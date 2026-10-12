@@ -1,0 +1,14 @@
+[
+  {
+    "id": "d-jinji",
+    "name": "金鸡湖商圈",
+    "demo": true,
+    "description": "仅用于演示的场馆分组；未声明或绘制地理边界。"
+  },
+  {
+    "id": "d-dushu",
+    "name": "独墅湖商圈",
+    "demo": true,
+    "description": "仅用于演示的场馆分组；未声明或绘制地理边界。"
+  }
+]

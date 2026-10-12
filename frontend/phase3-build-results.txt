@@ -1,0 +1,35 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> menduner-frontend@1.0.0 build
+> tsc -b && vite build
+
+vite v7.3.7 building client environment for production...
+transforming...
+✓ 3935 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                     0.47 kB │ gzip:   0.35 kB
+dist/assets/index-DJMKVOLr.css     12.57 kB │ gzip:   3.36 kB
+dist/assets/index-BnuhLJ6X.css     15.87 kB │ gzip:   2.67 kB
+dist/assets/index-dBPhgmzh.js       0.96 kB │ gzip:   0.57 kB
+dist/assets/index-BMPIp_b4.js       1.32 kB │ gzip:   0.75 kB
+dist/assets/index-CadBZ9kH.js       2.65 kB │ gzip:   1.23 kB
+dist/assets/index-B6l6ezaX.js       7.87 kB │ gzip:   2.67 kB
+dist/assets/index-LwxoSw47.js       8.83 kB │ gzip:   3.42 kB
+dist/assets/Input-BjmAv2Ur.js      10.12 kB │ gzip:   3.89 kB
+dist/assets/index-CLImRfdp.js      15.93 kB │ gzip:   6.30 kB
+dist/assets/index-D4N8bH4f.js      18.23 kB │ gzip:   4.03 kB
+dist/assets/index-CG-fopPg.js      22.73 kB │ gzip:   8.50 kB
+dist/assets/index-TKB7wxA6.js      46.81 kB │ gzip:  14.47 kB
+dist/assets/index-DiZQA1e7.js      87.68 kB │ gzip:  28.79 kB
+dist/assets/index-BaakBaAl.js     138.31 kB │ gzip:  45.72 kB
+dist/assets/index-CI7SvOaH.js     186.49 kB │ gzip:  61.79 kB
+dist/assets/Table-CBkJc8Bm.js     253.84 kB │ gzip:  78.58 kB
+dist/assets/index-Ctd3t_xX.js     716.64 kB │ gzip: 229.62 kB
+dist/assets/index-CtZUFq7_.js   1,134.13 kB │ gzip: 381.69 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 10.27s

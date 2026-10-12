@@ -1,0 +1,42 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> menduner-frontend@1.0.0 test
+> vitest run
+
+
+ RUN  v3.2.7 /workspace/scratch/ea48d6702fed/Menduner/frontend
+
+ ✓ tests/data.test.ts (11 tests) 10ms
+ ✓ tests/intelligence.test.ts (6 tests) 43ms
+stderr | tests/ui.test.tsx > Integrated platform routes and interactions > loads /insights using shared layout
+Not implemented: Window's getComputedStyle() method: with pseudo-elements
+
+stderr | tests/ui.test.tsx > Integrated platform routes and interactions > loads /evidence using shared layout
+Not implemented: Window's getComputedStyle() method: with pseudo-elements
+Not implemented: Window's getComputedStyle() method: with pseudo-elements
+
+stderr | tests/ui.test.tsx > Integrated platform routes and interactions > opens shared drawer and moves to calendar retaining selected event date
+Not implemented: Window's getComputedStyle() method: with pseudo-elements
+
+stderr | tests/ui.test.tsx > Integrated platform routes and interactions > searches evidence index and shows conflict provenance
+Not implemented: Window's getComputedStyle() method: with pseudo-elements
+Not implemented: Window's getComputedStyle() method: with pseudo-elements
+
+ ✓ tests/ui.test.tsx (12 tests) 45982ms
+   ✓ Integrated platform routes and interactions > loads /map using shared layout  1806ms
+   ✓ Integrated platform routes and interactions > loads /calendar using shared layout  725ms
+   ✓ Integrated platform routes and interactions > loads /graph using shared layout  651ms
+   ✓ Integrated platform routes and interactions > loads /hotels using shared layout  1481ms
+   ✓ Integrated platform routes and interactions > loads /insights using shared layout  1661ms
+   ✓ Integrated platform routes and interactions > loads /evidence using shared layout  1968ms
+   ✓ Integrated platform routes and interactions > changes month and displays an empty state when DEMO is off  9374ms
+   ✓ Integrated platform routes and interactions > opens shared drawer and moves to calendar retaining selected event date  11067ms
+   ✓ Integrated platform routes and interactions > shows overlapping multi-day calendar entries and navigates months  6696ms
+   ✓ Integrated platform routes and interactions > opens a graph node inspector  1973ms
+   ✓ Integrated platform routes and interactions > shows computed hotel distances without missing-coordinate events  5826ms
+   ✓ Integrated platform routes and interactions > searches evidence index and shows conflict provenance  2754ms
+
+ Test Files  3 passed (3)
+      Tests  29 passed (29)
+   Start at  01:18:16
+   Duration  48.79s (transform 346ms, setup 166ms, collect 2.04s, tests 46.03s, environment 1.59s, prepare 225ms)

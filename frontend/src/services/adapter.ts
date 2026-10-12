@@ -1,0 +1,198 @@
+import type {
+  Dataset,
+  Event,
+  Evidence,
+  Category,
+  Status,
+  Coordinates,
+} from "../types";
+import { categories, validDate, safeUrl, effectiveStatus } from "../utils/data";
+const text = (v: unknown): string | null =>
+  typeof v === "string" && v.trim() ? v.trim() : null;
+const status = (v: unknown): Status =>
+  ["Verified", "Unverified", "Missing", "Conflicting", "Needs Review"].includes(
+    String(v),
+  )
+    ? (v as Status)
+    : "Unverified";
+const first = (r: Record<string, unknown>, ...keys: string[]) =>
+  keys.map((k) => r[k]).find((v) => v !== undefined && v !== null);
+export function normalizeEvent(
+  raw: Record<string, unknown>,
+  index: number,
+): Event {
+  const start = first(raw, "startDate", "start_date", "Start Date", "开始日期");
+  const end = first(raw, "endDate", "end_date", "End Date", "结束日期");
+  const cat = String(
+    first(raw, "category", "event_type", "Event Type", "活动类型") ?? "others",
+  );
+  const aliases: Record<string, Category> = {
+    "Business/Economic": "business",
+    "Cultural/Entertainment": "culture",
+    "Education/Academic": "education",
+    "Government/Public Administration": "government",
+    Sports: "sports",
+    "Religious/Folk Customs": "folk",
+    Others: "others",
+  };
+  const attendance = first(raw, "attendance", "Attendance", "参与人数");
+  return {
+    id: text(first(raw, "id", "event_id", "Event ID")) ?? `import-${index + 1}`,
+    name:
+      text(first(raw, "name", "event_name", "Event Name", "活动名称")) ??
+      "未命名活动",
+    category:
+      cat in categories ? (cat as Category) : (aliases[cat] ?? "others"),
+    startDate: validDate(start) ? start : null,
+    endDate: validDate(end) ? end : null,
+    venueId: text(first(raw, "venueId", "venue_id")),
+    districtId: text(first(raw, "districtId", "district_id")),
+    organizer: text(first(raw, "organizer", "Organizer", "主办方")),
+    attendance:
+      typeof attendance === "number" &&
+      Number.isFinite(attendance) &&
+      attendance >= 0
+        ? attendance
+        : null,
+    sponsor: text(first(raw, "sponsor", "Sponsor")),
+    demo: raw.demo === true,
+    raw,
+  };
+}
+function coordinate(x: unknown): Coordinates | null {
+  if (!x || typeof x !== "object") return null;
+  const c = x as Record<string, unknown>;
+  // No coercion, no coordinate-system guessing. Unsupported systems stay off map.
+  if (
+    c.system !== "GCJ-02" ||
+    typeof c.lng !== "number" ||
+    typeof c.lat !== "number" ||
+    !Number.isFinite(c.lng) ||
+    !Number.isFinite(c.lat) ||
+    Math.abs(c.lng) > 180 ||
+    Math.abs(c.lat) > 90
+  )
+    return null;
+  return {
+    lng: c.lng,
+    lat: c.lat,
+    system: "GCJ-02",
+    status:
+      status(c.status) === "Verified" && !safeUrl(c.sourceUrl)
+        ? "Needs Review"
+        : status(c.status),
+    sourceUrl: safeUrl(c.sourceUrl),
+  };
+}
+export function normalizeDataset(input: unknown): Dataset {
+  const r = Array.isArray(input) ? { events: input } : input;
+  if (!r || typeof r !== "object" || !Array.isArray((r as Dataset).events))
+    throw new Error("JSON 必须是活动数组或包含 events 的数据集。");
+  const data = r as Record<string, unknown>;
+  const rows = data.events as unknown[];
+  if (rows.some((x) => !x || typeof x !== "object" || Array.isArray(x)))
+    throw new Error("活动记录必须是对象。");
+  const events = rows.map((x, i) =>
+    normalizeEvent(x as Record<string, unknown>, i),
+  );
+  const array = (key: string): Record<string, unknown>[] => {
+    const v = data[key];
+    if (v === undefined) return [];
+    if (
+      !Array.isArray(v) ||
+      v.some((x) => !x || typeof x !== "object" || Array.isArray(x))
+    )
+      throw new Error(`${key} 必须是对象数组`);
+    return v;
+  };
+  const venues = array("venues").map((v) => ({
+    id: text(v.id) ?? "",
+    name: text(v.name) ?? "未命名场馆",
+    address: text(v.address),
+    districtId: text(v.districtId),
+    districtDemo: v.districtDemo !== false,
+    coordinates: coordinate(v.coordinates),
+  }));
+  const hotels = array("hotels").map((v) => ({
+    id: text(v.id) ?? "",
+    name: text(v.name) ?? "未命名酒店",
+    address: text(v.address),
+    districtId: text(v.districtId),
+    districtDemo: v.districtDemo !== false,
+    coordinates: coordinate(v.coordinates),
+  }));
+  const districts = array("districts").map((d) => ({
+    id: text(d.id) ?? "",
+    name: text(d.name) ?? "未命名商圈",
+    demo: d.demo !== false,
+    description: text(d.description) ?? "归属需独立核验",
+  }));
+  const stamp =
+    typeof data.updatedAt === "string" && !isNaN(Date.parse(data.updatedAt))
+      ? data.updatedAt
+      : new Date().toISOString();
+  const evidence: Evidence[] = array("evidence").map((e, i) => ({
+    id: text(e.id) ?? `evidence-${i}`,
+    entityId: text(e.entityId) ?? "",
+    field: text(e.field) ?? "unknown",
+    value: e.value ?? null,
+    status: status(e.status),
+    method: text(e.method) ?? "unverified_internal_reference",
+    sourceName: text(e.sourceName),
+    sourceUrl: safeUrl(e.sourceUrl),
+    updatedAt: text(e.updatedAt) ?? stamp,
+    note: text(e.note) ?? undefined,
+    sourceRole: ["official_organizer", "government", "venue", "other"].includes(
+      String(e.sourceRole),
+    )
+      ? (e.sourceRole as Evidence["sourceRole"])
+      : undefined,
+    confidence:
+      typeof e.confidence === "number" &&
+      Number.isFinite(e.confidence) &&
+      e.confidence >= 0 &&
+      e.confidence <= 1
+        ? e.confidence
+        : undefined,
+    confidenceMethod: text(e.confidenceMethod) ?? undefined,
+  }));
+  evidence.forEach((e) => (e.status = effectiveStatus(e)));
+  for (const [label, list] of Object.entries({
+    events,
+    venues,
+    hotels,
+    districts,
+    evidence,
+  })) {
+    const ids = list.map((x) => x.id);
+    if (ids.some((x) => !x) || new Set(ids).size !== ids.length)
+      throw new Error(`${label} 的 ID 缺失或重复。`);
+  }
+  for (const event of events)
+    for (const field of [
+      "name",
+      "category",
+      "startDate",
+      "endDate",
+      "venueId",
+      "districtId",
+      "organizer",
+      "attendance",
+      "sponsor",
+    ] as const) {
+      if (!evidence.some((e) => e.entityId === event.id && e.field === field))
+        evidence.push({
+          id: `auto:${event.id}:${field}`,
+          entityId: event.id,
+          field,
+          value: event[field],
+          status: event[field] === null ? "Missing" : "Unverified",
+          method: "unverified_internal_reference",
+          sourceName: null,
+          sourceUrl: null,
+          updatedAt: stamp,
+          note: "导入值尚未独立核验。",
+        });
+    }
+  return { events, venues, hotels, districts, evidence, updatedAt: stamp };
+}

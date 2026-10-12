@@ -1,0 +1,20 @@
+{
+  "demo": true,
+  "field": "Event Date",
+  "candidates": [
+    {
+      "id": "source-a",
+      "value": "2026-10-12",
+      "sourceName": "Source A · 示例主办方官网",
+      "sourceRole": "official_organizer",
+      "demo": true
+    },
+    {
+      "id": "source-b",
+      "value": "2026-10-15",
+      "sourceName": "Source B · 示例转载页",
+      "sourceRole": "other",
+      "demo": true
+    }
+  ]
+}

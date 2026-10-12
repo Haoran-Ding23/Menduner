@@ -1,0 +1,24 @@
+[
+  {
+    "id": "h-inter",
+    "name": "苏州洲际酒店",
+    "address": "旺墩路288号",
+    "districtId": "d-jinji",
+    "districtDemo": true,
+    "coordinates": {
+      "lng": 120.710226,
+      "lat": 31.319292,
+      "system": "GCJ-02",
+      "status": "Verified",
+      "sourceUrl": "https://www.amap.com/place/B02000K05N"
+    }
+  },
+  {
+    "id": "h-pending",
+    "name": "待配置酒店（DEMO）",
+    "address": null,
+    "districtId": null,
+    "districtDemo": true,
+    "coordinates": null
+  }
+]

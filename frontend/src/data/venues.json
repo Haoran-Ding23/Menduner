@@ -1,0 +1,38 @@
+[
+  {
+    "id": "v-expo",
+    "name": "苏州国际博览中心",
+    "address": "苏州大道东688号",
+    "districtId": "d-jinji",
+    "districtDemo": true,
+    "coordinates": {
+      "lng": 120.707374,
+      "lat": 31.323727,
+      "system": "GCJ-02",
+      "status": "Verified",
+      "sourceUrl": "https://ditu.amap.com/place/B02000IVJP"
+    }
+  },
+  {
+    "id": "v-theatre",
+    "name": "独墅湖影剧院",
+    "address": "星湖街555号",
+    "districtId": "d-dushu",
+    "districtDemo": true,
+    "coordinates": {
+      "lng": 120.726136,
+      "lat": 31.266122,
+      "system": "GCJ-02",
+      "status": "Verified",
+      "sourceUrl": "https://ditu.amap.com/place/B02000K20E"
+    }
+  },
+  {
+    "id": "v-pending",
+    "name": "待核验场馆（DEMO）",
+    "address": null,
+    "districtId": null,
+    "districtDemo": true,
+    "coordinates": null
+  }
+]

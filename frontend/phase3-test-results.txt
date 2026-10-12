@@ -1,0 +1,57 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> menduner-frontend@1.0.0 test
+> vitest run
+
+
+ RUN  v3.2.7 /workspace/scratch/ea48d6702fed/Menduner/frontend
+
+ ✓ tests/data.test.ts (11 tests) 12ms
+ ✓ tests/intelligence.test.ts (15 tests) 52ms
+ ✓ tests/map-layer.test.tsx (1 test) 301ms
+   ✓ Real map integration boundary with mocked SDK > groups verified event locations, excludes unknown venue and adds real configured hotel layer  300ms
+stderr | tests/v11-ui.test.tsx > V1.1 Revenue Manager workflows > opens a demand explanation with truthful nearby hotel and source counts
+Not implemented: Window's getComputedStyle() method: with pseudo-elements
+
+stderr | tests/ui.test.tsx > Integrated platform routes and interactions > loads /insights using shared layout
+Not implemented: Window's getComputedStyle() method: with pseudo-elements
+Not implemented: Window's getComputedStyle() method: with pseudo-elements
+
+stderr | tests/ui.test.tsx > Integrated platform routes and interactions > loads /evidence using shared layout
+Not implemented: Window's getComputedStyle() method: with pseudo-elements
+Not implemented: Window's getComputedStyle() method: with pseudo-elements
+
+stderr | tests/v11-ui.test.tsx > V1.1 Revenue Manager workflows > demonstrates conflict selection without overwriting existing conflicting evidence
+Not implemented: Window's getComputedStyle() method: with pseudo-elements
+Not implemented: Window's getComputedStyle() method: with pseudo-elements
+
+ ✓ tests/v11-ui.test.tsx (4 tests) 19535ms
+   ✓ V1.1 Revenue Manager workflows > opens a demand explanation with truthful nearby hotel and source counts  5060ms
+   ✓ V1.1 Revenue Manager workflows > highlights the calculated review period in the risk calendar  5941ms
+   ✓ V1.1 Revenue Manager workflows > calculates a DEMO graph query and refuses an unsupported revenue question  3582ms
+   ✓ V1.1 Revenue Manager workflows > demonstrates conflict selection without overwriting existing conflicting evidence  4951ms
+stderr | tests/ui.test.tsx > Integrated platform routes and interactions > opens shared drawer and moves to calendar retaining selected event date
+Not implemented: Window's getComputedStyle() method: with pseudo-elements
+
+stderr | tests/ui.test.tsx > Integrated platform routes and interactions > searches evidence index and shows conflict provenance
+Not implemented: Window's getComputedStyle() method: with pseudo-elements
+Not implemented: Window's getComputedStyle() method: with pseudo-elements
+
+ ✓ tests/ui.test.tsx (12 tests) 50849ms
+   ✓ Integrated platform routes and interactions > loads /map using shared layout  1457ms
+   ✓ Integrated platform routes and interactions > loads /calendar using shared layout  848ms
+   ✓ Integrated platform routes and interactions > loads /graph using shared layout  836ms
+   ✓ Integrated platform routes and interactions > loads /hotels using shared layout  1341ms
+   ✓ Integrated platform routes and interactions > loads /insights using shared layout  2637ms
+   ✓ Integrated platform routes and interactions > loads /evidence using shared layout  2273ms
+   ✓ Integrated platform routes and interactions > changes month and displays an empty state when DEMO is off  9425ms
+   ✓ Integrated platform routes and interactions > opens shared drawer and moves to calendar retaining selected event date  11536ms
+   ✓ Integrated platform routes and interactions > shows overlapping multi-day calendar entries and navigates months  8852ms
+   ✓ Integrated platform routes and interactions > opens a graph node inspector  2367ms
+   ✓ Integrated platform routes and interactions > shows computed hotel distances without missing-coordinate events  6073ms
+   ✓ Integrated platform routes and interactions > searches evidence index and shows conflict provenance  3202ms
+
+ Test Files  5 passed (5)
+      Tests  43 passed (43)
+   Start at  01:32:56
+   Duration  53.87s (transform 558ms, setup 569ms, collect 5.71s, tests 70.75s, environment 2.62s, prepare 370ms)
