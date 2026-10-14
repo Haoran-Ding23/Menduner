@@ -1,0 +1,3 @@
+PASS crawler V1.4 CLI: 13 raw items / 11 unique synthetic events / 3 mock sources / 2 duplicates
+PASS real HTTP: FastAPI + SQLite -> Vite /api proxy -> dataset and all resource endpoints
+PASS six Vite route shells (not browser rendering or AMap validation)

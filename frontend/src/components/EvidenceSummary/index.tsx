@@ -18,7 +18,7 @@ export default function EvidenceSummary({ event }: { event: Event }) {
   const government = eventSources.filter((e) => e.sourceRole === "government");
   return (
     <section className="intelligence-card gap-top">
-      <h3>Traceable China-local Intelligence · 证据入口</h3>
+      <h3>证据入口</h3>
       <div className="source-checks">
         <Tag color={official.length ? "green" : "default"}>
           活动官网 {official.length ? "✓" : "待核验"}

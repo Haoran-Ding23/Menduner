@@ -1,0 +1,40 @@
+{
+  "events": [
+    {
+      "id": "platform-01",
+      "name": "城市商业交流会",
+      "category": "business",
+      "start": "2026-10-12",
+      "end": "2026-10-15",
+      "venue": "苏州国际博览中心",
+      "location": "苏州大道东688号",
+      "venue_id": "v-expo",
+      "district_id": "d-jinji",
+      "organizer": "演示组织方"
+    },
+    {
+      "id": "platform-02",
+      "name": "秋季文化展",
+      "category": "culture",
+      "start": "2026-10-14",
+      "end": "2026-10-19",
+      "venue": "苏州国际博览中心",
+      "location": "苏州大道东688号",
+      "venue_id": "v-expo",
+      "district_id": "d-jinji",
+      "organizer": "演示组织方 B"
+    },
+    {
+      "id": "platform-03",
+      "name": "DEMO 城市运动体验日",
+      "category": "sports",
+      "start": "2026-10-24",
+      "end": "2026-10-24",
+      "venue": "苏州国际博览中心",
+      "location": "苏州大道东688号",
+      "venue_id": "v-expo",
+      "district_id": "d-jinji",
+      "organizer": null
+    }
+  ]
+}

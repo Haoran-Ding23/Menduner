@@ -33,6 +33,12 @@ export interface Evidence {
   sourceRole?: "official_organizer" | "government" | "venue" | "other";
   confidence?: number;
   confidenceMethod?: string;
+  /** Why this field has its current status: an automatic rule or a human decision. */
+  origin?: string;
+  /** "automatic" for the auto-verification rule, otherwise the reviewer's name. */
+  decidedBy?: string;
+  decidedReason?: string;
+  decidedAt?: string;
 }
 export interface Event {
   id: string;
@@ -63,6 +69,11 @@ export interface Hotel {
   districtId: string | null;
   coordinates: Coordinates | null;
   districtDemo: boolean;
+  /** Portfolio tier. The grade comes from the source's own classification, not from judgement. */
+  tier?: "high" | "mid" | "comfort";
+  tierLabel?: string | null;
+  tierSource?: string | null;
+  tierEvidence?: string | null;
 }
 export interface District {
   id: string;
@@ -101,4 +112,6 @@ export interface Filters {
   district: string;
   category: string;
   includeDemo: boolean;
+  /** Show events that finished more than 30 days ago; hidden from the working view by default. */
+  includePast: boolean;
 }

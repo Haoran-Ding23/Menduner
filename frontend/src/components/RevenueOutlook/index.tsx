@@ -23,7 +23,7 @@ export default function RevenueOutlook({
     <div className="outlook-grid gap-bottom">
       <section className="panel">
         <div className="panel-heading">
-          <h3>{filters.month}月 Important Event Period · 重要活动时段</h3>
+          <h3>{filters.month}月重要活动时段</h3>
           <Tag color="blue">已记录日历活动</Tag>
         </div>
         <div className="outlook-content">
@@ -34,7 +34,7 @@ export default function RevenueOutlook({
                   {p.start} → {p.end}
                 </Button>
                 <p>
-                  High activity period · 活动密集时段
+                  活动密集时段
                   {p.demo && <Tag color="blue">DEMO</Tag>}
                 </p>
                 <ul className="explanation-list">
@@ -57,8 +57,8 @@ export default function RevenueOutlook({
       </section>
       <section className="panel">
         <div className="panel-heading">
-          <h3>Upcoming Events · Next 30 days</h3>
-          <Tag color="red">{upcoming.length} 个 HIGH 关注项</Tag>
+          <h3>未来 30 天活动</h3>
+          <Tag color="red">{upcoming.length} 个高关注项</Tag>
         </div>
         <div className="outlook-content">
           <small className="muted">
@@ -76,7 +76,7 @@ export default function RevenueOutlook({
             </div>
           ))}
           {!upcoming.length && (
-            <Empty description="未来30天没有符合条件的 HIGH 活动" />
+            <Empty description="未来 30 天没有高关注活动" />
           )}
         </div>
       </section>

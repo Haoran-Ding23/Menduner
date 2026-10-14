@@ -1,0 +1,144 @@
+{
+  "jobId": "7921612555d44724a99a1c7eb9205f78",
+  "mode": "REAL",
+  "demoArchive": "menduner.sqlite3.demo-archive-20261012T111431-e4ebba.sqlite3",
+  "pagesCollected": 10,
+  "rawRecordsCollected": 15,
+  "evidenceRecordsGenerated": 120,
+  "eventsProcessed": 12,
+  "eventsCreated": 11,
+  "eventsUpdated": 1,
+  "duplicatesDetected": 1,
+  "itemsRejected": 0,
+  "sourcesProcessed": 4,
+  "attempts": [
+    {
+      "source": "government-suzhou",
+      "status": "Success",
+      "accepted": 2,
+      "rejected": 0,
+      "error": null,
+      "requestErrors": [],
+      "warnings": [],
+      "pagesCollected": 2,
+      "requestAttempts": 4,
+      "contextRecords": 0
+    },
+    {
+      "source": "venue-suzhou-orchestra",
+      "status": "Success",
+      "accepted": 5,
+      "rejected": 0,
+      "error": null,
+      "requestErrors": [],
+      "warnings": [],
+      "pagesCollected": 1,
+      "requestAttempts": 2,
+      "contextRecords": 1
+    },
+    {
+      "source": "platform-shanghai-concerts",
+      "status": "Success",
+      "accepted": 5,
+      "rejected": 0,
+      "error": null,
+      "requestErrors": [],
+      "warnings": [],
+      "pagesCollected": 6,
+      "requestAttempts": 7,
+      "contextRecords": 1
+    },
+    {
+      "source": "venue-suzhou-expo",
+      "status": "Partial",
+      "accepted": 0,
+      "rejected": 0,
+      "error": null,
+      "requestErrors": [],
+      "warnings": [
+        "Schedule requires token-based dynamic content; static HTML has no reliable event records. No token endpoint accessed."
+      ],
+      "pagesCollected": 1,
+      "requestAttempts": 2,
+      "contextRecords": 1
+    }
+  ],
+  "status": "Partial",
+  "updatedAt": "2026-10-12T11:15:29.236494+00:00",
+  "eventsStored": 11,
+  "httpRequests": 15,
+  "robotsRequests": 5,
+  "retriedRequests": 0,
+  "pageLog": [
+    {
+      "url": "https://www.suzhou.gov.cn/szsrmzf/szyw/202610/0ba8650590584318b6c3051171a8c539.shtml",
+      "status": 200,
+      "bytes": 46060,
+      "robots": "no usable robots rules returned",
+      "crawl_time": "2026-10-12T11:14:47.483110+00:00"
+    },
+    {
+      "url": "https://www.suzhou.gov.cn/szsrmzf/wtly/202609/b211ae650d744fb69943e5fb88524f48.shtml",
+      "status": 200,
+      "bytes": 45199,
+      "robots": "no usable robots rules returned",
+      "crawl_time": "2026-10-12T11:14:48.985900+00:00"
+    },
+    {
+      "url": "https://www.szsorch.com/api/getMusicData/2026-27-music-sea50n/1?pageNum=0&pageSize=5",
+      "status": 200,
+      "bytes": 43634,
+      "robots": "no usable robots rules returned",
+      "crawl_time": "2026-10-12T11:15:01.065629+00:00"
+    },
+    {
+      "url": "https://shanghaiconcerts.com/venues/suzhou-culture-arts-centre",
+      "status": 200,
+      "bytes": 511446,
+      "robots": "robots.txt",
+      "crawl_time": "2026-10-12T11:15:10.520949+00:00"
+    },
+    {
+      "url": "https://shanghaiconcerts.com/concerts/szso-10th-anniversary-concert",
+      "status": 200,
+      "bytes": 480626,
+      "robots": "robots.txt",
+      "crawl_time": "2026-10-12T11:15:11.445266+00:00"
+    },
+    {
+      "url": "https://shanghaiconcerts.com/concerts/szso-chamber-style-1-brass",
+      "status": 200,
+      "bytes": 499155,
+      "robots": "robots.txt",
+      "crawl_time": "2026-10-12T11:15:12.484356+00:00"
+    },
+    {
+      "url": "https://shanghaiconcerts.com/concerts/yu-lu-yuan-jie-emperor-eroica",
+      "status": 200,
+      "bytes": 486226,
+      "robots": "robots.txt",
+      "crawl_time": "2026-10-12T11:15:13.479637+00:00"
+    },
+    {
+      "url": "https://shanghaiconcerts.com/concerts/chen-xieyang-berlioz-night",
+      "status": 200,
+      "bytes": 483001,
+      "robots": "robots.txt",
+      "crawl_time": "2026-10-12T11:15:14.528257+00:00"
+    },
+    {
+      "url": "https://shanghaiconcerts.com/concerts/rafael-aguirre-guitar-recital-suzhou",
+      "status": 200,
+      "bytes": 486947,
+      "robots": "robots.txt",
+      "crawl_time": "2026-10-12T11:15:15.445592+00:00"
+    },
+    {
+      "url": "https://www.suzhouexpo.com/zhanhuiricheng-389.html",
+      "status": 200,
+      "bytes": 18693,
+      "robots": "no usable robots rules returned",
+      "crawl_time": "2026-10-12T11:15:29.233484+00:00"
+    }
+  ]
+}

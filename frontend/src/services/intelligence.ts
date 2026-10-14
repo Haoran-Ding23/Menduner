@@ -226,11 +226,14 @@ export function upcomingHighEvents(
 export function districtMetrics(events: Event[], data: Dataset) {
   return data.districts.map((district) => {
     const records = events.filter((e) => e.districtId === district.id);
-    const venues = data.venues.filter((v) => v.districtId === district.id);
-    const hotels = data.hotels.filter((h) => h.districtId === district.id);
-    const locatedEvents = records.filter((e) =>
-      venues.some((v) => v.id === e.venueId),
+    // A venue carries no districtId of its own: its district is the district of the events
+    // held there, so it is derived from the events rather than read off the venue.
+    const venueIds = new Set(
+      records.map((e) => e.venueId).filter((id): id is string => Boolean(id)),
     );
+    const venues = data.venues.filter((v) => venueIds.has(v.id));
+    const hotels = data.hotels.filter((h) => h.districtId === district.id);
+    const locatedEvents = records.filter((e) => venueIds.has(e.venueId ?? ""));
     const busiest = venues
       .map((v) => ({
         name: v.name,

@@ -4,7 +4,7 @@ export default function TrustCenter() {
   return (
     <section className="panel gap-bottom">
       <div className="panel-heading">
-        <h3>Data Provenance · 数据来源链路</h3>
+        <h3>数据来源链路</h3>
         <Tag color="blue">本地记录</Tag>
       </div>
       <div className="trust-content">
@@ -37,20 +37,20 @@ export default function TrustCenter() {
           本地数据的来源追溯说明。下方字段表显示当前活动与场馆各自的证据；两者独立核验。
         </p>
         <article className="intelligence-card gap-top">
-          <h3>Conflict Review · 日期冲突示例</h3>
-          <Tag color="blue">DEMO / Synthetic data · 独立合成场景</Tag>
+          <h3>日期冲突示例</h3>
+          <Tag color="blue">DEMO / 独立合成场景</Tag>
           <div className="comparison-grid">
             {sample.candidates.map((c) => (
               <div key={c.id}>
                 <strong>{c.sourceName}</strong>
-                <p>Event Date：{c.value}</p>
+                <p>活动日期：{c.value}</p>
                 <small className="muted">无真实 URL · 未核验</small>
               </div>
             ))}
           </div>
           <Alert
             type="warning"
-            message="Resolution status: Needs review"
+            message="核验状态：待复核"
             description="保留两个来源值，等待核对原始公告、活动身份和变更记录；尚未选定日期。此示例不修改活动字段。"
           />
         </article>

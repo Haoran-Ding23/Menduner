@@ -1,0 +1,290 @@
+[
+ {
+  "venue_id": "v-expo",
+  "name": "苏州国际博览中心",
+  "lng": 120.707374,
+  "lat": 31.323727,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B02000IVJP",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "v-theatre",
+  "name": "独墅湖影剧院",
+  "lng": 120.726136,
+  "lat": 31.266122,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B02000K20E",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-cdb7143ab37f6e619c3b",
+  "name": "金鸡湖景区",
+  "lng": 120.704824,
+  "lat": 31.310263,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B020019OXQ",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-e94a8518e694fb4e0895",
+  "name": "阳澄湖旅游集散中心",
+  "lng": 120.775665,
+  "lat": 31.450134,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0H35S4PUY",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-056b9ea74ee865087f72",
+  "name": "苏州奥体中心体育馆",
+  "lng": 120.748617,
+  "lat": 31.305249,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0FFIS6MRS",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-e57e3ccf6bbbc345a597",
+  "name": "苏州奥体中心体育场",
+  "lng": 120.750573,
+  "lat": 31.304751,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0FFL7AIDJ",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-d526bc3bbf7b3322226a",
+  "name": "苏州文化艺术中心大剧院",
+  "lng": 120.702249,
+  "lat": 31.32185,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B02000ICYE",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-b8a51f4b0535ffe8a38e",
+  "name": "苏州狮山大剧院",
+  "lng": 120.547725,
+  "lat": 31.291795,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0JG5524EI",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-8493796f8b09e7bb940c",
+  "name": "昆山戏曲百戏博物馆",
+  "lng": 120.85919,
+  "lat": 31.374327,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0GKAR36FJ",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-417e681d8df955c3d947",
+  "name": "苏州美术馆",
+  "lng": 120.61676,
+  "lat": 31.324224,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B02000K4H3",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-beb287be89bb831ad314",
+  "name": "苏州市文联文艺家展厅",
+  "lng": 120.634475,
+  "lat": 31.294725,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0MRB4AAXY",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-664cfeb1a6e0b4c6b3e3",
+  "name": "吴文化博物馆",
+  "lng": 120.648596,
+  "lat": 31.253742,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0FFMDQXZK",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-9ae6a20522eb95c7bbfa",
+  "name": "苏州湾大剧院",
+  "lng": 120.586226,
+  "lat": 31.133813,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0FFGA7EGM",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-15323c4ff01f17167743",
+  "name": "苏州保利大剧院",
+  "lng": 120.6314,
+  "lat": 31.265489,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0KALX8JSG",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-a0f42c8266d5ecd41a23",
+  "name": "昆山文化艺术中心",
+  "lng": 120.906574,
+  "lat": 31.383191,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0FFFDJ2HB",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-b58983b76d8c9e3a0cb3",
+  "name": "常熟大剧院",
+  "lng": 120.779723,
+  "lat": 31.660917,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B020019K5F",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-4ce33e3638dad607aac2",
+  "name": "周庄古镇",
+  "lng": 120.85091,
+  "lat": 31.114744,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B02000IQJS",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-dafee4f2ea076b65ba99",
+  "name": "太仓美术馆",
+  "lng": 121.130708,
+  "lat": 31.453484,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0FFLJHRHA",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-8543c13c8826d5f2ee0b",
+  "name": "苏州奥林匹克体育中心体育馆",
+  "lng": 120.749784,
+  "lat": 31.307407,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0I63DXAQW",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-fec3a02d2b8e51bebd49",
+  "name": "苏州未来科幻馆",
+  "lng": 120.640759,
+  "lat": 31.417723,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0L65MN5KX",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-465cd3c9411660ce7e3a",
+  "name": "开明大戏院",
+  "lng": 120.625335,
+  "lat": 31.309339,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B020005W8B",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-bc0d35aa153e50646d71",
+  "name": "拙政园",
+  "lng": 120.629211,
+  "lat": 31.324194,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B020001R2Q",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-cff7d18517cd71437cbc",
+  "name": "天池山景区",
+  "lng": 120.477562,
+  "lat": 31.290117,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B02000IX5K",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-9f111464602824923bd3",
+  "name": "天平山景区",
+  "lng": 120.501349,
+  "lat": 31.290448,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0FFF53QWB",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-1d57b6d00173d11b4325",
+  "name": "黎里古镇",
+  "lng": 120.711391,
+  "lat": 30.988946,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0FFFFLIYG",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-ea3618dada5bf34a8ad5",
+  "name": "苏州狮山国际会议中心",
+  "lng": 120.548087,
+  "lat": 31.296863,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0HBBS2JN5",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-0a355c9a64a58a61759b",
+  "name": "印象百戏-苏州状元府",
+  "lng": 120.630773,
+  "lat": 31.310163,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0KGFH4BVB",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-5cb78de00ab85b3afa1a",
+  "name": "橙天嘉禾剧场",
+  "lng": 120.5922,
+  "lat": 31.174434,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0FFMBAVAI",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-a391cf7615cc80e762e6",
+  "name": "众戏剧文化艺术空间",
+  "lng": 120.548118,
+  "lat": 31.293449,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0K34AKJYR",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-c0dda291ae3aab7cffb1",
+  "name": "开心麻花运河剧场",
+  "lng": 120.604804,
+  "lat": 31.310004,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0K6ZZUQ0Q",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-2c0931174cc516475645",
+  "name": "苏州市第二工人文化宫",
+  "lng": 120.597107,
+  "lat": 31.381929,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B0GRTME3L0",
+  "status": "Verified"
+ },
+ {
+  "venue_id": "venue-986abb2d08d0c7399250",
+  "name": "苏州开明大戏院",
+  "lng": 120.625335,
+  "lat": 31.309339,
+  "system": "GCJ-02",
+  "sourceUrl": "https://ditu.amap.com/place/B020005W8B",
+  "status": "Verified"
+ }
+]

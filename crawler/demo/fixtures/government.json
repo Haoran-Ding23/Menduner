@@ -1,0 +1,94 @@
+{
+  "items": [
+    {
+      "activity": {
+        "id": "demo-02",
+        "name": "秋季文化展"
+      },
+      "dates": {
+        "start": "2026-10-14",
+        "end": "2026-10-18"
+      },
+      "details": {
+        "category": "culture",
+        "venueId": "v-expo",
+        "districtId": "d-jinji",
+        "organizer": "演示组织方",
+        "attendance": null,
+        "sponsor": null
+      }
+    },
+    {
+      "activity": {
+        "id": "demo-04",
+        "name": "社区公益开放日"
+      },
+      "dates": {
+        "start": "2026-10-23",
+        "end": "2026-10-23"
+      },
+      "details": {
+        "category": "government",
+        "venueId": "v-theatre",
+        "districtId": "d-dushu",
+        "organizer": "演示组织方",
+        "attendance": null,
+        "sponsor": null
+      }
+    },
+    {
+      "activity": {
+        "id": "demo-06",
+        "name": "冬季企业交流会"
+      },
+      "dates": {
+        "start": "2026-11-12",
+        "end": "2026-11-14"
+      },
+      "details": {
+        "category": "business",
+        "venueId": "v-expo",
+        "districtId": "d-jinji",
+        "organizer": "演示组织方",
+        "attendance": null,
+        "sponsor": null
+      }
+    },
+    {
+      "activity": {
+        "id": "demo-08",
+        "name": "场馆待核验活动"
+      },
+      "dates": {
+        "start": "2026-10-25",
+        "end": null
+      },
+      "details": {
+        "category": "others",
+        "venueId": "v-pending",
+        "districtId": null,
+        "organizer": null,
+        "attendance": null,
+        "sponsor": null
+      }
+    },
+    {
+      "activity": {
+        "id": "demo-10",
+        "name": "时间待确认活动"
+      },
+      "dates": {
+        "start": null,
+        "end": null
+      },
+      "details": {
+        "category": "others",
+        "venueId": null,
+        "districtId": null,
+        "organizer": "演示组织方",
+        "attendance": null,
+        "sponsor": null
+      }
+    }
+  ]
+}

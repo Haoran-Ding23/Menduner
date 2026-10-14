@@ -1,0 +1,5 @@
+{
+  "result": "PASS",
+  "recordsReplayed": 6,
+  "note": "Read-only replay of fetched raw records against final extractors; not another live crawl"
+}

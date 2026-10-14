@@ -9,7 +9,7 @@ export function ImpactTag({ event }: { event: Event }) {
   return (
     <Tooltip title={assessment.reasons.join("；")}>
       <Tag color={impactColors[assessment.level]}>
-        Attention: {assessment.level}
+        关注等级：{assessment.level}
         {event.demo ? " · DEMO" : ""}
       </Tag>
     </Tooltip>
@@ -21,12 +21,12 @@ export function DemandExplanation({ event }: { event: Event }) {
   return (
     <section className="intelligence-card">
       <div className="section-heading">
-        <h3>Event Intelligence · 为什么值得关注</h3>
+        <h3>为什么值得关注</h3>
         <ImpactTag event={event} />
       </div>
       <p className="muted">
         {event.demo
-          ? "DEMO / Synthetic data / Not real event intelligence"
+          ? "DEMO / 合成数据，非真实活动情报"
           : "基于已记录活动信息的关注等级"}
       </p>
       <ul className="explanation-list">

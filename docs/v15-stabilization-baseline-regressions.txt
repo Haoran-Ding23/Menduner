@@ -1,0 +1,110 @@
+FFFF........                                                             [100%]
+=================================== FAILURES ===================================
+________________ test_decoding_failure_is_audited_without_retry ________________
+
+    def test_decoding_failure_is_audited_without_retry():
+        visited = []
+    
+        def transport(request):
+            visited.append(request.url.path)
+            if request.url.path == "/robots.txt":
+                return httpx.Response(404)
+            return httpx.Response(
+                200, stream=httpx.ByteStream(b"invalid gzip"),
+                headers={"Content-Type": "text/html", "Content-Encoding": "gzip"},
+            )
+    
+        client = PublicClient(transport=httpx.MockTransport(transport), interval=0)
+        try:
+            with pytest.raises(httpx.DecodingError):
+                client.get("https://example.test/event")
+            assert visited == ["/robots.txt", "/event"]
+            audit = client.audit_since()
+>           assert audit["httpRequests"] == 2
+E           assert 1 == 2
+
+crawler/tests/test_v15_stabilization.py:35: AssertionError
+________ test_same_raw_body_with_different_locators_is_not_a_duplicate _________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-7/test_same_raw_body_with_differ0')
+
+    def test_same_raw_body_with_different_locators_is_not_a_duplicate(tmp_path):
+        raw = json.dumps({"content": [
+            {"id": key, "title": "苏州演出 " + key,
+             "attributeMapSingle": {"time": {"value": "2026-11-18 19:30"}}}
+            for key in ("one", "two")
+        ]})
+    
+        class Collision(StaticSource):
+            def collect(self):
+                return [item(raw, "orchestra_json").model_copy(update={"locator": key})
+                        for key in ("one", "two")]
+    
+        db = tmp_path / "locator.sqlite3"
+        report = run_pipeline(db, [Collision()])
+>       assert report["itemsRejected"] == 2 and report["eventsStored"] == 0
+E       assert (0 == 2)
+
+crawler/tests/test_v15_stabilization.py:57: AssertionError
+___________ test_reusing_client_and_adapter_reports_only_current_job ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-7/test_reusing_client_and_adapte0')
+
+    def test_reusing_client_and_adapter_reports_only_current_job(tmp_path):
+        def transport(request):
+            return (httpx.Response(404) if request.url.path == "/robots.txt" else
+                    httpx.Response(200, text=music(), headers={"Content-Type": "text/html"}))
+    
+        class FetchingSource(RealSource):
+            source_id = "test-fetching"
+            source_name = "Test-only fetching"
+            source_url = "https://example.test/event"
+            kind = "event_platform"
+    
+            def collect(self):
+                return [self.item(self.fetch(self.source_url))]
+    
+        client = PublicClient(transport=httpx.MockTransport(transport), interval=0)
+        source = FetchingSource(client=client)
+        try:
+            first = run_pipeline(tmp_path / "reuse.sqlite3", [source], request_client=client)
+            source.errors.append({"error": "previous job failure"})
+            source.warnings.append("previous job warning")
+            second = run_pipeline(tmp_path / "reuse.sqlite3", [source], request_client=client)
+>           assert second["status"] == "Success"
+E           AssertionError: assert 'Partial' == 'Success'
+E             
+E             - Success
+E             + Partial
+
+crawler/tests/test_v15_stabilization.py:85: AssertionError
+_________ test_invalid_merged_date_interval_rolls_back_and_retains_raw _________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-7/test_invalid_merged_date_inter0')
+
+    def test_invalid_merged_date_interval_rolls_back_and_retains_raw(tmp_path):
+        raw = music()
+        document = json.loads(raw.split(">", 1)[1].rsplit("<", 1)[0])
+        document["endDate"] = "2026-11-20"
+        raw = '<script type="application/ld+json">' + json.dumps(document) + '</script>'
+        db = tmp_path / "dates.sqlite3"
+        run_pipeline(db, [StaticSource(), StaticSource("test-real-b", raw)])
+        # First merge on the same date, then keep that identity across source updates.
+        raw = raw.replace("2026-11-18", "2026-11-19")
+        run_pipeline(db, [StaticSource("test-real-b", raw)])
+        before = snapshot(db)["events"]
+        assert len(before) == 1 and before[0]["verification_status"] == "Conflicting"
+        report = run_pipeline(db, [StaticSource(content=music(date="2026-11-21"))])
+>       assert report["status"] == "Failed" and report["eventsUpdated"] == 0
+E       AssertionError: assert ('Success' == 'Failed'
+E         
+E         - Failed
+E         + Success)
+
+crawler/tests/test_v15_stabilization.py:109: AssertionError
+=========================== short test summary info ============================
+FAILED crawler/tests/test_v15_stabilization.py::test_decoding_failure_is_audited_without_retry
+FAILED crawler/tests/test_v15_stabilization.py::test_same_raw_body_with_different_locators_is_not_a_duplicate
+FAILED crawler/tests/test_v15_stabilization.py::test_reusing_client_and_adapter_reports_only_current_job
+FAILED crawler/tests/test_v15_stabilization.py::test_invalid_merged_date_interval_rolls_back_and_retains_raw
+4 failed, 8 passed in 0.25s

@@ -1,0 +1,144 @@
+{
+  "attempts": [
+    {
+      "accepted": 2,
+      "contextRecords": 0,
+      "error": null,
+      "pagesCollected": 2,
+      "rejected": 0,
+      "requestAttempts": 4,
+      "requestErrors": [],
+      "source": "government-suzhou",
+      "status": "Success",
+      "warnings": []
+    },
+    {
+      "accepted": 5,
+      "contextRecords": 1,
+      "error": null,
+      "pagesCollected": 1,
+      "rejected": 0,
+      "requestAttempts": 2,
+      "requestErrors": [],
+      "source": "venue-suzhou-orchestra",
+      "status": "Success",
+      "warnings": []
+    },
+    {
+      "accepted": 5,
+      "contextRecords": 1,
+      "error": null,
+      "pagesCollected": 6,
+      "rejected": 0,
+      "requestAttempts": 7,
+      "requestErrors": [],
+      "source": "platform-shanghai-concerts",
+      "status": "Success",
+      "warnings": []
+    },
+    {
+      "accepted": 0,
+      "contextRecords": 1,
+      "error": null,
+      "pagesCollected": 1,
+      "rejected": 0,
+      "requestAttempts": 2,
+      "requestErrors": [],
+      "source": "venue-suzhou-expo",
+      "status": "Partial",
+      "warnings": [
+        "Schedule requires token-based dynamic content; static HTML has no reliable event records. No token endpoint accessed."
+      ]
+    }
+  ],
+  "demoArchive": null,
+  "duplicatesDetected": 0,
+  "eventsCreated": 12,
+  "eventsProcessed": 12,
+  "eventsStored": 12,
+  "eventsUpdated": 0,
+  "evidenceRecordsGenerated": 120,
+  "httpRequests": 15,
+  "itemsRejected": 0,
+  "jobId": "0fa1a5826da54aed9d0e8579f270c43c",
+  "mode": "REAL",
+  "pageLog": [
+    {
+      "bytes": 46060,
+      "crawl_time": "2026-10-13T09:17:06.854615+00:00",
+      "robots": "no usable robots rules returned",
+      "status": 200,
+      "url": "https://www.suzhou.gov.cn/szsrmzf/szyw/202610/0ba8650590584318b6c3051171a8c539.shtml"
+    },
+    {
+      "bytes": 45199,
+      "crawl_time": "2026-10-13T09:17:07.174671+00:00",
+      "robots": "no usable robots rules returned",
+      "status": 200,
+      "url": "https://www.suzhou.gov.cn/szsrmzf/wtly/202609/b211ae650d744fb69943e5fb88524f48.shtml"
+    },
+    {
+      "bytes": 43595,
+      "crawl_time": "2026-10-13T09:17:12.768539+00:00",
+      "robots": "no usable robots rules returned",
+      "status": 200,
+      "url": "https://www.szsorch.com/api/getMusicData/2026-27-music-sea50n/1?pageNum=0&pageSize=5"
+    },
+    {
+      "bytes": 511432,
+      "crawl_time": "2026-10-13T09:17:19.311177+00:00",
+      "robots": "robots.txt",
+      "status": 200,
+      "url": "https://shanghaiconcerts.com/venues/suzhou-culture-arts-centre"
+    },
+    {
+      "bytes": 480612,
+      "crawl_time": "2026-10-13T09:17:20.383288+00:00",
+      "robots": "robots.txt",
+      "status": 200,
+      "url": "https://shanghaiconcerts.com/concerts/szso-10th-anniversary-concert"
+    },
+    {
+      "bytes": 499251,
+      "crawl_time": "2026-10-13T09:17:21.923277+00:00",
+      "robots": "robots.txt",
+      "status": 200,
+      "url": "https://shanghaiconcerts.com/concerts/szso-chamber-style-1-brass"
+    },
+    {
+      "bytes": 486212,
+      "crawl_time": "2026-10-13T09:17:23.005124+00:00",
+      "robots": "robots.txt",
+      "status": 200,
+      "url": "https://shanghaiconcerts.com/concerts/yu-lu-yuan-jie-emperor-eroica"
+    },
+    {
+      "bytes": 482987,
+      "crawl_time": "2026-10-13T09:17:23.922421+00:00",
+      "robots": "robots.txt",
+      "status": 200,
+      "url": "https://shanghaiconcerts.com/concerts/chen-xieyang-berlioz-night"
+    },
+    {
+      "bytes": 486933,
+      "crawl_time": "2026-10-13T09:17:24.894297+00:00",
+      "robots": "robots.txt",
+      "status": 200,
+      "url": "https://shanghaiconcerts.com/concerts/rafael-aguirre-guitar-recital-suzhou"
+    },
+    {
+      "bytes": 18693,
+      "crawl_time": "2026-10-13T09:17:33.876367+00:00",
+      "robots": "no usable robots rules returned",
+      "status": 200,
+      "url": "https://www.suzhouexpo.com/zhanhuiricheng-389.html"
+    }
+  ],
+  "pagesCollected": 10,
+  "rawRecordsCollected": 15,
+  "retriedRequests": 0,
+  "robotsRequests": 5,
+  "sourcesProcessed": 4,
+  "status": "Partial",
+  "updatedAt": "2026-10-13T09:17:33.877553+00:00"
+}

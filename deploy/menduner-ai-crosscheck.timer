@@ -1,0 +1,11 @@
+[Unit]
+Description=Run the Menduner AI evidence cross-check every day at 08:30
+
+[Timer]
+# Half an hour after the crawler, so the check reads the pages that crawl just refreshed.
+OnCalendar=*-*-* 08:30:00
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

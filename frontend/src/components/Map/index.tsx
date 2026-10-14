@@ -1,10 +1,16 @@
 import { assessDemand } from "../../services/intelligence";
 import { useEffect, useRef, useState } from "react";
-import { Alert, Button, Spin, Modal } from "antd";
+import { Alert, Button, Spin, Modal, Empty, Table } from "antd";
 import AMapLoader from "@amap/amap-jsapi-loader";
 import type { Event, Hotel } from "../../types";
 import { usePlatform } from "../../hooks/usePlatform";
-import { verifiedCoords, categories, eventCoordinates } from "../../utils/data";
+import VenueEvents from "../VenueEvents";
+import {
+  verifiedCoords,
+  categories,
+  eventCoordinates,
+  HOTSPOT_MIN,
+} from "../../utils/data";
 // SDK has no bundled TypeScript declarations; keep dynamic types at this boundary only.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type SDK = any;
@@ -28,7 +34,7 @@ function loadSDK() {
     loading = AMapLoader.load({
       key,
       version: "2.0",
-      plugins: ["AMap.Scale", "AMap.ToolBar"],
+      plugins: ["AMap.Scale", "AMap.ToolBar", "AMap.Circle"],
     }).catch(() => {
       loading = null;
       throw new Error("load");
@@ -40,10 +46,13 @@ export default function EventMap({
   events,
   hotel,
   demandLayer = false,
+  radiusKm,
 }: {
   events: Event[];
   hotel?: Hotel;
   demandLayer?: boolean;
+  /** Draw the reviewed demand radius around the selected hotel, in kilometres. */
+  radiusKm?: number;
 }) {
   const { dataset, repository, selected, openEvent, go } = usePlatform();
   const container = useRef<HTMLDivElement>(null);
@@ -54,14 +63,23 @@ export default function EventMap({
   const [attempt, setAttempt] = useState(0);
   const [group, setGroup] = useState<Event[] | null>(null);
   const [groupName, setGroupName] = useState("");
+  const [groupVenue, setGroupVenue] = useState<string | null>(null);
+  const [showVenueAll, setShowVenueAll] = useState(false);
   useEffect(() => {
     let cancelled = false;
     let timeout: ReturnType<typeof setTimeout> | undefined;
+    // AMap reads the container size once, at construction, and keeps it. On a phone the
+    // container changes size constantly — rotating the device, the browser chrome collapsing
+    // as the address bar hides, and the CSS switching .map-shell to a viewport-relative height
+    // all move it — and without a resize the map keeps drawing at its old dimensions, which
+    // shows up as a grey band or a map that is the wrong shape. Nothing in CSS can fix that:
+    // the library has to be told.
+    let observer: ResizeObserver | undefined;
     setReady(false);
     setError("");
     timeout = setTimeout(() => {
       if (!cancelled)
-        setError("地图加载超时，请检查网络、Key 域名限制和本地代理。");
+        setError("地图加载超时，请检查网络、密钥域名限制和本地代理。");
     }, 20000);
     loadSDK()
       .then((A) => {
@@ -74,6 +92,14 @@ export default function EventMap({
         });
         map.current.addControl(new A.Scale());
         map.current.addControl(new A.ToolBar());
+        if (typeof ResizeObserver !== "undefined") {
+          observer = new ResizeObserver(() => {
+            // Guarded: the observer fires once during construction, before the map is usable,
+            // and resize() on a half-built map throws.
+            if (!cancelled && map.current) map.current.resize();
+          });
+          observer.observe(container.current);
+        }
         map.current.on("complete", () => {
           if (!cancelled) {
             clearTimeout(timeout);
@@ -90,7 +116,7 @@ export default function EventMap({
           clearTimeout(timeout);
           setError(
             e.message === "configuration"
-              ? "地图待配置：设置 Web JSAPI Key 与安全代理。"
+              ? "地图待配置：请设置 Web JSAPI 密钥与安全代理。"
               : "地图暂不可用：请检查网络、域名白名单和安全代理。",
           );
         }
@@ -98,6 +124,7 @@ export default function EventMap({
     return () => {
       cancelled = true;
       clearTimeout(timeout);
+      observer?.disconnect();
       map.current?.destroy();
       map.current = null;
     };
@@ -113,6 +140,7 @@ export default function EventMap({
         lng: number;
         lat: number;
         name: string;
+        venueId: string;
       }
     >();
     for (const e of events) {
@@ -125,6 +153,7 @@ export default function EventMap({
         lng: c.lng,
         lat: c.lat,
         name: venue.name,
+        venueId: venue.id,
       };
       g.events.push(e);
       grouped.set(key, g);
@@ -133,11 +162,17 @@ export default function EventMap({
     grouped.forEach((g) => {
       const first = g.events[0];
       const el = document.createElement("button");
-      el.className = "map-marker";
+      const isHotspot = g.events.length >= HOTSPOT_MIN;
+      // A venue programming three or more events is where the city is heating up, so its marker
+      // is bigger and ringed. The colour still encodes the dominant category.
+      el.className = isHotspot ? "map-marker map-marker-hotspot" : "map-marker";
       el.style.background = categories[first.category].color;
       el.textContent =
         g.events.length > 1 ? String(g.events.length) : first.demo ? "D" : "•";
-      el.setAttribute("aria-label", `${g.name}，${g.events.length} 个活动`);
+      el.setAttribute(
+        "aria-label",
+        `${g.name}，${g.events.length} 个活动${isHotspot ? "，热点场馆" : ""}`,
+      );
       const marker = new A.Marker({
         position: [g.lng, g.lat],
         content: el,
@@ -145,10 +180,13 @@ export default function EventMap({
         title: g.name,
       });
       marker.on("click", () => {
+        // A single event at a spot opens it directly. Where a venue programmes several
+        // events, list them all instead of silently opening an arbitrary one.
         if (g.events.length === 1) openEvent(first.id);
         else {
           setGroup(g.events);
           setGroupName(g.name);
+          setGroupVenue(g.venueId);
         }
       });
       markers.push(marker);
@@ -208,6 +246,24 @@ export default function EventMap({
           title: hotel.name,
         }),
       );
+      // The demand radius is the one boundary this product can honestly draw: it is the
+      // distance filter the page already applies, made visible. It is a straight-line
+      // GCJ-02 radius, not a travel-time isochrone, so it is labelled as such.
+      if (radiusKm && radiusKm > 0) {
+        map.current.add(
+          new A.Circle({
+            center: [hotel.coordinates.lng, hotel.coordinates.lat],
+            radius: radiusKm * 1000,
+            strokeColor: "#1677ff",
+            strokeWeight: 2,
+            strokeStyle: "dashed",
+            strokeOpacity: 0.9,
+            fillColor: "#1677ff",
+            fillOpacity: 0.06,
+            zIndex: 5,
+          }),
+        );
+      }
     }
     map.current.add(markers);
     if (markers.length)
@@ -225,6 +281,7 @@ export default function EventMap({
     openEvent,
     demandLayer,
     go,
+    radiusKm,
   ]);
   return (
     <div className="map-shell">
@@ -251,27 +308,77 @@ export default function EventMap({
       )}
       <div className="map-caption">
         AMap 2.0 · 仅核验坐标上图 · D = DEMO · H = 酒店
+        {radiusKm
+          ? ` · 蓝色虚线为 \ km 直线半径（非出行时间）`
+          : ""}
       </div>
       <Modal
-        title={groupName + " · 同址活动"}
+        title={(showVenueAll && groupVenue ? groupName + " · 该场馆全部活动" : groupName + " · 同址活动")}
         open={!!group}
-        onCancel={() => setGroup(null)}
+        onCancel={() => {
+          setGroup(null);
+          setShowVenueAll(false);
+        }}
+        width={showVenueAll ? 860 : 520}
         footer={null}
       >
-        {group?.map((e) => (
-          <Button
-            block
-            className="gap-bottom"
-            key={e.id}
-            onClick={() => {
-              openEvent(e.id);
-              setGroup(null);
-            }}
-          >
-            {e.name}
-            {e.demo ? " · DEMO" : ""}
-          </Button>
-        ))}
+        {showVenueAll && groupVenue ? (
+          <VenueEvents
+            venueId={groupVenue}
+            onClose={() => setShowVenueAll(false)}
+          />
+        ) : (
+          <>
+            {group?.length ? (
+              <Table<Event>
+                rowKey="id"
+                dataSource={group}
+                size="small"
+                pagination={false}
+                columns={[
+                  {
+                    title: "日期",
+                    width: 180,
+                    render: (_, e) =>
+                      e.startDate
+                        ? e.endDate && e.endDate !== e.startDate
+                          ? `${e.startDate} → ${e.endDate}`
+                          : e.startDate
+                        : "待确认",
+                  },
+                  {
+                    title: "活动",
+                    dataIndex: "name",
+                    render: (_, e) => (
+                      <Button
+                        type="link"
+                        size="small"
+                        style={{ padding: 0, height: "auto", textAlign: "left" }}
+                        onClick={() => {
+                          openEvent(e.id);
+                          setGroup(null);
+                        }}
+                      >
+                        {e.name}
+                      </Button>
+                    ),
+                  },
+                ]}
+              />
+            ) : (
+              <Empty description="无同址活动" />
+            )}
+            {groupVenue && (
+              <Button
+                className="gap-bottom"
+                style={{ marginTop: 12 }}
+                onClick={() => setShowVenueAll(true)}
+              >
+                查看该场馆全部活动
+              </Button>
+            )}
+          </>
+        )}
       </Modal>
     </div>
   );

@@ -1,0 +1,22 @@
+[Unit]
+Description=Menduner daily crawler
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=menduner
+Group=menduner
+WorkingDirectory=/srv/menduner
+Environment=MENDUNER_DB_PATH=/srv/menduner/data/menduner.sqlite3
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/srv/menduner/venv/bin/python -X utf8 -m crawler.run --max-items 12
+# The crawler exits 2 when the run completed but some sources did not. Some sources are
+# permanently uncollectable and documented as such (damai disallows its search page in
+# robots.txt; the Culture and Arts Centre serves a client-rendered shell with no data), so
+# without this the unit would report "Failed to start" every morning and the alert would be
+# ignored. Exit 1 (a real crash) is still a failure, and per-source outcomes are recorded in
+# crawl_runs / crawl_alerts.
+SuccessExitStatus=0 2
+MemoryMax=1200M
+Nice=10

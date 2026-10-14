@@ -1,0 +1,72 @@
+[
+  {
+    "event_id": "demo-01",
+    "title": "城市商业交流会",
+    "begin": "2026-10-12",
+    "finish": "2026-10-15",
+    "details": {
+      "category": "business",
+      "venueId": "v-expo",
+      "districtId": "d-jinji",
+      "organizer": "演示组织方",
+      "attendance": null,
+      "sponsor": null
+    }
+  },
+  {
+    "event_id": "demo-03",
+    "title": "青年学术论坛",
+    "begin": "2026-10-19",
+    "finish": "2026-10-20",
+    "details": {
+      "category": "education",
+      "venueId": "v-theatre",
+      "districtId": "d-dushu",
+      "organizer": "演示组织方",
+      "attendance": null,
+      "sponsor": null
+    }
+  },
+  {
+    "event_id": "demo-05",
+    "title": "民俗故事分享会",
+    "begin": "2026-10-28",
+    "finish": "2026-11-02",
+    "details": {
+      "category": "folk",
+      "venueId": "v-theatre",
+      "districtId": "d-dushu",
+      "organizer": "演示组织方",
+      "attendance": null,
+      "sponsor": null
+    }
+  },
+  {
+    "event_id": "demo-07",
+    "title": "春季体育交流会",
+    "begin": "2026-04-18",
+    "finish": "2026-04-20",
+    "details": {
+      "category": "sports",
+      "venueId": "v-expo",
+      "districtId": "d-jinji",
+      "organizer": "演示组织方",
+      "attendance": null,
+      "sponsor": null
+    }
+  },
+  {
+    "event_id": "demo-09",
+    "title": "跨年学术工作坊",
+    "begin": "2026-12-30",
+    "finish": "2027-01-03",
+    "details": {
+      "category": "education",
+      "venueId": "v-theatre",
+      "districtId": "d-dushu",
+      "organizer": "演示组织方",
+      "attendance": null,
+      "sponsor": null
+    }
+  }
+]

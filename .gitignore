@@ -1,0 +1,41 @@
+# Local Python environments and caches
+backend/.venv/
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+
+# Frontend dependencies and generated output
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/
+*.tsbuildinfo
+
+# Local configuration and credentials (commit placeholders only)
+.env
+.env.*
+!.env.example
+
+# SQLite databases and transaction sidecars
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+
+# Local logs and OS files
+*.log
+.DS_Store
+Thumbs.db
+
+# Windows launcher runtime process ownership
+.menduner-dev.json
+.menduner-dev.json.tmp
+
+# Optional preserved environment during Python version migration
+backend/.venv-*/
+# IDE and historical patch bundles: not part of the project.
+.idea/
+*.patch

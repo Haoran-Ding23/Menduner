@@ -1,0 +1,86 @@
+{
+  "result": "FAILED_NO_NEW_LIVE_EVENTS",
+  "attemptedSources": 3,
+  "successfulPages": 2,
+  "rawRecordsCollected": 6,
+  "eventsExtracted": 0,
+  "evidenceGenerated": 0,
+  "counts": {
+    "sources": 3,
+    "events": 0,
+    "crawler_raw_items": 6,
+    "crawler_observations": 0,
+    "crawler_evidence": 0
+  },
+  "sources": [
+    {
+      "accepted": 0,
+      "contextRecords": 2,
+      "error": "[{\"error\": \"robots.txt disallows this URL; no public page request made\", \"url\": \"https://search.damai.cn/\"}, {\"error\": \"Robots policy unavailable: HTTP 302 redirect (not followed); no public page request made\", \"url\": \"https://detail.damai.cn/item.htm?id=1011300369602\"}]",
+      "pagesCollected": 0,
+      "rejected": 0,
+      "requestAttempts": 2,
+      "requestErrors": [
+        {
+          "error": "robots.txt disallows this URL; no public page request made",
+          "url": "https://search.damai.cn/"
+        },
+        {
+          "error": "Robots policy unavailable: HTTP 302 redirect (not followed); no public page request made",
+          "url": "https://detail.damai.cn/item.htm?id=1011300369602"
+        }
+      ],
+      "source": "platform-damai-suzhou",
+      "status": "Failed",
+      "warnings": [],
+      "updatedAt": "2026-10-13T13:58:53.247865+00:00",
+      "jobId": "cd6c6a5d25d04206997241ac4169c47e"
+    },
+    {
+      "accepted": 0,
+      "contextRecords": 1,
+      "error": "[{\"error\": \"Robots policy unavailable: HTTP 200 HTML/non-rules response; no public page request made\", \"url\": \"https://www.huodongjia.com/suzhou/\"}]",
+      "investigation": {
+        "candidate_listing": "https://www.huodongjia.com/business",
+        "protected_api_requests": 0,
+        "scope": "city/listing verification"
+      },
+      "pagesCollected": 0,
+      "rejected": 0,
+      "requestAttempts": 1,
+      "requestErrors": [
+        {
+          "error": "Robots policy unavailable: HTTP 200 HTML/non-rules response; no public page request made",
+          "url": "https://www.huodongjia.com/suzhou/"
+        }
+      ],
+      "source": "platform-huodongjia-suzhou",
+      "status": "Failed",
+      "warnings": [],
+      "updatedAt": "2026-10-13T13:58:38.600118+00:00",
+      "jobId": "6e33c6dc0fb74d888da7e406fdf62012"
+    },
+    {
+      "accepted": 0,
+      "contextRecords": 3,
+      "error": "No reliable event record passed extraction and validation; raw/context retained",
+      "investigation": {
+        "protected_api_requests": 0,
+        "scope": "public schedule HTML only",
+        "template_placeholders_detected": true,
+        "token_header_detected": true
+      },
+      "pagesCollected": 2,
+      "rejected": 0,
+      "requestAttempts": 3,
+      "requestErrors": [],
+      "source": "venue-suzhou-expo",
+      "status": "Failed",
+      "warnings": [
+        "No validated static schedule records. Template years/placeholders are not events. Dynamic token/header APIs were not requested."
+      ],
+      "updatedAt": "2026-10-13T13:59:18.640728+00:00",
+      "jobId": "dc1826d1699b41a39b32d88498add989"
+    }
+  ]
+}

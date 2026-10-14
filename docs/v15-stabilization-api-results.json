@@ -1,0 +1,239 @@
+{
+  "python": "3.14.8",
+  "scenarios": [
+    {
+      "database": "empty",
+      "result": "PASS",
+      "httpChecks": 11,
+      "responses": [
+        {
+          "path": "/docs",
+          "status": 200
+        },
+        {
+          "path": "/openapi.json",
+          "status": 200
+        },
+        {
+          "path": "/dataset",
+          "status": 200
+        },
+        {
+          "path": "/events",
+          "status": 200
+        },
+        {
+          "path": "/venues",
+          "status": 200
+        },
+        {
+          "path": "/evidence",
+          "status": 200
+        },
+        {
+          "path": "/hotels",
+          "status": 200
+        },
+        {
+          "path": "/districts",
+          "status": 200
+        },
+        {
+          "path": "/status",
+          "status": 200
+        },
+        {
+          "path": "/events/does-not-exist",
+          "status": 404
+        },
+        {
+          "path": "/evidence?event_id=does-not-exist",
+          "status": 200
+        }
+      ],
+      "databaseCounts": {
+        "events": 0,
+        "sources": 0,
+        "crawler_raw_items": 0,
+        "crawler_observations": 0,
+        "crawler_evidence": 0
+      },
+      "mockSourceCount": 0,
+      "demoEventCount": 0,
+      "verificationCounts": {
+        "Verified": 0,
+        "Unverified": 0,
+        "Missing": 0,
+        "Conflicting": 0,
+        "Needs Review": 0
+      },
+      "lastUpdated": null,
+      "revision": 0
+    },
+    {
+      "database": "live sources",
+      "result": "PASS",
+      "httpChecks": 35,
+      "responses": [
+        {
+          "path": "/docs",
+          "status": 200
+        },
+        {
+          "path": "/openapi.json",
+          "status": 200
+        },
+        {
+          "path": "/dataset",
+          "status": 200
+        },
+        {
+          "path": "/events",
+          "status": 200
+        },
+        {
+          "path": "/venues",
+          "status": 200
+        },
+        {
+          "path": "/evidence",
+          "status": 200
+        },
+        {
+          "path": "/hotels",
+          "status": 200
+        },
+        {
+          "path": "/districts",
+          "status": 200
+        },
+        {
+          "path": "/status",
+          "status": 200
+        },
+        {
+          "path": "/events/does-not-exist",
+          "status": 404
+        },
+        {
+          "path": "/evidence?event_id=does-not-exist",
+          "status": 200
+        },
+        {
+          "path": "/events/evt-033324f0d292defe01cb2c4c",
+          "status": 200
+        },
+        {
+          "path": "/evidence?event_id=evt-033324f0d292defe01cb2c4c",
+          "status": 200
+        },
+        {
+          "path": "/events/evt-0598de893a192e792a911eb0",
+          "status": 200
+        },
+        {
+          "path": "/evidence?event_id=evt-0598de893a192e792a911eb0",
+          "status": 200
+        },
+        {
+          "path": "/events/evt-20d81db3425727255d746378",
+          "status": 200
+        },
+        {
+          "path": "/evidence?event_id=evt-20d81db3425727255d746378",
+          "status": 200
+        },
+        {
+          "path": "/events/evt-7fba076feb67e1b832bdce4e",
+          "status": 200
+        },
+        {
+          "path": "/evidence?event_id=evt-7fba076feb67e1b832bdce4e",
+          "status": 200
+        },
+        {
+          "path": "/events/evt-8e1eb0ce5a8be36b783dc79f",
+          "status": 200
+        },
+        {
+          "path": "/evidence?event_id=evt-8e1eb0ce5a8be36b783dc79f",
+          "status": 200
+        },
+        {
+          "path": "/events/evt-952c96fb7603b8a793ad8ab9",
+          "status": 200
+        },
+        {
+          "path": "/evidence?event_id=evt-952c96fb7603b8a793ad8ab9",
+          "status": 200
+        },
+        {
+          "path": "/events/evt-964314c3ecb768300e86634a",
+          "status": 200
+        },
+        {
+          "path": "/evidence?event_id=evt-964314c3ecb768300e86634a",
+          "status": 200
+        },
+        {
+          "path": "/events/evt-a642e09fcbede786687a1bf0",
+          "status": 200
+        },
+        {
+          "path": "/evidence?event_id=evt-a642e09fcbede786687a1bf0",
+          "status": 200
+        },
+        {
+          "path": "/events/evt-b8c70fb96b0eb0144ef688c9",
+          "status": 200
+        },
+        {
+          "path": "/evidence?event_id=evt-b8c70fb96b0eb0144ef688c9",
+          "status": 200
+        },
+        {
+          "path": "/events/evt-bc0e88184cade63a55c7b868",
+          "status": 200
+        },
+        {
+          "path": "/evidence?event_id=evt-bc0e88184cade63a55c7b868",
+          "status": 200
+        },
+        {
+          "path": "/events/evt-ded705d3a98fc9a4bf1043ae",
+          "status": 200
+        },
+        {
+          "path": "/evidence?event_id=evt-ded705d3a98fc9a4bf1043ae",
+          "status": 200
+        },
+        {
+          "path": "/events/evt-e3a3197aa6cad3641c51362f",
+          "status": 200
+        },
+        {
+          "path": "/evidence?event_id=evt-e3a3197aa6cad3641c51362f",
+          "status": 200
+        }
+      ],
+      "databaseCounts": {
+        "events": 12,
+        "sources": 4,
+        "crawler_raw_items": 43,
+        "crawler_observations": 12,
+        "crawler_evidence": 120
+      },
+      "mockSourceCount": 0,
+      "demoEventCount": 0,
+      "verificationCounts": {
+        "Verified": 0,
+        "Unverified": 0,
+        "Missing": 0,
+        "Conflicting": 0,
+        "Needs Review": 12
+      },
+      "lastUpdated": "2026-10-13T09:20:40.672119+00:00",
+      "revision": 3
+    }
+  ]
+}

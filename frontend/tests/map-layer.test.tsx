@@ -58,7 +58,7 @@ describe("Real map integration boundary with mocked SDK", () => {
     });
     render(
       <MemoryRouter initialEntries={["/map?event=demo-01"]}>
-        <PlatformProvider>
+        <PlatformProvider initialDataset={sampleDataset}>
           <EventMap events={events} demandLayer />
         </PlatformProvider>
       </MemoryRouter>,

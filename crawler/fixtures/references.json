@@ -1,0 +1,78 @@
+{
+  "venues": [
+    {
+      "id": "v-expo",
+      "name": "苏州国际博览中心",
+      "address": "苏州大道东688号",
+      "districtId": "d-jinji",
+      "districtDemo": true,
+      "coordinates": {
+        "lng": 120.707374,
+        "lat": 31.323727,
+        "system": "GCJ-02",
+        "status": "Verified",
+        "sourceUrl": "https://ditu.amap.com/place/B02000IVJP"
+      }
+    },
+    {
+      "id": "v-theatre",
+      "name": "独墅湖影剧院",
+      "address": "星湖街555号",
+      "districtId": "d-dushu",
+      "districtDemo": true,
+      "coordinates": {
+        "lng": 120.726136,
+        "lat": 31.266122,
+        "system": "GCJ-02",
+        "status": "Verified",
+        "sourceUrl": "https://ditu.amap.com/place/B02000K20E"
+      }
+    },
+    {
+      "id": "v-pending",
+      "name": "待核验场馆（DEMO）",
+      "address": null,
+      "districtId": null,
+      "districtDemo": true,
+      "coordinates": null
+    }
+  ],
+  "hotels": [
+    {
+      "id": "h-inter",
+      "name": "苏州洲际酒店",
+      "address": "旺墩路288号",
+      "districtId": "d-jinji",
+      "districtDemo": true,
+      "coordinates": {
+        "lng": 120.710226,
+        "lat": 31.319292,
+        "system": "GCJ-02",
+        "status": "Verified",
+        "sourceUrl": "https://www.amap.com/place/B02000K05N"
+      }
+    },
+    {
+      "id": "h-pending",
+      "name": "待配置酒店（DEMO）",
+      "address": null,
+      "districtId": null,
+      "districtDemo": true,
+      "coordinates": null
+    }
+  ],
+  "districts": [
+    {
+      "id": "d-jinji",
+      "name": "金鸡湖商圈",
+      "demo": true,
+      "description": "仅用于演示的场馆分组；未声明或绘制地理边界。"
+    },
+    {
+      "id": "d-dushu",
+      "name": "独墅湖商圈",
+      "demo": true,
+      "description": "仅用于演示的场馆分组；未声明或绘制地理边界。"
+    }
+  ]
+}

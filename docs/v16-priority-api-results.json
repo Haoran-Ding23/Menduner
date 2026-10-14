@@ -1,0 +1,151 @@
+{
+  "python": "3.14.8",
+  "scenarios": [
+    {
+      "database": "live priority-source policy audit (zero events)",
+      "result": "PASS",
+      "httpChecks": 11,
+      "responses": [
+        {
+          "path": "/docs",
+          "status": 200
+        },
+        {
+          "path": "/openapi.json",
+          "status": 200
+        },
+        {
+          "path": "/dataset",
+          "status": 200
+        },
+        {
+          "path": "/events",
+          "status": 200
+        },
+        {
+          "path": "/venues",
+          "status": 200
+        },
+        {
+          "path": "/evidence",
+          "status": 200
+        },
+        {
+          "path": "/hotels",
+          "status": 200
+        },
+        {
+          "path": "/districts",
+          "status": 200
+        },
+        {
+          "path": "/status",
+          "status": 200
+        },
+        {
+          "path": "/events/does-not-exist",
+          "status": 404
+        },
+        {
+          "path": "/evidence?event_id=does-not-exist",
+          "status": 200
+        }
+      ],
+      "databaseCounts": {
+        "events": 0,
+        "sources": 3,
+        "crawler_raw_items": 6,
+        "crawler_observations": 0,
+        "crawler_evidence": 0
+      },
+      "mockSourceCount": 0,
+      "demoEventCount": 0,
+      "verificationCounts": {
+        "Verified": 0,
+        "Unverified": 0,
+        "Missing": 0,
+        "Conflicting": 0,
+        "Needs Review": 0
+      },
+      "lastUpdated": null,
+      "revision": 0
+    },
+    {
+      "database": "SYNTHETIC MockTransport fixture - not live Damai data",
+      "result": "PASS",
+      "httpChecks": 13,
+      "responses": [
+        {
+          "path": "/docs",
+          "status": 200
+        },
+        {
+          "path": "/openapi.json",
+          "status": 200
+        },
+        {
+          "path": "/dataset",
+          "status": 200
+        },
+        {
+          "path": "/events",
+          "status": 200
+        },
+        {
+          "path": "/venues",
+          "status": 200
+        },
+        {
+          "path": "/evidence",
+          "status": 200
+        },
+        {
+          "path": "/hotels",
+          "status": 200
+        },
+        {
+          "path": "/districts",
+          "status": 200
+        },
+        {
+          "path": "/status",
+          "status": 200
+        },
+        {
+          "path": "/events/does-not-exist",
+          "status": 404
+        },
+        {
+          "path": "/evidence?event_id=does-not-exist",
+          "status": 200
+        },
+        {
+          "path": "/events/evt-73ff7ff928fc6f9bfb96c90d",
+          "status": 200
+        },
+        {
+          "path": "/evidence?event_id=evt-73ff7ff928fc6f9bfb96c90d",
+          "status": 200
+        }
+      ],
+      "databaseCounts": {
+        "events": 1,
+        "sources": 1,
+        "crawler_raw_items": 3,
+        "crawler_observations": 1,
+        "crawler_evidence": 11
+      },
+      "mockSourceCount": 0,
+      "demoEventCount": 0,
+      "verificationCounts": {
+        "Verified": 0,
+        "Unverified": 0,
+        "Missing": 0,
+        "Conflicting": 0,
+        "Needs Review": 1
+      },
+      "lastUpdated": "2026-10-13T14:04:20.588183+00:00",
+      "revision": 1
+    }
+  ]
+}

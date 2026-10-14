@@ -1,10 +1,11 @@
 import { useMemo } from "react";
 import { Empty, Tag, Alert } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
-import { filterEvents, eventCoordinates, categories } from "../../utils/data";
+import { filterEvents, eventCoordinates, categories, venueHotspots } from "../../utils/data";
 import Filters from "../../components/Filters";
 import EventMap from "../../components/Map";
 import EventCard from "../../components/EventCard";
+import VenueHotspots from "../../components/VenueHotspots";
 export default function CityEventMap() {
   const { dataset, filters } = usePlatform();
   const events = useMemo(
@@ -19,11 +20,18 @@ export default function CityEventMap() {
     ],
   );
   const mapped = events.filter((e) => eventCoordinates(e, dataset));
+  // Demand is clustered by VENUE: a hotel acts on "this theatre has 8 events", not on an
+  // inferred business district.
+  const clusters = useMemo(
+    () => venueHotspots(events, dataset.venues),
+    [events, dataset.venues],
+  );
+  const hotspots = clusters.filter((row) => row.isHotspot);
   return (
     <>
       <div className="page-heading">
-        <div className="eyebrow">SPATIAL INTELLIGENCE</div>
-        <h1>Menduner City Event Map</h1>
+        <div className="eyebrow">空间情报</div>
+        <h1>苏州城市活动地图</h1>
         <p>城市活动空间情报 · 连接活动、场馆与周边酒店资源</p>
       </div>
       <Filters />
@@ -43,16 +51,17 @@ export default function CityEventMap() {
           </strong>
         </div>
         <div>
-          <small>商圈分组</small>
+          <small>涉及场馆</small>
           <strong>
-            {new Set(events.map((e) => e.districtId).filter(Boolean)).size}
+            {clusters.length}
             <span>个</span>
           </strong>
         </div>
         <div>
-          <small>当前数据性质</small>
-          <strong className="stat-text">
-            {events.some((e) => e.demo) ? "包含 DEMO" : "实际导入"}
+          <small>热点场馆（≥3 场）</small>
+          <strong>
+            {hotspots.length}
+            <span>个</span>
           </strong>
         </div>
       </div>
@@ -87,11 +96,12 @@ export default function CityEventMap() {
           </div>
         </section>
       </div>
+      <VenueHotspots />
       <Alert
         className="gap-top"
         type="info"
         showIcon
-        message={`当前 ${events.filter((e) => e.demo).length} 条 DEMO 活动；商圈仅为演示分组，未绘制边界。${events.length - mapped.length} 条缺少核验坐标的活动仅保留在列表。`}
+        message={`当前 ${events.filter((e) => e.demo).length} 条 DEMO 活动。${events.length - mapped.length} 条缺少核验坐标的活动仅保留在列表。上图标记按活动类别着色，图例见地图下方。`}
       />
     </>
   );

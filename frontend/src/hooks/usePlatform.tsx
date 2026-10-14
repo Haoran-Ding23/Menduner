@@ -1,5 +1,8 @@
 import {
   createContext,
+  useCallback,
+  useEffect,
+  useRef,
   useContext,
   useMemo,
   useState,
@@ -8,10 +11,71 @@ import {
 import { useSearchParams, useNavigate } from "react-router-dom";
 import type { Dataset, Filters } from "../types";
 import { createRepository, sampleDataset } from "../services/repository";
+import { loadApiDataset, type PipelineStatus } from "../services/api";
 import { normalizeDataset } from "../services/adapter";
 const Context = createContext<ReturnType<typeof useStateValue> | null>(null);
-function useStateValue() {
-  const [dataset, setDataset] = useState<Dataset>(sampleDataset);
+function useStateValue(initialDataset?: Dataset) {
+  const [dataset, setDataset] = useState<Dataset>(
+    initialDataset ?? {
+      events: [],
+      venues: [],
+      hotels: [],
+      districts: [],
+      evidence: [],
+      updatedAt: "",
+    },
+  );
+  const [dataMode, setDataMode] = useState<
+    "loading" | "api" | "error" | "stale" | "demo" | "import"
+  >(initialDataset ? "demo" : "loading");
+  const [pipelineStatus, setPipelineStatus] = useState<PipelineStatus | null>(
+    null,
+  );
+  const [dataError, setDataError] = useState("");
+  const request = useRef<AbortController | null>(null);
+  const hasApiData = useRef(false);
+  const cancelRequest = () => {
+    request.current?.abort();
+    request.current = null;
+  };
+  const reloadData = useCallback(async () => {
+    request.current?.abort();
+    const controller = new AbortController();
+    request.current = controller;
+    if (!hasApiData.current) {
+      setDataset({
+        events: [],
+        venues: [],
+        hotels: [],
+        districts: [],
+        evidence: [],
+        updatedAt: "",
+      });
+      setPipelineStatus(null);
+    }
+    setDataMode("loading");
+    setDataError("");
+    try {
+      const result = await loadApiDataset(controller.signal);
+      if (controller.signal.aborted) return;
+      setDataset(result.dataset);
+      setPipelineStatus(result.status);
+      hasApiData.current = true;
+      setDataMode("api");
+    } catch (error) {
+      if (controller.signal.aborted) return;
+      setDataMode(hasApiData.current ? "stale" : "error");
+      setDataError(
+        error instanceof Error && error.name !== "AbortError"
+          ? error.message
+          : "API 连接超时或不可用",
+      );
+    }
+  }, []);
+  useEffect(() => {
+    if (!initialDataset) void reloadData();
+    return () => request.current?.abort();
+  }, [initialDataset, reloadData]);
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const year = Number(params.get("year") ?? 2026),
@@ -22,6 +86,7 @@ function useStateValue() {
     district: params.get("district") ?? "",
     category: params.get("category") ?? "",
     includeDemo: params.get("demo") !== "0",
+    includePast: params.get("past") === "1",
   };
   const update = (values: Record<string, string | number | null>) => {
     const next = new URLSearchParams(params);
@@ -54,9 +119,43 @@ function useStateValue() {
     );
     navigate(path + "?" + next.toString());
   };
+  // Events that finished a while ago are history, not a demand signal, and letting them sit in
+  // every list and total made a live product read like an archive. They are hidden from the
+  // working view but never deleted — the evidence behind them stays queryable, and a reviewer
+  // can bring them back with ?past=1.
+  const GRACE_DAYS = 30;
+  const includePast = params.get("past") === "1";
+  const visibleEvents = useMemo(() => {
+    if (includePast) return dataset.events;
+    const cutoff = new Date(Date.now() - GRACE_DAYS * 86400000)
+      .toISOString()
+      .slice(0, 10);
+    return dataset.events.filter((event) => {
+      // Demo/synthetic rows are a fixed fixture, not live demand, so hiding them would only
+      // make the demo dataset look broken.
+      if (event.demo || dataset.events.every((e) => e.demo)) return true;
+      const ends = event.endDate ?? event.startDate;
+      return !ends || ends >= cutoff;
+    });
+  }, [dataset.events, includePast]);
+  const archivedCount = dataset.events.length - visibleEvents.length;
+  const visibleDataset = useMemo(
+    () => (visibleEvents === dataset.events ? dataset : { ...dataset, events: visibleEvents }),
+    [dataset, visibleEvents],
+  );
+  const visibleRepository = useMemo(
+    () => (visibleEvents === dataset.events ? repository : createRepository(visibleDataset)),
+    [dataset.events, repository, visibleDataset, visibleEvents],
+  );
   return {
-    dataset,
-    repository,
+    dataset: visibleDataset,
+    archivedCount,
+    includePast,
+    dataMode,
+    pipelineStatus,
+    dataError,
+    reloadData,
+    repository: visibleRepository,
     filters,
     params,
     update,
@@ -67,10 +166,20 @@ function useStateValue() {
     closeEvent: () => update({ detail: null }),
     importData: (data: unknown) => {
       const d = normalizeDataset(data);
+      cancelRequest();
+      hasApiData.current = false;
+      setPipelineStatus(null);
+      setDataMode("import");
+      setDataError("");
       setDataset(d);
       update({ event: null, detail: null, district: null, category: null });
     },
     resetData: () => {
+      cancelRequest();
+      hasApiData.current = false;
+      setPipelineStatus(null);
+      setDataMode("demo");
+      setDataError("");
       setDataset(sampleDataset);
       update({
         year: 2026,
@@ -84,8 +193,14 @@ function useStateValue() {
     },
   };
 }
-export function PlatformProvider({ children }: { children: ReactNode }) {
-  const value = useStateValue();
+export function PlatformProvider({
+  children,
+  initialDataset,
+}: {
+  children: ReactNode;
+  initialDataset?: Dataset;
+}) {
+  const value = useStateValue(initialDataset);
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 export function usePlatform() {

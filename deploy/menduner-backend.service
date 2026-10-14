@@ -1,0 +1,40 @@
+[Unit]
+Description=Menduner backend (FastAPI + SQLite)
+Documentation=https://github.com/  # replace with your repository
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=menduner
+Group=menduner
+WorkingDirectory=/srv/menduner
+
+# The database path is overridable so the service never depends on the working directory.
+# MENDUNER_DB_PATH is read by backend/database.py.
+Environment=MENDUNER_DB_PATH=/srv/menduner/data/menduner.sqlite3
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+
+# Bind to loopback only: nginx is the only thing that should reach the API. The API has no
+# authentication, so it must not be exposed directly to the internet.
+ExecStart=/srv/menduner/venv/bin/python -m uvicorn backend.main:app \
+  --host 127.0.0.1 --port 8000 --workers 1 --no-server-header
+
+Restart=on-failure
+RestartSec=3
+
+# The crawler writes to the database and downloads from third-party sites, so keep the
+# service's own limits modest rather than letting one bad run take the machine down.
+MemoryMax=1200M
+TasksMax=256
+
+# Hardening: the service only needs its own directory.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/srv/menduner/data
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,61 @@
+{
+  "_comment": "Duplicate venue identities in the city event data. Two source pages can describe the same physical venue under slightly different text, which produced two venue rows for one place: one carrying verified AMap coordinates and one carrying the events. Collapsing them is a venue-IDENTITY decision (same name, same city, same address text), not a fact rewrite. Each alias keeps the evidence that justifies it.",
+  "_format": {
+    "alias_id": "the duplicate venue row id that events currently reference",
+    "canonical_id": "the row that becomes the source of truth",
+    "name": "the shared venue name both rows represent",
+    "reason": "why these are the same place",
+    "evidence_url": "a source that fixes the identity"
+  },
+  "aliases": [
+    {
+      "alias_id": "venue-245d1cb72e3edd1b997a",
+      "canonical_id": "v-expo",
+      "name": "苏州国际博览中心",
+      "reason": "Both rows are 苏州国际博览中心; v-expo carries the verified AMap place record and address 苏州大道东688号, the other row is the name-derived duplicate created by the venue extractor.",
+      "evidence_url": "https://ditu.amap.com/place/B02000IVJP",
+      "canonical_row": {
+        "id": "v-expo",
+        "name": "苏州国际博览中心",
+        "address": "苏州大道东688号",
+        "districtId": null,
+        "districtDemo": false,
+        "coordinates": {
+          "lng": 120.707374,
+          "lat": 31.323727,
+          "system": "GCJ-02",
+          "status": "Verified",
+          "sourceUrl": "https://ditu.amap.com/place/B02000IVJP"
+        }
+      }
+    },
+    {
+      "alias_id": "venue-7b505575084956bb6854",
+      "canonical_id": "venue-863710b26d47ccbb4d8a",
+      "name": "苏州文化艺术中心·金鸡湖音乐厅",
+      "reason": "Both rows name the same concert hall inside 苏州文化艺术中心; this row carries the events, the other is a name-derived duplicate.",
+      "canonical_row": {
+        "id": "venue-863710b26d47ccbb4d8a",
+        "name": "苏州文化艺术中心·金鸡湖音乐厅",
+        "address": null,
+        "districtId": null,
+        "districtDemo": false,
+        "coordinates": null
+      }
+    },
+    {
+      "alias_id": "venue-57bd45bb18487a904285",
+      "canonical_id": "venue-863710b26d47ccbb4d8a",
+      "name": "苏州文化艺术中心·金鸡湖音乐厅",
+      "reason": "Same hall; the slash and the middle dot are two renderings of one venue name.",
+      "canonical_row": {
+        "id": "venue-863710b26d47ccbb4d8a",
+        "name": "苏州文化艺术中心·金鸡湖音乐厅",
+        "address": null,
+        "districtId": null,
+        "districtDemo": false,
+        "coordinates": null
+      }
+    }
+  ]
+}

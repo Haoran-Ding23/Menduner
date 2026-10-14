@@ -1,5 +1,6 @@
+import { sampleDataset } from "../src/services/repository";
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { PlatformProvider } from "../src/hooks/usePlatform";
 import App from "../src/App";
@@ -18,7 +19,7 @@ afterEach(cleanup);
 const mount = (path: string) =>
   render(
     <MemoryRouter initialEntries={[path]}>
-      <PlatformProvider>
+      <PlatformProvider initialDataset={sampleDataset}>
         <App />
       </PlatformProvider>
     </MemoryRouter>,
@@ -26,7 +27,7 @@ const mount = (path: string) =>
 describe("V1.2 traceable city event intelligence", () => {
   it("explains event attention without exposed scores, pricing advice or an empty layer switch", async () => {
     mount("/map");
-    await screen.findByRole("heading", { name: "Menduner City Event Map" });
+    await screen.findByRole("heading", { name: "苏州城市活动地图" });
     expect(
       screen.queryByRole("switch", { name: "酒店需求层" }),
     ).not.toBeInTheDocument();
@@ -52,9 +53,9 @@ describe("V1.2 traceable city event intelligence", () => {
   });
   it("renders a technical relationship graph without a chatbot or decision path", async () => {
     mount("/graph");
-    await screen.findByRole("heading", { name: /Knowledge Graph Explorer/ });
+    await screen.findByRole("heading", { name: "知识图谱" });
     expect(
-      screen.getByText(/Event → Venue → Location Context/),
+      screen.getByText(/活动 → 场馆 → 位置语境/),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole("textbox", { name: "业务查询问题" }),
@@ -66,10 +67,10 @@ describe("V1.2 traceable city event intelligence", () => {
   it("preserves conflicting candidates as needs review without automatic selection", async () => {
     mount("/evidence?event=demo-02");
     expect(
-      (await screen.findAllByText("Resolution status: Needs review")).length,
+      (await screen.findAllByText("核验状态：待复核")).length,
     ).toBeGreaterThan(0);
-    expect(screen.getByText("Event Date：2026-10-12")).toBeInTheDocument();
-    expect(screen.getByText("Event Date：2026-10-15")).toBeInTheDocument();
+    expect(screen.getByText("活动日期：2026-10-12")).toBeInTheDocument();
+    expect(screen.getByText("活动日期：2026-10-15")).toBeInTheDocument();
     expect(screen.getByText("候选 1：演示组织方 A")).toBeInTheDocument();
     expect(screen.getByText("候选 2：演示组织方 B")).toBeInTheDocument();
     expect(
@@ -79,8 +80,8 @@ describe("V1.2 traceable city event intelligence", () => {
   });
   it("shows external event signals and real source status beside hotel distances", async () => {
     mount("/hotels");
-    await screen.findByRole("heading", { name: /Hotel Event Intelligence/ });
-    expect(screen.getByText(/External Demand Signals/)).toBeInTheDocument();
+    await screen.findByRole("heading", { name: "酒店活动情报" });
+    expect(screen.getByText(/按酒店位置与日期查看附近活动/)).toBeInTheDocument();
     expect(
       screen.getAllByText("活动来源：暂无已核验活动来源").length,
     ).toBeGreaterThan(0);
@@ -90,14 +91,30 @@ describe("V1.2 traceable city event intelligence", () => {
       ),
     ).not.toBeInTheDocument();
   });
+  it("offers the venue's full event list from the field table", async () => {
+    // A theatre programmes many events, so a venue row must lead to all of them.
+    mount("/evidence?event=demo-02");
+    const openers = await screen.findAllByRole("button", {
+      name: "查看该场馆全部活动",
+    });
+    expect(openers.length).toBeGreaterThan(0);
+    // The venue's own list is not on screen until it is asked for.
+    expect(screen.queryByLabelText(/场馆活动/)).not.toBeInTheDocument();
+
+    fireEvent.click(openers[0]);
+    const panel = await screen.findByLabelText(/场馆活动/);
+    expect(panel).toBeInTheDocument();
+    // It lists the venue's events and says how many, rather than opening one.
+    expect(within(panel).getByText(/\d+ 个活动/)).toBeInTheDocument();
+  });
   it("compares city resources without forecast or opportunity score panels", async () => {
     mount("/insights");
-    await screen.findByRole("heading", { name: /District Comparison/ });
+    await screen.findByRole("heading", { name: "商圈资源比较" });
     expect(
-      screen.getAllByText("Venue concentration · 活动场馆集中度").length,
+      screen.getAllByText("活动场馆集中度").length,
     ).toBeGreaterThan(0);
     expect(
-      screen.getAllByText("Hotel resources · 酒店资源").length,
+      screen.getAllByText("酒店资源").length,
     ).toBeGreaterThan(0);
     expect(
       screen.queryByText(/Demand potential|样本机会分/),

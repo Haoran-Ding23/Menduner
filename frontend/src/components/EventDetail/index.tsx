@@ -19,7 +19,7 @@ export default function EventDetail() {
     .find((d) => d.id === event?.districtId);
   return (
     <Drawer
-      title="活动详情 · Event Details"
+      title="活动详情"
       width={550}
       open={!!detail}
       onClose={closeEvent}

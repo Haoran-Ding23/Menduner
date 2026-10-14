@@ -5,7 +5,71 @@ import type {
   Evidence,
   Filters,
   Status,
+  Venue,
 } from "../types";
+
+/**
+ * Clustered demand by VENUE, not by business district.
+ *
+ * A hotel reacts to "苏州保利大剧院 has 8 events this month", not to "吴中区 has 92". A venue is
+ * also a fact in the data, whereas a business district is an inference from reverse geocoding.
+ * Venues holding at least HOTSPOT_MIN events are flagged so the map can show where the city is
+ * heating up, and each row keeps its per-category split so a cluster's colour is explainable.
+ */
+export const HOTSPOT_MIN = 3;
+
+export function venueHotspots(
+  events: Event[],
+  venues: Venue[],
+): {
+  venue: Venue;
+  events: Event[];
+  count: number;
+  isHotspot: boolean;
+  topCategory: Category | null;
+}[] {
+  const byVenue = new Map<string, Event[]>();
+  for (const event of events) {
+    const id = event.venueId;
+    if (!id) continue;
+    const list = byVenue.get(id);
+    if (list) list.push(event);
+    else byVenue.set(id, [event]);
+  }
+  const lookup = new Map(venues.map((v) => [v.id, v]));
+  const rows = [];
+  for (const [venueId, list] of byVenue) {
+    const venue = lookup.get(venueId);
+    if (!venue) continue;
+    const counts = new Map<Category, number>();
+    for (const event of list) {
+      counts.set(event.category, (counts.get(event.category) ?? 0) + 1);
+    }
+    const topCategory =
+      [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+    rows.push({
+      venue,
+      events: list,
+      count: list.length,
+      isHotspot: list.length >= HOTSPOT_MIN,
+      topCategory,
+    });
+  }
+  // Most active first, then by name so the order is stable between renders.
+  return rows.sort(
+    (a, b) => b.count - a.count || a.venue.name.localeCompare(b.venue.name),
+  );
+}
+
+// Every kind gets its own colour so a glance at the map separates the demand types a hotel
+// reacts to. Chosen for contrast at marker size rather than for any palette convention:
+//   blue    trade fairs and exhibitions — the Expo volume driver, most neutral strong colour
+//   red     concerts and stage shows — the loudest marker, and the loudest demand
+//   purple  sport
+//   amber   culture-and-tourism and folk festivals
+//   teal    government and public administration, to read as official
+//   green   education and academia
+//   grey    everything else, so it does not compete for attention
 export const categories: Record<
   Category,
   {
@@ -13,12 +77,12 @@ export const categories: Record<
     color: string;
   }
 > = {
-  government: { label: "政府 / 公共管理", color: "#5579d6" },
+  government: { label: "政府 / 公共管理", color: "#13aaba" },
   business: { label: "商业 / 经济", color: "#1677ff" },
-  culture: { label: "文化 / 娱乐", color: "#a56be2" },
-  education: { label: "教育 / 学术", color: "#13aaba" },
-  sports: { label: "体育", color: "#31a56b" },
-  folk: { label: "宗教 / 民俗", color: "#d39725" },
+  culture: { label: "文化 / 娱乐", color: "#e5484d" },
+  education: { label: "教育 / 学术", color: "#2fa84f" },
+  sports: { label: "体育", color: "#8b5cf6" },
+  folk: { label: "宗教 / 民俗", color: "#e8a317" },
   others: { label: "其他", color: "#8794a8" },
 };
 export const statusColors: Record<Status, string> = {
@@ -27,8 +91,7 @@ export const statusColors: Record<Status, string> = {
   Missing: "default",
   Conflicting: "red",
   "Needs Review": "gold",
-};
-export const statusLabels: Record<Status, string> = {
+};export const statusLabels: Record<Status, string> = {
   Verified: "已核验",
   Unverified: "未核验",
   Missing: "缺失",
@@ -104,8 +167,26 @@ export function effectiveStatus(e: Evidence): Status {
   if (e.status === "Verified" && !safeUrl(e.sourceUrl)) return "Needs Review";
   return e.status;
 }
+/**
+ * Fields a human can actually verify by reading the source.
+ *
+ * A reference id, a classification rule's output and the response URL are derived, not
+ * claimed by the page, so no reviewer can confirm them. Counting them towards an event's
+ * status made an event impossible to finish: it could never reach 已核验 however carefully
+ * every factual field was checked. They are still displayed with their own status, so the
+ * 已核验 badge is scoped to what it can honestly mean.
+ */
+export const DERIVED_FIELDS = new Set([
+  "venueId",
+  "districtId",
+  "category",
+  "sourceUrl",
+  "city",
+]);
+
 export function eventStatus(items: Evidence[]): Status {
-  const s = items.map(effectiveStatus);
+  const verifiable = items.filter((e) => !DERIVED_FIELDS.has(e.field));
+  const s = (verifiable.length ? verifiable : items).map(effectiveStatus);
   if (s.includes("Conflicting")) return "Conflicting";
   if (s.includes("Needs Review")) return "Needs Review";
   if (s.includes("Unverified")) return "Unverified";

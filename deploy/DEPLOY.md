@@ -1,0 +1,289 @@
+# 部署手册（阿里云轻量应用服务器 / Ubuntu）
+
+面向：**1 台 2核2G 轻量应用服务器 + Ubuntu 22.04/24.04**，用 IP 直接访问，不买域名、不备案。
+
+全流程约 30 分钟。每一步都可复制粘贴。
+
+---
+
+## 0. 下单时注意
+
+| 项目 | 选择 | 原因 |
+|---|---|---|
+| 规格 | **2核2G** | 1G 在服务器上跑 `npm run build` 会 OOM |
+| 地域 | 华东（上海） | 离苏州近，高德调用快 |
+| 镜像 | **Ubuntu 22.04 / 24.04 纯净镜像** | 不要选「宝塔面板」：白占内存，还多一层攻击面 |
+| 磁盘 | 40G | 系统+依赖约 3G，数据库 105MB，余量充足 |
+
+买完后在**轻量服务器控制台 → 防火墙**里放行：
+
+- **22**（SSH，通常默认已开）
+- **80**（HTTP）← 必须手动加，否则浏览器打不开
+
+> 「防火墙」在这里就是云厂商的安全组，不放行 80 端口，页面永远转圈。
+
+---
+
+## 1. 登录服务器
+
+在控制台重置 root 密码，然后用本机终端：
+
+```bash
+ssh admin@47.116.133.230
+```
+
+首次会问 `yes/no`，输入 `yes`。
+
+---
+
+## 2. 装依赖（Ubuntu）
+
+```bash
+apt update && apt upgrade -y
+apt install -y python3 python3-venv python3-pip nginx rsync
+```
+
+验证版本：
+
+```bash
+python3 --version    # 需 3.10+，Ubuntu 22.04 自带 3.10，24.04 自带 3.12
+```
+
+> 项目开发用的是 Python 3.14，但代码没有用到 3.14 独有语法，3.10 以上都能跑。
+
+---
+
+## 3. 建目录和运行账号
+
+```bash
+useradd -r -s /usr/sbin/nologin -d /srv/menduner menduner || true
+mkdir -p /srv/menduner/data
+```
+
+---
+
+## 4. 上传代码
+
+发布包已经准备好了，在 **`C:\Users\haora\Desktop\menduner-upload`**，共 106 MB（其中数据库 105 MB）。
+它只包含该上传的东西：源码 + 前端构建产物 + 数据库，**不含** Windows 虚拟环境和缓存。
+
+**在你的 Windows 本机**新开一个 PowerShell 窗口，执行：
+
+```powershell
+cd C:\Users\haora\Desktop
+scp -r menduner-upload admin@47.116.133.230:/srv/
+```
+
+然后把它改名成标准路径（在**服务器**上执行）：
+
+```bash
+mv /srv/menduner-upload /srv/menduner
+ls /srv/menduner            # 应看到 backend  crawler  data  deploy
+```
+
+首次 `scp` 会问 `Are you sure you want to continue connecting?`，输入 `yes`，然后输入你设置的 root 密码。
+
+> 105 MB 上传需要几分钟，取决于你的上行带宽。**中途别 Ctrl+C**，否则数据库会传一半。
+
+---
+
+## 5. 装 Python 依赖
+
+回到**服务器**：
+
+```bash
+cd /srv/menduner
+python3 -m venv venv
+./venv/bin/pip install --upgrade pip
+./venv/bin/pip install -r backend/requirements.txt
+```
+
+验证能导入：
+
+```bash
+./venv/bin/python -c "import fastapi, uvicorn, sqlite3, bs4, yaml; print('依赖 OK')"
+```
+
+> `requirements.txt` 里的版本是按 Python 3.14 钉住的。如果某个包在 3.10 上装不上，去掉那一行的 `==版本号` 重装即可，功能不受影响。
+
+---
+
+## 6. 迁移数据库里的旧路径（重要）
+
+数据库里存了开发时的文件路径吗？没有——但 `runs`、`crawler_raw_items` 里存的是**网站 URL**，不受影响。这一节只需确认数据库可读：
+
+```bash
+./venv/bin/python -c "
+import sqlite3
+con = sqlite3.connect('/srv/menduner/data/menduner.sqlite3')
+print('events:', con.execute('SELECT COUNT(*) FROM events').fetchone()[0])
+print('hotels:', con.execute('SELECT COUNT(*) FROM hotels').fetchone()[0])
+"
+```
+
+看到 `events: 145` 就说明数据库完好。
+
+设置权限（只让服务账号能写）：
+
+```bash
+chown -R menduner:menduner /srv/menduner
+chmod 750 /srv/menduner/data
+```
+
+---
+
+## 7. 配置后端服务
+
+```bash
+cp /srv/menduner/deploy/menduner-backend.service /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable --now menduner-backend
+```
+
+检查状态：
+
+```bash
+systemctl status menduner-backend --no-pager
+curl -s http://127.0.0.1:8000/status | head -c 200
+```
+
+`curl` 能返回 JSON 就说明后端起来了。如果失败：
+
+```bash
+journalctl -u menduner-backend -n 40 --no-pager
+```
+
+**注意**：后端只监听 `127.0.0.1:8000`，外部访问不到——这是故意的。这个 API **没有任何鉴权**，绝不能直接暴露。
+
+---
+
+## 8. 配置 Nginx
+
+编辑配置文件，把 `__SERVER_NAME__` 换成你的公网 IP：
+
+```bash
+sed "s/__SERVER_NAME__/你的公网IP/" /srv/menduner/deploy/nginx-menduner.conf > /etc/nginx/sites-available/menduner
+ln -sf /etc/nginx/sites-available/menduner /etc/nginx/sites-enabled/menduner
+rm -f /etc/nginx/sites-enabled/default      # 去掉 nginx 自带的欢迎页，否则会抢占
+nginx -t                                     # 必须显示 syntax is ok
+systemctl reload nginx
+```
+
+---
+
+## 9. 访问
+
+浏览器打开：
+
+```
+http://你的公网IP
+```
+
+应该看到地图页面，右上角显示「城市活动情报 · 145 条」。
+
+**如果打开是 nginx 欢迎页**：`sites-enabled/default` 没删干净。
+**如果页面出来但列表空、右上角显示「API 不可用」**：后端没起来，看 `journalctl -u menduner-backend`。
+
+---
+
+## 10. 高德地图（最容易踩的坑）
+
+页面出来了，但**地图区域可能是空白或只有灰底**。原因是高德的 Key 绑定了域名白名单，现在换成了你的服务器 IP。
+
+到 [高德开放平台控制台](https://console.amap.com/dev/key/app) 找到你的应用：
+
+1. **Web端(JS API) Key**（`VITE_AMAP_KEY`，即 `de269b65...`）→ 设置 → 把 `你的公网IP` 加进白名单
+   - 如果高德不接受纯 IP，就填服务器 IP 也能生效；实在不行临时清空白名单（仅演示用，有被盗用风险）
+2. 改完**要重新构建前端**（Key 是构建时打进包里的）：
+   ```powershell
+   cd frontend; npm run build
+   scp -r dist admin@47.116.133.230:/srv/menduner/
+   ```
+3. 浏览器强刷 `Ctrl+F5`
+
+**关于安全密钥（`AMAP_SECURITY_CODE`）**：开发时 Vite 会给高德请求注入 `jscode` 签名，生产环境没这一步。所以：
+
+- 地图本体、标记、半径圈都正常显示
+- **自定义地图样式失效**（底图用高德默认样式）
+- 浏览器控制台会看到几条 `/_AMapService/...` 请求返回 **404**——这是**预期行为**，不是故障，不影响使用
+
+已确认：前端包里**只有 JS Key**（本来就该公开），安全密钥没有被打进包，是正确的。
+
+要恢复样式需要额外跑一个小代理进程，见 `deploy/nginx-menduner.conf` 底部的注释。
+
+---
+
+## 11. 加访问口令（强烈建议）
+
+**这个项目所有写接口都是开放的**：任何知道网址的人都能批准/驳回证据、合并场馆、改坐标。对"证明数据可信"的系统来说这是逻辑矛盾，公开前至少加一层：
+
+```bash
+apt install -y apache2-utils
+htpasswd -c /etc/nginx/.htpasswd menduner     # 会提示你设密码
+nano /etc/nginx/sites-available/menduner
+```
+
+把 `location /api/` 里这两行的注释去掉：
+
+```nginx
+auth_basic "Menduner";
+auth_basic_user_file /etc/nginx/.htpasswd;
+```
+
+```bash
+nginx -t && systemctl reload nginx
+```
+
+> 这只保护了 API。如果想整站都要口令，把上面两行加到 `location /` 里。
+> 注意加了之后，浏览器对 `/api` 的请求会弹认证框——演示时先输入一次即可。
+
+---
+
+## 12. 日常维护
+
+**看日志**
+```bash
+journalctl -u menduner-backend -f          # 后端实时日志
+tail -f /var/log/nginx/access.log          # 访问日志
+```
+
+**重启 / 停止**
+```bash
+systemctl restart menduner-backend
+systemctl stop menduner-backend
+```
+
+**备份数据库**（这就是全部家当，建议每周一次）
+```bash
+cp /srv/menduner/data/menduner.sqlite3 /root/menduner-$(date +%F).sqlite3
+```
+再下载到本地：
+```powershell
+scp admin@47.116.133.230:/root/menduner-2026-10-14.sqlite3 .
+```
+
+**重新采集数据**（可选，会在服务器上访问外部网站）
+```bash
+cd /srv/menduner
+./venv/bin/python -X utf8 -m crawler.run --max-items 40 --db /srv/menduner/data/menduner.sqlite3
+```
+
+> 注意：在云服务器上跑爬虫，出口 IP 是机房 IP，可能被部分站点拦截。演示前建议在本地采集好再上传数据库。
+
+---
+
+## 13. 后面想绑域名
+
+1. 买域名，解析 A 记录到公网 IP
+2. **大陆服务器必须 ICP 备案**（2-20 天）——不备案域名访问会被拦
+3. 备案通过后把 nginx 配置里的 `server_name` 改成域名
+4. 想用 HTTPS 就 `apt install certbot python3-certbot-nginx && certbot --nginx -d 你的域名`
+5. **别忘了**把新域名加到高德 Key 的白名单，并重新构建前端
+
+---
+
+## 已知限制（如实说明）
+
+- **68 个活动不上地图**：场馆缺坐标（`山丘livehouse-斜塘店` 等在高德查不到），或场馆引用未经人工确认。这是数据现状，不是部署问题。
+- **92MB 第三方原始 HTML** 存在数据库里。内部演示没问题；**公开对外提供浏览可能违反来源站点条款**。若要公开，建议清掉 `crawler_raw_items.raw_content`（能从 105MB 降到 1MB 以内），但会失去"翻回原页"的留证能力。
+- **单进程 `--workers 1`**：SQLite 写入并发有限，不要加 workers，会锁冲突。

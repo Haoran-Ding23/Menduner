@@ -59,6 +59,14 @@ export function normalizeEvent(
     raw,
   };
 }
+const TIERS = new Set(["high", "mid", "comfort"]);
+
+/** Portfolio tier, accepted only when the source stated a grade we recognise. */
+function tier(value: unknown): "high" | "mid" | "comfort" | undefined {
+  const raw = text(value);
+  return raw && TIERS.has(raw) ? (raw as "high" | "mid" | "comfort") : undefined;
+}
+
 function coordinate(x: unknown): Coordinates | null {
   if (!x || typeof x !== "object") return null;
   const c = x as Record<string, unknown>;
@@ -120,6 +128,10 @@ export function normalizeDataset(input: unknown): Dataset {
     districtId: text(v.districtId),
     districtDemo: v.districtDemo !== false,
     coordinates: coordinate(v.coordinates),
+    tier: tier(v.tier),
+    tierLabel: text(v.tierLabel),
+    tierSource: text(v.tierSource),
+    tierEvidence: text(v.tierEvidence),
   }));
   const districts = array("districts").map((d) => ({
     id: text(d.id) ?? "",
@@ -155,6 +167,10 @@ export function normalizeDataset(input: unknown): Dataset {
         ? e.confidence
         : undefined,
     confidenceMethod: text(e.confidenceMethod) ?? undefined,
+    origin: text(e.origin) ?? undefined,
+    decidedBy: text(e.decidedBy) ?? undefined,
+    decidedReason: text(e.decidedReason) ?? undefined,
+    decidedAt: text(e.decidedAt) ?? undefined,
   }));
   evidence.forEach((e) => (e.status = effectiveStatus(e)));
   for (const [label, list] of Object.entries({

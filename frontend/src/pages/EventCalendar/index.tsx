@@ -36,10 +36,8 @@ export default function EventCalendar() {
   return (
     <>
       <div className="page-heading">
-        <div className="eyebrow">TEMPORAL INTELLIGENCE</div>
-        <h1>
-          Event Calendar <span>活动日历</span>
-        </h1>
+        <div className="eyebrow">时间情报</div>
+        <h1>活动日历</h1>
         <p>城市活动时间分布 · 查看重叠活动与重要活动时段</p>
       </div>
       <Filters />
@@ -128,7 +126,7 @@ export default function EventCalendar() {
                       key={e.id}
                       className="calendar-event"
                       aria-label={(e.demo ? "D · " : "") + e.name}
-                      title={`Attention: ${level}；${e.startDate ?? "开始日期待核验"} → ${e.endDate ?? "结束日期待核验"}`}
+                      title={`关注等级：${level}；${e.startDate ?? "开始日期待核验"} → ${e.endDate ?? "结束日期待核验"}`}
                       style={{ borderLeftColor: categories[e.category].color }}
                       onClick={() => openEvent(e.id)}
                     >
@@ -137,7 +135,7 @@ export default function EventCalendar() {
                         {e.name}
                       </span>
                       <small className="block calendar-impact">
-                        Attention: {level}
+                        关注等级：{level}
                         {e.demo ? " · DEMO" : ""}
                       </small>
                     </button>

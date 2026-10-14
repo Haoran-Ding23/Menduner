@@ -1,20 +1,22 @@
 npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
 
-> menduner-frontend@1.2.0 test
+> menduner-frontend@1.3.0 test
 > vitest run
 
 
  RUN  v3.2.7 /workspace/scratch/ea48d6702fed/Menduner/frontend
 
- ✓ tests/data.test.ts (11 tests) 21ms
- ✓ tests/intelligence.test.ts (12 tests) 61ms
- ✓ tests/map-layer.test.tsx (1 test) 333ms
-   ✓ Real map integration boundary with mocked SDK > groups verified event locations, excludes unknown venue and adds real configured hotel layer  332ms
-stderr | tests/ui.test.tsx > Integrated platform routes and interactions > loads /insights using shared layout
-Not implemented: Window's getComputedStyle() method: with pseudo-elements
+ ✓ tests/data.test.ts (11 tests) 28ms
+ ✓ tests/intelligence.test.ts (12 tests) 46ms
+ ✓ tests/map-layer.test.tsx (1 test) 330ms
+   ✓ Real map integration boundary with mocked SDK > groups verified event locations, excludes unknown venue and adds real configured hotel layer  329ms
+ ✓ tests/api.test.tsx (6 tests) 1531ms
+   ✓ API provider lifecycle > loads API records, refreshes changed records and labels stale snapshots on failure  1181ms
+stderr | tests/v12-ui.test.tsx > V1.2 traceable city event intelligence > explains event attention without exposed scores, pricing advice or an empty layer switch
 Not implemented: Window's getComputedStyle() method: with pseudo-elements
 
-stderr | tests/v12-ui.test.tsx > V1.2 traceable city event intelligence > explains event attention without exposed scores, pricing advice or an empty layer switch
+stderr | tests/ui.test.tsx > Integrated platform routes and interactions > loads /insights using shared layout
+Not implemented: Window's getComputedStyle() method: with pseudo-elements
 Not implemented: Window's getComputedStyle() method: with pseudo-elements
 
 stderr | tests/ui.test.tsx > Integrated platform routes and interactions > loads /evidence using shared layout
@@ -25,39 +27,39 @@ stderr | tests/v12-ui.test.tsx > V1.2 traceable city event intelligence > preser
 Not implemented: Window's getComputedStyle() method: with pseudo-elements
 Not implemented: Window's getComputedStyle() method: with pseudo-elements
 
-stderr | tests/ui.test.tsx > Integrated platform routes and interactions > opens shared drawer and moves to calendar retaining selected event date
-Not implemented: Window's getComputedStyle() method: with pseudo-elements
-
 stderr | tests/v12-ui.test.tsx > V1.2 traceable city event intelligence > compares city resources without forecast or opportunity score panels
 Not implemented: Window's getComputedStyle() method: with pseudo-elements
 Not implemented: Window's getComputedStyle() method: with pseudo-elements
 
- ✓ tests/v12-ui.test.tsx (6 tests) 21908ms
-   ✓ V1.2 traceable city event intelligence > explains event attention without exposed scores, pricing advice or an empty layer switch  5937ms
-   ✓ V1.2 traceable city event intelligence > highlights only the overlap period and displays its factual reason  8829ms
-   ✓ V1.2 traceable city event intelligence > renders a technical relationship graph without a chatbot or decision path  683ms
-   ✓ V1.2 traceable city event intelligence > preserves conflicting candidates as needs review without automatic selection  3058ms
-   ✓ V1.2 traceable city event intelligence > shows external event signals and real source status beside hotel distances  1156ms
-   ✓ V1.2 traceable city event intelligence > compares city resources without forecast or opportunity score panels  2245ms
+ ✓ tests/v12-ui.test.tsx (6 tests) 19923ms
+   ✓ V1.2 traceable city event intelligence > explains event attention without exposed scores, pricing advice or an empty layer switch  4917ms
+   ✓ V1.2 traceable city event intelligence > highlights only the overlap period and displays its factual reason  7101ms
+   ✓ V1.2 traceable city event intelligence > renders a technical relationship graph without a chatbot or decision path  735ms
+   ✓ V1.2 traceable city event intelligence > preserves conflicting candidates as needs review without automatic selection  3583ms
+   ✓ V1.2 traceable city event intelligence > shows external event signals and real source status beside hotel distances  1224ms
+   ✓ V1.2 traceable city event intelligence > compares city resources without forecast or opportunity score panels  2361ms
+stderr | tests/ui.test.tsx > Integrated platform routes and interactions > opens shared drawer and moves to calendar retaining selected event date
+Not implemented: Window's getComputedStyle() method: with pseudo-elements
+
 stderr | tests/ui.test.tsx > Integrated platform routes and interactions > searches evidence index and shows conflict provenance
 Not implemented: Window's getComputedStyle() method: with pseudo-elements
 Not implemented: Window's getComputedStyle() method: with pseudo-elements
 
- ✓ tests/ui.test.tsx (12 tests) 48963ms
-   ✓ Integrated platform routes and interactions > loads /map using shared layout  1442ms
-   ✓ Integrated platform routes and interactions > loads /calendar using shared layout  853ms
-   ✓ Integrated platform routes and interactions > loads /graph using shared layout  653ms
-   ✓ Integrated platform routes and interactions > loads /hotels using shared layout  1189ms
-   ✓ Integrated platform routes and interactions > loads /insights using shared layout  2137ms
-   ✓ Integrated platform routes and interactions > loads /evidence using shared layout  2149ms
-   ✓ Integrated platform routes and interactions > changes month and displays an empty state when DEMO is off  9256ms
-   ✓ Integrated platform routes and interactions > opens shared drawer and moves to calendar retaining selected event date  11404ms
-   ✓ Integrated platform routes and interactions > shows overlapping multi-day calendar entries and navigates months  8503ms
-   ✓ Integrated platform routes and interactions > opens a graph node inspector  2056ms
-   ✓ Integrated platform routes and interactions > shows computed hotel distances without missing-coordinate events  5911ms
-   ✓ Integrated platform routes and interactions > searches evidence index and shows conflict provenance  3409ms
+ ✓ tests/ui.test.tsx (12 tests) 49953ms
+   ✓ Integrated platform routes and interactions > loads /map using shared layout  1725ms
+   ✓ Integrated platform routes and interactions > loads /calendar using shared layout  837ms
+   ✓ Integrated platform routes and interactions > loads /graph using shared layout  635ms
+   ✓ Integrated platform routes and interactions > loads /hotels using shared layout  1137ms
+   ✓ Integrated platform routes and interactions > loads /insights using shared layout  2085ms
+   ✓ Integrated platform routes and interactions > loads /evidence using shared layout  2142ms
+   ✓ Integrated platform routes and interactions > changes month and displays an empty state when DEMO is off  9658ms
+   ✓ Integrated platform routes and interactions > opens shared drawer and moves to calendar retaining selected event date  11989ms
+   ✓ Integrated platform routes and interactions > shows overlapping multi-day calendar entries and navigates months  9146ms
+   ✓ Integrated platform routes and interactions > opens a graph node inspector  2324ms
+   ✓ Integrated platform routes and interactions > shows computed hotel distances without missing-coordinate events  5117ms
+   ✓ Integrated platform routes and interactions > searches evidence index and shows conflict provenance  3156ms
 
- Test Files  5 passed (5)
-      Tests  42 passed (42)
-   Start at  02:06:08
-   Duration  51.99s (transform 541ms, setup 683ms, collect 6.83s, tests 71.29s, environment 3.09s, prepare 442ms)
+ Test Files  6 passed (6)
+      Tests  48 passed (48)
+   Start at  02:23:09
+   Duration  54.01s (transform 497ms, setup 848ms, collect 9.07s, tests 71.81s, environment 3.75s, prepare 497ms)

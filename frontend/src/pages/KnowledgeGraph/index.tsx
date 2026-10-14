@@ -19,6 +19,7 @@ import {
   Space,
 } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
+import useIsSmallScreen from "../../hooks/useIsSmallScreen";
 import { valueText } from "../../utils/data";
 import { assessDemand, evidenceSummary } from "../../services/intelligence";
 import { ImpactTag } from "../../components/DemandIntelligence";
@@ -38,6 +39,9 @@ export default function KnowledgeGraph() {
   const { repository, dataset, selected, update, openEvent, go } =
     usePlatform();
   const id = selected ?? dataset.events[0]?.id ?? "";
+  // The MiniMap is a 200x150 overlay that would cover a third of a phone screen, and React
+  // Flow measures it for the fit calculation. It is not rendered below the 760px breakpoint.
+  const small = useIsSmallScreen();
   const [expanded, setExpanded] = useState(true),
     [nodeId, setNodeId] = useState<string | null>(null),
     [edgeId, setEdgeId] = useState<string | null>(null);
@@ -107,11 +111,9 @@ export default function KnowledgeGraph() {
   return (
     <>
       <div className="page-heading">
-        <div className="eyebrow">CONNECTED CITY DATA</div>
-        <h1>
-          Knowledge Graph Explorer <span>城市数据关系探索</span>
-        </h1>
-        <p>Event → Venue → Location Context → Nearby Hospitality Resources</p>
+        <div className="eyebrow">城市数据关联</div>
+        <h1>知识图谱</h1>
+        <p>活动 → 场馆 → 位置语境 → 周边酒店资源</p>
       </div>
       <div className="panel graph-toolbar">
         <Space wrap>
@@ -153,7 +155,9 @@ export default function KnowledgeGraph() {
               nodes={nodes}
               edges={edges}
               fitView
+              fitViewOptions={{ padding: small ? 0.25 : 0.1 }}
               nodesDraggable={false}
+              proOptions={{ hideAttribution: small }}
               onNodeClick={(_, n) => {
                 setNodeId(n.id);
                 setEdgeId(null);
@@ -161,14 +165,16 @@ export default function KnowledgeGraph() {
               onEdgeClick={(_, e) => setEdgeId(e.id)}
             >
               <Background color="#dce4ed" gap={22} />
-              <Controls />
-              <MiniMap
-                nodeColor={(n) =>
-                  colors[
-                    graph.nodes.find((g) => g.id === n.id)?.kind ?? "Event"
-                  ]
-                }
-              />
+              <Controls showInteractive={false} />
+              {!small && (
+                <MiniMap
+                  nodeColor={(n) =>
+                    colors[
+                      graph.nodes.find((g) => g.id === n.id)?.kind ?? "Event"
+                    ]
+                  }
+                />
+              )}
             </ReactFlow>
           ) : (
             <Empty description="没有可展示的图谱数据" />

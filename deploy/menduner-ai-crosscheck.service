@@ -1,0 +1,28 @@
+[Unit]
+Description=Menduner AI evidence cross-check (DeepSeek reads stored pages)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=menduner
+Group=menduner
+WorkingDirectory=/srv/menduner
+
+# The API key lives in this file, mode 600, owned by the service account. It is read at
+# startup and never written to a log, a database row, or the frontend bundle.
+EnvironmentFile=/etc/menduner/ai.env
+Environment=MENDUNER_DB_PATH=/srv/menduner/data/menduner.sqlite3
+Environment=PYTHONUNBUFFERED=1
+
+# --compare is read-only: it never writes to the database. --one-event-only restricts the
+# check to pages that yielded exactly one event, because comparing a single reading against one
+# of several events on a listing page produces disagreements that are artifacts of the
+# comparison, not findings about the data.
+ExecStart=/srv/menduner/venv/bin/python -X utf8 scripts/ai_enrich.py \
+  --compare --one-event-only --limit 40 \
+  --out /srv/menduner/data/ai-crosscheck.json
+
+# The model is a reader, not a source: this job cannot change a verification status.
+MemoryMax=800M
+Nice=15

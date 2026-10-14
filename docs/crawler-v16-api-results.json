@@ -1,0 +1,191 @@
+{
+  "python": "3.14.8",
+  "scenarios": [
+    {
+      "database": "empty",
+      "result": "PASS",
+      "httpChecks": 11,
+      "responses": [
+        {
+          "path": "/docs",
+          "status": 200
+        },
+        {
+          "path": "/openapi.json",
+          "status": 200
+        },
+        {
+          "path": "/dataset",
+          "status": 200
+        },
+        {
+          "path": "/events",
+          "status": 200
+        },
+        {
+          "path": "/venues",
+          "status": 200
+        },
+        {
+          "path": "/evidence",
+          "status": 200
+        },
+        {
+          "path": "/hotels",
+          "status": 200
+        },
+        {
+          "path": "/districts",
+          "status": 200
+        },
+        {
+          "path": "/status",
+          "status": 200
+        },
+        {
+          "path": "/events/does-not-exist",
+          "status": 404
+        },
+        {
+          "path": "/evidence?event_id=does-not-exist",
+          "status": 200
+        }
+      ],
+      "databaseCounts": {
+        "events": 0,
+        "sources": 0,
+        "crawler_raw_items": 0,
+        "crawler_observations": 0,
+        "crawler_evidence": 0
+      },
+      "mockSourceCount": 0,
+      "demoEventCount": 0,
+      "verificationCounts": {
+        "Verified": 0,
+        "Unverified": 0,
+        "Missing": 0,
+        "Conflicting": 0,
+        "Needs Review": 0
+      },
+      "lastUpdated": null,
+      "revision": 0
+    },
+    {
+      "database": "live sources",
+      "result": "PASS",
+      "httpChecks": 23,
+      "responses": [
+        {
+          "path": "/docs",
+          "status": 200
+        },
+        {
+          "path": "/openapi.json",
+          "status": 200
+        },
+        {
+          "path": "/dataset",
+          "status": 200
+        },
+        {
+          "path": "/events",
+          "status": 200
+        },
+        {
+          "path": "/venues",
+          "status": 200
+        },
+        {
+          "path": "/evidence",
+          "status": 200
+        },
+        {
+          "path": "/hotels",
+          "status": 200
+        },
+        {
+          "path": "/districts",
+          "status": 200
+        },
+        {
+          "path": "/status",
+          "status": 200
+        },
+        {
+          "path": "/events/does-not-exist",
+          "status": 404
+        },
+        {
+          "path": "/evidence?event_id=does-not-exist",
+          "status": 200
+        },
+        {
+          "path": "/events/evt-31dee0a1ad3e11ace91685ea",
+          "status": 200
+        },
+        {
+          "path": "/evidence?event_id=evt-31dee0a1ad3e11ace91685ea",
+          "status": 200
+        },
+        {
+          "path": "/events/evt-b8758c34e7dd0ab32b001f44",
+          "status": 200
+        },
+        {
+          "path": "/evidence?event_id=evt-b8758c34e7dd0ab32b001f44",
+          "status": 200
+        },
+        {
+          "path": "/events/evt-caa2b4f722de488946b13159",
+          "status": 200
+        },
+        {
+          "path": "/evidence?event_id=evt-caa2b4f722de488946b13159",
+          "status": 200
+        },
+        {
+          "path": "/events/evt-d2a4012e4cb0a924091fbfbf",
+          "status": 200
+        },
+        {
+          "path": "/evidence?event_id=evt-d2a4012e4cb0a924091fbfbf",
+          "status": 200
+        },
+        {
+          "path": "/events/evt-ded705d3a98fc9a4bf1043ae",
+          "status": 200
+        },
+        {
+          "path": "/evidence?event_id=evt-ded705d3a98fc9a4bf1043ae",
+          "status": 200
+        },
+        {
+          "path": "/events/evt-e3a3197aa6cad3641c51362f",
+          "status": 200
+        },
+        {
+          "path": "/evidence?event_id=evt-e3a3197aa6cad3641c51362f",
+          "status": 200
+        }
+      ],
+      "databaseCounts": {
+        "events": 6,
+        "sources": 10,
+        "crawler_raw_items": 20,
+        "crawler_observations": 6,
+        "crawler_evidence": 60
+      },
+      "mockSourceCount": 0,
+      "demoEventCount": 0,
+      "verificationCounts": {
+        "Verified": 0,
+        "Unverified": 0,
+        "Missing": 0,
+        "Conflicting": 0,
+        "Needs Review": 6
+      },
+      "lastUpdated": "2026-10-13T09:53:24.385616+00:00",
+      "revision": 1
+    }
+  ]
+}

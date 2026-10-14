@@ -321,6 +321,36 @@ main {
   font-weight: 700;
   cursor: pointer;
 }
+/* A venue programming several events is where demand concentrates, so it reads as a hotspot:
+   larger, ringed, and with a pulse that draws the eye without moving the marker. */
+.map-marker-hotspot {
+  width: 42px;
+  height: 42px;
+  font-size: 15px;
+  border-width: 3px;
+  box-shadow:
+    0 0 0 4px #e5484d55,
+    0 4px 14px #0004;
+  animation: hotspot-pulse 2.4s ease-in-out infinite;
+}
+@keyframes hotspot-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 4px #e5484d55,
+      0 4px 14px #0004;
+  }
+  50% {
+    box-shadow:
+      0 0 0 8px #e5484d22,
+      0 4px 14px #0004;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .map-marker-hotspot {
+    animation: none;
+  }
+}
 .hotel-marker {
   display: grid;
   place-items: center;
@@ -474,6 +504,36 @@ main {
   gap: 15px;
   flex-wrap: wrap;
   margin-bottom: 18px;
+}
+/* One labelled control per cell, so a multi-select rendering many tags cannot push its
+   neighbours off the line. */
+.field-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr) minmax(0, 1.5fr) minmax(0, 1.4fr);
+  gap: 14px 18px;
+  width: 100%;
+  align-items: end;
+}
+.field-grid > label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+.field-grid > label > small {
+  font-size: 12px;
+  font-weight: 600;
+  color: #61748f;
+}
+@media (max-width: 1180px) {
+  .field-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 720px) {
+  .field-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 .graph-layout {
   display: grid;
@@ -952,5 +1012,293 @@ main {
   }
   .trust-content .ant-steps {
     flex-direction: column;
+  }
+}
+
+.crash-panel {
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.crash-panel .ant-alert {
+  margin-bottom: 16px;
+}
+.crash-panel .ant-typography code {
+  word-break: break-all;
+}
+
+/* ==========================================================================
+   Phone layout
+   ==========================================================================
+   Written last so it wins over every narrower breakpoint above. The problems it fixes were
+   structural, not cosmetic:
+
+     * the sidebar stayed a 76px ICON RAIL, taking a fifth of a 360px screen from the content;
+     * .map-shell and .graph-canvas kept desktop heights of 440-510px, so the map was taller
+       than the phone screen itself and everything below it sat far down the page;
+     * the filter bar holds Selects with hard-coded widths of 180px and 185px plus a
+       twelve-month row, which overflowed a 360px viewport;
+     * wide Ant Design tables squeezed their columns instead of scrolling.
+
+   On a phone the navigation moves to the BOTTOM, where a thumb reaches it, and the content
+   takes the full width of the screen. Nothing is hidden that a phone user needs: every
+   destination stays reachable, it is just laid out horizontally.
+
+   Selector names verified against the TSX: the filter bar is .filterbar (NOT .filters) and the
+   knowledge-graph canvas is .graph-canvas (NOT .graph-shell).
+   ========================================================================== */
+
+@media (max-width: 760px) {
+  /* --- Navigation becomes a bottom bar --- */
+  .sidebar {
+    inset: auto 0 0 0;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 0;
+    padding: 0 max(4px, env(safe-area-inset-left)) env(safe-area-inset-bottom)
+      max(4px, env(safe-area-inset-right));
+    border-right: none;
+    border-top: 1px solid #e7edf4;
+    box-shadow: 0 -2px 12px #0000000f;
+    z-index: 40;
+  }
+  /* The brand, section label and footer are desktop furniture. */
+  .brand,
+  .nav-section,
+  .sidebar-foot {
+    display: none;
+  }
+  .sidebar nav {
+    display: flex;
+    flex: 1;
+    width: 100%;
+    gap: 0;
+  }
+  /* The 950px rule hid the labels and centred the icons. On a bottom bar the label is what
+     makes an icon-only strip legible, so the labels come back and are allowed to wrap. */
+  .nav-item,
+  .nav-item > span {
+    display: flex;
+  }
+  .nav-item {
+    flex: 1 1 0;
+    min-width: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 7px 2px;
+    border-radius: 0;
+    border-left: none;
+    line-height: 1.15;
+  }
+  .nav-item > span {
+    /* Six Chinese labels do not fit on one line at 360px, so they wrap rather than truncate. */
+    white-space: normal;
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 0;
+  }
+  .nav-item .anticon {
+    font-size: 18px;
+  }
+
+  /* The content owns the full width and clears the fixed bottom bar. */
+  .workspace {
+    margin-left: 0;
+    width: 100%;
+    padding-bottom: calc(64px + env(safe-area-inset-bottom));
+  }
+
+  /* --- Header: shorter, and it must not wrap into two rows --- */
+  header {
+    height: auto;
+    min-height: 52px;
+    padding: 8px 12px;
+    gap: 8px;
+  }
+  header > div {
+    min-width: 0;
+  }
+  header strong {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .header-year {
+    display: none;
+  }
+  header .ant-space {
+    gap: 6px !important;
+  }
+
+  main {
+    padding: 16px 12px 24px;
+  }
+
+  /* --- Stats: two across, not four --- */
+  .stats-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .stats-strip > div {
+    padding: 12px;
+  }
+  .stats-strip strong {
+    font-size: 20px;
+  }
+
+  /* --- Filter bar: the hard-coded Select widths must go --- */
+  .filterbar {
+    padding: 12px;
+  }
+  .filterbar .ant-space {
+    width: 100%;
+    row-gap: 8px;
+  }
+  .filterbar .ant-space-item {
+    /* Without this the 180px/185px inline widths force a horizontal scroll. */
+    max-width: 100%;
+  }
+  .filterbar .ant-select,
+  .filterbar .ant-picker {
+    width: 100% !important;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .filterbar .months {
+    gap: 5px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .filterbar .months .ant-btn {
+    /* Five to a row reads better than six at this width. */
+    flex: 0 0 calc(20% - 5px);
+    font-size: 11px;
+    padding-inline: 0;
+  }
+
+  /* --- Panels --- */
+  .panel {
+    padding: 14px;
+    border-radius: 10px;
+  }
+  .panel-heading {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .panel-heading > .ant-space {
+    width: 100%;
+  }
+
+  /* --- The map: floor it against the viewport instead of a desktop 440px --- */
+  .map-shell {
+    height: min(62vh, 420px);
+  }
+  .legend {
+    gap: 6px 10px;
+    font-size: 10px;
+  }
+
+  /* Desktop canvases with fixed heights. */
+  .graph-canvas {
+    height: min(60vh, 380px) !important;
+  }
+  .chart {
+    height: 190px;
+  }
+  .calendar-day {
+    min-height: 68px;
+  }
+
+  /* --- Layouts collapse to a single column --- */
+  .map-layout,
+  .evidence-layout,
+  .graph-layout,
+  .hotel-layout,
+  .outlook-grid,
+  .opportunity-grid,
+  .industry-grid,
+  .charts-grid,
+  .trust-demo-grid,
+  .decision-grid,
+  .comparison-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hotel-layout > .event-list {
+    grid-column: auto;
+  }
+  .hotel-layout .list-scroll {
+    display: block;
+  }
+  .evidence-layout > .panel:first-child,
+  .hotel-layout > .panel:first-child {
+    /* A tall filter column above the results would push them off the first screen. */
+    position: static;
+    max-height: none;
+  }
+
+  /* --- Tables: scroll sideways instead of squashing columns --- */
+  .ant-table-wrapper {
+    overflow-x: auto;
+  }
+  .ant-table {
+    min-width: 560px;
+  }
+  /* Nested tables (drawers, expanded rows) are narrow by design and must not inherit that. */
+  .ant-drawer .ant-table,
+  .ant-table-expanded-row .ant-table {
+    min-width: 0;
+  }
+  .list-scroll {
+    max-height: none;
+  }
+
+  /* Long unbroken values (source URLs, coordinates, venue ids) overflowed the cards. */
+  .value-wrap,
+  .ant-descriptions-item-content,
+  .evidence-row {
+    overflow-wrap: anywhere;
+  }
+  .evidence-row strong {
+    min-width: 0;
+  }
+
+  /* Dropdowns are anchored to wide triggers; cap them to the screen. */
+  .ant-select-dropdown,
+  .ant-picker-dropdown,
+  .ant-popover {
+    max-width: calc(100vw - 16px);
+  }
+  .ant-modal {
+    max-width: calc(100vw - 16px);
+    margin: 8px auto;
+  }
+
+  /* iOS Safari zooms the page when a focused input is under 16px. */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+  /* ...but that would make the dense filter bar enormous, and its controls are taps. */
+  .filterbar input,
+  .ant-select-selection-search-input {
+    font-size: 13px;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+  .page-heading p {
+    font-size: 12px;
+  }
+  .upcoming-row {
+    gap: 6px;
   }
 }
