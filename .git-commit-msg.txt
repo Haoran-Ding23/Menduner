@@ -1,0 +1,18 @@
+﻿Deploy the crawler update and record how the live database was updated
+
+The demo server (47.116.133.230) now runs the rebuilt sources. Only code was uploaded: the
+server database holds live review work the local copy does not have (103 review decisions,
+25 venue edits, the newest made the same day), so overwriting it was never an option. The two
+sources were collected on the server instead, as the service user:
+
+  arts: Success, 31 accepted (30 new, 1 updated), 6 pages, 35 raw items
+  expo: Success,  7 accepted,                  4 pages, 12 raw items
+  addresses: 31 venue rows rewritten by scripts/normalize_venue_addresses.py --apply
+
+Server database 136 -> 173 events; review_decisions and venue_edits untouched; /api/status
+reports eventCount 173, mockSourceCount 0. The daily timer (08:03, --max-items 12) picks up the
+new adapters automatically, and the database was backed up to
+/root/menduner-2026-10-15-post-crawler-update.sqlite3 before the change was called done.
+
+Also refreshes the crawl unit's stale comment (the arts centre is no longer "a client-rendered
+shell with no data").
