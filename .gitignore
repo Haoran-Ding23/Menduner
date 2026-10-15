@@ -36,16 +36,17 @@ Thumbs.db
 
 # Optional preserved environment during Python version migration
 backend/.venv-*/
+
 # IDE and historical patch bundles: not part of the project.
 .idea/
 **/.idea/
 *.patch
 
-# Local build scratch (esbuild temp on Windows).
-.build-tmp/
-.esbuild-tmp/
+# Every dot-prefixed entry is local scratch: build caches, deploy staging, git worktrees,
+# editor state. Three separate incidents of committing these (a Vite node cache, a deploy
+# staging directory, screenshot previews) made one blanket rule the right answer instead of
+# listing each directory as it was discovered.
+.*
+!.env.example
+!frontend/.env.example
 
-# Local scratch from dev-server runs and screenshots.
-.vite-tmp/
-*-preview.png
-agenda-preview.png
