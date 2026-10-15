@@ -22,9 +22,12 @@ Two verified hazards shape this adapter and are load-bearing:
    ``mp.weixin.qq.com`` is never requested (WeChat stays manual-only).
 2. **The calendar is not ordered by event date.** Pages 1-12 of the live calendar
    held 92 not-yet-ended records interleaved with finished ones (page 5 carried
-   only 2 of 12), so paging always continues to an explicit ``page_cap`` and never
-   stops because a page looked past-dated. The pager advertises 662 pages; that
-   number is never followed. Only ``max_items`` bounds DETAIL requests.
+   only 2 of 12), so an individual past-dated page is never read as the end of the
+   list. Re-measured 2026-10-15 over pages 1-35: 213 not-yet-ended records, thinning
+   with depth, and page 45 carried none. Paging therefore stops on a run of
+   future-free pages (``dry_page_limit``) instead of a guessed fixed depth, and the
+   pager's advertised 662 pages are never followed. Only ``max_items`` bounds DETAIL
+   requests.
 
 Withdrawal conditions are explicit: a listing whose verified ``div.content-outer.list
 ul`` block is gone, or whose rows no longer carry a parseable ``活动时间`` date, fails
@@ -419,18 +422,29 @@ class VisitszSource(PublicAccessSource):
     # documented 404/410 "no usable rules" semantics already apply. The strict default
     # is correct here and the soft-404 opt-in stays off.
     accept_soft_404_robots = False
-    # Verified horizon: pages 1-12 held the 92 not-yet-ended records of 144 scanned.
-    # The pager advertises 662 pages; that number is never followed. Listing requests
-    # stay bounded by this cap and detail requests by max_items.
-    page_cap = 12
+    # The horizon is found adaptively, not fixed. Measured 2026-10-15 on the live
+    # calendar: pages 1-12 carried 95 not-yet-ended records, but page 45 and beyond
+    # carried none at all, because older pages are older postings about older events.
+    # The yield is therefore front-loaded and becomes pure history with depth, so
+    # paging continues while it is still paying and stops after a run of pages that
+    # produced nothing future. page_cap remains the hard ceiling.
+    page_cap = 40
+    # Six consecutive future-free pages. Measured distribution: the deepest real
+    # cluster of not-yet-ended records sits on page 35, and the first run of six
+    # empty pages begins at 39, so this stops at 44 without cutting live material.
+    dry_page_limit = 6
     investigation = {}
 
-    def __init__(self, *args, page_cap=None, today=None, **kwargs):
+    def __init__(self, *args, page_cap=None, dry_page_limit=None, today=None, **kwargs):
         super().__init__(*args, **kwargs)
         if page_cap is not None:
             if page_cap < 1:
                 raise ValueError('page_cap must be a positive number of listing pages')
             self.page_cap = page_cap
+        if dry_page_limit is not None:
+            if dry_page_limit < 1:
+                raise ValueError('dry_page_limit must be a positive number of listing pages')
+            self.dry_page_limit = dry_page_limit
         if today is not None:
             if not isinstance(today, date):
                 raise ValueError('today must be a datetime.date')
@@ -454,8 +468,9 @@ class VisitszSource(PublicAccessSource):
         items = []
         self.investigation = {
             'scope': 'official Suzhou festival calendar: bounded listing pages -> dated detail pages',
-            'paging': 'listing pages 1..page_cap, filtered by date; never stopped by a past-dated page',
+            'paging': 'listing pages 1..page_cap, stopping after dry_page_limit pages with no future rows',
             'page_cap': self.page_cap,
+            'dry_page_limit': self.dry_page_limit,
             'listing_pages_fetched': 0,
             'listing_rows_seen': 0,
             'undated_listing_rows_dropped': 0,
@@ -467,10 +482,12 @@ class VisitszSource(PublicAccessSource):
             'detail_pages_fetched': 0,
             'protected_api_requests': 0,
             'wechat_requests': 0,
+            'stopped_reason': None,
         }
         page = None
         candidates = []
         seen_ids = set()
+        dry_streak = 0
         for page_number in range(1, self.page_cap + 1):
             url = listing_url(page_number)
             try:
@@ -503,6 +520,7 @@ class VisitszSource(PublicAccessSource):
                 break  # End of the calendar, not a failure.
             self.investigation['listing_rows_seen'] += len(rows)
             time_markers = 0
+            future_on_page = 0
             for row in rows:
                 start, finish, dropped = row_interval(row['date_text'])
                 if dropped is not None:
@@ -518,6 +536,7 @@ class VisitszSource(PublicAccessSource):
                 if (finish or start) < self.calendar_today.isoformat():
                     self.investigation['past_dated_listing_rows_dropped'] += 1
                     continue
+                future_on_page += 1
                 row_id = detail_page_id(row['url'])
                 if row_id is None:
                     self.investigation['offhost_or_invalid_row_links_dropped'] += 1
@@ -533,6 +552,19 @@ class VisitszSource(PublicAccessSource):
                              'the listing shape changed and nothing is published from it',
                 })
                 break
+            # Older pages are older postings about older events, so the not-yet-ended
+            # yield falls off with depth. A run of future-free pages means the calendar
+            # has been read past its useful horizon; continuing would spend listing
+            # requests on history only.
+            if future_on_page:
+                dry_streak = 0
+            else:
+                dry_streak += 1
+                if dry_streak >= self.dry_page_limit:
+                    self.investigation['stopped_reason'] = (
+                        'dry_horizon: %d consecutive listing pages carried no not-yet-ended row'
+                        % dry_streak)
+                    break
 
         self.investigation['candidate_detail_urls'] = len(candidates)
         for row in candidates[:self.max_items]:

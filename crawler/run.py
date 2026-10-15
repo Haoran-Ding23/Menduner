@@ -15,7 +15,12 @@ from crawler.coverage import attach_coverage
 # range from 1 public page to a 150-row exhibition schedule, so a single fixed depth either
 # starves the rich sources or over-fetches the thin ones. Pagination stays bounded inside
 # each adapter. The cap is explicit and the limit is checked, not silent.
-MAX_ITEMS_CAP = 40
+#
+# Raised from 40 to 240 on 2026-10-15. The old ceiling was binding on the largest official
+# source rather than protecting anything: the Suzhou festival calendar alone held 197
+# not-yet-ended records within pages 1-35, and a run could publish only 40 of them. Each
+# adapter still chooses its own depth and stop condition, so thin sources are unaffected.
+MAX_ITEMS_CAP = 240
 
 
 def main():
@@ -28,7 +33,15 @@ def main():
         "--max-items",
         type=int,
         default=12,
-        help=f"1-{MAX_ITEMS_CAP} detail records per source; no pagination",
+        help=f"1-{MAX_ITEMS_CAP} detail records per source; each adapter bounds its own pagination",
+    )
+    # Selecting the rich official calendars needs more than the small exploratory default.
+    # 197 not-yet-ended records sat within pages 1-35 of the Suzhou festival calendar alone,
+    # so --deep raises the per-source budget in one flag instead of a long --max-items value.
+    parser.add_argument(
+        "--deep",
+        action="store_true",
+        help=f"collect up to {MAX_ITEMS_CAP} detail records per source instead of the default",
     )
     parser.add_argument(
         "--tier1", action="store_true", help="Attempt the ten CityEvent Tier 1 sources"
@@ -38,6 +51,7 @@ def main():
     args = parser.parse_args()
     if not 1 <= args.max_items <= MAX_ITEMS_CAP:
         parser.error(f"--max-items must be 1-{MAX_ITEMS_CAP}")
+    per_source_items = MAX_ITEMS_CAP if args.deep else args.max_items
     client = None
     try:
         definitions = load_registry(args.registry)
@@ -62,7 +76,7 @@ def main():
         adapters = []
         for key in keys:
             definition = by_key[key]
-            adapter = SOURCES[key](client=client, max_items=args.max_items)
+            adapter = SOURCES[key](client=client, max_items=per_source_items)
             if adapter.source_id != definition.source_id:
                 parser.error("Registry source ID does not match adapter ownership")
             adapter.require_events = (

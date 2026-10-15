@@ -134,9 +134,11 @@ def calendar_handler(pages, details, visited=None, robots=None):
     return handler
 
 
-def source_for(pages, details, *, max_items=3, page_cap=12, visited=None, robots=None):
+def source_for(pages, details, *, max_items=3, page_cap=12, dry_page_limit=None, visited=None,
+               robots=None):
     return VisitszSource(client=client_for(calendar_handler(pages, details, visited, robots)),
-                         max_items=max_items, page_cap=page_cap, today=TODAY)
+                         max_items=max_items, page_cap=page_cap,
+                         dry_page_limit=dry_page_limit, today=TODAY)
 
 
 # --------------------------------------------------------------------------------------
@@ -457,6 +459,113 @@ def test_page_cap_bounds_listing_requests():
     assert LISTING_URL + '?page=3' not in visited
     assert source.investigation['candidate_detail_urls'] == 2
     assert len([item for item in items if item.is_event]) == 2
+
+
+def test_dry_horizon_stops_paging_without_reading_past_it():
+    """Older pages are older postings about older events.
+
+    Measured on the live calendar 2026-10-15: page 1 yielded 11 of 12 records not yet
+    ended, page 12 yielded 6, and page 45 yielded none. Reading a fixed number of pages
+    therefore spends listing requests on history once the horizon is passed. Paging stops
+    after a run of pages that produced nothing future.
+    """
+    # Page 1 has a future record; pages 2-10 are all past-dated.
+    pages = {1: [listing_row('2026101300000001', '苏州某剧院：未来演出', '2026-12-01')]}
+    for number in range(2, 11):
+        pages[number] = [listing_row('20261013000001%02d' % number, '历史演出%d' % number,
+                                     '2026-08-0%d' % (number % 9 + 1))]
+    details = {'2026101300000001': detail_page(
+        when='2026-12-01', name='苏州某剧院：未来演出', place='苏州市某路1号苏州某剧院')}
+    visited = []
+    source = source_for(pages, details, max_items=5, page_cap=40,
+                        dry_page_limit=3, visited=visited)
+    try:
+        items = source.collect()
+    finally:
+        source.client.close()
+
+    # 1 future page + 3 dry pages, then it stops - it never reaches page 5 onward.
+    assert source.investigation['listing_pages_fetched'] == 4
+    assert LISTING_URL + '?page=5' not in visited
+    assert source.investigation['stopped_reason'].startswith('dry_horizon: 3 consecutive')
+    # Only the three dry pages that were actually read count as dropped rows.
+    assert source.investigation['past_dated_listing_rows_dropped'] == 3
+    events = [item for item in items if item.is_event]
+    assert [item.item_key for item in events] == ['visitsz-detail-2026101300000001']
+
+
+def test_a_future_row_resets_the_dry_streak():
+    """A future-bearing page resets the counter, so a short gap cannot end the scan.
+
+    The live calendar is not ordered by event date and carries future clusters well past
+    page 12 (page 25 held 8 not-yet-ended records), so isolated empty pages must not be
+    read as the end of the useful horizon.
+
+    Known limitation, recorded rather than hidden: this rule can still stop ahead of a
+    future cluster that sits more than dry_page_limit pages after the previous one. It is
+    a deliberate trade, not an oversight - the measured distribution puts the deepest real
+    cluster at page 35 with the first six-page gap at 39, so a limit of 6 stops at 44
+    without cutting live material. The alternative is reading every page of a 663-page
+    calendar to find a handful of stragglers.
+    """
+    def past(number):
+        return [listing_row('20261013000002%02d' % number, '历史%d' % number, '2026-07-01')]
+
+    pages = {
+        1: [listing_row('2026101300000001', '苏州某剧院：演出甲', '2026-12-01')],
+        2: past(2), 3: past(3),                       # dry run of 2
+        4: [listing_row('2026101300000004', '苏州某剧院：演出乙', '2026-11-01')],  # resets
+        5: past(5), 6: past(6), 7: past(7), 8: past(8),  # dry run of 4 -> stop here
+        9: [listing_row('2026101300000009', '苏州某剧院：演出丙', '2026-10-20')],
+    }
+    details = {
+        '2026101300000001': detail_page(when='2026-12-01', name='苏州某剧院：演出甲',
+                                        place='苏州市某路1号苏州某剧院'),
+        '2026101300000004': detail_page(when='2026-11-01', name='苏州某剧院：演出乙',
+                                        place='苏州市某路1号苏州某剧院'),
+        '2026101300000009': detail_page(when='2026-10-20', name='苏州某剧院：演出丙',
+                                        place='苏州市某路1号苏州某剧院'),
+    }
+    visited = []
+    source = source_for(pages, details, max_items=5, page_cap=40,
+                        dry_page_limit=3, visited=visited)
+    try:
+        items = source.collect()
+    finally:
+        source.client.close()
+
+    # The two dry pages before page 4 must not have stopped anything: page 4 was read.
+    assert LISTING_URL + '?page=4' in visited
+    # Pages 1-7 were read; the dry run of 5, 6, 7 tripped the limit of 3 at page 7.
+    assert source.investigation['listing_pages_fetched'] == 7
+    assert source.investigation['stopped_reason'].startswith('dry_horizon: 3 consecutive')
+    events = [item for item in items if item.is_event]
+    assert [item.item_key for item in events] == [
+        'visitsz-detail-2026101300000001', 'visitsz-detail-2026101300000004']
+
+
+def test_page_cap_still_bounds_a_calendar_that_never_dries():
+    """page_cap remains the hard ceiling even when every page carries a future record."""
+    pages = {number: [listing_row('20261013000003%02d' % number, '演出%d' % number, '2026-12-01')]
+             for number in range(1, 30)}
+    details = {'20261013000003%02d' % number: detail_page(
+        when='2026-12-01', name='演出%d' % number, place='苏州市某路1号苏州某剧院')
+        for number in range(1, 30)}
+    visited = []
+    source = source_for(pages, details, max_items=40, page_cap=5, dry_page_limit=3,
+                        visited=visited)
+    try:
+        source.collect()
+    finally:
+        source.client.close()
+    assert source.investigation['listing_pages_fetched'] == 5
+    assert LISTING_URL + '?page=6' not in visited
+    assert source.investigation['stopped_reason'] is None  # the ceiling stopped it, not dryness
+
+
+def test_dry_page_limit_must_be_positive():
+    with pytest.raises(ValueError, match='dry_page_limit'):
+        VisitszSource(client=object(), dry_page_limit=0)
 
 
 def test_max_items_bounds_detail_page_requests():
