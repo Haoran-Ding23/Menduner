@@ -1,0 +1,268 @@
+categories:
+- government
+- venue
+- event_platform
+- media
+- tourism
+- sports
+- education
+- social_media
+sources:
+- adapter: sipac
+  category: government
+  crawl_status: FAILED
+  crawl_url: https://www.sipac.gov.cn/
+  implementation: event_extraction
+  last_checked: '2026-10-13T20:46:57.659144+00:00'
+  priority: 1
+  reason: No reliable event record passed extraction and validation; raw/context retained;
+    No explicit leading event date; publication/relative dates are not substituted
+  source_id: government-sipac
+  source_name: Suzhou Industrial Park (SIPAC)
+  tier: 1
+  topic: null
+  trust_level: OFFICIAL_GOVERNMENT
+  url: http://www.sipac.gov.cn/
+- adapter: government
+  category: government
+  crawl_status: SUCCESS
+  crawl_url: https://www.suzhou.gov.cn/
+  implementation: event_extraction
+  last_checked: '2026-10-13T21:58:42.608917+00:00'
+  priority: 1
+  reason: null
+  source_id: government-suzhou
+  source_name: Suzhou Government
+  tier: 1
+  topic: null
+  trust_level: OFFICIAL_GOVERNMENT
+  url: https://www.suzhou.gov.cn/
+- adapter: culture_tourism
+  category: government
+  crawl_status: PARTIAL
+  crawl_url: https://wglj.suzhou.gov.cn/szwhgdhlyj/hdxx/list.shtml
+  implementation: event_extraction
+  last_checked: '2026-10-13T20:46:57.659144+00:00'
+  priority: 1
+  reason: No explicit leading event date; publication/relative dates are not substituted
+  source_id: government-suzhou-culture-tourism
+  source_name: Suzhou Culture and Tourism Bureau
+  tier: 1
+  topic: tourism
+  trust_level: OFFICIAL_GOVERNMENT
+  url: http://wglj.suzhou.gov.cn/
+- adapter: expo
+  category: venue
+  crawl_status: SUCCESS
+  crawl_url: https://www.suzhouexpo.com/zhanhuiricheng-389.html
+  implementation: event_extraction
+  last_checked: '2026-10-15T05:06:24.861226+00:00'
+  limitation: 'The official schedule is assembled in the browser: the served HTML
+    carries no dates, and the calendar is read from the host''s own public JSON (/api/Article/list)
+    using the static channel token the host publishes in /templates/expo_CN/js/config.js.
+    That token is public markup shipped to every visitor, not a credential, and it
+    is re-read on every run rather than stored. extras.start_time carries the CMS
+    insertion clock, so only its calendar date is published; past-year archives are
+    never republished as live demand.'
+  priority: 2
+  reason: null
+  source_id: venue-suzhou-expo
+  source_name: Suzhou International Expo Centre
+  tier: 1
+  topic: exhibition
+  trust_level: OFFICIAL_VENUE
+  url: http://www.suzhouexpo.com/
+- adapter: olympic
+  category: venue
+  crawl_status: SUCCESS
+  crawl_url: https://www.szosc.cn/index.php/Activity/index.html
+  implementation: event_extraction
+  last_checked: '2026-10-13T20:46:57.659144+00:00'
+  limitation: 'Last crawl succeeded and stored real events, but reconnaissance on
+    2026-10-13 found this public 活动赛事 list is a purely historical archive: all 135
+    dates are in the past (latest 2026-08-23) and the list has no pagination (index_2.html
+    returns 404). Treat the stored records as historical observations, not a future
+    demand feed. Future events at this venue are reachable via the visitsz tourism
+    portal.'
+  priority: 2
+  reason: null
+  source_id: venue-suzhou-olympic
+  source_name: Suzhou Olympic Sports Centre
+  tier: 1
+  topic: sports
+  trust_level: OFFICIAL_VENUE
+  url: https://www.szosc.cn/
+- adapter: arts
+  category: venue
+  crawl_status: SUCCESS
+  crawl_url: https://www.sscac.com.cn/
+  implementation: event_extraction
+  last_checked: '2026-10-15T05:10:30.076783+00:00'
+  limitation: 'Still a client-rendered Nuxt shell: the served HTML holds no event
+    data, so the calendar is read from the host''s own public JSON API (/sue/api/cinema/findYanYiList
+    and /cinema/showDramaInfoList) that the shell''s published bundle advertises,
+    re-discovered on every run and never assumed. The 戏剧 endpoint answers its whole
+    archive back to 1992 without the startTime filter its own page sends, so the filter
+    is part of the request and finished performances are never republished.'
+  priority: 2
+  reason: null
+  source_id: venue-suzhou-arts
+  source_name: Suzhou Culture and Arts Centre
+  tier: 1
+  topic: null
+  trust_level: OFFICIAL_VENUE
+  url: https://www.sscac.com.cn/
+- adapter: huodongjia
+  category: event_platform
+  crawl_status: SUCCESS
+  crawl_url: https://www.huodongjia.com/
+  implementation: event_extraction
+  last_checked: '2026-10-13T20:46:57.659144+00:00'
+  priority: 3
+  reason: null
+  source_id: platform-huodongjia-suzhou
+  source_name: Huodongjia Suzhou
+  tier: 1
+  topic: null
+  trust_level: COMMERCIAL_PLATFORM
+  url: https://www.huodongjia.com/
+- adapter: damai
+  category: event_platform
+  crawl_status: FAILED
+  crawl_url: https://search.damai.cn/
+  detail_urls:
+  - https://detail.damai.cn/item.htm?id=1011300369602
+  - https://detail.damai.cn/item.htm?id=884792480760
+  implementation: event_extraction
+  last_checked: '2026-10-13T20:46:57.659144+00:00'
+  priority: 3
+  reason: '[{"error": "robots.txt disallows this URL; no public page request made",
+    "url": "https://search.damai.cn/"}, {"error": "Robots policy unavailable: HTTP
+    302 redirect (not followed); no public page request made", "url": "https://detail.damai.cn/item.htm?id=1011300369602"}]'
+  source_id: platform-damai-suzhou
+  source_name: Damai Suzhou
+  tier: 1
+  topic: null
+  trust_level: COMMERCIAL_PLATFORM
+  url: https://search.damai.cn/
+- adapter: subao
+  category: media
+  crawl_status: FAILED
+  crawl_url: https://www.subaonet.com/list/szwl/
+  implementation: event_extraction
+  last_checked: '2026-10-13T20:46:57.659144+00:00'
+  priority: 3
+  reason: No reliable event record passed extraction and validation; raw/context retained;
+    No explicit leading event date; publication/relative dates are not substituted
+  source_id: media-subao
+  source_name: Subao News
+  tier: 1
+  topic: null
+  trust_level: SECONDARY_MEDIA
+  url: https://www.subaonet.com/
+- adapter: cnena
+  category: event_platform
+  crawl_status: SUCCESS
+  crawl_url: http://www.cnena.com/showroom/showroom-htm-id-28.html
+  implementation: event_extraction
+  last_checked: '2026-10-13T20:46:57.659144+00:00'
+  limitation: 'www.cnena.com is reachable over plain HTTP only: its certificate is
+    not valid for the hostname (CERTIFICATE_VERIFY_FAILED: Hostname mismatch) and
+    TLS verification is never disabled. Response integrity is therefore NOT cryptographically
+    verifiable; this source can only ever yield Needs Review / Unverified claims,
+    never Verified. The supplied city route /Show/city/suzhou/ is a 404 page and is
+    never requested; the working route is the 苏州国际博览中心 展会排期 venue page. Only path-based
+    routes are used because robots disallows query strings.'
+  priority: 3
+  reason: null
+  source_id: platform-cnena-suzhou
+  source_name: China Exhibition Network
+  tier: 1
+  topic: exhibition
+  trust_level: COMMERCIAL_PLATFORM
+  url: http://www.cnena.com/
+- adapter: venue
+  category: venue
+  crawl_status: SUCCESS
+  crawl_url: https://www.szsorch.com/shows-ticketing.html
+  implementation: event_extraction
+  last_checked: '2026-10-13T20:46:57.659144+00:00'
+  priority: 2
+  reason: null
+  source_id: venue-suzhou-orchestra
+  source_name: Suzhou Symphony Orchestra
+  tier: 2
+  topic: null
+  trust_level: OFFICIAL_VENUE
+  url: https://www.szsorch.com/shows-ticketing.html
+- adapter: event_platform
+  category: event_platform
+  crawl_status: SUCCESS
+  crawl_url: https://shanghaiconcerts.com/venues/suzhou-culture-arts-centre
+  implementation: event_extraction
+  last_checked: '2026-10-13T20:46:57.659144+00:00'
+  priority: 3
+  reason: null
+  source_id: platform-shanghai-concerts
+  source_name: Shanghai Concerts — Suzhou listings
+  tier: 2
+  topic: null
+  trust_level: COMMERCIAL_PLATFORM
+  url: https://shanghaiconcerts.com/venues/suzhou-culture-arts-centre
+- adapter: visitsz
+  category: tourism
+  crawl_status: PARTIAL
+  crawl_url: https://visitsz.wglj.suzhou.com.cn/festival-activity.aspx
+  implementation: event_extraction
+  last_checked: '2026-10-13T20:46:57.659144+00:00'
+  limitation: 'Secondary/aggregator publisher: titles and 来源 credits come from venue
+    WeChat accounts, so its claims stay Unverified/Needs Review and are never Verified.
+    The calendar is not ordered by event date; paging is swept to the verified horizon
+    and never follows the advertised 662 pages. Only max_items bounds detail requests.
+    Records without a real 时间 date and 地点 value are rejected, never published.'
+  priority: 1
+  reason: 'No explicit 地点 (venue/location) on the visitsz detail page: ''详见文章''; placeholder
+    and template values are never published'
+  require_events: true
+  source_id: tourism-visitsz-festival
+  source_name: 苏州市旅游咨询中心 节庆日历 (visitsz)
+  tier: 2
+  topic: tourism
+  trust_level: OFFICIAL_GOVERNMENT
+  url: https://visitsz.wglj.suzhou.com.cn/
+- adapter: douban
+  category: event_platform
+  crawl_status: SUCCESS
+  crawl_url: https://www.douban.com/location/suzhou/events/future
+  implementation: event_extraction
+  last_checked: '2026-10-13T20:46:57.659144+00:00'
+  limitation: User-generated community aggregator. Dates are published as month/day
+    without a year, so a year is only accepted when an explicit weekday makes exactly
+    one candidate year consistent; otherwise the record is rejected. Claims are Needs
+    Review/Unverified and never Verified.
+  priority: 3
+  reason: null
+  require_events: true
+  source_id: community-douban-suzhou
+  source_name: 豆瓣同城苏州
+  tier: 2
+  topic: null
+  trust_level: COMMERCIAL_PLATFORM
+  url: https://www.douban.com/location/suzhou/events/future
+- adapter: null
+  category: social_media
+  crawl_status: MANUAL_VERIFICATION_REQUIRED
+  crawl_url: null
+  implementation: manual_only
+  last_checked: null
+  name: 苏州发布
+  platform: WeChat
+  priority: 3
+  reason: Verify account identity and each submitted event manually; no WeChat crawler
+  source_id: social-wechat-suzhou-fabu
+  source_name: 苏州发布
+  status: Manual verification required
+  tier: 2
+  trust_level: MANUAL_IDENTITY_CHECK
+  url: null
+version: '1.6'
