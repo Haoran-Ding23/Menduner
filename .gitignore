@@ -40,3 +40,7 @@ backend/.venv-*/
 .idea/
 **/.idea/
 *.patch
+
+# Local build scratch (esbuild temp on Windows).
+.build-tmp/
+.esbuild-tmp/
