@@ -13,6 +13,7 @@ from crawler.extractor import extract, text
 from crawler.validator import validate
 from crawler.storage import put_evidence
 from crawler.venues import canonical_venue_id, canonical_venue_rows
+from crawler.venue_duplicates import is_region_name
 from crawler.addresses import venue_address
 from crawler import crawl_log, review, verification
 
@@ -538,6 +539,19 @@ def publish(con, adapter, accepted, now, references, allow_demo, source_meta=Non
     counts = {"created": 0, "updated": 0, "duplicates": 0}
     for raw_id, item, event in accepted:
         event = dict(event)
+        # A place that is only an administrative region is not a venue, and must not become one.
+        #
+        # The official-article extractor reads a title's leading 单位： prefix as the venue, so a
+        # city-wide event titled 太仓市:捡个秋天·太仓漫游季 produced a venue row named 太仓市. That
+        # row is wrong twice over: it splits a region-wide event off as if it happened at one
+        # place, and it invites a coordinate, because AMap does return a 太仓市 POI - the city
+        # centre. Pinning region-wide demand to a city-centre point would put it on the map as a
+        # real venue and distort every distance calculation that reads it.
+        #
+        # The event keeps its own 地点 claim and district; only the venue row is skipped, so
+        # nothing is invented and nothing is lost.
+        if not item.mock and event.get("venue") and is_region_name(event["venue"]):
+            event["venue"] = None
         if not item.mock and event.get("venue"):
             key = text(event["venue"]).replace("·", "").replace(" ", "")
             venue_id = "venue-" + hashlib.sha256(key.encode()).hexdigest()[:20]

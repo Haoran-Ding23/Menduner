@@ -51,7 +51,23 @@ HAS_DIGIT = re.compile(r"\d")
 # then "contained" 太仓市博物馆 and 太仓市图书馆 and was proposed as an alias of both, which
 # would have merged three unrelated places into one. The row is a misclassification rather
 # than a duplicate, so containment against it must never merge.
-REGION_NAME = re.compile(r"^[\u4e00-\u9fff]{2,4}(?:省|市|区|县|镇|乡|街道)$")
+#
+# Deliberately tight, because the scenic-area and old-town rows look similar and are real
+# places with real geometry (周庄古镇, 黎平古镇 and 天平山景区 all carry verified coordinates on
+# the live database):
+#   * a 市/省/区/县 must be the whole name, so 苏州市体育中心 and 苏州工业园区文化馆 are safe;
+#   * 镇/乡/街道 must end the name only when the preceding character is not a place marker,
+#     which keeps 周庄古镇 and 震泽古镇 while still catching 木渎镇;
+#   * the 景区/景点/公园/古镇/古城 endings are excluded outright.
+# A name-ending 街道 is caught; 街道口 is a street corner and is not.
+REGION_NAME = re.compile(
+    r"^[\u4e00-\u9fff]{2,3}(?:省|市|区|县)$"
+    r"|^[\u4e00-\u9fff]{2,3}(?<![古新老])镇$"
+    r"|^[\u4e00-\u9fff]{2,3}[乡县]$"
+    r"|^[\u4e00-\u9fff]{2,6}街道$"
+)
+# Scenic areas, old towns and parks end with a region-shaped suffix but name a place.
+PLACE_SUFFIX = re.compile(r"(?:景区|景点|公园|古镇|古城|水乡|园林|街区|广场|商圈)$")
 
 # A generic room/location word carries no venue identity on its own.
 #
@@ -93,7 +109,10 @@ def looks_like_address(name: str | None) -> bool:
 
 def is_region_name(name: str | None) -> bool:
     """True when a row's name is only an administrative region, i.e. not a venue at all."""
-    return bool(REGION_NAME.fullmatch((name or "").strip()))
+    cleaned = (name or "").strip()
+    if PLACE_SUFFIX.search(cleaned):
+        return False
+    return bool(REGION_NAME.fullmatch(cleaned))
 
 
 def is_generic_venue_word(name: str | None) -> bool:
