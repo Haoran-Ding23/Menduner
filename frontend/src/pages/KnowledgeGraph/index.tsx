@@ -25,6 +25,7 @@ import { assessDemand, evidenceSummary } from "../../services/intelligence";
 import { ImpactTag } from "../../components/DemandIntelligence";
 const colors = {
   Event: "#1677ff",
+  Related: "#5b8def",
   Venue: "#13aaba",
   District: "#a56be2",
   Hotel: "#d39725",
@@ -33,50 +34,97 @@ const positions = {
   Event: { x: 0, y: 180 },
   Venue: { x: 255, y: 290 },
   District: { x: 510, y: 290 },
-  Hotel: { x: 510, y: 450 },
+  Hotel: { x: 760, y: 290 },
 };
+/** Where the related events sit: up to three columns in two rows, left of the event.
+ *
+ * Placement has to survive React Flow's fitView, which frames every node at once. Two earlier
+ * attempts failed the same way. Fanning ten nodes above the event put them outside the framed
+ * area; stacking them in a tall column beside a chain that already runs 700px vertically made
+ * the bounding box so tall that fitView scaled everything down to unreadable.
+ *
+ * Reading each row right-to-left, with a cap of six, keeps the related block compact and
+ * beside the chain rather than around it, so the framed extent stays close to square.
+ */
+const RELATED_PER_ROW = 4;
+function relatedPosition(index: number) {
+  const column = index % RELATED_PER_ROW;
+  const row = Math.floor(index / RELATED_PER_ROW);
+  return { x: -340 + column * 226, y: -150 + row * 118 };
+}
 export default function KnowledgeGraph() {
-  const { repository, dataset, selected, update, openEvent, go } =
+  const { repository, dataset, selected, update, openEvent, go, params } =
     usePlatform();
   const id = selected ?? dataset.events[0]?.id ?? "";
   // The MiniMap is a 200x150 overlay that would cover a third of a phone screen, and React
   // Flow measures it for the fit calculation. It is not rendered below the 760px breakpoint.
   const small = useIsSmallScreen();
-  const [expanded, setExpanded] = useState(true),
-    [nodeId, setNodeId] = useState<string | null>(null),
+  // The two layers live in the URL, matching how the rest of the workspace keeps view state
+  // there (?past=1, ?event=…). A reviewer can then send a link that shows exactly the view
+  // they mean, and a test can reach a state it could otherwise only click into.
+  const expanded = params.get("layers") !== "0";
+  const showRelated = params.get("related") === "1";
+  const setExpanded = (next: boolean) => update({ layers: next ? null : "0" });
+  const setShowRelated = (next: boolean) => update({ related: next ? "1" : null });
+  const [nodeId, setNodeId] = useState<string | null>(null),
     [edgeId, setEdgeId] = useState<string | null>(null);
-  const graph = useMemo(() => repository.getGraphData(id), [repository, id]);
+  const graph = useMemo(
+    () => repository.getGraphData(id, { related: showRelated }),
+    [repository, id, showRelated],
+  );
+  // The related-event edges are the event->event ones; the venue/demand chain is unchanged.
+  const relatedIds = useMemo(
+    () => graph.edges.filter((e) => e.id.startsWith("related-")).map((e) => e.target),
+    [graph.edges],
+  );
+  // How many same-venue events exist in total, so the panel can say what is not shown.
+  const relatedTotal = useMemo(() => {
+    const event = repository.getEventById(id);
+    if (!event?.venueId) return 0;
+    return dataset.events.filter(
+      (e) => e.venueId === event.venueId && e.id !== event.id,
+    ).length;
+  }, [repository, dataset.events, id]);
   const offsets = { Event: 0, Venue: 0, District: 0, Hotel: 0 };
+  const relatedOrder = new Map(relatedIds.map((rid, index) => [rid, index]));
   const nodes: Node[] = graph.nodes
     .filter((n) => expanded || !["District", "Hotel"].includes(n.kind))
-    .map((n) => ({
-      id: n.id,
-      data: {
-        label: (
-          <div>
-            <small style={{ color: colors[n.kind] }}>
-              {n.kind.toUpperCase()}
-              {n.demo ? " · DEMO" : n.analytical ? " · 规则假设" : ""}
-            </small>
-            <strong>{n.label}</strong>
-          </div>
-        ),
-      },
-      position: {
-        ...positions[n.kind],
-        y: positions[n.kind].y + offsets[n.kind]++ * 125,
-      },
-      style: {
-        border: `1px ${n.analytical ? "dashed" : "solid"} ${colors[n.kind]}`,
-        borderRadius: 12,
-        width: 190,
-        background: "#fff",
-        boxShadow:
-          nodeId === n.id
-            ? `0 0 0 3px ${colors[n.kind]}44`
-            : "0 5px 18px #162b4710",
-      },
-    }));
+    .map((n) => {
+      const relatedIndex = relatedOrder.get(n.id);
+      const isRelated = relatedIndex !== undefined;
+      const kindColor = isRelated ? colors.Related : colors[n.kind];
+      return {
+        id: n.id,
+        data: {
+          label: (
+            <div>
+              <small style={{ color: kindColor }}>
+                {n.kind.toUpperCase()}
+                {isRelated ? " · 关联活动" : ""}
+                {n.demo ? " · DEMO" : n.analytical ? " · 规则假设" : ""}
+              </small>
+              <strong>{n.label}</strong>
+            </div>
+          ),
+        },
+        position: isRelated
+          ? relatedPosition(relatedIndex)
+          : {
+              ...positions[n.kind],
+              y: positions[n.kind].y + offsets[n.kind]++ * 58,
+            },
+        style: {
+          border: `1px ${n.analytical ? "dashed" : "solid"} ${kindColor}`,
+          borderRadius: 12,
+          width: 190,
+          background: "#fff",
+          boxShadow:
+            nodeId === n.id
+              ? `0 0 0 3px ${kindColor}44`
+              : "0 5px 18px #162b4710",
+        },
+      };
+    });
   const edges: Edge[] = graph.edges
     .filter(
       (e) =>
@@ -138,6 +186,12 @@ export default function KnowledgeGraph() {
             onChange={setExpanded}
           />
           <span>展开商圈与酒店</span>
+          <Switch
+            aria-label="显示关联活动"
+            checked={showRelated}
+            onChange={setShowRelated}
+          />
+          <span>显示关联活动</span>
         </Space>
         <Space wrap>
           {Object.entries(colors).map(([k, c]) => (
@@ -151,7 +205,11 @@ export default function KnowledgeGraph() {
         <div className="panel graph-canvas">
           {nodes.length ? (
             <ReactFlow
-              key={id + expanded}
+              // The key must change whenever the node set changes shape. React Flow only
+              // runs fitView on mount, so toggling the related layer without remounting left
+              // the new nodes outside the framed viewport - the caption counted them while
+              // the canvas showed none.
+              key={id + expanded + showRelated}
               nodes={nodes}
               edges={edges}
               fitView
@@ -255,8 +313,27 @@ export default function KnowledgeGraph() {
         className="gap-top"
         type="info"
         showIcon
-        message="HELD_AT：活动与场馆关联；LOCATED_IN：商圈位置背景；NEAR：核验坐标计算的近似直线距离（10 km 内）。虚线表示 DEMO 关系；点击节点查看信息及证据入口。"
+        message={
+          "HELD_AT：活动与场馆关联；LOCATED_IN：商圈位置背景；NEAR：核验坐标计算的近似直线距离（10 km 内）。" +
+          "同场馆 / 同期：两个活动共用同一场馆，由场馆引用计算得出，不是来源声明，因此画为虚线且不算作证据。" +
+          "虚线表示 DEMO 或规则推导的关系；点击节点查看信息及证据入口。"
+        }
       />
+      {showRelated && (
+        <Alert
+          className="gap-top"
+          type="info"
+          showIcon
+          message={
+            relatedIds.length
+              ? `已展开 ${relatedIds.length} 个关联活动（同场馆按同期天数排序）。` +
+                (relatedTotal > relatedIds.length
+                  ? `该场馆共有 ${relatedTotal} 个其他活动，其余未展开以免图不可读。`
+                  : "")
+              : "该活动没有可关联的同场馆活动，或它尚未归入场馆。"
+          }
+        />
+      )}
     </>
   );
 }

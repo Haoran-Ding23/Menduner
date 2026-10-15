@@ -226,3 +226,77 @@ export function eventCoordinates(
     return null;
   return venue.coordinates;
 }
+
+/** How many related events the graph will draw around the selected one.
+ *
+ * Measured on the live database: 30 venues program two or more events, and the same-venue
+ * relation alone accounts for 248 pairs. 苏州文化艺术中心·金鸡湖音乐厅 programs 100 events, so
+ * drawing every neighbour of the busiest venue would be unreadable and useless. The cap keeps
+ * the graph a neighbourhood, and the sidebar reports how many were left out.
+ */
+export const RELATED_LIMIT = 4;
+
+export type RelatedKind =
+  /** Same venue, and the two events overlap in time. The stronger signal: the venue is
+   *  already hosting demand while this event runs. */
+  | "SAME_VENUE_OVERLAPPING"
+  /** Same venue, different dates. The venue is the shared fact; the dates are not. */
+  | "SAME_VENUE";
+
+export interface RelatedEvent {
+  event: Event;
+  kind: RelatedKind;
+  /** Shared days between the two events, or 0 when they do not overlap. */
+  overlapDays: number;
+  /** Shared venue name, for the edge label. */
+  venueName: string;
+}
+
+function dayCount(from: string, to: string): number {
+  const a = Date.parse(from + "T00:00:00Z");
+  const b = Date.parse(to + "T00:00:00Z");
+  if (Number.isNaN(a) || Number.isNaN(b) || b < a) return 0;
+  return Math.round((b - a) / 86400000) + 1;
+}
+
+/** Events that share the selected event's venue, strongest relation first.
+ *
+ * Only the venue relation is offered, because it is the only one the data supports as a
+ * relation rather than as a coincidence. Measured over the 345 live events: same-venue
+ * pairs are 248, same-district pairs are 506 but only 5 events carry a district at all, and
+ * date-overlap pairs are 14,895 — a number that relates everything to everything and
+ * therefore says nothing. Overlap is used only to rank events that already share a venue.
+ */
+export function relatedEvents(
+  event: Event,
+  data: import("../types").Dataset,
+  limit = RELATED_LIMIT,
+): RelatedEvent[] {
+  if (!event.venueId) return [];
+  const venue = data.venues.find((v) => v.id === event.venueId);
+  const own = dates(event);
+  if (!own) return [];
+  const rows: RelatedEvent[] = [];
+  for (const other of data.events) {
+    if (other.id === event.id) continue;
+    if (other.venueId !== event.venueId) continue;
+    const span = dates(other);
+    if (!span) continue;
+    const from = span[0] > own[0] ? span[0] : own[0];
+    const to = span[1] < own[1] ? span[1] : own[1];
+    const overlapDays = from <= to ? dayCount(from, to) : 0;
+    rows.push({
+      event: other,
+      kind: overlapDays ? "SAME_VENUE_OVERLAPPING" : "SAME_VENUE",
+      overlapDays,
+      venueName: venue?.name ?? event.venueId,
+    });
+  }
+  rows.sort((a, b) => {
+    if (a.overlapDays !== b.overlapDays) return b.overlapDays - a.overlapDays;
+    const sa = dates(a.event)?.[0] ?? "";
+    const sb = dates(b.event)?.[0] ?? "";
+    return sa.localeCompare(sb) || a.event.name.localeCompare(b.event.name);
+  });
+  return rows.slice(0, limit);
+}

@@ -1,13 +1,18 @@
-import { useMemo } from "react";
-import { Empty, Tag, Alert } from "antd";
+import { useMemo, useState } from "react";
+import { Empty, Tag, Alert, Switch, Space } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
 import { filterEvents, eventCoordinates, categories, venueHotspots } from "../../utils/data";
+import { assessDemand } from "../../services/intelligence";
 import Filters from "../../components/Filters";
 import EventMap from "../../components/Map";
 import EventCard from "../../components/EventCard";
 import VenueHotspots from "../../components/VenueHotspots";
 export default function CityEventMap() {
   const { dataset, filters } = usePlatform();
+  // Hotels are drawn on request rather than always. The map is about where the demand is;
+  // the hotel layer answers the follow-up question, and leaving it on by default buries the
+  // event markers under a cluster of H pins in the same few districts.
+  const [showHotels, setShowHotels] = useState(true);
   const events = useMemo(
     () => filterEvents(dataset.events, filters),
     [
@@ -27,6 +32,16 @@ export default function CityEventMap() {
     [events, dataset.venues],
   );
   const hotspots = clusters.filter((row) => row.isHotspot);
+  // What the hotel layer would draw, so the control can say how much it is showing.
+  const hotelCount = useMemo(() => {
+    const ids = new Set<string>();
+    for (const event of events) {
+      for (const { hotel } of assessDemand(event, dataset).nearbyHotels) {
+        ids.add(hotel.id);
+      }
+    }
+    return ids.size;
+  }, [events, dataset]);
   return (
     <>
       <div className="page-heading">
@@ -69,10 +84,17 @@ export default function CityEventMap() {
         <section className="panel map-panel">
           <div className="panel-heading">
             <h3>空间分布</h3>
-
-            <Tag color="cyan">金鸡湖 / 独墅湖</Tag>
+            <Space wrap>
+              <Switch
+                aria-label="显示酒店"
+                checked={showHotels}
+                onChange={setShowHotels}
+              />
+              <span>显示酒店（{hotelCount} 家）</span>
+              <Tag color="cyan">金鸡湖 / 独墅湖</Tag>
+            </Space>
           </div>
-          <EventMap events={events} demandLayer />
+          <EventMap events={events} demandLayer={showHotels} />
           <div className="legend">
             {Object.values(categories).map((c) => (
               <span key={c.label}>

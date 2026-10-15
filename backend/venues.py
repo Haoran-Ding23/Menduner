@@ -248,6 +248,30 @@ def merge(db_path: Path, *, alias_id: str, canonical_id: str, reviewer: str,
                 ),
             )
             # The events now sit at a canonical venue, so their venue reference is settled.
+            #
+            # The stored claim must point at the venue the event actually references. Moving
+            # the event row alone leaves its evidence pointing at the id that was just
+            # deleted, so the claim and the event disagree for ever after. That is not a
+            # cosmetic mismatch: every reader that cross-checks a stored claim against the
+            # event it belongs to - the knowledge graph's venue edge, and the merge itself,
+            # which reads this row to find what was approved - silently finds nothing.
+            con.execute(
+                "UPDATE crawler_evidence SET value=? "
+                "WHERE event_id=? AND field_name='venue_id'",
+                (json.dumps(canonical_id, ensure_ascii=False), event["id"]),
+            )
+            con.execute(
+                "UPDATE evidence SET value=? "
+                "WHERE entity_id=? AND field='venueId' AND value=?",
+                (
+                    json.dumps(canonical_id, ensure_ascii=False),
+                    event["id"],
+                    json.dumps(alias_id, ensure_ascii=False),
+                ),
+            )
+            # Read back after the rewrite so the recorded decision names the value the event
+            # now carries; recording the superseded id would leave the audit trail pointing
+            # at the venue this merge just removed.
             claim = con.execute(
                 "SELECT value FROM crawler_evidence WHERE event_id=? AND field_name='venue_id'",
                 (event["id"],),

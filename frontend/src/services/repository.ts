@@ -7,7 +7,7 @@ import evidence from "../data/evidence.json";
 import meta from "../data/meta.json";
 import { normalizeDataset } from "./adapter";
 import type { Dataset, GraphNode, GraphEdge } from "../types";
-import { effectiveStatus } from "../utils/data";
+import { effectiveStatus, relatedEvents } from "../utils/data";
 export const sampleDataset = normalizeDataset({
   events,
   venues,
@@ -25,7 +25,7 @@ export function createRepository(dataset: Dataset) {
     getDistricts: () => dataset.districts,
     getEvidence: (id: string) =>
       dataset.evidence.filter((e) => e.entityId === id),
-    getGraphData: (id: string) => {
+    getGraphData: (id: string, options: { related?: boolean } = {}) => {
       const event = dataset.events.find((e) => e.id === id);
       const nodes: GraphNode[] = [],
         edges: GraphEdge[] = [];
@@ -111,6 +111,33 @@ export function createRepository(dataset: Dataset) {
             target: hotel.id,
             label: `NEAR · ${distance.toFixed(2)} km`,
             demo: false,
+          });
+        });
+      }
+      // Related events, drawn only on request.
+      //
+      // The graph is otherwise a single-event neighbourhood: it answers "where is this and
+      // what is around it", never "what else is going on". 苏州文化艺术中心·金鸡湖音乐厅 alone
+      // programs 100 live events, so the venue relation is the one thing that makes an event
+      // part of a programme rather than an isolated pin.
+      //
+      // These edges are analytic, not sourced: they are computed from the venue reference
+      // the two events already carry, and they assert no causal or economic link. They are
+      // therefore marked `analytical` and drawn dashed, the same convention the DEMO and
+      // rule-derived edges use, so nothing on screen claims more evidence than exists.
+      if (options.related && venue && nodes.some((n) => n.id === venue.id)) {
+        relatedEvents(event, dataset).forEach(({ event: other, kind, overlapDays }) => {
+          add(other.id, other.name, "Event", other.demo);
+          edges.push({
+            id: `related-${event.id}-${other.id}`,
+            source: event.id,
+            target: other.id,
+            label:
+              kind === "SAME_VENUE_OVERLAPPING"
+                ? `同期 · 同场馆 ${overlapDays} 天`
+                : "同场馆",
+            demo: false,
+            analytical: true,
           });
         });
       }

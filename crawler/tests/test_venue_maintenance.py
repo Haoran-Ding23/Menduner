@@ -294,6 +294,82 @@ def test_merge_moves_every_reference_and_removes_the_duplicate_row(seeded):
     assert approved == 1
 
 
+def test_merge_rewrites_the_stored_venue_claim_to_the_survivor(seeded):
+    """Moving the event row is not enough; its evidence has to move with it.
+
+    On the live database a merge left evt-77ccff2b's venue row pointing at 开明大戏院 while its
+    stored venue_id claim still named 苏州开明大戏院, the row the merge had just deleted. Every
+    reader that cross-checks a claim against the event it belongs to then finds nothing - the
+    knowledge graph drew a single event node with no venue and no related events at all,
+    because its venue edge requires the claim's value to equal the event's venueId.
+    """
+    db, alias_file = seeded
+    with connect(db) as con:
+        # A stored claim needs a collected page to point at, so give it a job and a raw item.
+        now = "2026-10-15T00:00:00+00:00"
+        con.execute(
+            "INSERT INTO crawler_jobs(id, started_at, status) VALUES(?,?,?)",
+            ("job-1", now, "Success"),
+        )
+        con.execute(
+            "INSERT INTO crawler_raw_items"
+            "(id, job_id, source_id, item_key, original_url, source_name, crawl_time, "
+            " raw_content, mock, validation_status)"
+            " VALUES(?,?,?,?,?,?,?,?,?,?)",
+            ("raw-1", "job-1", "venue-suzhou-orchestra", "item-1",
+             "https://example.invalid/src", "test", now, "<html></html>", 0, "Published"),
+        )
+        # Give the duplicate's event a stored claim naming the id that is about to vanish.
+        for table, field_col in (("crawler_evidence", "field_name"), ("evidence", "field")):
+            columns = {r[1] for r in con.execute(f"PRAGMA table_info({table})")}
+            row = {
+                "id": f"claim-{table}",
+                "event_id": "evt-2",
+                field_col: "venue_id" if field_col == "field_name" else "venueId",
+                "value": json.dumps("dup", ensure_ascii=False),
+                "source_url": "https://example.invalid/src",
+            }
+            if "entity_id" in columns:
+                row["entity_id"] = "evt-2"
+            if "verification_status" in columns:
+                row["verification_status"] = "Needs Review"
+            if "source" in columns:
+                row["source"] = "venue-suzhou-orchestra"
+            if "confidence" in columns:
+                row["confidence"] = 0.6
+            if "raw_item_id" in columns:
+                row["raw_item_id"] = "raw-1"
+            if "payload" in columns:
+                row["payload"] = "{}"
+            names = ", ".join(row)
+            marks = ", ".join("?" for _ in row)
+            con.execute(f"INSERT INTO {table}({names}) VALUES({marks})", tuple(row.values()))
+
+    venue_store.merge(
+        db,
+        alias_id="dup",
+        canonical_id="keep",
+        reviewer="rm",
+        reason="same theatre",
+        alias_path=alias_file,
+    )
+
+    with connect(db) as con:
+        stored = con.execute(
+            "SELECT value FROM crawler_evidence WHERE event_id='evt-2'"
+        ).fetchone()[0]
+        projected = con.execute(
+            "SELECT value FROM evidence WHERE entity_id='evt-2' AND field='venueId'"
+        ).fetchone()[0]
+        decisions = con.execute(
+            "SELECT reviewed_value FROM review_decisions WHERE event_id='evt-2' AND field='venueId'"
+        ).fetchall()
+    assert json.loads(stored) == "keep", "the claim must name the surviving venue"
+    assert json.loads(projected) == "keep"
+    # The recorded decision must name the value the event now carries, not the deleted id.
+    assert [r[0] for r in decisions] == ["keep"]
+
+
 def test_merge_applies_to_later_crawls_through_the_alias_file(seeded):
     db, alias_file = seeded
     venue_store.merge(
