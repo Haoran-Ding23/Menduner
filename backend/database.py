@@ -49,6 +49,12 @@ def initialize(path):
         from backend.crawler_migration import migrate
         migrate(con)
 
+        # Attendance is a separate, human-collected dataset rather than part of the crawl
+        # projection, so its table is created here alongside the other schemas instead of by
+        # a crawler run.
+        from crawler import attendance
+        attendance.ensure_schema(con)
+
 def aggregate_status(statuses):
     for value in ('Conflicting', 'Needs Review', 'Unverified', 'Missing'):
         if value in statuses:
