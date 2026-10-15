@@ -52,15 +52,74 @@ args = ap.parse_args()
 con = sqlite3.connect(args.db)
 con.row_factory = sqlite3.Row
 
+def decision_value(raw):
+    """The venue id a review decision names.
+
+    ``review_decisions.reviewed_value`` stores plain text, not JSON - unlike the evidence
+    payload, where the same value is a JSON-encoded string. Parsing the decision with
+    ``json.loads`` therefore fails on every id, and a failure read as None looks exactly like
+    "this decision names a venue that no longer exists": the first version of this repair
+    classified all 112 healthy decisions as broken and would have rewritten every one of them.
+    Text is taken as written; only a JSON-encoded string is decoded.
+    """
+    if raw is None:
+        return None
+    text = raw.strip()
+    if len(text) >= 2 and text[0] == '"' and text[-1] == '"':
+        try:
+            return json.loads(text)
+        except ValueError:
+            return text
+    return text
+
+
+def payload_value(raw):
+    """The venue id an evidence payload column holds, which IS JSON-encoded."""
+    if raw is None:
+        return None
+    text = raw.strip()
+    if not text:
+        return None
+    try:
+        return json.loads(text)
+    except ValueError:
+        return text
+
+
 current = {r["id"]: r["venue"] for r in con.execute("SELECT id, venue FROM events")}
 known = {r["id"] for r in con.execute("SELECT id FROM venues")}
+# Events a human has already settled for this field, regardless of which value they approved.
 approved = {
     (r["event_id"], r["field"])
     for r in con.execute("SELECT event_id, field FROM review_decisions WHERE decision='Verified'")
 }
 
+# Decisions whose reviewed_value no longer matches the event's venue. A merge rewrote the
+# event but left the decision naming the venue it deleted, and a decision only applies when
+# its reviewed_value equals the event's current value - so the approval silently stopped
+# working and the field fell back to Needs Review despite having been settled by a human.
+#
+# A decision with no value at all is left alone: it names nothing, so there is nothing to
+# repoint, and treating "empty" as "stale" is how the first attempt went wrong.
+stale_decisions = {}
+empty_decisions = 0
+for r in con.execute(
+    "SELECT event_id, reviewed_value FROM review_decisions "
+    "WHERE field='venueId' AND decision='Verified'"
+):
+    want = current.get(r["event_id"])
+    if want is None:
+        continue
+    have = decision_value(r["reviewed_value"])
+    if have is None:
+        empty_decisions += 1
+        continue
+    if have != want:
+        stale_decisions[r["event_id"]] = {"event_id": r["event_id"], "from": have,
+                                          "to": want, "gone": have not in known}
+
 # 服务的行来自 payload；对照事件的场馆，检查 payload 里的值
-broken = []
+broken = {}
 for r in con.execute(
     "SELECT event_id, value, payload FROM evidence WHERE field='venueId'"
 ):
@@ -76,20 +135,31 @@ for r in con.execute(
     shown_status = payload.get("status")
     wrong_value = shown != want
     stale_status = (not wrong_value) and shown_status != "Verified" and (eid, "venueId") in approved
-    if not (wrong_value or stale_status):
+    # An event with a stale decision also needs a rebuild, even when its payload value is
+    # already correct: the rebuild is what re-applies the corrected decision.
+    decision_stale = eid in stale_decisions
+    if not (wrong_value or stale_status or decision_stale):
         continue
-    broken.append({
+    broken[eid] = {
         "event_id": eid,
         "payload_value": shown,
-        "column_value": json.loads(r["value"]) if r["value"] else None,
+        "column_value": payload_value(r["value"]),
         "payload_status": shown_status,
         "want": want,
         "gone": shown not in known,
-        "issue": "value" if wrong_value else "status",
-    })
+        "issue": "value" if wrong_value else ("decision" if decision_stale else "status"),
+    }
+broken = list(broken.values())
 
 print(f"库: {args.db}")
 print(f"事件 {len(current)}  场馆 {len(known)}")
+print()
+print(f"=== 记录了旧场馆的人工决策: {len(stale_decisions)} 条 ===")
+for d in stale_decisions.values():
+    flag = "  ← 决策指向已不存在的场馆" if d["gone"] else ""
+    print(f"  {d['event_id']}  {d['from']} -> {d['to']}{flag}")
+if empty_decisions:
+    print(f"  （另有 {empty_decisions} 条决策没有记录值，不动它们）")
 print()
 print(f"=== 需要重建的事件: {len(broken)} 个 ===")
 for b in broken:
@@ -98,7 +168,7 @@ for b in broken:
     print(f"      接口返回={b['payload_value']} (status={b['payload_status']})  "
           f"实际场馆={b['want']}{flag}")
 
-if not broken:
+if not broken and not stale_decisions:
     print("  无需修复")
     sys.exit(0)
 
@@ -109,7 +179,20 @@ if not args.apply:
 
 con.close()
 print()
-print("=== 用管线自身的投影重建 ===")
+print("=== 1. 修正记录了旧场馆的人工决策 ===")
+if stale_decisions:
+    dec = sqlite3.connect(args.db)
+    for d in stale_decisions.values():
+        dec.execute("UPDATE review_decisions SET reviewed_value=? WHERE event_id=? AND field='venueId'",
+                    (d["to"], d["event_id"]))
+    dec.commit()
+    dec.close()
+    print(f"  已修正 {len(stale_decisions)} 条")
+else:
+    print("  无需修正")
+
+print()
+print("=== 2. 用管线自身的投影重建事件 ===")
 for b in broken:
     reproject_event(args.db, b["event_id"])
     print(f"  已重建 {b['event_id']}")

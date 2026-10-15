@@ -219,22 +219,20 @@ sources:
   crawl_url: https://visitsz.wglj.suzhou.com.cn/festival-activity.aspx
   trust_level: OFFICIAL_GOVERNMENT
   priority: 1
-  crawl_status: PARTIAL
+  crawl_status: SUCCESS
   tier: 2
   require_events: true
   adapter: visitsz
   implementation: event_extraction
-  reason: 'No explicit 地点 (venue/location) on the visitsz detail page: ''详见文内''; placeholder
-    and template values are never published; No explicit 地点 (venue/location) on the
-    visitsz detail page: ''详见文章''; placeholder and template values are never published'
+  reason: null
   limitation: 'Secondary/aggregator publisher: titles and 来源 credits come from venue
     WeChat accounts, so its claims stay Unverified/Needs Review and are never Verified.
     The calendar is not ordered by event date; paging runs while it still yields not-yet-ended
-    records and stops after a run of future-free pages, never following the advertised 662
-    pages. Measured 2026-10-15: pages 1-35 held 213 such records, page 45 held none. Only
-    max_items bounds detail requests.
-    Records without a real 时间 date and 地点 value are rejected, never published.'
-  last_checked: '2026-10-15T07:46:09.116412+00:00'
+    records and stops after a run of future-free pages, never following the advertised
+    662 pages. Measured 2026-10-15: pages 1-35 held 213 such records, page 45 held
+    none. Only max_items bounds detail requests. Records without a real 时间 date and
+    地点 value are rejected, never published.'
+  last_checked: '2026-10-15T08:07:56.992256+00:00'
   topic: tourism
 - source_id: community-douban-suzhou
   source_name: 豆瓣同城苏州
