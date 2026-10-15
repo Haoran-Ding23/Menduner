@@ -347,12 +347,21 @@ def merge(db_path: Path, *, alias_id: str, canonical_id: str, reviewer: str,
 
 def set_coordinates(db_path: Path, *, venue_id: str, lng: float, lat: float,
                     source_url: str, reviewer: str, note: str | None = None,
-                    system: str = "GCJ-02") -> dict:
-    """Record a human-supplied venue coordinate, with its provenance."""
+                    system: str = "GCJ-02", status: str = "Verified") -> dict:
+    """Record a human-supplied venue coordinate, with its provenance.
+
+    ``status`` exists because not every coordinate deserves "Verified". A building entrance is
+    a point and can be verified. A scenic area or an old town is a region, and the only
+    coordinate AMap offers is one representative point inside it - 莲花岛's sits on its north
+    side. Writing that as Verified would claim a precision the place does not have, so such a
+    row is recorded as Needs Review and queued for a human instead.
+    """
     if not reviewer.strip():
         raise ValueError("A coordinate must name the reviewer who checked it")
     if system != "GCJ-02":
         raise ValueError("Only GCJ-02 coordinates are accepted")
+    if status not in ("Verified", "Needs Review"):
+        raise ValueError("A coordinate status is Verified or Needs Review")
     if not (
         SUZHOU_BOUNDS["lng_min"] <= lng <= SUZHOU_BOUNDS["lng_max"]
         and SUZHOU_BOUNDS["lat_min"] <= lat <= SUZHOU_BOUNDS["lat_max"]
@@ -375,7 +384,7 @@ def set_coordinates(db_path: Path, *, venue_id: str, lng: float, lat: float,
             "lng": lng,
             "lat": lat,
             "system": system,
-            "status": "Verified",
+            "status": status,
             "sourceUrl": url,
         }
         con.execute(

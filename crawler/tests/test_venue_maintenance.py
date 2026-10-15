@@ -452,6 +452,61 @@ def test_merge_never_overwrites_a_coordinate_the_survivor_already_has(seeded):
     assert survivor["coordinates"] == coords(120.62, 31.31), "the survivor's own record wins"
 
 
+def test_a_region_coordinate_is_recorded_as_needs_review_not_verified(seeded):
+    """A scenic area is a region, so its single coordinate is not a verified point.
+
+    AMap offers one representative point for 莲花岛 and it sits on the island's north side.
+    Writing that as Verified claims a precision the place does not have. A building entrance
+    is a point and stays Verified; a region is queued for a human instead.
+    """
+    db, _ = seeded
+    venue_store.set_coordinates(
+        db,
+        venue_id="keep",
+        lng=120.5,
+        lat=31.29,
+        source_url="https://ditu.amap.com/place/B0TEST",
+        reviewer="rm",
+        note="scenic area, representative point only",
+        status="Needs Review",
+    )
+    with connect(db) as con:
+        payload = json.loads(
+            con.execute("SELECT payload FROM venues WHERE id='keep'").fetchone()[0]
+        )
+    assert payload["coordinates"]["status"] == "Needs Review"
+
+    # The default is unchanged, so a building entrance is still Verified.
+    venue_store.set_coordinates(
+        db,
+        venue_id="keep",
+        lng=120.5,
+        lat=31.29,
+        source_url="https://ditu.amap.com/place/B0TEST2",
+        reviewer="rm",
+        note="building entrance",
+    )
+    with connect(db) as con:
+        payload = json.loads(
+            con.execute("SELECT payload FROM venues WHERE id='keep'").fetchone()[0]
+        )
+    assert payload["coordinates"]["status"] == "Verified"
+
+
+def test_an_unknown_coordinate_status_is_rejected(seeded):
+    db, _ = seeded
+    with pytest.raises(ValueError, match="Verified or Needs Review"):
+        venue_store.set_coordinates(
+            db,
+            venue_id="keep",
+            lng=120.5,
+            lat=31.29,
+            source_url="https://ditu.amap.com/place/B0TEST",
+            reviewer="rm",
+            status="Probably fine",
+        )
+
+
 def test_merge_writes_a_canonical_row_so_later_crawls_can_resolve_the_alias(seeded):
     """An alias without its canonical row breaks the next crawl.
 
