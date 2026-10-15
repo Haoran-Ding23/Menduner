@@ -185,7 +185,36 @@ def merge(db_path: Path, *, alias_id: str, canonical_id: str, reviewer: str,
         )
         name = json.loads(canonical_row["payload"]).get("name") or alias_name
 
-        # Record the alias first: it is the authority every later crawl reads.
+        # Carry over anything the survivor lacks before the alias is recorded, because the
+        # alias carries the canonical row and the row has to be the final one.
+        #
+        # The venue being merged away can be the only row holding a venue's verified
+        # geometry: on the live data 苏州狮山大剧院 carried the AMap record while the
+        # surviving 狮山大剧院 had six events and no coordinates. Deleting the alias row
+        # without this transfer destroys the only copy of a coordinate, and a coordinate is
+        # the one field that cannot be recovered by re-reading a source page.
+        #
+        # Only a field the canonical row is missing is filled, the value is copied verbatim,
+        # and nothing is derived, guessed or overwritten.
+        carried: list[str] = []
+        if alias_row is not None:
+            alias_payload = json.loads(alias_row["payload"])
+            canonical_payload = json.loads(canonical_row["payload"])
+            updated = dict(canonical_payload)
+            for field in ("coordinates", "address"):
+                if not canonical_payload.get(field) and alias_payload.get(field):
+                    updated[field] = alias_payload[field]
+                    carried.append(field)
+            if carried:
+                con.execute(
+                    "UPDATE venues SET payload=? WHERE id=?",
+                    (json.dumps(updated, ensure_ascii=False, sort_keys=True), canonical_id),
+                )
+                canonical_row = {"payload": json.dumps(updated, ensure_ascii=False)}
+
+        # Record the alias first: it is the authority every later crawl reads. The canonical
+        # row travels with it so the publish pipeline can resolve the id; without it the next
+        # crawl refuses the alias with "canonical venue that is not declared".
         write_alias(
             alias_id=alias_id,
             canonical_id=canonical_id,
@@ -193,6 +222,7 @@ def merge(db_path: Path, *, alias_id: str, canonical_id: str, reviewer: str,
             reason=reason,
             evidence_url=evidence_url,
             path=alias_path,
+            canonical_row=json.loads(canonical_row["payload"]),
         )
         reset_cache()
 
