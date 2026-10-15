@@ -50,3 +50,10 @@ backend/.venv-*/
 !.env.example
 !frontend/.env.example
 
+# pytest's numbered temp directories. Normally these live in the system temp directory, but a
+# session that points TEMP at the workspace (done once to work around a Windows file-lock issue)
+# puts them in the repository instead. They are not dot-prefixed, so the rule above misses them.
+pytest-of-*/
+pytest-*/
+
+

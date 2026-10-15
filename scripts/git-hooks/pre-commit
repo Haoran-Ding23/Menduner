@@ -1,0 +1,28 @@
+#!/bin/sh
+# Refuse to commit local scratch.
+#
+# Five separate times a build or test run put a temporary directory in the workspace and it was
+# committed: a Vite node compile cache, a deploy staging directory, screenshot previews, and
+# pytest's numbered temp directories. Each time the fix was another line in .gitignore, and each
+# time the next incident used a name nobody had listed yet. Adding rules is not converging, so
+# this checks the actual staged paths instead of trying to predict them.
+#
+# Install:  cp scripts/git-hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+# Bypass:   git commit --no-verify
+
+blocked=$(git diff --cached --name-only --diff-filter=ACMR \
+  | grep -v -E '^\.gitignore$|^\.env\.example$|/\.env\.example$|^scripts/git-hooks/' \
+  | grep -E \
+  '^(\.|pytest-|build-|dist-|tmp-)|/(\.vite-tmp|\.build-tmp|\.esbuild-tmp|\.stage|node_modules|__pycache__|\.pytest_cache)/|pytest-of-|\.pyc$|-preview\.png$')
+
+if [ -n "$blocked" ]; then
+  echo "pre-commit: refusing to commit local scratch files:" >&2
+  echo "$blocked" | sed 's/^/  /' >&2
+  echo "" >&2
+  echo "These are build or test artefacts, not project content. Unstage them with:" >&2
+  echo "  git restore --staged <path>" >&2
+  echo "or bypass this check deliberately with:  git commit --no-verify" >&2
+  exit 1
+fi
+
+exit 0
