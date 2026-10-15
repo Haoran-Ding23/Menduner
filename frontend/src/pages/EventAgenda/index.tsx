@@ -264,9 +264,13 @@ function AgendaRow({
             {category.label}
           </Tag>
           <Tag color={statusColors[status]}>{statusLabels[status]}</Tag>
-          <ImpactTag event={event} />
-          {!plottable && (
-            <Tooltip title="这个场馆还没有核验坐标，地图上无法定位，仍可在列表里查看">
+          {/* ImpactTag is only informative once the venue can be located. Without coordinates the
+              assessment is always UNKNOWN, and a column of identical UNKNOWN tags on every row
+              is noise rather than information; the 缺坐标 tag below already says why. */}
+          {plottable ? (
+            <ImpactTag event={event} />
+          ) : (
+            <Tooltip title="这个场馆还没有核验坐标，地图上无法定位，需求等级也算不出来，仍可在列表里查看">
               <Tag>缺坐标</Tag>
             </Tooltip>
           )}
