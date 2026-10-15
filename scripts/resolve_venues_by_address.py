@@ -34,6 +34,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import httpx  # noqa: E402
 
 from backend.database import connect, snapshot  # noqa: E402
+from crawler.addresses import lookup_address  # noqa: E402
 
 DEFAULT_DB = Path("backend/data/menduner.sqlite3")
 POI_ENDPOINT = "https://restapi.amap.com/v3/place/text"
@@ -159,6 +160,27 @@ def evidence(venue_name: str, poi_name: str, addr_key: str, poi_addr: str) -> st
     return "name+address"
 
 
+def query_pois(client, key: str, query: str):
+    """AMap POI candidates for one query: ``(pois, None)`` or ``(None, reason)``."""
+    try:
+        document = client.get(
+            POI_ENDPOINT,
+            params={
+                "key": key,
+                "keywords": query,
+                "city": "苏州",
+                "offset": 10,
+                "page": 1,
+                "extensions": "all",
+            },
+        ).json()
+    except Exception as exc:  # noqa: BLE001 - the reason is reported, not raised
+        return None, f"ERROR {type(exc).__name__}"
+    if document.get("status") != "1":
+        return None, f"AMAP {document.get('info')}"
+    return document.get("pois") or [], None
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--db", type=Path, default=DEFAULT_DB)
@@ -204,56 +226,54 @@ def main() -> int:
             address = venue.get("address") or ""
             addr_key = address_key(address)
             # Address first when there is one — it is the discriminating signal. Name alone is
-            # the weaker query and is what produced the false failures.
-            query = f"{address} {name}".strip() if addr_key else name
-            try:
-                document = client.get(
-                    POI_ENDPOINT,
-                    params={
-                        "key": key,
-                        "keywords": query,
-                        "city": "苏州",
-                        "offset": 10,
-                        "page": 1,
-                        "extensions": "all",
-                    },
-                ).json()
-            except Exception as exc:
-                print(f"  [{index:2d}] {name[:28]:28s} ERROR {type(exc).__name__}")
-                failed.append(venue)
-                time.sleep(args.interval)
-                continue
-            if document.get("status") != "1":
-                print(f"  [{index:2d}] {name[:28]:28s} AMAP {document.get('info')}")
-                failed.append(venue)
-                time.sleep(args.interval * 2)
-                continue
+            # the weaker query and is what produced the false failures. When the full address
+            # finds nothing, the same address reduced to its road and house number is tried
+            # next: AMap indexes "松涛街1088号" better than the building detail behind it.
+            queries = []
+            if addr_key:
+                queries.append(("address", f"{address} {name}".strip()))
+                reduced = lookup_address(address)
+                if reduced and reduced != address:
+                    queries.append(("road+number", f"{reduced} {name}".strip()))
+            if not queries:
+                queries.append(("name", name))
 
             best = None
-            for poi in document.get("pois") or []:
-                if not poi.get("location") or not poi.get("id"):
-                    continue
-                if not any(area in (poi.get("cityname") or "") for area in SUZHOU):
-                    continue
-                if not type_ok(poi.get("type")):
-                    continue
-                poi_addr = address_key(poi.get("address"))
-                grounds = evidence(name, poi.get("name") or "", addr_key, poi_addr)
-                if grounds is None:
-                    continue
-                lng, lat = (float(x) for x in poi["location"].split(","))
-                best = (poi, lng, lat, grounds)
-                break
+            failure = None
+            for kind, query in queries:
+                pois, failure = query_pois(client, key, query)
+                if pois is None:
+                    break
+                for poi in pois:
+                    if not poi.get("location") or not poi.get("id"):
+                        continue
+                    if not any(area in (poi.get("cityname") or "") for area in SUZHOU):
+                        continue
+                    if not type_ok(poi.get("type")):
+                        continue
+                    poi_addr = address_key(poi.get("address"))
+                    grounds = evidence(name, poi.get("name") or "", addr_key, poi_addr)
+                    if grounds is None:
+                        continue
+                    lng, lat = (float(x) for x in poi["location"].split(","))
+                    best = (poi, lng, lat, grounds, kind, query)
+                    break
+                if best:
+                    break
+                time.sleep(args.interval)
 
             if best is None:
-                print(f"  [{index:2d}] {name[:28]:28s} 无可靠匹配（未写入）")
+                print(f"  [{index:2d}] {name[:28]:28s} 无可靠匹配（未写入）"
+                      + (f"  {failure}" if failure else ""))
                 failed.append(venue)
             else:
-                poi, lng, lat, grounds = best
+                poi, lng, lat, grounds, kind, query = best
                 print(
-                    f"  [{index:2d}] {name[:28]:28s} MATCH({grounds}) {lng:.6f},{lat:.6f}\n"
+                    f"  [{index:2d}] {name[:28]:28s} MATCH({grounds}/{kind}) {lng:.6f},{lat:.6f}\n"
                     f"        -> {poi.get('name')}  [{str(poi.get('type'))[:34]}]\n"
-                    f"        -> 地址 {poi_addr or poi.get('address')}  id={poi.get('id')}"
+                    f"        -> 地址 {address_key(poi.get('address')) or poi.get('address')}  "
+                    f"id={poi.get('id')}\n"
+                    f"        -> 查询 {query}"
                 )
                 matched.append(
                     (

@@ -238,7 +238,14 @@ def resolve_year(month, day, weekday=None, today=None, max_drift_days=0):
     ``[today - max_drift_days, today + 366 days]`` and whose real weekday matches the claim
     the source itself printed. Exactly one candidate resolves; zero or several return None,
     and the caller rejects the record rather than inventing a date.
+
+    With no printed weekday there is no claim to match, and the window alone must never pick
+    a year: a bare ``10月14日`` seen on 2026-10-15 would otherwise resolve to 2027-10-14 even
+    though the page may well mean the day before. Such a label resolves only through the
+    caller's own anchor (a year printed elsewhere in the SAME interval), never from here.
     """
+    if weekday is None:
+        return None
     anchor = today or today_local()
     earliest = anchor - timedelta(days=max_drift_days)
     latest = anchor + timedelta(days=366)

@@ -13,6 +13,7 @@ from crawler.extractor import extract, text
 from crawler.validator import validate
 from crawler.storage import put_evidence
 from crawler.venues import canonical_venue_id, canonical_venue_rows
+from crawler.addresses import venue_address
 from crawler import crawl_log, review, verification
 
 REFERENCE_FILE = (
@@ -540,9 +541,11 @@ def publish(con, adapter, accepted, now, references, allow_demo, source_meta=Non
         if not item.mock and event.get("venue"):
             key = text(event["venue"]).replace("·", "").replace(" ", "")
             venue_id = "venue-" + hashlib.sha256(key.encode()).hexdigest()[:20]
-            address = (
-                event.get("location") if "号" in (event.get("location") or "") else None
-            )
+            # The venue row carries the ADDRESS part of the source's own place string; the claim
+            # itself stays verbatim on the event's `location` field and its evidence. Without
+            # this, a 豆瓣 place line like
+            # "苏州 吴中区 山丘livehouse-斜塘店 松涛街1088号斜塘老街36幢" was stored as the address.
+            address = venue_address(event.get("location"), event.get("venue"))
             canonical_id = canonical_venue_id(venue_id)
             if canonical_id != venue_id:
                 # This name belongs to a venue that is already recorded under a canonical id.

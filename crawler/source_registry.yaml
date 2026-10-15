@@ -60,14 +60,19 @@ sources:
   crawl_url: https://www.suzhouexpo.com/zhanhuiricheng-389.html
   trust_level: OFFICIAL_VENUE
   priority: 2
-  crawl_status: FAILED
+  crawl_status: SUCCESS
   tier: 1
   adapter: expo
-  implementation: public_page_audit
-  reason: No reliable event record passed extraction and validation; raw/context retained;
-    No validated static schedule records. Template years/placeholders are not events.
-    Dynamic token/header APIs were not requested.
-  last_checked: '2026-10-13T15:00:05.179221+00:00'
+  implementation: event_extraction
+  reason: null
+  limitation: 'The official schedule is assembled in the browser: the served HTML
+    carries no dates, and the calendar is read from the host''s own public JSON (/api/Article/list)
+    using the static channel token the host publishes in /templates/expo_CN/js/config.js.
+    That token is public markup shipped to every visitor, not a credential, and it
+    is re-read on every run rather than stored. extras.start_time carries the CMS
+    insertion clock, so only its calendar date is published; past-year archives are
+    never republished as live demand.'
+  last_checked: '2026-10-15T05:06:24.861226+00:00'
   topic: exhibition
 - source_id: venue-suzhou-olympic
   source_name: Suzhou Olympic Sports Centre
@@ -96,14 +101,18 @@ sources:
   crawl_url: https://www.sscac.com.cn/
   trust_level: OFFICIAL_VENUE
   priority: 2
-  crawl_status: FAILED
+  crawl_status: SUCCESS
   tier: 1
   adapter: arts
-  implementation: public_page_audit
-  reason: '[{"error": "Official host publishes no event data in the served HTML (client-rendered
-    Nuxt shell with an empty state payload); its events are reachable via the visitsz
-    tourism portal instead", "url": "https://www.sscac.com.cn/"}]'
-  last_checked: '2026-10-13T20:46:57.659144+00:00'
+  implementation: event_extraction
+  reason: null
+  limitation: 'Still a client-rendered Nuxt shell: the served HTML holds no event
+    data, so the calendar is read from the host''s own public JSON API (/sue/api/cinema/findYanYiList
+    and /cinema/showDramaInfoList) that the shell''s published bundle advertises,
+    re-discovered on every run and never assumed. The 戏剧 endpoint answers its whole
+    archive back to 1992 without the startTime filter its own page sends, so the filter
+    is part of the request and finished performances are never republished.'
+  last_checked: '2026-10-15T05:10:30.076783+00:00'
   topic: null
 - source_id: platform-huodongjia-suzhou
   source_name: Huodongjia Suzhou

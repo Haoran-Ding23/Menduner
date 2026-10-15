@@ -31,11 +31,8 @@ def main():
         help=f"1-{MAX_ITEMS_CAP} detail records per source; no pagination",
     )
     parser.add_argument(
-        "--include-expo",
-        action="store_true",
-        help="Audit official expo static page; currently publishes no reliable events",
+        "--tier1", action="store_true", help="Attempt the ten CityEvent Tier 1 sources"
     )
-    parser.add_argument("--tier1", action="store_true", help="Attempt the ten CityEvent Tier 1 sources, including audits")
     parser.add_argument("--registry", type=Path, default=REGISTRY_PATH, help="Source registry and last-observed status")
     parser.add_argument("--coverage-report", type=Path, help="Write source coverage JSON")
     args = parser.parse_args()
@@ -61,8 +58,7 @@ def main():
             parser.error("--tier1 selects the ten sources; use --source separately")
         keys = (tier1_keys(args.registry) if args.tier1 else
                 [d.adapter for d in sorted(definitions, key=lambda d: d.priority)
-                 if d.adapter and (args.source == d.adapter or
-                                   args.source == "all" and (d.adapter != "expo" or args.include_expo))])
+                 if d.adapter and (args.source == d.adapter or args.source == "all")])
         adapters = []
         for key in keys:
             definition = by_key[key]
@@ -92,8 +88,8 @@ def main():
         #
         # The distinction is kept because it is useful to a human and to a script. It is NOT
         # left to mean "the service failed": some sources are permanently uncollectable and are
-        # documented as such (damai disallows its search page in robots.txt; the Culture and
-        # Arts Centre serves a client-rendered shell). The systemd unit therefore declares
+        # documented as such (damai disallows its search page in robots.txt; SIPAC and Subao
+        # publish no extractable event date). The systemd unit therefore declares
         # SuccessExitStatus=2, and per-source outcomes live in crawl_runs/crawl_alerts where a
         # real regression is supposed to be noticed.
         return 0 if report["status"] == "Success" else 2

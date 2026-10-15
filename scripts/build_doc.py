@@ -224,7 +224,7 @@ def build() -> None:
 
     h(doc, "① 业务实体（前端直接读）", 2)
     table(doc, ["表", "行数", "说明"], [
-        ["events", "134", "活动。列名用前端驼峰：name / startDate / venueName …"],
+        ["events", "172", "活动。列名用前端驼峰：name / startDate / venueName …"],
         ["venues", "51", "场馆。payload 是 JSON，坐标、地址、别名都在里面"],
         ["hotels", "15", "酒店。含 tier（高端/中端/舒适）和判定依据"],
         ["districts", "29", "商圈/街道。来自高德反查，属推断数据"],
@@ -232,11 +232,11 @@ def build() -> None:
 
     h(doc, "② 证据链（这是本项目的核心）", 2)
     table(doc, ["表", "行数", "说明"], [
-        ["evidence", "1,376", "字段级证据缓存，前端读这张。列名用前端驼峰"],
-        ["crawler_evidence", "1,364", "字段级证据原始表，列名用后端下划线"],
-        ["crawler_raw_items", "1,357", "原始网页留存。只追加，不删除（历史留证）"],
-        ["crawler_observations", "145", "活动 ←→ 原始页面的连接表"],
-        ["crawler_unified_events", "134", "指纹表，跨来源去重用"],
+        ["evidence", "1,756", "字段级证据缓存，前端读这张。列名用前端驼峰"],
+        ["crawler_evidence", "1,744", "字段级证据原始表，列名用后端下划线"],
+        ["crawler_raw_items", "1,404", "原始网页留存。只追加，不删除（历史留证）"],
+        ["crawler_observations", "183", "活动 ←→ 原始页面的连接表"],
+        ["crawler_unified_events", "172", "指纹表，跨来源去重用"],
     ], widths=[4.0, 1.8, 7.6])
     body(doc, "注意 evidence 和 crawler_evidence 靠同一个 id 关联，但列名风格不同。"
               "写后端代码时用下划线，写前端时用驼峰，混用会静默拿不到值 —— "
@@ -260,10 +260,10 @@ def build() -> None:
 
     h(doc, "字段状态四态", 2)
     table(doc, ["状态", "含义", "数量"], [
-        ["Verified", "已核验。官方来源且提取完全确定，或人工通过", "335"],
-        ["Needs Review", "待复核。进入人工队列", "612"],
-        ["Missing", "来源确实没有这个值（不是留空）", "294"],
-        ["Unverified", "有值但无法核验", "135"],
+        ["Verified", "已核验。官方来源且提取完全确定，或人工通过", "558"],
+        ["Needs Review", "待复核。进入人工队列", "648"],
+        ["Missing", "来源确实没有这个值（不是留空）", "377"],
+        ["Unverified", "有值但无法核验", "173"],
     ], widths=[3.4, 8.2, 1.8])
     body(doc, "Missing 和留空的区别很重要：留空看起来像没有这个字段，"
               "Missing 才说明是来源本来就没给。这个区别是人工审核能工作的前提。",
@@ -329,7 +329,8 @@ def build() -> None:
     table(doc, ["检查", "为什么"], [
         ["robots.txt 允许抓取吗", "不允许就不接，别绕。大麦就是这么被排除的"],
         ["页面上有真实的未来活动吗", "政府站常是「圆满落幕」式回顾，接了只会污染数据"],
-        ["是 HTML 静态渲染还是 JS 空壳", "JS 空壳抓不到内容，苏州文化艺术中心就是这样"],
+        ["是 HTML 静态渲染还是 JS 空壳", "JS 空壳不要直接放弃：先找它自己调的公开 JSON 接口，"
+                                        "苏州文化艺术中心、苏州国际博览中心都是这样接上的"],
         ["有明确的场馆和日期吗", "只有日期没场馆的活动无法上图，价值有限"],
     ], widths=[5.0, 8.4])
 
@@ -345,7 +346,7 @@ def build() -> None:
     priority: 1
     tier: 1
     adapter: example_hall                 # 必须和代码里的适配器 key 一致
-    implementation: event_extraction      # 或 audit_only（只审计不提取）
+    implementation: event_extraction      # 或 public_page_audit（只审计不提取）
     require_events: true                  # 抓不到活动就标记失败
 """)
 
@@ -387,7 +388,7 @@ def build() -> None:
     table(doc, ["退出码", "含义", "systemd 怎么处理"], [
         ["0", "全部来源成功", "正常"],
         ["2", "跑完了，但有来源失败", "通过 SuccessExitStatus=0 2 视为正常。"
-                                       "部分来源永久不可采（robots 禁止、JS 空壳），"
+                                       "部分来源永久不可采（robots 禁止、无可提取日期），"
                                        "不该让每天的任务都报失败"],
         ["1", "崩溃", "算失败，会告警"],
     ], widths=[2.2, 6.0, 5.2])
@@ -399,9 +400,9 @@ def build() -> None:
         ["government-sipac", "1", "OFFICIAL_GOVERNMENT", "sipac", "FAILED"],
         ["government-suzhou", "1", "OFFICIAL_GOVERNMENT", "government", "SUCCESS"],
         ["government-suzhou-culture-tourism", "1", "OFFICIAL_GOVERNMENT", "culture_tourism", "PARTIAL"],
-        ["venue-suzhou-expo", "1", "OFFICIAL_VENUE", "expo", "FAILED"],
+        ["venue-suzhou-expo", "1", "OFFICIAL_VENUE", "expo", "SUCCESS"],
         ["venue-suzhou-olympic", "1", "OFFICIAL_VENUE", "olympic", "SUCCESS"],
-        ["venue-suzhou-arts", "1", "OFFICIAL_VENUE", "arts", "FAILED"],
+        ["venue-suzhou-arts", "1", "OFFICIAL_VENUE", "arts", "SUCCESS"],
         ["platform-huodongjia-suzhou", "1", "COMMERCIAL_PLATFORM", "huodongjia", "SUCCESS"],
         ["platform-damai-suzhou", "1", "COMMERCIAL_PLATFORM", "damai", "FAILED"],
         ["media-subao", "1", "SECONDARY_MEDIA", "subao", "FAILED"],
@@ -653,10 +654,9 @@ def build() -> None:
     h(doc, "11 已知局限与陷阱", 1)
     h(doc, "当前局限（系统里可见，不是隐藏问题）", 2)
     table(doc, ["局限", "原因"], [
-        ["4 个来源采集失败", "SIPAC 无可提取事件；苏州文化艺术中心是 JS 空壳；"
-                              "大麦搜索页 robots 禁止；Subao 抽不出有效日期"],
-        ["18 个场馆没有坐标", "小剧场、茶馆、livehouse，高德没有对应条目"],
-        ["活动级已核验为 0", "需全部事实字段核验通过，人工审核尚未完成（字段级已核验 335 条）"],
+        ["3 个来源采集失败", "SIPAC 无可提取事件；大麦搜索页 robots 禁止；Subao 抽不出有效日期"],
+        ["19 个场馆没有坐标", "小剧场、茶馆、livehouse，高德没有对应条目"],
+        ["活动级已核验为 0", "需全部事实字段核验通过，人工审核尚未完成（字段级已核验 558 条）"],
         ["商圈是推断数据", "来自高德反查，不是来源给出的原始字段"],
         ["不做收益预测、不对接 RMS", "项目边界"],
     ], widths=[4.0, 9.4])
@@ -686,6 +686,7 @@ def build() -> None:
     h(doc, "附录 A 常用脚本", 1)
     table(doc, ["脚本", "用途"], [
         ["scripts/resolve_venues_by_address.py", "用地址+名称在高德解析场馆坐标（dry-run 默认）"],
+        ["scripts/normalize_venue_addresses.py", "把场馆地址归一成来源地点串里的地址部分（dry-run 默认）"],
         ["scripts/dedupe_events.py", "合并指纹相同的历史重复活动（dry-run 默认）"],
         ["scripts/enrich_venue_coordinates.py", "补场馆坐标"],
         ["scripts/enrich_hotels.py", "补酒店分层与坐标"],

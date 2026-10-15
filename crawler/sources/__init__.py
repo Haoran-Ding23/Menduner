@@ -1,9 +1,8 @@
 from .government import SuzhouGovernmentSource
-from .venue import VenueSource, ExpoVenueSource
+from .venue import VenueSource, ExpoVenueSource, SscacVenueSource
 from .event_platform import EventPlatformSource
 from .cityevent import (SIPACSource, CultureTourismSource, OlympicSource,
-                        ArtsCentreSource, HuodongjiaSource, DamaiSource,
-                        SubaoSource)
+                        HuodongjiaSource, DamaiSource, SubaoSource)
 from .tourism import VisitszSource
 from .community.douban import DoubanSource
 from .exhibition.cnena import CnenaSource
@@ -17,7 +16,7 @@ SOURCES = {
     "sipac": SIPACSource,
     "culture_tourism": CultureTourismSource,
     "olympic": OlympicSource,
-    "arts": ArtsCentreSource,
+    "arts": SscacVenueSource,
     "huodongjia": HuodongjiaSource,
     "damai": DamaiSource,
     "subao": SubaoSource,

@@ -22,13 +22,20 @@ class RealSource:
         self.pages_collected = 0
         self.request_attempts = 0
 
-    def item(self, page, *, key=None, extractor="jsonld", is_event=True, locator=None):
+    def item(self, page, *, key=None, extractor="jsonld", is_event=True, locator=None, raw=None):
+        """One collected item, with the fetched page recorded verbatim as its raw content.
+
+        ``raw`` overrides that content when the evidence for a record is the record's own
+        bytes rather than the whole response body — e.g. one row of a JSON list endpoint
+        whose response is retained once as a context item. The default is unchanged: the
+        page is stored exactly as it was served.
+        """
         return CollectedItem(
             item_key=key or page.url,
             original_url=page.url,
             source_name=self.source_name,
             crawl_time=page.crawl_time,
-            raw_content=page.content,
+            raw_content=raw if raw is not None else page.content,
             mock=False,
             extractor=extractor,
             is_event=is_event,

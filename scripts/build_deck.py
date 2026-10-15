@@ -39,22 +39,33 @@ FONT = "Microsoft YaHei"
 W = Inches(13.333)
 H = Inches(7.5)
 
+# Every value below is a direct count read from backend/data/menduner.sqlite3 on 2026-10-15
+# (the day the two client-rendered venue sources went live). The query behind each one:
+#   events/venues/hotels/districts : COUNT(*) of that table
+#   evidence/ev_*                  : COUNT(*) of `evidence`, grouped by verification_status
+#   raw_pages                      : COUNT(*) of `crawler_raw_items` (append-only raw retention)
+#   decisions                      : COUNT(*) of `review_decisions`
+#   sources_registered             : COUNT(*) of `sources`
+#   sources_failed                 : registry rows whose last observed status is FAILED
+#   venues_without_coords          : venues whose payload carries no coordinates object
+#   plottable                      : events whose venue row has coordinates
+#   future                         : events with startDate >= today (this snapshot's date)
 METRICS = {
-    "events": 134,
+    "events": 172,
     "venues": 51,
     "hotels": 15,
     "districts": 29,
-    "evidence": 1376,
-    "ev_verified": 335,
-    "ev_review": 612,
-    "ev_missing": 294,
-    "raw_pages": 1848,
+    "evidence": 1756,
+    "ev_verified": 558,
+    "ev_review": 648,
+    "ev_missing": 377,
+    "raw_pages": 1404,
     "decisions": 97,
-    "plottable": 116,
-    "future": 80,
-    "sources_registered": 13,
-    "sources_failed": 4,
-    "venues_without_coords": 18,
+    "plottable": 101,
+    "future": 113,
+    "sources_registered": 14,
+    "sources_failed": 3,
+    "venues_without_coords": 19,
 }
 LIVE_URL = "http://47.116.133.230"
 
@@ -205,7 +216,8 @@ def build() -> None:
     slide = slide_base(prs, "三层结构：来源、证据、人工核验", "方案", page)
     cards = [
         ("01 · 来源", "有限但真实",
-         "13 个来源注册在册，每个都有信任等级、\n采集状态和失败原因。不假装全网都爬过。", BLUE),
+         f"{METRICS['sources_registered']} 个来源注册在册，每个都有信任等级、\n"
+         "采集状态和失败原因。不假装全网都爬过。", BLUE),
         ("02 · 证据", "每个字段留原文出处",
          "每个字段单独一条证据：值、来源 URL、\n提取方式、核验状态。原文网页全部留存。", AMBER),
         ("03 · 核验", "规则加人工兜底",
@@ -334,7 +346,7 @@ def build() -> None:
         (str(METRICS["decisions"]), "人工决定", AMBER),
     ], y=Inches(3.65), height=Inches(1.5))
     text(slide, Inches(0.9), Inches(5.45), Inches(11.5), Inches(1.0),
-         ["全部来自 13 个注册来源的真实采集，数据库里 0 条 MOCK 数据。",
+         [f"全部来自 {METRICS['sources_registered']} 个注册来源的真实采集，数据库里 0 条 MOCK 数据。",
           f"覆盖 {METRICS['districts']} 个商圈 / 街道，活动日期跨度 2025-05 到 2027-07。"],
          size=13, color=MUTED, line=1.7)
 
@@ -345,7 +357,7 @@ def build() -> None:
          ("后端", "FastAPI + SQLite\n每个字段的证据独立存储与查询"),
          ("前端", "React + TypeScript + Vite + antd\n六页界面，高德地图")],
         [("部署", "阿里云 + Nginx + systemd\n每日定时采集，已上线运行"),
-         ("质量", "后端 445 个测试，前端 66 个测试\n全部通过"),
+         ("质量", "Python 466 个测试，前端 66 个测试\n全部通过"),
          ("AI 辅助", "DeepSeek 读原始页面交叉核对提取结果\nAI 只做读者，不做权威")],
     )
     for col, items in enumerate(columns):
@@ -365,8 +377,10 @@ def build() -> None:
          size=14, color=BODY)
     bullets(slide, [
         (f"{METRICS['sources_failed']} 个来源当前采集失败",
-         "政府 SIPAC 页面无可提取事件；苏州文化艺术中心是 JS 空壳；"
-         "大麦搜索页被 robots.txt 禁止；Subao 抽不出有效日期。原因逐条记录在系统里。"),
+         "政府 SIPAC 页面无可提取事件；大麦搜索页被 robots.txt 禁止；"
+         "Subao 抽不出有效日期。原因逐条记录在系统里。"
+         "两个原本因为前端 JS 渲染而采不到的场馆（苏州国际博览中心、苏州文化艺术中心），"
+         "已改走它们自己页面调用的公开 JSON 接口，现在正常出数据。"),
         (f"{METRICS['venues_without_coords']} 个场馆还没有坐标",
          "多为小剧场、茶馆、livehouse，高德没有对应条目，需要人工指定。"),
         ("活动级已核验目前是 0",

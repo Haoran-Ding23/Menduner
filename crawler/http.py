@@ -1,4 +1,11 @@
-"""Bounded public GETs: robots, same-host redirects, backoff, no login or tokens."""
+"""Bounded public requests: robots, same-host redirects, backoff, no login or credentials.
+
+Every source is read exactly the way a browser reads it. The two client-rendered venue
+sources need the JSON endpoint their own published JavaScript calls, which is why a
+bounded public POST and the host's own static channel header (published by the host in
+its public ``config.js``, never a user credential) are supported here. Authorization,
+Cookie and every other credential-style header stay impossible: see ``PUBLIC_JSON_HEADERS``.
+"""
 
 import time
 from dataclasses import dataclass
@@ -12,6 +19,13 @@ USER_AGENT = (
 )
 MAX_PAGE_BYTES = 2_000_000
 MAX_WAIT_SECONDS = 5
+# Hosts whose event calendar is rendered client-side must be read through the same JSON API
+# their own published JavaScript calls. That API is public, but two of them expect the
+# request shape a browser sends rather than a bare GET: one POSTs a small JSON filter body
+# and one sends the static channel header the host ships in its own public config.js.
+# No other request header may be attached to a public collection request, so a credential
+# (Authorization, Cookie, ...) can never be introduced by an adapter.
+PUBLIC_JSON_HEADERS = frozenset({"access-token", "content-type", "accept"})
 
 
 @dataclass
@@ -82,7 +96,7 @@ class PublicClient:
             )
         return parts
 
-    def _request(self, url, *, is_robots=False):
+    def _request(self, url, *, is_robots=False, method="GET", json_body=None, headers=None):
         host = urlparse(url).netloc
         for attempt in range(self.retries + 1):
             wait = self.host_intervals.get(host, self.interval) - (
@@ -93,7 +107,9 @@ class PublicClient:
             self.last_request[host] = time.monotonic()
             status = None
             try:
-                with self.client.stream("GET", url) as streamed:
+                with self.client.stream(
+                    method, url, json=json_body, headers=headers
+                ) as streamed:
                     status = streamed.status_code
                     chunks = []
                     size = 0
@@ -102,17 +118,17 @@ class PublicClient:
                         if size > MAX_PAGE_BYTES:
                             self.requests.append(dict(
                                 url=url, status=streamed.status_code,
-                                attempt=attempt + 1, robots=is_robots,
+                                attempt=attempt + 1, robots=is_robots, method=method,
                                 error="Page exceeds the 2 MB prototype limit",
                             ))
                             raise ValueError("Page exceeds the 2 MB prototype limit")
                         chunks.append(chunk)
                     # iter_bytes already decompressed the body; do not decode it twice.
-                    headers = dict(streamed.headers)
-                    headers.pop("content-encoding", None)
-                    headers.pop("content-length", None)
+                    headers_out = dict(streamed.headers)
+                    headers_out.pop("content-encoding", None)
+                    headers_out.pop("content-length", None)
                     response = httpx.Response(
-                        streamed.status_code, headers=headers,
+                        streamed.status_code, headers=headers_out,
                         content=b"".join(chunks), request=streamed.request,
                     )
                 self.requests.append(
@@ -121,6 +137,7 @@ class PublicClient:
                         status=response.status_code,
                         attempt=attempt + 1,
                         robots=is_robots,
+                        method=method,
                     )
                 )
                 if (
@@ -140,12 +157,13 @@ class PublicClient:
                 # Keep the attempt in the audit; this is not a transport retry.
                 self.requests.append(
                     dict(url=url, status=status, attempt=attempt + 1,
-                         robots=is_robots, error=str(exc))
+                         robots=is_robots, method=method, error=str(exc))
                 )
                 raise
             except httpx.TransportError:
                 self.requests.append(
-                    dict(url=url, status=None, attempt=attempt + 1, robots=is_robots)
+                    dict(url=url, status=None, attempt=attempt + 1, robots=is_robots,
+                         method=method)
                 )
                 if attempt == self.retries:
                     raise
@@ -201,13 +219,30 @@ class PublicClient:
         self.host_intervals[parts.netloc] = max(self.interval, delay or 0)
         return label
 
-    def get(self, url, *, allowed_redirect=None):
+    def _fetch(
+        self,
+        url,
+        *,
+        method="GET",
+        json_body=None,
+        request_headers=None,
+        allowed_redirect=None,
+        media=("html", "json", "text/plain"),
+    ):
+        """One bounded public request family: policy, redirects, size, media type, audit.
+
+        ``get`` and ``request_json`` share this path so a public JSON API can never bypass
+        the robots policy, the same-host/same-scheme redirect rules or the 2 MB cap that a
+        public page already obeys.
+        """
         parts = self._public_page_url(url)
         original_scheme = parts.scheme
         original_host = parts.hostname
         for _ in range(5):
             policy = self._policy(url)
-            response = self._request(url)
+            response = self._request(
+                url, method=method, json_body=json_body, headers=request_headers
+            )
             if response.is_redirect:
                 target = urljoin(url, response.headers.get("Location", ""))
                 if urlparse(target).hostname != original_host:
@@ -220,6 +255,12 @@ class PublicClient:
                     )
                 if allowed_redirect is not None and not allowed_redirect(target):
                     raise RuntimeError("Redirect leaves approved public page routes; no target request made")
+                if method != "GET":
+                    # A redirected write-shaped request is replayed at a route nobody
+                    # approved; only plain page GETs may follow a redirect.
+                    raise RuntimeError(
+                        "Redirected non-GET public request rejected; no target request made"
+                    )
                 target_parts = self._public_page_url(target)
                 if (target_parts.port or 443) != (parts.port or 443):
                     raise RuntimeError("Redirect changes source port; review manually")
@@ -228,17 +269,52 @@ class PublicClient:
             response.raise_for_status()
             if len(response.content) > 2_000_000:
                 raise ValueError("Page exceeds the 2 MB prototype limit")
-            media = response.headers.get("content-type", "")
-            if not any(t in media for t in ("html", "json", "text/plain")):
+            served = response.headers.get("content-type", "")
+            if not any(t in served for t in media):
                 raise ValueError("Unsupported page content type")
             now = datetime.now(timezone.utc)
             metadata = {
                 "status": response.status_code,
                 "bytes": len(response.content),
                 "robots": policy,
+                "method": method,
             }
             self.pages.append(
                 {"url": str(response.url), **metadata, "crawl_time": now.isoformat()}
             )
-            return Page(str(response.url), response.text, now, media, metadata)
+            return Page(str(response.url), response.text, now, served, metadata)
         raise RuntimeError("Too many redirects")
+
+    def get(self, url, *, allowed_redirect=None, media=("html", "json", "text/plain")):
+        """One bounded public page GET. ``media`` narrows or widens the accepted media types
+        for a caller that deliberately reads a published asset (e.g. the JavaScript bundle a
+        client-rendered source advertises its JSON API in) instead of an HTML page."""
+        return self._fetch(url, allowed_redirect=allowed_redirect, media=media)
+
+    def request_json(self, url, *, method="GET", json_body=None, headers=None,
+                     allowed_redirect=None):
+        """Bounded public JSON request through the same robots/redirect/audit boundary.
+
+        Only GET and POST are available, a body requires POST, and the only headers a
+        caller may attach are the host's own published channel header plus the content
+        negotiation a browser would send (``PUBLIC_JSON_HEADERS``). Anything else — most
+        importantly any credential — is refused before a request is built.
+        """
+        if method not in ("GET", "POST"):
+            raise ValueError("Only public GET and POST are supported")
+        if json_body is not None and method != "POST":
+            raise ValueError("A JSON body requires POST")
+        for name in (headers or {}):
+            if str(name).lower() not in PUBLIC_JSON_HEADERS:
+                raise ValueError(
+                    "Unsupported public request header; no credential may be attached: "
+                    + str(name)
+                )
+        return self._fetch(
+            url,
+            method=method,
+            json_body=json_body,
+            request_headers=headers,
+            allowed_redirect=allowed_redirect,
+            media=("json",),
+        )

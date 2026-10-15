@@ -1,4 +1,4 @@
-**Latest V1.6 priority refinement:** [Damai adapter, Huodongjia verification and Expo investigation](../docs/V1.6_PRIORITY_SOURCE_REVIEW.md). No additional live events were collected; current limitations remain explicit. The descriptions below record the original V1.6 baseline.
+**Latest 2026-10-15:** the two venue sources whose calendars are rendered in the browser — 苏州国际博览中心 (`expo`) and 苏州文化艺术中心 (`arts`) — are no longer audit-only. Both are read through the public JSON endpoint their own published JavaScript calls, and both now publish real dated events. See [V1.6.4_JS_RENDERED_VENUES.md](../docs/V1.6.4_JS_RENDERED_VENUES.md). The V1.6 priority refinement is in [V1.6_PRIORITY_SOURCE_REVIEW.md](../docs/V1.6_PRIORITY_SOURCE_REVIEW.md); the descriptions below record the original V1.6/V1.5 baseline.
 
 # Current: V1.6 CityEvent source network
 
@@ -17,9 +17,10 @@ See [CRAWLER_V1.6.md](../docs/CRAWLER_V1.6.md) for the current registry, Tier 1 
 | government | 苏州市人民政府公开活动报道 | 两篇已核实URL的文化活动报道；保留转载来源与发布信息，不将发布日当活动日 |
 | venue | 苏州交响乐团官方演出栏目 | 页面自身调用的公开GET演出列表；无需登录、token或上传接口 |
 | event_platform | 上海乐历的苏州文化艺术中心演出页 | 公开列表及同站演出详情JSON-LD，限定苏州活动 |
-| expo（可选审计） | 苏州国际博览中心官方展会日程 | 保存静态原文；当前动态日程依赖token，不访问token接口，不发布占位内容 |
+| expo | 苏州国际博览中心官方展会日程 | 页面自身的 Vue 脚本调用的公开 JSON 展会日程；静态 header 里的 token 是站点自己发布的公开常量，每次运行重新读取，不保存 |
+| arts | 苏州文化艺术中心官网演出日程 | 官网是 Nuxt 空壳，改读它自己打包 JS 里公开的 `/sue/api/cinema/*` JSON；端点字符串每次运行从官网 JS 里重新发现，不写死 |
 
-默认 `all` 运行前三个来源。`--include-expo` 额外检查博览中心，当前会产生Partial警告。这是原型，不是完整苏州活动覆盖。
+默认 `all` 运行全部已注册来源（含上面两个场馆），不再需要额外的开关。这是原型，不是完整苏州活动覆盖。
 
 ## 安装与运行
 
@@ -34,8 +35,12 @@ See [CRAWLER_V1.6.md](../docs/CRAWLER_V1.6.md) for the current registry, Tier 1 
 # 默认：每个来源最多3个详情记录，写入当前SQLite
 .\backend\.venv\Scripts\python.exe -m crawler.run
 
-# 本次报告使用的有限采集范围：最多5条，附加博览中心静态审计
-.\backend\.venv\Scripts\python.exe -m crawler.run --max-items 5 --include-expo
+# 本次报告使用的有限采集范围：每个来源最多5条（V1.6 起上限为 40）
+.\backend\.venv\Scripts\python.exe -m crawler.run --max-items 5
+
+# 只要两个前端渲染的场馆来源（V1.6.4 起它们会真的出数据）
+.\backend\.venv\Scripts\python.exe -m crawler.run --source arts --max-items 40
+.\backend\.venv\Scripts\python.exe -m crawler.run --source expo --max-items 40
 
 # 单来源或隔离数据库
 .\backend\.venv\Scripts\python.exe -m crawler.run --source government
@@ -51,6 +56,8 @@ Linux/macOS使用backend/.venv/bin/python。--max-items只允许1–5；不翻�
 ## 溯源与字段质量
 
 每条raw保留original_url、source_name、crawl_time及原始HTML/JSON。列表/背景页单独标Context，不冒充事件。提取前保存的原文不被后续更新覆盖。
+
+场馆行的 `address` 只取来源地点串里的地址部分（`crawler/addresses.py`）：`苏州 吴中区 山丘livehouse-斜塘店 松涛街1088号斜塘老街36幢` → `松涛街1088号斜塘老街36幢`，查地图时再降到 `松涛街1088号`。事件上的 `location` 始终是来源原文，不会被改写成地址；来源没给门牌号就保持 `地址待核验`，不编造。存量行用 `scripts/normalize_venue_addresses.py` 归一（dry-run 默认）。
 
 统一字段仍为event_id/event_name/category/start_date/end_date/venue/location/organizer/source_url；兼容venue_id和district_id。字段证据保留value/source/source_url/confidence，附加snippet、method和原始记录ID，供后续人工或AI阅读同一网页核对。
 

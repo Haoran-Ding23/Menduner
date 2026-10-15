@@ -39,3 +39,4 @@ class VenueSource(RealSource):
 
 
 from .expo import ExpoVenueSource
+from .sscac import SscacVenueSource

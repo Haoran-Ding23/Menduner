@@ -1,0 +1,744 @@
+{
+  "jobId": "c95e87be19054bec8d59a4496ee30e21",
+  "mode": "REAL",
+  "demoArchive": null,
+  "pagesCollected": 4,
+  "rawRecordsCollected": 12,
+  "evidenceRecordsGenerated": 1744,
+  "eventsProcessed": 7,
+  "eventsCreated": 7,
+  "eventsUpdated": 0,
+  "duplicatesDetected": 0,
+  "itemsRejected": 0,
+  "sourcesProcessed": 1,
+  "attempts": [
+    {
+      "source": "venue-suzhou-expo",
+      "status": "Success",
+      "accepted": 7,
+      "rejected": 0,
+      "error": null,
+      "requestErrors": [],
+      "warnings": [],
+      "pagesCollected": 4,
+      "requestAttempts": 5,
+      "contextRecords": 5,
+      "investigation": {
+        "scope": "Vue schedule page read through the public JSON its own script calls",
+        "request_contract": "derived from the schedule page's own inline script, not assumed",
+        "static_channel_token": "read from the host's own public config.js; not a credential",
+        "categories_seen": 10,
+        "categories_requested": [
+          {
+            "id": "434",
+            "year": 2026
+          }
+        ],
+        "records_seen": 51,
+        "records_available": 7,
+        "records_selected": 7,
+        "records_rejected": [
+          {
+            "id": "2079",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2084",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2085",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2087",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2088",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2089",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2086",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2090",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2091",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2092",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2101",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2102",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2093",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2094",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2095",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2096",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2097",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2098",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2099",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2103",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2104",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2100",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2105",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2106",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2107",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2108",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2110",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2111",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2112",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2115",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2116",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2117",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2118",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2119",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2120",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2121",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2124",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2123",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2138",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2139",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2140",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2141",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2142",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          },
+          {
+            "id": "2147",
+            "reason": "exhibition finished before 2026-10-15; the year archive is not republished"
+          }
+        ],
+        "pages_requested": 1,
+        "credentials_used": 0
+      }
+    }
+  ],
+  "status": "Success",
+  "updatedAt": "2026-10-15T05:06:24.861226+00:00",
+  "httpRequests": 5,
+  "robotsRequests": 1,
+  "retriedRequests": 0,
+  "pageLog": [
+    {
+      "url": "https://www.suzhouexpo.com/zhanhuiricheng-389.html",
+      "status": 200,
+      "bytes": 18693,
+      "robots": "robots absent (HTTP 404/410)",
+      "method": "GET",
+      "crawl_time": "2026-10-15T05:06:21.710744+00:00"
+    },
+    {
+      "url": "https://www.suzhouexpo.com/templates/expo_CN/js/config.js",
+      "status": 200,
+      "bytes": 127,
+      "robots": "robots absent (HTTP 404/410)",
+      "method": "GET",
+      "crawl_time": "2026-10-15T05:06:22.614967+00:00"
+    },
+    {
+      "url": "https://www.suzhouexpo.com/api/Catogery/sub_list?cate_id=389&is_sub=0",
+      "status": 200,
+      "bytes": 2443,
+      "robots": "robots absent (HTTP 404/410)",
+      "method": "GET",
+      "crawl_time": "2026-10-15T05:06:23.629445+00:00"
+    },
+    {
+      "url": "https://www.suzhouexpo.com/api/Article/list?cate_id=434&is_sub=true&albums=true&attachs=true&pageIndex=1&pageSize=100&sort=start_time+asc&search_params=",
+      "status": 200,
+      "bytes": 46214,
+      "robots": "robots absent (HTTP 404/410)",
+      "method": "GET",
+      "crawl_time": "2026-10-15T05:06:24.753227+00:00"
+    }
+  ],
+  "eventsStored": 172,
+  "crawlLog": {
+    "raised": [],
+    "resolved": []
+  },
+  "sourceCoverage": {
+    "registeredSources": 15,
+    "tier1RegisteredSources": 10,
+    "implementedSources": 14,
+    "tier1ImplementedSources": 10,
+    "tier1EventExtractionAdapters": 10,
+    "tier1AuditOnlyAdapters": 0,
+    "eventExtractionAdapters": 14,
+    "auditOnlyAdapters": 0,
+    "manualOnlySources": 1,
+    "attemptedSources": 1,
+    "successfulPages": 4,
+    "failedSources": [],
+    "eventProducingSources": [
+      "venue-suzhou-expo"
+    ],
+    "eventsExtracted": 7,
+    "eventsStored": 172,
+    "evidenceGenerated": 70,
+    "currentEventEvidenceRecords": 1744,
+    "rawRecordsCollected": 12,
+    "sources": [
+      {
+        "source_id": "government-sipac",
+        "source_name": "Suzhou Industrial Park (SIPAC)",
+        "category": "government",
+        "url": "http://www.sipac.gov.cn/",
+        "crawl_url": "https://www.sipac.gov.cn/",
+        "trust_level": "OFFICIAL_GOVERNMENT",
+        "priority": 1,
+        "crawl_status": "FAILED",
+        "tier": 1,
+        "require_events": null,
+        "adapter": "sipac",
+        "implementation": "event_extraction",
+        "reason": "No reliable event record passed extraction and validation; raw/context retained; No explicit leading event date; publication/relative dates are not substituted",
+        "limitation": null,
+        "allow_plain_http": false,
+        "last_checked": "2026-10-13T20:46:57.659144+00:00",
+        "topic": null,
+        "platform": null,
+        "status": null,
+        "name": null,
+        "detail_urls": [],
+        "attempted": false,
+        "successful_pages": 0,
+        "events_extracted": 0,
+        "evidence_generated": 0,
+        "raw_records": 0,
+        "rejected_records": 0,
+        "rejection_reasons": []
+      },
+      {
+        "source_id": "government-suzhou",
+        "source_name": "Suzhou Government",
+        "category": "government",
+        "url": "https://www.suzhou.gov.cn/",
+        "crawl_url": "https://www.suzhou.gov.cn/",
+        "trust_level": "OFFICIAL_GOVERNMENT",
+        "priority": 1,
+        "crawl_status": "SUCCESS",
+        "tier": 1,
+        "require_events": null,
+        "adapter": "government",
+        "implementation": "event_extraction",
+        "reason": null,
+        "limitation": null,
+        "allow_plain_http": false,
+        "last_checked": "2026-10-13T21:58:42.608917+00:00",
+        "topic": null,
+        "platform": null,
+        "status": null,
+        "name": null,
+        "detail_urls": [],
+        "attempted": false,
+        "successful_pages": 0,
+        "events_extracted": 0,
+        "evidence_generated": 0,
+        "raw_records": 0,
+        "rejected_records": 0,
+        "rejection_reasons": []
+      },
+      {
+        "source_id": "government-suzhou-culture-tourism",
+        "source_name": "Suzhou Culture and Tourism Bureau",
+        "category": "government",
+        "url": "http://wglj.suzhou.gov.cn/",
+        "crawl_url": "https://wglj.suzhou.gov.cn/szwhgdhlyj/hdxx/list.shtml",
+        "trust_level": "OFFICIAL_GOVERNMENT",
+        "priority": 1,
+        "crawl_status": "PARTIAL",
+        "tier": 1,
+        "require_events": null,
+        "adapter": "culture_tourism",
+        "implementation": "event_extraction",
+        "reason": "No explicit leading event date; publication/relative dates are not substituted",
+        "limitation": null,
+        "allow_plain_http": false,
+        "last_checked": "2026-10-13T20:46:57.659144+00:00",
+        "topic": "tourism",
+        "platform": null,
+        "status": null,
+        "name": null,
+        "detail_urls": [],
+        "attempted": false,
+        "successful_pages": 0,
+        "events_extracted": 0,
+        "evidence_generated": 0,
+        "raw_records": 0,
+        "rejected_records": 0,
+        "rejection_reasons": []
+      },
+      {
+        "source_id": "venue-suzhou-expo",
+        "source_name": "Suzhou International Expo Centre",
+        "category": "venue",
+        "url": "http://www.suzhouexpo.com/",
+        "crawl_url": "https://www.suzhouexpo.com/zhanhuiricheng-389.html",
+        "trust_level": "OFFICIAL_VENUE",
+        "priority": 2,
+        "crawl_status": "SUCCESS",
+        "tier": 1,
+        "require_events": null,
+        "adapter": "expo",
+        "implementation": "event_extraction",
+        "reason": null,
+        "limitation": "The official schedule is assembled in the browser: the served HTML carries no dates, and the calendar is read from the host's own public JSON (/api/Article/list) using the static channel token the host publishes in /templates/expo_CN/js/config.js. That token is public markup shipped to every visitor, not a credential, and it is re-read on every run rather than stored. extras.start_time carries the CMS insertion clock, so only its calendar date is published; past-year archives are never republished as live demand.",
+        "allow_plain_http": false,
+        "last_checked": "2026-10-15T05:06:24.861226+00:00",
+        "topic": "exhibition",
+        "platform": null,
+        "status": null,
+        "name": null,
+        "detail_urls": [],
+        "attempted": true,
+        "successful_pages": 4,
+        "events_extracted": 7,
+        "evidence_generated": 70,
+        "raw_records": 12,
+        "rejected_records": 0,
+        "rejection_reasons": []
+      },
+      {
+        "source_id": "venue-suzhou-olympic",
+        "source_name": "Suzhou Olympic Sports Centre",
+        "category": "venue",
+        "url": "https://www.szosc.cn/",
+        "crawl_url": "https://www.szosc.cn/index.php/Activity/index.html",
+        "trust_level": "OFFICIAL_VENUE",
+        "priority": 2,
+        "crawl_status": "SUCCESS",
+        "tier": 1,
+        "require_events": null,
+        "adapter": "olympic",
+        "implementation": "event_extraction",
+        "reason": null,
+        "limitation": "Last crawl succeeded and stored real events, but reconnaissance on 2026-10-13 found this public 活动赛事 list is a purely historical archive: all 135 dates are in the past (latest 2026-08-23) and the list has no pagination (index_2.html returns 404). Treat the stored records as historical observations, not a future demand feed. Future events at this venue are reachable via the visitsz tourism portal.",
+        "allow_plain_http": false,
+        "last_checked": "2026-10-13T20:46:57.659144+00:00",
+        "topic": "sports",
+        "platform": null,
+        "status": null,
+        "name": null,
+        "detail_urls": [],
+        "attempted": false,
+        "successful_pages": 0,
+        "events_extracted": 0,
+        "evidence_generated": 0,
+        "raw_records": 0,
+        "rejected_records": 0,
+        "rejection_reasons": []
+      },
+      {
+        "source_id": "venue-suzhou-arts",
+        "source_name": "Suzhou Culture and Arts Centre",
+        "category": "venue",
+        "url": "https://www.sscac.com.cn/",
+        "crawl_url": "https://www.sscac.com.cn/",
+        "trust_level": "OFFICIAL_VENUE",
+        "priority": 2,
+        "crawl_status": "SUCCESS",
+        "tier": 1,
+        "require_events": null,
+        "adapter": "arts",
+        "implementation": "event_extraction",
+        "reason": null,
+        "limitation": "Still a client-rendered Nuxt shell: the served HTML holds no event data, so the calendar is read from the host's own public JSON API (/sue/api/cinema/findYanYiList and /cinema/showDramaInfoList) that the shell's published bundle advertises, re-discovered on every run and never assumed. The 戏剧 endpoint answers its whole archive back to 1992 without the startTime filter its own page sends, so the filter is part of the request and finished performances are never republished.",
+        "allow_plain_http": false,
+        "last_checked": "2026-10-15T05:06:19.925985+00:00",
+        "topic": null,
+        "platform": null,
+        "status": null,
+        "name": null,
+        "detail_urls": [],
+        "attempted": false,
+        "successful_pages": 0,
+        "events_extracted": 0,
+        "evidence_generated": 0,
+        "raw_records": 0,
+        "rejected_records": 0,
+        "rejection_reasons": []
+      },
+      {
+        "source_id": "platform-huodongjia-suzhou",
+        "source_name": "Huodongjia Suzhou",
+        "category": "event_platform",
+        "url": "https://www.huodongjia.com/",
+        "crawl_url": "https://www.huodongjia.com/",
+        "trust_level": "COMMERCIAL_PLATFORM",
+        "priority": 3,
+        "crawl_status": "SUCCESS",
+        "tier": 1,
+        "require_events": null,
+        "adapter": "huodongjia",
+        "implementation": "event_extraction",
+        "reason": null,
+        "limitation": null,
+        "allow_plain_http": false,
+        "last_checked": "2026-10-13T20:46:57.659144+00:00",
+        "topic": null,
+        "platform": null,
+        "status": null,
+        "name": null,
+        "detail_urls": [],
+        "attempted": false,
+        "successful_pages": 0,
+        "events_extracted": 0,
+        "evidence_generated": 0,
+        "raw_records": 0,
+        "rejected_records": 0,
+        "rejection_reasons": []
+      },
+      {
+        "source_id": "platform-damai-suzhou",
+        "source_name": "Damai Suzhou",
+        "category": "event_platform",
+        "url": "https://search.damai.cn/",
+        "crawl_url": "https://search.damai.cn/",
+        "trust_level": "COMMERCIAL_PLATFORM",
+        "priority": 3,
+        "crawl_status": "FAILED",
+        "tier": 1,
+        "require_events": null,
+        "adapter": "damai",
+        "implementation": "event_extraction",
+        "reason": "[{\"error\": \"robots.txt disallows this URL; no public page request made\", \"url\": \"https://search.damai.cn/\"}, {\"error\": \"Robots policy unavailable: HTTP 302 redirect (not followed); no public page request made\", \"url\": \"https://detail.damai.cn/item.htm?id=1011300369602\"}]",
+        "limitation": null,
+        "allow_plain_http": false,
+        "last_checked": "2026-10-13T20:46:57.659144+00:00",
+        "topic": null,
+        "platform": null,
+        "status": null,
+        "name": null,
+        "detail_urls": [
+          "https://detail.damai.cn/item.htm?id=1011300369602",
+          "https://detail.damai.cn/item.htm?id=884792480760"
+        ],
+        "attempted": false,
+        "successful_pages": 0,
+        "events_extracted": 0,
+        "evidence_generated": 0,
+        "raw_records": 0,
+        "rejected_records": 0,
+        "rejection_reasons": []
+      },
+      {
+        "source_id": "media-subao",
+        "source_name": "Subao News",
+        "category": "media",
+        "url": "https://www.subaonet.com/",
+        "crawl_url": "https://www.subaonet.com/list/szwl/",
+        "trust_level": "SECONDARY_MEDIA",
+        "priority": 3,
+        "crawl_status": "FAILED",
+        "tier": 1,
+        "require_events": null,
+        "adapter": "subao",
+        "implementation": "event_extraction",
+        "reason": "No reliable event record passed extraction and validation; raw/context retained; No explicit leading event date; publication/relative dates are not substituted",
+        "limitation": null,
+        "allow_plain_http": false,
+        "last_checked": "2026-10-13T20:46:57.659144+00:00",
+        "topic": null,
+        "platform": null,
+        "status": null,
+        "name": null,
+        "detail_urls": [],
+        "attempted": false,
+        "successful_pages": 0,
+        "events_extracted": 0,
+        "evidence_generated": 0,
+        "raw_records": 0,
+        "rejected_records": 0,
+        "rejection_reasons": []
+      },
+      {
+        "source_id": "platform-cnena-suzhou",
+        "source_name": "China Exhibition Network",
+        "category": "event_platform",
+        "url": "http://www.cnena.com/",
+        "crawl_url": "http://www.cnena.com/showroom/showroom-htm-id-28.html",
+        "trust_level": "COMMERCIAL_PLATFORM",
+        "priority": 3,
+        "crawl_status": "SUCCESS",
+        "tier": 1,
+        "require_events": null,
+        "adapter": "cnena",
+        "implementation": "event_extraction",
+        "reason": null,
+        "limitation": "www.cnena.com is reachable over plain HTTP only: its certificate is not valid for the hostname (CERTIFICATE_VERIFY_FAILED: Hostname mismatch) and TLS verification is never disabled. Response integrity is therefore NOT cryptographically verifiable; this source can only ever yield Needs Review / Unverified claims, never Verified. The supplied city route /Show/city/suzhou/ is a 404 page and is never requested; the working route is the 苏州国际博览中心 展会排期 venue page. Only path-based routes are used because robots disallows query strings.",
+        "allow_plain_http": true,
+        "last_checked": "2026-10-13T20:46:57.659144+00:00",
+        "topic": "exhibition",
+        "platform": null,
+        "status": null,
+        "name": null,
+        "detail_urls": [],
+        "attempted": false,
+        "successful_pages": 0,
+        "events_extracted": 0,
+        "evidence_generated": 0,
+        "raw_records": 0,
+        "rejected_records": 0,
+        "rejection_reasons": []
+      },
+      {
+        "source_id": "venue-suzhou-orchestra",
+        "source_name": "Suzhou Symphony Orchestra",
+        "category": "venue",
+        "url": "https://www.szsorch.com/shows-ticketing.html",
+        "crawl_url": "https://www.szsorch.com/shows-ticketing.html",
+        "trust_level": "OFFICIAL_VENUE",
+        "priority": 2,
+        "crawl_status": "SUCCESS",
+        "tier": 2,
+        "require_events": null,
+        "adapter": "venue",
+        "implementation": "event_extraction",
+        "reason": null,
+        "limitation": null,
+        "allow_plain_http": false,
+        "last_checked": "2026-10-13T20:46:57.659144+00:00",
+        "topic": null,
+        "platform": null,
+        "status": null,
+        "name": null,
+        "detail_urls": [],
+        "attempted": false,
+        "successful_pages": 0,
+        "events_extracted": 0,
+        "evidence_generated": 0,
+        "raw_records": 0,
+        "rejected_records": 0,
+        "rejection_reasons": []
+      },
+      {
+        "source_id": "platform-shanghai-concerts",
+        "source_name": "Shanghai Concerts — Suzhou listings",
+        "category": "event_platform",
+        "url": "https://shanghaiconcerts.com/venues/suzhou-culture-arts-centre",
+        "crawl_url": "https://shanghaiconcerts.com/venues/suzhou-culture-arts-centre",
+        "trust_level": "COMMERCIAL_PLATFORM",
+        "priority": 3,
+        "crawl_status": "SUCCESS",
+        "tier": 2,
+        "require_events": null,
+        "adapter": "event_platform",
+        "implementation": "event_extraction",
+        "reason": null,
+        "limitation": null,
+        "allow_plain_http": false,
+        "last_checked": "2026-10-13T20:46:57.659144+00:00",
+        "topic": null,
+        "platform": null,
+        "status": null,
+        "name": null,
+        "detail_urls": [],
+        "attempted": false,
+        "successful_pages": 0,
+        "events_extracted": 0,
+        "evidence_generated": 0,
+        "raw_records": 0,
+        "rejected_records": 0,
+        "rejection_reasons": []
+      },
+      {
+        "source_id": "tourism-visitsz-festival",
+        "source_name": "苏州市旅游咨询中心 节庆日历 (visitsz)",
+        "category": "tourism",
+        "url": "https://visitsz.wglj.suzhou.com.cn/",
+        "crawl_url": "https://visitsz.wglj.suzhou.com.cn/festival-activity.aspx",
+        "trust_level": "OFFICIAL_GOVERNMENT",
+        "priority": 1,
+        "crawl_status": "PARTIAL",
+        "tier": 2,
+        "require_events": true,
+        "adapter": "visitsz",
+        "implementation": "event_extraction",
+        "reason": "No explicit 地点 (venue/location) on the visitsz detail page: '详见文章'; placeholder and template values are never published",
+        "limitation": "Secondary/aggregator publisher: titles and 来源 credits come from venue WeChat accounts, so its claims stay Unverified/Needs Review and are never Verified. The calendar is not ordered by event date; paging is swept to the verified horizon and never follows the advertised 662 pages. Only max_items bounds detail requests. Records without a real 时间 date and 地点 value are rejected, never published.",
+        "allow_plain_http": false,
+        "last_checked": "2026-10-13T20:46:57.659144+00:00",
+        "topic": "tourism",
+        "platform": null,
+        "status": null,
+        "name": null,
+        "detail_urls": [],
+        "attempted": false,
+        "successful_pages": 0,
+        "events_extracted": 0,
+        "evidence_generated": 0,
+        "raw_records": 0,
+        "rejected_records": 0,
+        "rejection_reasons": []
+      },
+      {
+        "source_id": "community-douban-suzhou",
+        "source_name": "豆瓣同城苏州",
+        "category": "event_platform",
+        "url": "https://www.douban.com/location/suzhou/events/future",
+        "crawl_url": "https://www.douban.com/location/suzhou/events/future",
+        "trust_level": "COMMERCIAL_PLATFORM",
+        "priority": 3,
+        "crawl_status": "SUCCESS",
+        "tier": 2,
+        "require_events": true,
+        "adapter": "douban",
+        "implementation": "event_extraction",
+        "reason": null,
+        "limitation": "User-generated community aggregator. Dates are published as month/day without a year, so a year is only accepted when an explicit weekday makes exactly one candidate year consistent; otherwise the record is rejected. Claims are Needs Review/Unverified and never Verified.",
+        "allow_plain_http": false,
+        "last_checked": "2026-10-13T20:46:57.659144+00:00",
+        "topic": null,
+        "platform": null,
+        "status": null,
+        "name": null,
+        "detail_urls": [],
+        "attempted": false,
+        "successful_pages": 0,
+        "events_extracted": 0,
+        "evidence_generated": 0,
+        "raw_records": 0,
+        "rejected_records": 0,
+        "rejection_reasons": []
+      },
+      {
+        "source_id": "social-wechat-suzhou-fabu",
+        "source_name": "苏州发布",
+        "category": "social_media",
+        "url": null,
+        "crawl_url": null,
+        "trust_level": "MANUAL_IDENTITY_CHECK",
+        "priority": 3,
+        "crawl_status": "MANUAL_VERIFICATION_REQUIRED",
+        "tier": 2,
+        "require_events": null,
+        "adapter": null,
+        "implementation": "manual_only",
+        "reason": "Verify account identity and each submitted event manually; no WeChat crawler",
+        "limitation": null,
+        "allow_plain_http": false,
+        "last_checked": null,
+        "topic": null,
+        "platform": "WeChat",
+        "status": "Manual verification required",
+        "name": "苏州发布",
+        "detail_urls": [],
+        "attempted": false,
+        "successful_pages": 0,
+        "events_extracted": 0,
+        "evidence_generated": 0,
+        "raw_records": 0,
+        "rejected_records": 0,
+        "rejection_reasons": []
+      }
+    ]
+  }
+}

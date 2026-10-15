@@ -1,5 +1,5 @@
 """Priority-source checks use synthetic fixtures, never live Damai access."""
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 import json
 from pathlib import Path
 
@@ -301,27 +301,55 @@ def test_huodongjia_genuine_robots_denial_still_stops_the_host(tmp_path):
         client.close()
 
 
-def test_expo_retains_templates_and_detects_tokens_without_calling_api(tmp_path):
+def test_expo_no_longer_audits_the_shell_it_reads_the_public_json(tmp_path):
+    """The source used to count token references in the served markup without calling the API.
+
+    The page is a Vue application, and its own inline script declares the public JSON it calls
+    with the static channel token its public config.js publishes. That contract is now followed
+    (pinned in crawler/tests/test_js_venue_sources.py); this regression keeps the audit-only
+    behaviour from coming back: the API is requested, and a real event is published from it.
+    """
     visited = []
-    raw = '<div v-for="item in list">{{item.name}}</div><a>2018</a><script>$.ajax({headers:{token:exampleToken}})</script>'
 
     def handler(request):
         visited.append(str(request.url))
         if request.url.path == '/robots.txt':
             return httpx.Response(404)
-        assert request.url.path in ('/index.aspx', '/zhanhuiricheng-389.html')
-        return httpx.Response(200, text=raw, headers={'Content-Type': 'text/html'})
+        if request.url.path == '/templates/expo_CN/js/config.js':
+            return httpx.Response(200, text="var config = { token: 'fyxmt' };",
+                                  headers={'Content-Type': 'application/javascript'})
+        if request.url.path == '/api/Catogery/sub_list':
+            return httpx.Response(200, json={'success': True, 'data': [
+                {'id': 434, 'title': str(date.today().year)}]})
+        if request.url.path == '/api/Article/list':
+            return httpx.Response(200, json={'success': True, 'data': {'items': [
+                {'id': 2149, 'title': 'NVIDIA会议',
+                 'extras': {'start_time': (date.today() + timedelta(days=5)).isoformat() +
+                                            'T14:41:49',
+                            'end_time': (date.today() + timedelta(days=6)).isoformat() +
+                                        'T14:41:53'}}]}})
+        return httpx.Response(200, text=(
+            '<html><head><title>苏州国际博览中心_展会日程</title>'
+            '<script src="/templates/expo_CN/js/config.js"></script></head><body>'
+            '<script>$.ajax({data:{cate_id: 389, is_sub: 0},'
+            'url: config.host_url+"/api/Catogery/sub_list",'
+            'headers:{"Access-Token": config.token}});'
+            '$.ajax({url: config.host_url+"/api/Article/list",'
+            'headers:{"Access-Token": config.token}});</script></body></html>'),
+            headers={'Content-Type': 'text/html'})
 
     client = client_for(handler)
     try:
-        report = run_pipeline(tmp_path / 'expo.sqlite3', [ExpoVenueSource(client=client)], request_client=client)
-        assert report['status'] == 'Failed' and report['eventsStored'] == 0
-        audit = report['attempts'][0]['investigation']
-        assert audit['protected_api_requests'] == 0
-        assert audit['token_header_detected'] and audit['template_placeholders_detected']
-        assert report['pagesCollected'] == 2 and all('/api' not in u for u in visited)
+        report = run_pipeline(tmp_path / 'expo.sqlite3', [ExpoVenueSource(client=client)],
+                              request_client=client)
     finally:
         client.close()
+    investigation = report['attempts'][0]['investigation']
+    assert 'protected_api_requests' not in investigation
+    assert 'token_header_detected' not in investigation
+    assert investigation['credentials_used'] == 0
+    assert any('/api/Article/list' in url for url in visited), visited
+    assert report['eventsStored'] == 1
 
 
 def test_failed_refresh_keeps_previous_city_evidence(tmp_path):

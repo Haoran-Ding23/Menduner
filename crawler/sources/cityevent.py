@@ -112,39 +112,16 @@ class OlympicSource(RealSource):
         return items
 
 
-class PublicPageAuditSource(RealSource):
-    """Attempt only the approved public page; unsupported sources publish nothing."""
-    require_events = True
-    reason = 'No reliable static event records; source requires manual review'
-    crawl_url: str
-
-    def collect(self):
-        try:
-            page = self.fetch(self.crawl_url)
-            self.errors.append({'url': page.url, 'error': self.reason})
-            return [self.item(page, key='audit-context', is_event=False, extractor='context')]
-        except Exception as exc:
-            self.errors.append({'url': self.crawl_url, 'error': str(exc)})
-            return []
-
-
-class ArtsCentreSource(PublicPageAuditSource):
-    source_id = 'venue-suzhou-arts'
-    source_name = 'Suzhou Culture and Arts Centre'
-    kind = 'venue'
-    # Verified 2026-10-13: the supplied www.suzhoupcc.com does not resolve (NXDOMAIN).
-    # www.sscac.com.cn is the real official host, but it is a Nuxt shell that serves an
-    # empty state payload (state:{list:{list:[]}}) with no event data in the HTML.
-    source_url = crawl_url = 'https://www.sscac.com.cn/'
-    reason = ('Official host publishes no event data in the served HTML (client-rendered '
-              'Nuxt shell with an empty state payload); its events are reachable via the '
-              'visitsz tourism portal instead')
-
-
 from crawler.sources.event_platform.huodongjia import HuodongjiaSource
 
 
 from crawler.sources.event_platform.damai import DamaiSource
+
+# The audit-only handler that used to serve 苏州文化艺术中心 is gone: the host is a
+# client-rendered shell, but the shell's own published JavaScript calls a public JSON API that
+# carries the whole performance calendar, so the source now extracts real events in
+# crawler/sources/venue/sscac.py. 苏州国际博览中心 (crawler/sources/venue/expo.py) moved the
+# same way.
 
 # China Exhibition Network is no longer an audit-only handler: the supplied city route
 # was a 404 page and the venue schedule page carries real dated exhibitions, so it has a
