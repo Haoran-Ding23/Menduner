@@ -1102,6 +1102,36 @@ main {
   align-items: center;
 }
 
+/* --------------------------------------------------------------------------
+   Venue index: the venue list beside the selected venue's events
+   -------------------------------------------------------------------------- */
+.venue-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+.venue-panel {
+  /* The events panel is sticky so scrolling a long venue list does not scroll the events
+     away; the list is the index and the events are the thing being read. */
+  position: sticky;
+  top: 12px;
+  max-height: calc(100vh - 40px);
+  overflow: auto;
+}
+.venue-row > td {
+  vertical-align: top;
+}
+.venue-row-active > td {
+  background: #eef5ff;
+}
+.venue-row:hover > td {
+  background: #f6faff;
+}
+.venue-row-active:hover > td {
+  background: #e7f0ff;
+}
+
 @media (max-width: 760px) {
   /* The tag column is the first thing to go: it is context, not the answer. The row keeps
      index / date / name, which is what makes it scannable on a phone. */
@@ -1117,6 +1147,15 @@ main {
   }
   .agenda-big {
     font-size: 17px;
+  }
+
+  /* The venue list and its events stack; the sticky panel would trap the scroll. */
+  .venue-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .venue-panel {
+    position: static;
+    max-height: none;
   }
 }
 

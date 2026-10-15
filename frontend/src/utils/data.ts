@@ -227,6 +227,63 @@ export function eventCoordinates(
   return venue.coordinates;
 }
 
+/** Every venue that has at least one event in the given list, busiest first.
+ *
+ * This is the venue-first view of the same data the map shows spatially. The interviewed
+ * operations lead at a hotel in 太仓 described the problem as "官方渠道比较多，信息比较散，
+ * 需要一年中的活动归纳好" and reasoned entirely in venues ("场地", "场地大小"), so grouping
+ * by venue is the aggregation that matches how the demand side already thinks.
+ *
+ * Venues with no events in the current selection are omitted rather than shown as empty rows:
+ * a list of 93 venues where 40 are blank would defeat the purpose of aggregating.
+ */
+export function eventsByVenue(
+  events: Event[],
+  venues: Venue[],
+): {
+  venue: Venue;
+  events: Event[];
+  count: number;
+  topCategory: Category | null;
+  firstDate: string | null;
+  hasCoordinates: boolean;
+}[] {
+  const byVenue = new Map<string, Event[]>();
+  for (const event of events) {
+    const id = event.venueId;
+    if (!id) continue;
+    const list = byVenue.get(id);
+    if (list) list.push(event);
+    else byVenue.set(id, [event]);
+  }
+  const lookup = new Map(venues.map((v) => [v.id, v]));
+  const rows = [];
+  for (const [venueId, list] of byVenue) {
+    const venue = lookup.get(venueId);
+    if (!venue) continue;
+    const counts = new Map<Category, number>();
+    for (const event of list) {
+      counts.set(event.category, (counts.get(event.category) ?? 0) + 1);
+    }
+    // Dated events in date order, undated ones last. A record with no date cannot be placed
+    // in a programme, so it belongs at the end rather than in front of the dated ones - which
+    // is where an empty string sorts by default, and where the first version of this put it.
+    list.sort((a, b) =>
+      (dates(a)?.[0] ?? "9999-99-99").localeCompare(dates(b)?.[0] ?? "9999-99-99"),
+    );
+    rows.push({
+      venue,
+      events: list,
+      count: list.length,
+      topCategory: [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null,
+      firstDate: dates(list[0])?.[0] ?? null,
+      hasCoordinates: !!verifiedCoords(venue.coordinates),
+    });
+  }
+  // Busiest first, then by name so the order is stable between renders.
+  return rows.sort((a, b) => b.count - a.count || a.venue.name.localeCompare(b.venue.name));
+}
+
 /** How many related events the graph will draw around the selected one.
  *
  * Measured on the live database: 30 venues program two or more events, and the same-venue

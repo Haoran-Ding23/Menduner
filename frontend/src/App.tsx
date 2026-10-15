@@ -11,6 +11,7 @@ import { lazyWithReload } from './utils/lazyWithReload';
 const Map = lazyWithReload(() => import('./pages/CityEventMap'));
 const Calendar = lazyWithReload(() => import('./pages/EventCalendar'));
 const Agenda = lazyWithReload(() => import('./pages/EventAgenda'));
+const Venues = lazyWithReload(() => import('./pages/VenueIndex'));
 const Graph = lazyWithReload(() => import('./pages/KnowledgeGraph'));
 const Hotels = lazyWithReload(() => import('./pages/HotelIntelligence'));
 const Insights = lazyWithReload(() => import('./pages/DistrictInsights'));
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="/map" element={<Page name="城市活动地图"><Map /></Page>}/>
           <Route path="/calendar" element={<Page name="活动日历"><Calendar /></Page>}/>
           <Route path="/agenda" element={<Page name="活动清单"><Agenda /></Page>}/>
+          <Route path="/venues" element={<Page name="场馆活动清单"><Venues /></Page>}/>
           <Route path="/graph" element={<Page name="知识图谱"><Graph /></Page>}/>
           <Route path="/hotels" element={<Page name="酒店活动情报"><Hotels /></Page>}/>
           <Route path="/insights" element={<Page name="商圈洞察"><Insights /></Page>}/>

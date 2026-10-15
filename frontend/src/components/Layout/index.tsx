@@ -12,6 +12,7 @@ import {
   UploadOutlined,
   ReloadOutlined,
   UnorderedListOutlined,
+  ShopOutlined,
 } from "@ant-design/icons";
 import { usePlatform } from "../../hooks/usePlatform";
 export const pages = [
@@ -32,6 +33,12 @@ export const pages = [
     title: "活动清单",
     label: "活动清单",
     icon: <UnorderedListOutlined />,
+  },
+  {
+    path: "/venues",
+    title: "场馆活动清单",
+    label: "场馆活动清单",
+    icon: <ShopOutlined />,
   },
   {
     path: "/graph",
