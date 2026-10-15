@@ -44,3 +44,8 @@ backend/.venv-*/
 # Local build scratch (esbuild temp on Windows).
 .build-tmp/
 .esbuild-tmp/
+
+# Local scratch from dev-server runs and screenshots.
+.vite-tmp/
+*-preview.png
+agenda-preview.png
