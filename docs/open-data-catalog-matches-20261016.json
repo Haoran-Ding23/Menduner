@@ -1,0 +1,7318 @@
+{
+ "_note": "苏州公共数据开放平台目录中与目标字段相关的条目(2026-10-16 全量 6023 条内匹配,匹配范围=资源名+平台简介;不是下载下来的数据)",
+ "_source": "POST https://data.suzhou.gov.cn/dii/catalog/cms/open/getResourcePage?current=&size=  body {resourceName:'',isPublished:true}  → 6023 rows",
+ "_caution": "目录条目 ≠ 数据可用。items 只记录平台自己公布的名字/简介/开放属性/条件/计数。",
+ "catalogTotals": {
+  "published": 6023
+ },
+ "topics": {
+  "商业消费:商圈日客流/销售指数/交易笔数": [
+   {
+    "resourceName": "张家港市统计局居民人均消费支出信息",
+    "dept": "张家港市统计局",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:09",
+    "downloadCount": 2,
+    "viewCount": 7,
+    "id": "1513489641214537728",
+    "intro": "张家港市统计局居民人均消费支出信息,时间范围：2022-至今,包含：年份、全体居民人均消费支出、城镇居民人均消费支出、农村居民人均消费支出",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "张家港市统计局历年社会消费品零售总额信息",
+    "dept": "张家港市统计局",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:09",
+    "downloadCount": 2,
+    "viewCount": 4,
+    "id": "1511804762793930752",
+    "intro": "张家港市统计局历年社会消费品零售总额信息,时间范围：2022-至今,包含：年份、全市",
+    "matchedTerms": [
+     "消费",
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "张家港市工业用地土地成交结果公示信息",
+    "dept": "张家港市自然资源和规划局",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-16 21:02:48",
+    "downloadCount": 1,
+    "viewCount": 3,
+    "id": "1511413155699585024",
+    "intro": "张家港市工业用地土地成交结果公示信息,时间范围：2024-至今,包含：序号、地块编号、地块坐落、面积（平方米）、用途、出让年限、产业门类、投资强度（万元/亩）、容积率、交易日期等",
+    "matchedTerms": [
+     "交易"
+    ]
+   },
+   {
+    "resourceName": "张家港市统计局张家港市经济发展指标信息",
+    "dept": "张家港市统计局",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-16 21:02:10",
+    "downloadCount": 1,
+    "viewCount": 9,
+    "id": "1508792857678540800",
+    "intro": "张家港市统计局张家港市经济发展指标信息,时间范围：2018-至今,包含：报告期、规模以上工业总产值、全社会固定资产投资、工业投资、服务业投资、新兴产业投资、社会消费品零售总额、规模以上工业企业主营业务收入、规模以上工业企业利税总额、规模以上工业企业利润总额等",
+    "matchedTerms": [
+     "消费",
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "张家港市统计局交通和用电和社零信息统计数据",
+    "dept": "张家港市统计局",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:10",
+    "downloadCount": 0,
+    "viewCount": 3,
+    "id": "1508792834924441600",
+    "intro": "张家港市统计局交通和用电和社零信息统计数据,时间范围：2020-至今,包含：全社会用电量/万千瓦时、客运量_全社会/万人次、客运量_公路/万人次、居民用电量/万千瓦时、工业用电量/万千瓦时、年度、电信业务总量/万吨、社会消费品零售总额/万元、货运量_全社会/万吨、货运量_公路/万吨等",
+    "matchedTerms": [
+     "消费",
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "苏州工业园区志愿者积分变动情况信息",
+    "dept": "工业园区宣传和统战部",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2026-10-16 21:00:04",
+    "downloadCount": 0,
+    "viewCount": 15,
+    "id": "1508483263630635008",
+    "intro": "苏州工业园区志愿者积分变动情况信息，时间范围: 2023-至今，包含：主键、志愿者用户编号、兑换之前的积分、兑换之后的积分、变动时间、交易说明、业务类型、流水号",
+    "matchedTerms": [
+     "交易"
+    ]
+   },
+   {
+    "resourceName": "张家港市发改委粮油市场价格监测信息",
+    "dept": "张家港市发展和改革委员会(张家港市粮食和物资储备局)",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-16 21:01:54",
+    "downloadCount": 1,
+    "viewCount": 5,
+    "id": "1505873574610825216",
+    "intro": "张家港市发改委粮油市场价格监测信息,时间范围：2023-至今,包含：序号、名称、销量（公斤）、批发价（元）、零售价（元）、本期开始时间、本期截止时间",
+    "matchedTerms": [
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "姑苏区社会消费品零售总额信息",
+    "dept": "姑苏区统计局",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-16 20:59:54",
+    "downloadCount": 0,
+    "viewCount": 47,
+    "id": "1496078246579761152",
+    "intro": "姑苏区社会消费品零售总额信息，时间范围：2020-至今，包含：唯一性主键、计量单位、统计时间、本月完成、累计完成、同比增幅（%）",
+    "matchedTerms": [
+     "消费",
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "姑苏区A级景区数量及客流量统计数据",
+    "dept": "姑苏区教育体育和文化旅游委员会",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "5",
+    "dataUpdateTime": "2026-10-16 20:59:44",
+    "downloadCount": 18,
+    "viewCount": 52,
+    "id": "1494408282990931968",
+    "intro": "姑苏区A级景区数量及客流量统计数据，时间范围: 2020-至今，包含：唯一性主键、景区数量、统计时间、本年度累计接待人次",
+    "matchedTerms": [
+     "客流"
+    ]
+   },
+   {
+    "resourceName": "姑苏区统计局对外开放数据",
+    "dept": "姑苏区统计局",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-16 20:59:54",
+    "downloadCount": 0,
+    "viewCount": 28,
+    "id": "1494407505325027328",
+    "intro": "姑苏区统计局对外开放数据，时间范围: 2021-至今，包含：唯一性主键、一般公共预算收入、一般公共预算支出、社会消费品零售总额、限额以上批零住餐企业社会消费品零售总额、全社会固定资产投资额、规模以上工业总产值、单位、统计时间",
+    "matchedTerms": [
+     "消费",
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "张家港市锦丰镇农副产品平均销售价格信息",
+    "dept": "江苏扬子江国际冶金工业园（锦丰镇）",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-16 21:00:12",
+    "downloadCount": 1,
+    "viewCount": 12,
+    "id": "1449037402073165825",
+    "intro": "张家港市锦丰镇农副产品平均销售价格信息，时间范围：2023-至今，包含：序号,采集日期,默认唯一字段(共享交换平台)、类别、品名、价格、计量单位、默认时间戳字段(共享交换平台)",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "常熟市环卫作业商业街道信息（历史数据）",
+    "dept": "常熟市城市管理局",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 20:58:41",
+    "downloadCount": 0,
+    "viewCount": 2,
+    "id": "1446465284437405696",
+    "intro": "常熟市环卫作业商业街道信息，包含序号、名称、标段、道路等级、道路起点、道路终点、道路长度、清扫总宽度、清扫面积、保洁面积、是否删除、创建人编号、创建时间、编辑人编号、编辑时间。",
+    "matchedTerms": [
+     "商业街"
+    ]
+   },
+   {
+    "resourceName": "常熟市工业大数据平台工业企业资源集约利用综合评价等级结果信息",
+    "dept": "常熟市工业和信息化局",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2026-10-16 20:58:52",
+    "downloadCount": 0,
+    "viewCount": 5,
+    "id": "1445359923668152320",
+    "intro": "常熟市工业大数据平台工业企业资源集约利用综合评价等级结果信息，包含主键、年份、企业信用代码、企业名称、所在区镇、区镇代码、行业、行业代码、企业类型、是否是工业企业、是否是宗地主、计算亩均税收的值、计算亩均销售的值、占地面积、租赁面积、研发经费、总能耗、平均职工人数（删除）、主要污染物排放总当量、固定资产折旧、生产税净额、营业盈余、职工工资总额、增加值、实际缴纳的税金、实际销售的收入等。",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "姑苏区药品零售许可信息",
+    "dept": "姑苏区市场监督管理局",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-16 20:59:49",
+    "downloadCount": 0,
+    "viewCount": 29,
+    "id": "1394319659948535808",
+    "intro": "姑苏区药品零售许可信息，时间范围：2022-至今，包含：唯一性主键、审核结果、业务类型、行业类别、经营范围、统一社会信用代码、许可证截止日期、经营类别、开业时间、核准时间",
+    "matchedTerms": [
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "高新区法人自然人限制消费名单",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求。",
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-15 22:18:41",
+    "downloadCount": 0,
+    "viewCount": 279,
+    "id": "1258381336714113024",
+    "intro": "高新区法人自然人限制消费名单，其中包括姓名、案号等。",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "苏州高新区高新技术企业培育智能评价信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求。",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:18:42",
+    "downloadCount": 2,
+    "viewCount": 109,
+    "id": "1196843836405673984",
+    "intro": "苏州高新区高新技术企业培育智能评价信息，其中包括资产总额得分及销售收入得分等。",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "太仓市文体广电和旅游局体育彩票销售网点",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:38",
+    "downloadCount": 10,
+    "viewCount": 157,
+    "id": "963762165197766656",
+    "intro": "电话咨询，联系方式：0512-53549598，主要内容：站点号、站点地址、玩法情况、网点性质",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "姑苏区经营性用地土地出让公告",
+    "dept": "姑苏区",
+    "resourceType": "接口",
+    "openAttributeName": "无条件开放",
+    "openCondition": "需求场景与申请数据有明确关联性，确保场景合规、数据安全。",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 22:26:23",
+    "downloadCount": 0,
+    "viewCount": 32,
+    "id": "1184446728365080576",
+    "intro": "姑苏区经营性用地土地出让公告，包括地块位置、地块编号、面积（平方米）、用途、出让年限、容积率、建筑密度、绿地率、起报总价（万元）、保证金人民币（万元）、保证金美元（万元）、保证金港币（万元）、人民币（万元）、项目分割销售的比例约定、公告编号",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "苏州市政务服务特色服务点信息",
+    "dept": "市数据局（政务办）",
+    "resourceType": "接口",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2026-10-16 22:26:26",
+    "downloadCount": 0,
+    "viewCount": 34,
+    "id": "1169635188357136384",
+    "intro": "房产交易全网通办服务点、出入境服务点等各部门政务服务网点基础信息",
+    "matchedTerms": [
+     "交易"
+    ]
+   },
+   {
+    "resourceName": "吴中区统计局限上社会消费品零售总额",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-26 12:51:59",
+    "downloadCount": 17,
+    "viewCount": 196,
+    "id": "1154368362324885504",
+    "intro": "吴中区统计局限上社会消费品零售总额",
+    "matchedTerms": [
+     "消费",
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "吴中区统计局城镇居民人均生活消费支出",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-26 12:50:46",
+    "downloadCount": 19,
+    "viewCount": 293,
+    "id": "1154368603530919936",
+    "intro": "吴中区统计局城镇居民人均生活消费支出",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "高新区食品销售单位许可信息",
+    "dept": "高新区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-13 16:41:41",
+    "downloadCount": 13,
+    "viewCount": 272,
+    "id": "1151557054160371712",
+    "intro": "食品经营许可信息，包括经营者名称，经营场所等相关信息",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "高新区药品销售单位许可信息",
+    "dept": "高新区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-13 16:43:15",
+    "downloadCount": 12,
+    "viewCount": 252,
+    "id": "1151557576347054080",
+    "intro": "药品经营许可信息，包括企业名称，地址，经营类别等相关信息",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "苏州市发改委部分农贸市场零售均价",
+    "dept": "市发展和改革委员会（市粮食和物资储备局）",
+    "resourceType": "接口",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2026-10-16 22:26:36",
+    "downloadCount": 13,
+    "viewCount": 556,
+    "id": "1149723572530511872",
+    "intro": "苏州市部分农贸市场零售均价2023年9月8均价",
+    "matchedTerms": [
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "苏州市发改委市区民用管道天然气销售价格表",
+    "dept": "市发展和改革委员会（市粮食和物资储备局）",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-08 14:11:43",
+    "downloadCount": 11,
+    "viewCount": 496,
+    "id": "1149701180487856128",
+    "intro": "市区民用管道天然气销售价格表",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "高新区居民收支信息",
+    "dept": "高新区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-14 11:04:34",
+    "downloadCount": 20,
+    "viewCount": 183,
+    "id": "1150782449007132672",
+    "intro": "从2022年度1月至今，高新区居民收支信息，其中包括城镇常住居民人均可支配收入，城镇常住居民人均消费支出信息。",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "苏州市文旅消费聚集区情况",
+    "dept": "市文化广电和旅游局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-02-25 15:08:28",
+    "downloadCount": 64,
+    "viewCount": 625,
+    "id": "1148307417081249792",
+    "intro": "苏州市文旅消费聚集区名录：名称，获评时间。",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "苏州市区存量住宅用地信息",
+    "dept": "市自然资源和规划局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-02-28 11:10:07",
+    "downloadCount": 150,
+    "viewCount": 501,
+    "id": "1148211164565667840",
+    "intro": "各月的苏州市区存量住宅用地信息汇总表，包括项目总数、存量住宅用地总面积、未销售房屋的土地面积等信息。",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "苏州市经营性用地土地出让公告",
+    "dept": "市自然资源和规划局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-02-28 14:11:16",
+    "downloadCount": 302,
+    "viewCount": 231,
+    "id": "1148216780994576384",
+    "intro": "2024年苏州市经营性用地土地出让公告，包括地块位置、地块编号、面积、用途、出让年限、规划技术指标、起报总价、保证金、加价幅度、项目分割销售的比例约定等信息。",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "苏州市预包装食品销售许可(苏州市场监管)",
+    "dept": "市市场监督管理局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-27 10:16:17",
+    "downloadCount": 42,
+    "viewCount": 299,
+    "id": "1146864211948929024",
+    "intro": "苏州市预包装食品销售许可(苏州市场监管)，包括经营者名称,统一社会信用代码,住所,经营场所,许可证编号,经营项目,有效期至,主体业态,签发人,日常监督管理机构,发证机关,发证日期",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "苏州市其他类食品销售许可(苏州市场监管)",
+    "dept": "市市场监督管理局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-27 10:05:21",
+    "downloadCount": 9,
+    "viewCount": 117,
+    "id": "1146863604949282816",
+    "intro": "苏州市其他类食品销售许可(苏州市场监管)，包括经营者名称,统一社会信用代码,住所,经营场所,许可证编号,经营项目,有效期至,主体业态,签发人,日常监督管理机构,发证机关,发证日期",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "苏州市特殊医学用途配方食品销售许可(苏州市场监管)",
+    "dept": "市市场监督管理局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-27 10:10:52",
+    "downloadCount": 10,
+    "viewCount": 137,
+    "id": "1146864624924295168",
+    "intro": "苏州市特殊医学用途配方食品销售许可(苏州市场监管)，包括经营者名称,统一社会信用代码,住所,经营场所,许可证编号,经营项目,有效期至,主体业态,签发人,日常监督管理机构,发证机关,发证日期",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "苏州市保健食品销售许可(苏州市场监管)",
+    "dept": "市市场监督管理局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-27 10:02:37",
+    "downloadCount": 9,
+    "viewCount": 115,
+    "id": "1146864634973876224",
+    "intro": "苏州市保健食品销售许可(苏州市场监管)，包括经营者名称,统一社会信用代码,住所,经营场所,许可证编号,经营项目,有效期至,主体业态,签发人,日常监督管理机构,发证机关,发证日期",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "苏州市婴幼儿配方乳粉销售许可(苏州市场监管)",
+    "dept": "市市场监督管理局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-27 10:07:14",
+    "downloadCount": 8,
+    "viewCount": 154,
+    "id": "1146864688195371008",
+    "intro": "苏州市婴幼儿配方乳粉销售许可(苏州市场监管)，包括经营者名称,统一社会信用代码,住所,经营场所,许可证编号,经营项目,有效期至,主体业态,签发人,日常监督管理机构,发证机关,发证日期",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "苏州市其他婴幼儿配方食品销售许可(苏州市场监管)",
+    "dept": "市市场监督管理局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-27 10:03:54",
+    "downloadCount": 9,
+    "viewCount": 116,
+    "id": "1146864765982961664",
+    "intro": "苏州市其他婴幼儿配方食品销售许可(苏州市场监管)，包括经营者名称,统一社会信用代码,住所,经营场所,许可证编号,经营项目,有效期至,主体业态,签发人,日常监督管理机构,发证机关,发证日期",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "苏州市预包装食品(含冷藏冷冻食品)销售许可(苏州市场监管)",
+    "dept": "市市场监督管理局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-27 10:15:26",
+    "downloadCount": 27,
+    "viewCount": 149,
+    "id": "1146864318773686272",
+    "intro": "苏州市预包装食品(含冷藏冷冻食品)销售许可(苏州市场监管)，包括经营者名称,统一社会信用代码,住所,经营场所,许可证编号,经营项目,有效期至,主体业态,签发人,日常监督管理机构,发证机关,发证日期",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "苏州市预包装食品(不含冷藏冷冻食品)销售许可(苏州市场监管)",
+    "dept": "市市场监督管理局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-27 10:14:31",
+    "downloadCount": 25,
+    "viewCount": 190,
+    "id": "1146864382082510848",
+    "intro": "苏州市预包装食品(不含冷藏冷冻食品)销售许可(苏州市场监管)，包括经营者名称,统一社会信用代码,住所,经营场所,许可证编号,经营项目,有效期至,主体业态,签发人,日常监督管理机构,发证机关,发证日期",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "苏州市散装食品(含冷藏冷冻食品)销售许可(苏州市场监管)",
+    "dept": "市市场监督管理局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-27 10:08:48",
+    "downloadCount": 10,
+    "viewCount": 138,
+    "id": "1146864430216314880",
+    "intro": "苏州市散装食品(含冷藏冷冻食品)销售许可(苏州市场监管)，包括经营者名称,统一社会信用代码,住所,经营场所,许可证编号,经营项目,有效期至,主体业态,签发人,日常监督管理机构,发证机关,发证日期",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "苏州市散装食品(不含冷藏冷冻食品)销售许可(苏州市场监管)",
+    "dept": "市市场监督管理局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-27 10:08:07",
+    "downloadCount": 10,
+    "viewCount": 140,
+    "id": "1146864493470613504",
+    "intro": "苏州市散装食品(不含冷藏冷冻食品)销售许可(苏州市场监管)，包括经营者名称,统一社会信用代码,住所,经营场所,许可证编号,经营项目,有效期至,主体业态,签发人,日常监督管理机构,发证机关,发证日期",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "苏州市散装食品销售许可(苏州市场监管)",
+    "dept": "市市场监督管理局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-27 10:09:31",
+    "downloadCount": 16,
+    "viewCount": 113,
+    "id": "1146864508574330880",
+    "intro": "苏州市散装食品销售许可(苏州市场监管)，包括经营者名称,统一社会信用代码,住所,经营场所,许可证编号,经营项目,有效期至,主体业态,签发人,日常监督管理机构,发证机关,发证日期",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "苏州市医疗器械网络销售备案(苏州市场监管)",
+    "dept": "市市场监督管理局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-27 10:08:27",
+    "downloadCount": 21,
+    "viewCount": 605,
+    "id": "1146865232414703616",
+    "intro": "苏州市医疗器械网络销售备案(苏州市场监管)，包括监察机构,监督单位,定期单位,告知单编号,告知日期,设备种类,设备类别,设备品种,设备名称,制造单位,制造单位许可证编号,制造编号,型号参数,设备安装地点,安装改造修理日期,施工类别,施工单位,施工单位许可证编号,使用单位,使用单位地址",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "昆山市获评省级放心消费创建示范单位名单",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-21 15:09:47",
+    "downloadCount": 7,
+    "viewCount": 50,
+    "id": "1146018919565455360",
+    "intro": "",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "市容环卫-环卫作业商业街道",
+    "dept": "常熟市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请公开",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-14 13:50:37",
+    "downloadCount": 0,
+    "viewCount": 469,
+    "id": "1110928885648945152",
+    "intro": "名称，标段，道路等级，道路起点，道路终点，道路长度（m），清扫总宽度（m），清扫面积（㎡），保洁面积（㎡）",
+    "matchedTerms": [
+     "商业街"
+    ]
+   },
+   {
+    "resourceName": "吴江区-2022年省、市级放心消费创建先进示范单位信息",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-05 16:17:38",
+    "downloadCount": 0,
+    "viewCount": 326,
+    "id": "1049352025727528960",
+    "intro": "吴江区-2022年省、市级放心消费创建先进示范单位信息，各项指标",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "吴江区-省、市级放心消费创建先进示范单位信息",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-10-05 13:40:16",
+    "downloadCount": 7,
+    "viewCount": 217,
+    "id": "1049317916254892032",
+    "intro": "吴江区-省、市级放心消费创建先进示范单位信息，各项指标",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "吴中区行政审批局出版物零售单位事项办件信息",
+    "dept": "吴中区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:43",
+    "downloadCount": 0,
+    "viewCount": 42,
+    "id": "1181237695139246080",
+    "intro": "吴中区行政审批局出版物零售单位事项办件信息",
+    "matchedTerms": [
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "吴中区行政审批局药品零售设立变更注销办件信息",
+    "dept": "吴中区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-15 22:15:51",
+    "downloadCount": 0,
+    "viewCount": 33,
+    "id": "1047541971693010944",
+    "intro": "吴中区行政审批局药品零售设立、变更、注销办件信息",
+    "matchedTerms": [
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "吴中区统计局-房地产企业面积和销售按登记注册类型和资质分组",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-26 11:47:03",
+    "downloadCount": 0,
+    "viewCount": 243,
+    "id": "1072525199776378880",
+    "intro": "吴中区统计局-房地产企业面积和销售按登记注册类型和资质分组",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "吴中区统计局-城镇居民家庭全年食品人均消费量",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-19 16:26:21",
+    "downloadCount": 0,
+    "viewCount": 202,
+    "id": "1047198486326607872",
+    "intro": "",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "吴中区统计局-城镇居民家庭全年生活消费人均支出情况",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-19 16:24:45",
+    "downloadCount": 0,
+    "viewCount": 188,
+    "id": "1047198611417559040",
+    "intro": "",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "吴中区统计局-规模以上工业企业分行业综合能源消费量",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-19 16:43:58",
+    "downloadCount": 0,
+    "viewCount": 187,
+    "id": "1047198801637605376",
+    "intro": "",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "吴中区统计局-限上社会消费品零售总额",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-19 16:50:31",
+    "downloadCount": 0,
+    "viewCount": 200,
+    "id": "1047199873483632640",
+    "intro": "",
+    "matchedTerms": [
+     "消费",
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "吴中区统计局-城市房产交易情况",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-19 16:18:36",
+    "downloadCount": 0,
+    "viewCount": 348,
+    "id": "1047201009502453760",
+    "intro": "",
+    "matchedTerms": [
+     "交易"
+    ]
+   },
+   {
+    "resourceName": "吴中区统计局分月社会消费品零售总额和比重",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-19 16:51:10",
+    "downloadCount": 0,
+    "viewCount": 164,
+    "id": "1047202909652189184",
+    "intro": "吴中区统计局-分月社会消费品零售总额和比重",
+    "matchedTerms": [
+     "消费",
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "吴中区统计局-规模以上工业企业分行业能源消费量",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-26 11:58:51",
+    "downloadCount": 0,
+    "viewCount": 299,
+    "id": "1072525201244356608",
+    "intro": "吴中区统计局-规模以上工业企业分行业能源消费量",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2019年规模以上工业企业能源购进、消费与库存",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-25 15:21:53",
+    "downloadCount": 0,
+    "viewCount": 152,
+    "id": "1045719015039893504",
+    "intro": "吴江区统计局-2019年规模以上工业企业能源购进、消费与库存，2019年各项指标",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2020年规模以上工业企业能源购进、消费与库存",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-25 15:17:24",
+    "downloadCount": 0,
+    "viewCount": 177,
+    "id": "1045719015266385920",
+    "intro": "吴江区统计局-2020年规模以上工业企业能源购进、消费与库存，2020年各项指标",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2021年规模以上工业企业能源购进、消费与库存",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-25 15:16:55",
+    "downloadCount": 0,
+    "viewCount": 155,
+    "id": "1045719015484489728",
+    "intro": "吴江区统计局-2021年规模以上工业企业能源购进、消费与库存，2021年各项指标",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2019年规模以上工业企业分行业能源消费量",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-25 15:25:34",
+    "downloadCount": 0,
+    "viewCount": 198,
+    "id": "1045719015690010624",
+    "intro": "吴江区统计局-2019年规模以上工业企业分行业能源消费量，2019年各项指标",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2020年规模以上工业企业分行业能源消费量",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-25 15:16:21",
+    "downloadCount": 0,
+    "viewCount": 284,
+    "id": "1045719016088469504",
+    "intro": "吴江区统计局-2020年规模以上工业企业分行业能源消费量，2020年各项指标",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2021年规模以上工业企业分行业能源消费量",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-25 15:25:07",
+    "downloadCount": 0,
+    "viewCount": 222,
+    "id": "1045719016495316992",
+    "intro": "吴江区统计局-2021年规模以上工业企业分行业能源消费量，2021年各项指标",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2019年城镇居民家庭平均每百户年末耐用消费品拥有量",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-25 14:25:53",
+    "downloadCount": 0,
+    "viewCount": 129,
+    "id": "1045706749410213888",
+    "intro": "吴江区统计局-2019年城镇居民家庭平均每百户年末耐用消费品拥有量，2019年各项指标",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2020年城镇居民家庭平均每百户年末耐用消费品拥有量",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-25 14:30:07",
+    "downloadCount": 0,
+    "viewCount": 132,
+    "id": "1045706749498294272",
+    "intro": "吴江区统计局-2020年城镇居民家庭平均每百户年末耐用消费品拥有量，2020年各项指标",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2021年城镇居民家庭平均每百户年末耐用消费品拥有量",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-25 14:28:43",
+    "downloadCount": 0,
+    "viewCount": 155,
+    "id": "1045706749670260736",
+    "intro": "吴江区统计局-2021年城镇居民家庭平均每百户年末耐用消费品拥有量，2021年各项指标",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "昆山市规上工业能源购进、消费与库存汇总表",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-29 17:46:05",
+    "downloadCount": 16,
+    "viewCount": 201,
+    "id": "1046995047042740224",
+    "intro": "昆山市规上工业能源购进、消费与库存汇总表",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "昆山市居民人均消费支出",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-29 17:47:59",
+    "downloadCount": 12,
+    "viewCount": 297,
+    "id": "1046994983964602368",
+    "intro": "昆山市居民人均消费支出",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "昆山限额以上批发和零售业商品购进、销售、库存总额",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-29 18:05:00",
+    "downloadCount": 7,
+    "viewCount": 129,
+    "id": "1046998574502735872",
+    "intro": "昆山限额以上批发和零售业商品购进、销售、库存总额",
+    "matchedTerms": [
+     "销售",
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2019年限额以上批发和零售业企业财务状况",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-24 10:07:51",
+    "downloadCount": 0,
+    "viewCount": 131,
+    "id": "1045279341712441344",
+    "intro": "吴江区统计局-2019年限额以上批发和零售业企业财务状况，2019年各项指标",
+    "matchedTerms": [
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2020年限额以上批发和零售业企业财务状况",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-24 10:12:56",
+    "downloadCount": 0,
+    "viewCount": 132,
+    "id": "1045279342006042624",
+    "intro": "吴江区统计局-2020年限额以上批发和零售业企业财务状况，2020年各项指标",
+    "matchedTerms": [
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2021年限额以上批发和零售业企业财务状况",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-25 10:56:01",
+    "downloadCount": 0,
+    "viewCount": 153,
+    "id": "1045279342291255296",
+    "intro": "吴江区统计局-2021年限额以上批发和零售业企业财务状况，2021年各项指标",
+    "matchedTerms": [
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2019年亿元以上商品交易市场情况综合表",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-24 10:15:27",
+    "downloadCount": 0,
+    "viewCount": 152,
+    "id": "1045279342576467968",
+    "intro": "吴江区统计局-2019年亿元以上商品交易市场情况综合表，2019年各项指标",
+    "matchedTerms": [
+     "交易"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2020年亿元以上商品交易市场情况综合表",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-24 10:12:05",
+    "downloadCount": 0,
+    "viewCount": 171,
+    "id": "1045279342765211648",
+    "intro": "吴江区统计局-2020年亿元以上商品交易市场情况综合表，2020年各项指标",
+    "matchedTerms": [
+     "交易"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2021年亿元以上商品交易市场情况综合表",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-24 10:14:50",
+    "downloadCount": 0,
+    "viewCount": 151,
+    "id": "1045279342895235072",
+    "intro": "吴江区统计局-2021年亿元以上商品交易市场情况综合表，2021年各项指标",
+    "matchedTerms": [
+     "交易"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2019年社会消费品零售总额",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-25 10:53:30",
+    "downloadCount": 0,
+    "viewCount": 178,
+    "id": "1045279343012675584",
+    "intro": "吴江区统计局-2019年社会消费品零售总额，2019年各项指标",
+    "matchedTerms": [
+     "消费",
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2020年社会消费品零售总额及分行业核算增速",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-25 10:51:41",
+    "downloadCount": 0,
+    "viewCount": 153,
+    "id": "1045279343172059136",
+    "intro": "吴江区统计局-2020年社会消费品零售总额及分行业核算增速，2020年各项指标",
+    "matchedTerms": [
+     "消费",
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2021年社会消费品零售总额及分行业核算增速",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-25 10:52:40",
+    "downloadCount": 0,
+    "viewCount": 131,
+    "id": "1045279343318859776",
+    "intro": "吴江区统计局-2021年社会消费品零售总额及分行业核算增速，2021年各项指标",
+    "matchedTerms": [
+     "消费",
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "昆山市高新区商品交易场所明细表(专题)",
+    "dept": "昆山市",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "有条件开放",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2026-10-15 22:18:14",
+    "downloadCount": 0,
+    "viewCount": 137,
+    "id": "1046997311883014144",
+    "intro": "",
+    "matchedTerms": [
+     "交易"
+    ]
+   },
+   {
+    "resourceName": "昆山市-高新区零售商业网点",
+    "dept": "昆山市",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "有条件开放",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2026-10-15 22:18:14",
+    "downloadCount": 0,
+    "viewCount": 163,
+    "id": "1046997438211256320",
+    "intro": "",
+    "matchedTerms": [
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2019年限额以上批发和零售业商品购进、销售、库存总额",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-23 15:56:30",
+    "downloadCount": 0,
+    "viewCount": 152,
+    "id": "1044921367366139904",
+    "intro": "吴江区统计局-2019年限额以上批发和零售业商品购进、销售、库存总额，2019年各项指标",
+    "matchedTerms": [
+     "销售",
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2020年限额以上批发和零售业商品购进、销售、库存总额",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-23 10:44:13",
+    "downloadCount": 0,
+    "viewCount": 568,
+    "id": "1044921367651352576",
+    "intro": "吴江区统计局-2020年限额以上批发和零售业商品购进、销售、库存总额，2020年各项指标",
+    "matchedTerms": [
+     "销售",
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2021年限额以上批发和零售业商品购进、销售、库存总额",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-23 10:44:46",
+    "downloadCount": 0,
+    "viewCount": 150,
+    "id": "1044921367915593728",
+    "intro": "吴江区统计局-2021年限额以上批发和零售业商品购进、销售、库存总额，2021年各项指标",
+    "matchedTerms": [
+     "销售",
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2019年限额以上批发和零售业、住宿和餐饮业法人和产业活动单位基本情况",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-23 15:55:27",
+    "downloadCount": 0,
+    "viewCount": 150,
+    "id": "1044918466665185280",
+    "intro": "吴江区统计局-2019年限额以上批发和零售业、住宿和餐饮业法人和产业活动单位基本情况，2019年各项指标",
+    "matchedTerms": [
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2020年限额以上批发和零售业、住宿和餐饮业法人和产业活动单位基本情况",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-23 10:14:43",
+    "downloadCount": 0,
+    "viewCount": 197,
+    "id": "1044918466807791616",
+    "intro": "吴江区统计局-2020年限额以上批发和零售业、住宿和餐饮业法人和产业活动单位基本情况，2020年各项指标",
+    "matchedTerms": [
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2021年限额以上批发和零售业、住宿和餐饮业法人和产业活动单位基本情况",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-23 10:15:13",
+    "downloadCount": 0,
+    "viewCount": 261,
+    "id": "1044918466937815040",
+    "intro": "吴江区统计局-2021年限额以上批发和零售业、住宿和餐饮业法人和产业活动单位基本情况，2021年各项指标",
+    "matchedTerms": [
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "昆山市二手车交易市场",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-22 15:18:02",
+    "downloadCount": 9,
+    "viewCount": 254,
+    "id": "1044621949484101632",
+    "intro": "昆山市二手车交易市场\n",
+    "matchedTerms": [
+     "交易"
+    ]
+   },
+   {
+    "resourceName": "太仓市市民用管道天然气销售价格表",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:14",
+    "downloadCount": 13,
+    "viewCount": 304,
+    "id": "1039469823816593408",
+    "intro": "市民用管道天然气销售价格表",
+    "matchedTerms": [
+     "销售"
+    ]
+   },
+   {
+    "resourceName": "吴中区城镇居民人均消费性支出",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2025-12-19 11:08:13",
+    "downloadCount": 12,
+    "viewCount": 81,
+    "id": "1037327387837296640",
+    "intro": "吴中区城镇居民人均消费性支出\n",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "苏州工业园区2019年居民消费价格指数",
+    "dept": "苏州工业园区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-30 09:56:40",
+    "downloadCount": 9,
+    "viewCount": 243,
+    "id": "1029794558635110400",
+    "intro": "苏州工业园区2019年居民消费价格指数",
+    "matchedTerms": [
+     "消费"
+    ]
+   },
+   {
+    "resourceName": "苏州烟草专卖零售行政许可信息变更信息",
+    "dept": "苏州市烟草专卖局（市烟草公司）",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "政务双公示，敏感数据脱敏",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-11-21 16:29:06",
+    "downloadCount": 8,
+    "viewCount": 293,
+    "id": "1146469303329161216",
+    "intro": "苏州烟草专卖零售行政许可信息变更信息表",
+    "matchedTerms": [
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "苏州烟草专卖零售行政许可信息",
+    "dept": "苏州市烟草专卖局（市烟草公司）",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "提供江苏省市场监管信息平台，敏感信息脱敏",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-11-21 16:38:58",
+    "downloadCount": 14,
+    "viewCount": 144,
+    "id": "1147183633079140352",
+    "intro": "苏州烟草专卖零售行政许可信息表",
+    "matchedTerms": [
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "历年社会消费品零售总额",
+    "dept": "市统计局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-11-05 15:46:13",
+    "downloadCount": 37,
+    "viewCount": 451,
+    "id": "924979025713233920",
+    "intro": "历年社会消费品零售总额",
+    "matchedTerms": [
+     "消费",
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "张家港市公共资源交易中心政府采购项目信息",
+    "dept": "张家港市",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "申请开放",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2026-10-16 10:28:21",
+    "downloadCount": 0,
+    "viewCount": 55,
+    "id": "1294659509088878592",
+    "intro": "张家港市公共资源交易中心政府采购项目信息，包含采购人名称、采购方式、项目预算等信息项",
+    "matchedTerms": [
+     "交易"
+    ]
+   },
+   {
+    "resourceName": "张家港市公共资源交易中心工程建设项目招标信息",
+    "dept": "张家港市",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "申请开放",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2026-10-16 10:28:22",
+    "downloadCount": 0,
+    "viewCount": 43,
+    "id": "1294660320623788032",
+    "intro": "张家港市公共资源交易中心工程建设项目招标信息，包含招标人名称、招标方式等信息项",
+    "matchedTerms": [
+     "交易"
+    ]
+   },
+   {
+    "resourceName": "张家港市公共资源交易中心工程建设项目招标投标数据集-项目及公告-招标公告与资格预审公告",
+    "dept": "张家港市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "6",
+    "dataUpdateTime": "2026-10-16 10:28:22",
+    "downloadCount": 19,
+    "viewCount": 305,
+    "id": "1149696264360914944",
+    "intro": "工程建设项目招标投标数据集-项目及公告-招标公告与资格预审公告",
+    "matchedTerms": [
+     "交易"
+    ]
+   },
+   {
+    "resourceName": "张家港市公共资源交易中心政府采购数据集-交易信息-采购（资格预审）公告",
+    "dept": "张家港市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 10:28:22",
+    "downloadCount": 13,
+    "viewCount": 172,
+    "id": "1149696268009930752",
+    "intro": "政府采购数据集-交易信息-采购（资格预审）公告",
+    "matchedTerms": [
+     "交易"
+    ]
+   },
+   {
+    "resourceName": "张家港市公共资源交易中心工程建设项目招标投标数据集-中标-中标候选人公示",
+    "dept": "张家港市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 10:28:21",
+    "downloadCount": 33,
+    "viewCount": 365,
+    "id": "1149696327812345856",
+    "intro": "工程建设项目招标投标数据集-中标-中标候选人公示",
+    "matchedTerms": [
+     "交易"
+    ]
+   },
+   {
+    "resourceName": "张家港市公共资源交易中心政府采购数据集-交易信息-更正公告",
+    "dept": "张家港市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 10:28:21",
+    "downloadCount": 15,
+    "viewCount": 170,
+    "id": "1149696331226480640",
+    "intro": "政府采购数据集-交易信息-更正公告",
+    "matchedTerms": [
+     "交易"
+    ]
+   },
+   {
+    "resourceName": "政府采购数据集-交易信息-采购合同",
+    "dept": "张家港市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 10:28:22",
+    "downloadCount": 20,
+    "viewCount": 144,
+    "id": "1149696454329331712",
+    "intro": "政府采购数据集-交易信息-采购合同",
+    "matchedTerms": [
+     "交易"
+    ]
+   },
+   {
+    "resourceName": "张家港市公共资源交易中心政府采购数据集-交易信息-中标（成交）结果公告",
+    "dept": "张家港市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 10:28:21",
+    "downloadCount": 40,
+    "viewCount": 330,
+    "id": "1149696459198889984",
+    "intro": "政府采购数据集-交易信息-中标（成交）结果公告",
+    "matchedTerms": [
+     "交易"
+    ]
+   },
+   {
+    "resourceName": "张家港市应急管理局烟花爆竹零售店",
+    "dept": "张家港市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2026-10-15 22:16:40",
+    "downloadCount": 16,
+    "viewCount": 642,
+    "id": "1029817024824672256",
+    "intro": "全市烟花爆竹零售店信息",
+    "matchedTerms": [
+     "零售"
+    ]
+   },
+   {
+    "resourceName": "苏州市成品油零售经营资格审批信息",
+    "dept": "市商务局",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "市级部门间",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-15 13:09:24",
+    "downloadCount": 2,
+    "viewCount": 701,
+    "id": "963761919214419968",
+    "intro": "企业从事成品油零售经营资格审批的相关信息",
+    "matchedTerms": [
+     "零售"
+    ]
+   }
+  ],
+  "酒店住宿:入住率/平均房价/间夜": [
+   {
+    "resourceName": "张家港市民政局福利院机构信息",
+    "dept": "张家港市民政局",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:01",
+    "downloadCount": 1,
+    "viewCount": 5,
+    "id": "1511051310392373248",
+    "intro": "张家港市民政局福利院机构信息,时间范围：2023-至今,包含：建筑面积、工作人员总数、入住人数、床位数、联系电话、机构法人、发证日期、许可证编号、机构地址、机构名称等",
+    "matchedTerms": [
+     "入住"
+    ]
+   },
+   {
+    "resourceName": "高新区乡村民宿基本信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:18:56",
+    "downloadCount": 34,
+    "viewCount": 205,
+    "id": "1217153971531218944",
+    "intro": "高新区乡村民宿基本信息，包含高新区24家乡村民宿数据，信息项包含旅游民宿中文名称、所属板块、旅游民宿地址、开业时间等",
+    "matchedTerms": [
+     "民宿"
+    ]
+   },
+   {
+    "resourceName": "高新区旅游住宿酒店节假日营业信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-15 22:18:56",
+    "downloadCount": 2,
+    "viewCount": 165,
+    "id": "1217424764806823936",
+    "intro": "高新区旅游住宿节假日信息，每逢佳佳日由各酒店按天填报，信息项包含名称、年、节假日、日期、营业收入（万元）、平均房价（元）、平均出租率等",
+    "matchedTerms": [
+     "酒店",
+     "住宿",
+     "出租率",
+     "平均房价"
+    ]
+   },
+   {
+    "resourceName": "高新区乡村民宿管理信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:18:56",
+    "downloadCount": 2,
+    "viewCount": 140,
+    "id": "1217425000316993536",
+    "intro": "高新区乡村民宿管理信息，包含高新区24家乡村民宿数据，信息项包含旅游民宿中文名称、房屋来源、单位注册类型、法人姓名等",
+    "matchedTerms": [
+     "民宿"
+    ]
+   },
+   {
+    "resourceName": "高新区旅游住宿酒店信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:18:56",
+    "downloadCount": 29,
+    "viewCount": 166,
+    "id": "1217413115282681856",
+    "intro": "高新区旅游住宿信息，包含高新区2家星级酒店及7家重点非星级酒店，信息项包含酒店名称、类别、等级 、所属板块、酒店地址、介绍等",
+    "matchedTerms": [
+     "酒店",
+     "住宿",
+     "星级酒店"
+    ]
+   },
+   {
+    "resourceName": "高新区旅游住宿酒店营业信息（月度）",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-15 22:18:56",
+    "downloadCount": 2,
+    "viewCount": 148,
+    "id": "1217430693954650112",
+    "intro": "高新区旅游住宿月度信息，每月由各酒店填报，信息项包含酒店名称、年、月、营业收入（万元）、平均房价（元）、平均出租率等",
+    "matchedTerms": [
+     "酒店",
+     "住宿",
+     "出租率",
+     "平均房价"
+    ]
+   },
+   {
+    "resourceName": "太仓市服务业重点监控用水单位名录",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:38",
+    "downloadCount": 20,
+    "viewCount": 374,
+    "id": "1189892317563285504",
+    "intro": "县级重点用水单位从是年取水量20万立方米以上的工业企业、服务业等用水单位选择。对于学校、医院、宾馆等服务业单位年取水量达不到20万立方米的，优先选择每类行业取水规模较大的3家。本级用水单位名录还包括国家级、省级和市级重点监控用水单位。",
+    "matchedTerms": [
+     "宾馆"
+    ]
+   },
+   {
+    "resourceName": "太仓市工业企业重点监控用水单位名录",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:38",
+    "downloadCount": 24,
+    "viewCount": 189,
+    "id": "1189892714369609728",
+    "intro": "县级重点用水单位从是年取水量20万立方米以上的工业企业、服务业等用水单位选择。对于学校、医院、宾馆等服务业单位年取水量达不到20万立方米的，优先选择每类行业取水规模较大的3家。本级用水单位名录还包括国家级、省级和市级重点监控用水单位。",
+    "matchedTerms": [
+     "宾馆"
+    ]
+   },
+   {
+    "resourceName": "姑苏区旅馆",
+    "dept": "姑苏区",
+    "resourceType": "接口",
+    "openAttributeName": "无条件开放",
+    "openCondition": "需求场景与申请数据有明确关联性，确保场景合规、数据安全。",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 22:26:23",
+    "downloadCount": 0,
+    "viewCount": 20,
+    "id": "1184449228849770496",
+    "intro": "姑苏区旅馆，包括宾馆名称、经营地址",
+    "matchedTerms": [
+     "宾馆"
+    ]
+   },
+   {
+    "resourceName": "苏州市水上搜救站点信息",
+    "dept": "市交通运输局",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-10-19 09:02:43",
+    "downloadCount": 2,
+    "viewCount": 4328,
+    "id": "1052629081169031168",
+    "intro": "苏州市各水上搜酒店基本信息（JSon格式）",
+    "matchedTerms": [
+     "酒店"
+    ]
+   },
+   {
+    "resourceName": "苏州市乡村备案民宿名录",
+    "dept": "市文化广电和旅游局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-04 15:37:29",
+    "downloadCount": 9,
+    "viewCount": 50,
+    "id": "1184806949428068352",
+    "intro": "苏州市乡村备案民宿情况",
+    "matchedTerms": [
+     "民宿"
+    ]
+   },
+   {
+    "resourceName": "吴江区-2022年星级酒店信息",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2025-10-05 16:18:03",
+    "downloadCount": 0,
+    "viewCount": 398,
+    "id": "1049351836287594496",
+    "intro": "吴江区-2022年星级酒店信息，各项指标",
+    "matchedTerms": [
+     "酒店",
+     "星级酒店"
+    ]
+   },
+   {
+    "resourceName": "昆山限额以上住宿和餐饮业经营情况",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-29 18:05:22",
+    "downloadCount": 10,
+    "viewCount": 262,
+    "id": "1046997988571021312",
+    "intro": "昆山限额以上住宿和餐饮业经营情况",
+    "matchedTerms": [
+     "住宿"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2019年限额以上住宿和餐饮业经营情况",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-24 09:35:34",
+    "downloadCount": 0,
+    "viewCount": 175,
+    "id": "1045270944833273856",
+    "intro": "吴江区统计局-2019年限额以上住宿和餐饮业经营情况，2019年各项指标",
+    "matchedTerms": [
+     "住宿"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2020年限额以上住宿和餐饮业经营情况",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-24 09:35:01",
+    "downloadCount": 0,
+    "viewCount": 136,
+    "id": "1045270944967491584",
+    "intro": "吴江区统计局-2020年限额以上住宿和餐饮业经营情况，2020年各项指标",
+    "matchedTerms": [
+     "住宿"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2021年限额以上住宿和餐饮业经营情况",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-24 09:34:19",
+    "downloadCount": 0,
+    "viewCount": 176,
+    "id": "1045270945101709312",
+    "intro": "吴江区统计局-2021年限额以上住宿和餐饮业经营情况。2021年各项指标",
+    "matchedTerms": [
+     "住宿"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2019年限额以上批发和零售业、住宿和餐饮业法人和产业活动单位基本情况",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-23 15:55:27",
+    "downloadCount": 0,
+    "viewCount": 150,
+    "id": "1044918466665185280",
+    "intro": "吴江区统计局-2019年限额以上批发和零售业、住宿和餐饮业法人和产业活动单位基本情况，2019年各项指标",
+    "matchedTerms": [
+     "住宿"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2020年限额以上批发和零售业、住宿和餐饮业法人和产业活动单位基本情况",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-23 10:14:43",
+    "downloadCount": 0,
+    "viewCount": 197,
+    "id": "1044918466807791616",
+    "intro": "吴江区统计局-2020年限额以上批发和零售业、住宿和餐饮业法人和产业活动单位基本情况，2020年各项指标",
+    "matchedTerms": [
+     "住宿"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2021年限额以上批发和零售业、住宿和餐饮业法人和产业活动单位基本情况",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-23 10:15:13",
+    "downloadCount": 0,
+    "viewCount": 261,
+    "id": "1044918466937815040",
+    "intro": "吴江区统计局-2021年限额以上批发和零售业、住宿和餐饮业法人和产业活动单位基本情况，2021年各项指标",
+    "matchedTerms": [
+     "住宿"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2019年限额以上住宿和餐饮业企业财务状况",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-18 14:11:29",
+    "downloadCount": 0,
+    "viewCount": 194,
+    "id": "1043165828315545600",
+    "intro": "吴江区统计局-2019年限额以上住宿和餐饮业企业财务状况，2019年各项指标",
+    "matchedTerms": [
+     "住宿"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2020年限额以上住宿和餐饮业企业财务状况",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-18 14:10:53",
+    "downloadCount": 0,
+    "viewCount": 153,
+    "id": "1043165828621729792",
+    "intro": "吴江区统计局-2020年限额以上住宿和餐饮业企业财务状况，2020年各项指标",
+    "matchedTerms": [
+     "住宿"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2021年限额以上住宿和餐饮业企业财务状况",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-18 14:10:10",
+    "downloadCount": 0,
+    "viewCount": 154,
+    "id": "1043165828906942464",
+    "intro": "吴江区统计局-2021年限额以上住宿和餐饮业企业财务状况，2021年各项指标",
+    "matchedTerms": [
+     "住宿"
+    ]
+   },
+   {
+    "resourceName": "常熟市旅游民宿登记备案信息",
+    "dept": "常熟市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请公开",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-11-30 13:45:33",
+    "downloadCount": 0,
+    "viewCount": 347,
+    "id": "1035491262143332352",
+    "intro": "常熟市旅游民宿登记备案信息",
+    "matchedTerms": [
+     "民宿"
+    ]
+   },
+   {
+    "resourceName": "常熟市备案旅游民宿扶持补助名单",
+    "dept": "常熟市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-05 17:33:58",
+    "downloadCount": 0,
+    "viewCount": 328,
+    "id": "963762248718942208",
+    "intro": "常熟市备案旅游民宿扶持补助名单",
+    "matchedTerms": [
+     "民宿"
+    ]
+   },
+   {
+    "resourceName": "常熟市星级旅游饭店扶持补助名单",
+    "dept": "常熟市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "不向社会开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-05 17:27:39",
+    "downloadCount": 0,
+    "viewCount": 407,
+    "id": "1029820898075672576",
+    "intro": "常熟市星级旅游饭店扶持补助名单",
+    "matchedTerms": [
+     "旅游饭店"
+    ]
+   },
+   {
+    "resourceName": "苏州高新区酒店信息",
+    "dept": "高新区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "申请人同意或相关法律法规要求",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-11-10 10:53:58",
+    "downloadCount": 0,
+    "viewCount": 743,
+    "id": "963761939338690560",
+    "intro": "苏州高新区酒店信息",
+    "matchedTerms": [
+     "酒店"
+    ]
+   }
+  ],
+  "文旅活动:人数/来源地/停留时间": [
+   {
+    "resourceName": "苏州工业园区区、街道公共法律服务中心数据",
+    "dept": "工业园区政法委员会（司法局）",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2026-10-16 21:00:47",
+    "downloadCount": 5,
+    "viewCount": 14,
+    "id": "1526158725043417088",
+    "intro": "苏州工业园区区、街道公共法律服务中心数据，时间范围: 2025-2025，包含：序号、名称、地址、电话、律师接待时间、服务内容",
+    "matchedTerms": [
+     "接待"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局政务服务事项清单信息",
+    "dept": "张家港市文体广电和旅游局（市文物局）",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:12",
+    "downloadCount": 1,
+    "viewCount": 6,
+    "id": "1513489569257058304",
+    "intro": "张家港市文体广电和旅游局政务服务事项清单信息,时间范围：2023-至今,包含：部门名称、审批结果名称、实施清单名称、业务项名称、基本编码、业务编码、事项类型",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "张家港市统计局外贸和外资统计数据",
+    "dept": "张家港市统计局",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:10",
+    "downloadCount": 0,
+    "viewCount": 8,
+    "id": "1513489440311570432",
+    "intro": "张家港市统计局外贸和外资统计数据,时间范围：2020-至今,包含：出口总额/万美元、利用外资_合同外资金额/万美元、利用外资_实际利用外资/万美元、利用外资_新签外资合同数/个、外贸货物吞吐量/万吨、年度、接待境外旅游者数/人、港口吞吐量/万吨、进出口总额/万美元、进口总额/万美元",
+    "matchedTerms": [
+     "旅游",
+     "接待"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局体育场馆设施信息",
+    "dept": "张家港市文体广电和旅游局（市文物局）",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:12",
+    "downloadCount": 1,
+    "viewCount": 8,
+    "id": "1513489431792939008",
+    "intro": "张家港市文体广电和旅游局体育场馆设施信息,时间范围：2017-至今,包含：场馆名称、场馆简介",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局图书馆二十四小时图书馆驿站统计信息",
+    "dept": "张家港市文体广电和旅游局（市文物局）",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:13",
+    "downloadCount": 0,
+    "viewCount": 19,
+    "id": "1511413308670046208",
+    "intro": "张家港市文体广电和旅游局图书馆二十四小时图书馆驿站统计信息,时间范围：2020-至今,包含：统计时间、地点、名称、镇区、序号",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局公共图书馆公益性展览信息",
+    "dept": "张家港市文体广电和旅游局（市文物局）",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:13",
+    "downloadCount": 1,
+    "viewCount": 10,
+    "id": "1510999051361021952",
+    "intro": "张家港市文体广电和旅游局公共图书馆公益性展览信息,时间范围：2022-至今,包含：展览名称、展览地点、展览时间",
+    "matchedTerms": [
+     "旅游",
+     "展览"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局公共图书馆流动服务信息",
+    "dept": "张家港市文体广电和旅游局（市文物局）",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:13",
+    "downloadCount": 1,
+    "viewCount": 9,
+    "id": "1510999034978070528",
+    "intro": "张家港市文体广电和旅游局公共图书馆流动服务信息,时间范围：2022-至今,包含：服务内容、服务地点、服务时间",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局文化馆免费开放信息",
+    "dept": "张家港市文体广电和旅游局（市文物局）",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:13",
+    "downloadCount": 1,
+    "viewCount": 7,
+    "id": "1510999032012697600",
+    "intro": "张家港市文体广电和旅游局文化馆免费开放信息,时间范围：2022-至今,包含：免费对外开放时间、免费对外开放活动项目",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局公共图书馆公益性讲座信息",
+    "dept": "张家港市文体广电和旅游局（市文物局）",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:13",
+    "downloadCount": 1,
+    "viewCount": 6,
+    "id": "1510999017185832960",
+    "intro": "张家港市文体广电和旅游局公共图书馆公益性讲座信息,时间范围：2022-至今,包含：讲座名称、讲座地点、讲座时间",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局公共图书馆公益性培训公告信息",
+    "dept": "张家港市文体广电和旅游局（市文物局）",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:13",
+    "downloadCount": 1,
+    "viewCount": 8,
+    "id": "1510999012622430208",
+    "intro": "张家港市文体广电和旅游局公共图书馆公益性培训公告信息,时间范围：2022-至今,包含：培训主题、培训时间、培训地点",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局公共图书馆免费开放公告信息",
+    "dept": "张家港市文体广电和旅游局（市文物局）",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:13",
+    "downloadCount": 1,
+    "viewCount": 8,
+    "id": "1510998986621939712",
+    "intro": "张家港市文体广电和旅游局公共图书馆免费开放公告信息,时间范围：2022-至今,包含：咨询电话、开放时间、馆室名称",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局公共图书馆阅读推广活动信息",
+    "dept": "张家港市文体广电和旅游局（市文物局）",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:12",
+    "downloadCount": 1,
+    "viewCount": 7,
+    "id": "1510998669763244032",
+    "intro": "张家港市文体广电和旅游局公共图书馆阅读推广活动信息,时间范围：2022-至今,包含：活动主题、活动时间、活动地点",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局举办的国际国内重大体育赛事信息",
+    "dept": "张家港市文体广电和旅游局（市文物局）",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:12",
+    "downloadCount": 1,
+    "viewCount": 9,
+    "id": "1510998647042699264",
+    "intro": "张家港市文体广电和旅游局举办的国际国内重大体育赛事信息,时间范围：2023-至今,包含：赛事名称、比赛时间、比赛地点",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局美术馆藏品信息统计信息",
+    "dept": "张家港市文体广电和旅游局（市文物局）",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:13",
+    "downloadCount": 1,
+    "viewCount": 9,
+    "id": "1510998630517141504",
+    "intro": "张家港市文体广电和旅游局美术馆藏品信息统计信息,时间范围：2023-至今,包含：藏品名称、藏品种类、藏品尺寸（cm）",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局市非物质文化遗产项目代表性传承人信息",
+    "dept": "张家港市文体广电和旅游局（市文物局）",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:12",
+    "downloadCount": 1,
+    "viewCount": 9,
+    "id": "1508792857682735104",
+    "intro": "张家港市文体广电和旅游局市非物质文化遗产项目代表性传承人信息,时间范围：2017-至今,包含：类别、项目名称、代表性传承人、传承情况和技艺特点",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局图书馆分馆统计信息",
+    "dept": "张家港市文体广电和旅游局（市文物局）",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:13",
+    "downloadCount": 1,
+    "viewCount": 7,
+    "id": "1508792853303881728",
+    "intro": "张家港市文体广电和旅游局图书馆分馆统计信息,时间范围：2020-至今,包含：统计时间、地址、分馆名称、镇区、序号",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "苏州工业园区区街道公共法律服务中心分布信息",
+    "dept": "工业园区政法委员会（司法局）",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2026-10-16 21:00:06",
+    "downloadCount": 2,
+    "viewCount": 21,
+    "id": "1508428790690443264",
+    "intro": "苏州工业园区区街道公共法律服务中心分布信息，时间范围：2025-2025，包含：序号、名称、地址、电话、律师接待时间、服务内容",
+    "matchedTerms": [
+     "接待"
+    ]
+   },
+   {
+    "resourceName": "苏州工业园区旅游引导资金扶持项目公示信息",
+    "dept": "工业园区宣传和统战部",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:00:03",
+    "downloadCount": 2,
+    "viewCount": 14,
+    "id": "1507072660567453696",
+    "intro": "苏州工业园区旅游引导资金扶持项目公示信息，时间范围: 2025-至今，包含：序号、扶持类别、项目名称、单位名称、扶持金额",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局悦读港城内容表信息",
+    "dept": "张家港市文体广电和旅游局（市文物局）",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "3",
+    "dataUpdateTime": "2026-10-16 21:02:13",
+    "downloadCount": 1,
+    "viewCount": 8,
+    "id": "1506600880543330304",
+    "intro": "张家港市文体广电和旅游局悦读港城内容表信息,时间范围：2020-至今,包含：APP缩略图、SEO关键词、SEO描述、SEO标题、修改时间、分享数、发布时间、序号、数据来源 多选、是否创建HTML等",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局市级阅读阵地信息",
+    "dept": "张家港市文体广电和旅游局（市文物局）",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:13",
+    "downloadCount": 0,
+    "viewCount": 8,
+    "id": "1505968995731468288",
+    "intro": "张家港市文体广电和旅游局市级阅读阵地信息,时间范围：2020-至今,包含：统计时间、地点、名称、序号",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局图书馆社区阅读活动站统计信息",
+    "dept": "张家港市文体广电和旅游局（市文物局）",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:13",
+    "downloadCount": 0,
+    "viewCount": 12,
+    "id": "1505968996306087936",
+    "intro": "张家港市文体广电和旅游局图书馆社区阅读活动站统计信息,时间范围：2020-至今,包含：统计时间、备注、地址、社区阅读活动站、镇区、序号",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局图书馆农家书屋统计信息",
+    "dept": "张家港市文体广电和旅游局（市文物局）",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:13",
+    "downloadCount": 0,
+    "viewCount": 8,
+    "id": "1505968957982732288",
+    "intro": "张家港市文体广电和旅游局图书馆农家书屋统计信息,时间范围：2020-至今,包含：统计时间、地址、农家书屋、镇区、序号",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "姑苏区金阊街道艺术团信息",
+    "dept": "金阊街道办事处",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:00:11",
+    "downloadCount": 0,
+    "viewCount": 16,
+    "id": "1470425153183903744",
+    "intro": "姑苏区金阊街道艺术团信息，时间范围：2024-至今，包含：序号、负责人、名称、联系电话、演出类别、联系人、类别、人数、联系方式",
+    "matchedTerms": [
+     "演出"
+    ]
+   },
+   {
+    "resourceName": "姑苏区A级景区数量及客流量统计数据",
+    "dept": "姑苏区教育体育和文化旅游委员会",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "5",
+    "dataUpdateTime": "2026-10-16 20:59:44",
+    "downloadCount": 18,
+    "viewCount": 52,
+    "id": "1494408282990931968",
+    "intro": "姑苏区A级景区数量及客流量统计数据，时间范围: 2020-至今，包含：唯一性主键、景区数量、统计时间、本年度累计接待人次",
+    "matchedTerms": [
+     "景区",
+     "接待"
+    ]
+   },
+   {
+    "resourceName": "姑苏区国内旅游收入趋势分析数据",
+    "dept": "姑苏区教育体育和文化旅游委员会",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "5",
+    "dataUpdateTime": "2026-10-16 20:59:44",
+    "downloadCount": 6,
+    "viewCount": 27,
+    "id": "1494407750083637248",
+    "intro": "姑苏区国内旅游收入趋势分析数据，时间范围: 2020-至今，包含：唯一性主键、环比、国内旅游收入（亿元）、季度、年份",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "姑苏区旅游风景区信息",
+    "dept": "姑苏区教育体育和文化旅游委员会",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 20:59:44",
+    "downloadCount": 8,
+    "viewCount": 30,
+    "id": "1494407735047057408",
+    "intro": "姑苏区旅游风景区信息，时间范围: 2021-至今，包含：唯一性主键、级别、地址、名称、关闭时间、经度、纬度、所属街道、参考价格、开放时间",
+    "matchedTerms": [
+     "旅游",
+     "景区"
+    ]
+   },
+   {
+    "resourceName": "姑苏区沧浪街道文化场馆线下考核范围服务人次统计信息",
+    "dept": "沧浪街道办事处",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 20:58:36",
+    "downloadCount": 0,
+    "viewCount": 11,
+    "id": "1471431409721896960",
+    "intro": "姑苏区沧浪街道文化场馆线下考核范围服务人次统计信息，时间范围：2024-至今，包含：序号,地区（场馆）、平均人口数（万次）、服务人次合计（万次）、培训（讲座）（万次）、人均（万次）、文艺活动（万次）、展览（万次）",
+    "matchedTerms": [
+     "展览",
+     "文化场馆"
+    ]
+   },
+   {
+    "resourceName": "常熟市接待外来团体或演职人员信息",
+    "dept": "常熟市文体广电和旅游局",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "6",
+    "dataUpdateTime": "2026-10-16 20:59:10",
+    "downloadCount": 1,
+    "viewCount": 3,
+    "id": "1445721978812198912",
+    "intro": "常熟市接待外来团体或演职人员信息，包含国家、演员团体名称、演职人员数量、明星演员、接待时间、参与活动。",
+    "matchedTerms": [
+     "接待"
+    ]
+   },
+   {
+    "resourceName": "常熟市农业旅游示范区信息",
+    "dept": "常熟市文体广电和旅游局",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 20:59:10",
+    "downloadCount": 0,
+    "viewCount": 4,
+    "id": "1445344607936409600",
+    "intro": "常熟市农业旅游示范区信息，包含地址标准地址码、所属板块、等级、评定时间、是否收门票、数据上报时间。",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "常熟市A级景区信息",
+    "dept": "常熟市文体广电和旅游局",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 20:59:08",
+    "downloadCount": 0,
+    "viewCount": 4,
+    "id": "1445344595114422272",
+    "intro": "常熟市A级景区信息，包含景区名称、景区地址、地址标准地址码、所属板块、景区介绍、景区等级、等级评定时间、门票淡季价格、门票旺季价格、最大承载量、数据上报时间。",
+    "matchedTerms": [
+     "景区"
+    ]
+   },
+   {
+    "resourceName": "常熟市虞山街道旅游公厕信息",
+    "dept": "虞山街道（虞山文化旅游度假区、虞山林场）",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:01:48",
+    "downloadCount": 2,
+    "viewCount": 46,
+    "id": "1429841488108548096",
+    "intro": "常熟市虞山街道旅游公厕信息，包括地址、面积、通电通水情况、排污方式、有无障碍设施等",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "张家港市博物馆陈列展览信息",
+    "dept": "张家港市文体广电和旅游局（市文物局）",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:13",
+    "downloadCount": 1,
+    "viewCount": 12,
+    "id": "1392938571892224000",
+    "intro": "张家港市博物馆陈列展览信息,时间范围：2017-至今,包含：展览名称、展览简介、展览地点、展览时间、展览类型",
+    "matchedTerms": [
+     "展览"
+    ]
+   },
+   {
+    "resourceName": "高新区文化和旅游领域基层政务公开事项目录信息",
+    "dept": "高新区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-23 16:00:59",
+    "downloadCount": 1,
+    "viewCount": 11,
+    "id": "1277641336384847872",
+    "intro": "高新区文化和旅游领域基层政务公开事项目录信息，其中包括事项类别、事项编码、事项名称等相关信息项。",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "相城区文体和旅游局市级非物质文化遗产代表性项目名录",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-11-05 14:14:58",
+    "downloadCount": 18,
+    "viewCount": 130,
+    "id": "1270008476932964352",
+    "intro": "相城区文体和旅游局市级非物质文化遗产代表性项目名录，保护项目类别、项目名称、保护单位名称等信息。",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "相城区文体和旅游局产业专项资金拟扶持项目名单",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "有较完善的数据安全保护体系，可在自身业务范围内进行科学研究、咨询报告、业务支撑等场景，不得针对具体组织对外发布新闻等信息。",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-11-01 16:25:09",
+    "downloadCount": 0,
+    "viewCount": 66,
+    "id": "1268596422363774976",
+    "intro": "相城区文体和旅游局产业专项资金拟扶持项目名单，包含政策文件、所属板块、项目名称等信息。",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "高新区乡村民宿基本信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:18:56",
+    "downloadCount": 34,
+    "viewCount": 205,
+    "id": "1217153971531218944",
+    "intro": "高新区乡村民宿基本信息，包含高新区24家乡村民宿数据，信息项包含旅游民宿中文名称、所属板块、旅游民宿地址、开业时间等",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "高新区旅游住宿酒店节假日营业信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-15 22:18:56",
+    "downloadCount": 2,
+    "viewCount": 165,
+    "id": "1217424764806823936",
+    "intro": "高新区旅游住宿节假日信息，每逢佳佳日由各酒店按天填报，信息项包含名称、年、节假日、日期、营业收入（万元）、平均房价（元）、平均出租率等",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "高新区乡村民宿管理信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:18:56",
+    "downloadCount": 2,
+    "viewCount": 140,
+    "id": "1217425000316993536",
+    "intro": "高新区乡村民宿管理信息，包含高新区24家乡村民宿数据，信息项包含旅游民宿中文名称、房屋来源、单位注册类型、法人姓名等",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "高新区旅游住宿酒店信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:18:56",
+    "downloadCount": 29,
+    "viewCount": 166,
+    "id": "1217413115282681856",
+    "intro": "高新区旅游住宿信息，包含高新区2家星级酒店及7家重点非星级酒店，信息项包含酒店名称、类别、等级 、所属板块、酒店地址、介绍等",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "高新区文化旅游人才信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:18:55",
+    "downloadCount": 2,
+    "viewCount": 103,
+    "id": "1217424794724823040",
+    "intro": "高新区文化旅游人才信息，包含2017年以来获评的文化旅游人才数据，数据项包含姓名、人才级别、人才类型、获评年度等",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "高新区旅游住宿酒店营业信息（月度）",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-15 22:18:56",
+    "downloadCount": 2,
+    "viewCount": 148,
+    "id": "1217430693954650112",
+    "intro": "高新区旅游住宿月度信息，每月由各酒店填报，信息项包含酒店名称、年、月、营业收入（万元）、平均房价（元）、平均出租率等",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "高新区公益性小剧场示范点信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:18:53",
+    "downloadCount": 15,
+    "viewCount": 72,
+    "id": "1217149859741790208",
+    "intro": "高新区公益性小剧场示范点信息，包含2022年以来获评的区公益性小剧场示范点，数据项包含小剧场名称、级别、获评年份、所属地区、位置、主要演出内容等",
+    "matchedTerms": [
+     "演出"
+    ]
+   },
+   {
+    "resourceName": "高新区旅游景区信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:18:56",
+    "downloadCount": 46,
+    "viewCount": 158,
+    "id": "1217152666863628288",
+    "intro": "高新区旅游景区信息，包含填5个4A级景区、1个乡村旅游区及1个度假区数据，信息项包含景区名称、所属板块、等级、地址、介绍等",
+    "matchedTerms": [
+     "旅游",
+     "景区"
+    ]
+   },
+   {
+    "resourceName": "高新区旅游景区节假日经营数据",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-15 22:18:56",
+    "downloadCount": 2,
+    "viewCount": 141,
+    "id": "1217424129088778240",
+    "intro": "高新区旅游景区节假日信息，每逢节假日由各景区按天进行填报，信息项包含名称、年、节假日、日期、总游客量（万人）等",
+    "matchedTerms": [
+     "旅游",
+     "景区",
+     "游客"
+    ]
+   },
+   {
+    "resourceName": "高新区旅游景区营业收入信息（月度）",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-15 22:18:56",
+    "downloadCount": 2,
+    "viewCount": 161,
+    "id": "1217425402387197952",
+    "intro": "高新区旅游景区月度信息，每月由各景区填报，信息项包含名称、年、月、总游客量（万人）、景区营业收入（万元）等",
+    "matchedTerms": [
+     "旅游",
+     "景区",
+     "游客"
+    ]
+   },
+   {
+    "resourceName": "高新区公共文化空间基本信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:18:53",
+    "downloadCount": 20,
+    "viewCount": 94,
+    "id": "1217150462039621632",
+    "intro": "高新区公共文化空间基本信息，包含2021年以来获评的公共文化空间，信息项包含空间名称、级别、获评年份、设立时间、所属地区、空间类型、建筑面积、服务项目等",
+    "matchedTerms": [
+     "公共文化"
+    ]
+   },
+   {
+    "resourceName": "高新区公共文化空间管理基本信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:18:54",
+    "downloadCount": 2,
+    "viewCount": 73,
+    "id": "1217425254504427520",
+    "intro": "高新区公共文化空间管理信息，包含2021年以来获评的公共文化空间，信息项包含空间名称、空间负责人、联系方式、建设单位主体名称等",
+    "matchedTerms": [
+     "公共文化"
+    ]
+   },
+   {
+    "resourceName": "相城区元和街道文化场馆统计信息",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-04 10:24:04",
+    "downloadCount": 13,
+    "viewCount": 87,
+    "id": "1209904538062094336",
+    "intro": "相城区元和街道文化场馆统计信息，包括序号、名称、类型、地址等信息。",
+    "matchedTerms": [
+     "文化场馆"
+    ]
+   },
+   {
+    "resourceName": "相城区公共文化服务领域基层政务公开标准目录",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-11-05 16:48:44",
+    "downloadCount": 11,
+    "viewCount": 113,
+    "id": "1192758916586631168",
+    "intro": "相城区公共文化服务领域基层政务公开标准目录包含信息公开属性、办理岗位、设定依据等信息",
+    "matchedTerms": [
+     "公共文化"
+    ]
+   },
+   {
+    "resourceName": "太仓市文体广电和旅游局娱乐场所经营单位信息",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件共享",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:39",
+    "downloadCount": 13,
+    "viewCount": 237,
+    "id": "963762165269069824",
+    "intro": "主要内容：区域、场所名称、地址",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "太仓市文体广电和旅游局体育彩票销售网点",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:38",
+    "downloadCount": 10,
+    "viewCount": 157,
+    "id": "963762165197766656",
+    "intro": "电话咨询，联系方式：0512-53549598，主要内容：站点号、站点地址、玩法情况、网点性质",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "太仓市文体广电和旅游局旅行社信息",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件共享",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:17",
+    "downloadCount": 14,
+    "viewCount": 127,
+    "id": "963762165126463488",
+    "intro": "电话咨询：53526588，主要包括：旅行社名称、是否开展经营活动、注册地址、是否涉及旅游包车",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "太仓市文体广电和旅游局互联网上网服务营业场所经营单位信息",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:15",
+    "downloadCount": 10,
+    "viewCount": 93,
+    "id": "963762164996440064",
+    "intro": "主要内容：公司名称、公司地址、网站中文名称、域名",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "相城区公共文化场馆一览表",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放。",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-14 15:22:51",
+    "downloadCount": 13,
+    "viewCount": 4174,
+    "id": "1184812621175652352",
+    "intro": "相城区公共文化场馆一览表包括类型、名称、地址等。",
+    "matchedTerms": [
+     "文化场馆",
+     "公共文化"
+    ]
+   },
+   {
+    "resourceName": "常熟市翁同龢纪念馆展览信息",
+    "dept": "常熟市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-22 10:20:28",
+    "downloadCount": 0,
+    "viewCount": 140,
+    "id": "1184908971934445568",
+    "intro": "常熟市翁同龢纪念馆展览信息,包含主键、展览名称、展览地点、展览时间起、展览时间止、展览主题、展览简介、主办单位、主办单位统一社会信用代码、承办单位、承办单位统一社会信用代码、批次编号、更新时间、数据状态、数据版本、数据标识时间、审批时间、数据上报部门编号、数据上报部门名称、业务数据所属开始时间、业务数据所属结束时间、业务数据标识等字段。",
+    "matchedTerms": [
+     "展览"
+    ]
+   },
+   {
+    "resourceName": "常熟市图书馆展览信息",
+    "dept": "常熟市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请公开",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-28 16:29:04",
+    "downloadCount": 0,
+    "viewCount": 49,
+    "id": "1184915059731791872",
+    "intro": "常熟市图书馆展览信息,包含主键、展览名称、展览地点、展览时间起、展览时间止、展览主题、展览简介、主办单位、主办单位统一社会信用代码、承办单位、承办单位统一社会信用代码、批次编号、更新时间、数据状态、数据版本、数据标识时间、审批时间、数据上报部门编号、数据上报部门名称、业务数据所属开始时间、业务数据所属结束时间、业务数据标识等字段。",
+    "matchedTerms": [
+     "展览"
+    ]
+   },
+   {
+    "resourceName": "姑苏区A级景区信息查询",
+    "dept": "姑苏区",
+    "resourceType": "接口",
+    "openAttributeName": "无条件开放",
+    "openCondition": "需求场景与申请数据有明确关联性，确保场景合规、数据安全。",
+    "updateFrequencyCode": "6",
+    "dataUpdateTime": "2026-10-16 22:26:21",
+    "downloadCount": 0,
+    "viewCount": 39,
+    "id": "1184492040324608000",
+    "intro": "姑苏区A级景区信息查询，包括景区名称、景区等级、景区地址、景区票价、景区电话",
+    "matchedTerms": [
+     "景区"
+    ]
+   },
+   {
+    "resourceName": "昆山市青岛国际机床展览会参展企业名单",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依据申请，按需开放",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-10-08 11:15:48",
+    "downloadCount": 0,
+    "viewCount": 139,
+    "id": "1182326193007034368",
+    "intro": "公共数据开放平台第二十六届青岛国际机床展览会参展企业名单",
+    "matchedTerms": [
+     "展览"
+    ]
+   },
+   {
+    "resourceName": "昆山市公共文化惠民活动名录",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依据申请，按需开放",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-10-08 13:46:32",
+    "downloadCount": 0,
+    "viewCount": 59,
+    "id": "1182325981169516544",
+    "intro": "昆山文化云昆山市公共文化惠民活动名录",
+    "matchedTerms": [
+     "公共文化"
+    ]
+   },
+   {
+    "resourceName": "昆山市巴城镇主要旅游景点一览表",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依据申请，按需开放",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-10-05 17:54:04",
+    "downloadCount": 0,
+    "viewCount": 41,
+    "id": "1181589784046563328",
+    "intro": "巴城镇审批服务综合执法一体化平台2020年巴城镇主要旅游景点一览表",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "姑苏区城管委信访受理接待地址",
+    "dept": "姑苏区",
+    "resourceType": "接口",
+    "openAttributeName": "无条件开放",
+    "openCondition": "需求场景与申请数据有明确关联性，确保场景合规、数据安全。",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 22:26:24",
+    "downloadCount": 0,
+    "viewCount": 20,
+    "id": "1182682960148787200",
+    "intro": "姑苏区城管委信访受理接待地址包括地址、名称等信息。",
+    "matchedTerms": [
+     "接待"
+    ]
+   },
+   {
+    "resourceName": "苏州工业园区文旅监管检查任务信息",
+    "dept": "苏州工业园区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "源局办授权",
+    "updateFrequencyCode": "2",
+    "dataUpdateTime": "2026-10-16 10:28:04",
+    "downloadCount": 1,
+    "viewCount": 86,
+    "id": "1181629772364709888",
+    "intro": "苏州工业园区文旅监管检查任务信息",
+    "matchedTerms": [
+     "文旅"
+    ]
+   },
+   {
+    "resourceName": "吴中区未成年人救助保护中心信息表",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-18 16:52:37",
+    "downloadCount": 14,
+    "viewCount": 84,
+    "id": "1181238975974801408",
+    "intro": "吴中区未成年人救助保护中心信息表，单位、地址、接待时间、电话",
+    "matchedTerms": [
+     "接待"
+    ]
+   },
+   {
+    "resourceName": "吴中区婚姻登记机构一览表",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-16 10:52:04",
+    "downloadCount": 17,
+    "viewCount": 360,
+    "id": "1168512442118111232",
+    "intro": "苏州市吴中区婚姻登记机构一览表，包括单位、地点、接待时间、电话（区号0512）",
+    "matchedTerms": [
+     "接待"
+    ]
+   },
+   {
+    "resourceName": "吴中区文体旅游局直属单位工作职责",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-26 10:05:58",
+    "downloadCount": 12,
+    "viewCount": 231,
+    "id": "1156160901612793856",
+    "intro": "吴中区文体旅游局直属单位工作职责",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "相城区文旅局旅游示范区及重点村名录",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-11-06 15:42:46",
+    "downloadCount": 18,
+    "viewCount": 356,
+    "id": "1154378909153980416",
+    "intro": "相城区文旅局旅游示范区及重点村名录，包括景区类型、名称、地址、区域面积等信息。",
+    "matchedTerms": [
+     "文旅",
+     "旅游",
+     "景区"
+    ]
+   },
+   {
+    "resourceName": "相城区文旅局国家级旅游景区名录",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-11-06 15:41:58",
+    "downloadCount": 21,
+    "viewCount": 410,
+    "id": "1154378780162355200",
+    "intro": "相城区文旅局国家级旅游景区名录，包括景区级别，名称，地址，占地面积及开放时间等信息。",
+    "matchedTerms": [
+     "文旅",
+     "旅游",
+     "景区"
+    ]
+   },
+   {
+    "resourceName": "相城区文旅局旅游度假区旅行社开放名录",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-11-15 15:17:20",
+    "downloadCount": 15,
+    "viewCount": 260,
+    "id": "1150033631466713088",
+    "intro": "相城区文旅局旅游度假区旅行社开放名录，包含点位名称等信息。",
+    "matchedTerms": [
+     "文旅",
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "相城区文旅局非物质文化遗产名录",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-10-30 15:31:01",
+    "downloadCount": 25,
+    "viewCount": 407,
+    "id": "1150034414090256384",
+    "intro": "相城区文旅局非物质文化遗产名录，包含项目类别、项目等级、项目名称等信息。",
+    "matchedTerms": [
+     "文旅"
+    ]
+   },
+   {
+    "resourceName": "相城区文旅局不可移动文物及博物馆名录",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-11-15 15:16:58",
+    "downloadCount": 21,
+    "viewCount": 337,
+    "id": "1150034502862729216",
+    "intro": "相城区文旅局不可移动文物及博物馆名录，包含名称及保护等级等信息。",
+    "matchedTerms": [
+     "文旅"
+    ]
+   },
+   {
+    "resourceName": "相城区文旅局非遗传承人名单",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-11-15 15:16:30",
+    "downloadCount": 18,
+    "viewCount": 239,
+    "id": "1150127320016842752",
+    "intro": "相城区文旅局非遗传承人名单，包含传承等级、传承人姓名、项目名称等信息。",
+    "matchedTerms": [
+     "文旅"
+    ]
+   },
+   {
+    "resourceName": "相城区文旅局文化馆图书馆名录",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-11-15 15:15:21",
+    "downloadCount": 12,
+    "viewCount": 221,
+    "id": "1150127451332112384",
+    "intro": "相城区文旅局文化馆图书馆名录，包含文化馆、图书馆的名称及类别等信息。",
+    "matchedTerms": [
+     "文旅"
+    ]
+   },
+   {
+    "resourceName": "相城区文体和旅游局联络员信息表",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-11-02 16:24:12",
+    "downloadCount": 8,
+    "viewCount": 201,
+    "id": "1150035807568097280",
+    "intro": "相城区文体和旅游局联络员信息表",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "苏州市发改委实行政府指导价管理的景区门票价格",
+    "dept": "市发展和改革委员会（市粮食和物资储备局）",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-08 14:21:54",
+    "downloadCount": 19,
+    "viewCount": 399,
+    "id": "1149696522436411392",
+    "intro": "实行政府指导价管理的景区门票价格",
+    "matchedTerms": [
+     "景区"
+    ]
+   },
+   {
+    "resourceName": "苏州工业园区活动展览展品信息",
+    "dept": "苏州工业园区",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2026-10-16 10:28:04",
+    "downloadCount": 16,
+    "viewCount": 237,
+    "id": "1149372191210696704",
+    "intro": "活动展览展品信息",
+    "matchedTerms": [
+     "展览"
+    ]
+   },
+   {
+    "resourceName": "苏州工业园区公共文化活动信息",
+    "dept": "苏州工业园区",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2026-10-16 10:28:04",
+    "downloadCount": 26,
+    "viewCount": 896,
+    "id": "1149372292985454592",
+    "intro": "园区活动信息",
+    "matchedTerms": [
+     "公共文化"
+    ]
+   },
+   {
+    "resourceName": "苏州市水利风景区明细表",
+    "dept": "市水务局",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 13:31:56",
+    "downloadCount": 27,
+    "viewCount": 319,
+    "id": "1148971570053738496",
+    "intro": "包含风景区名称，编码，等级等信息",
+    "matchedTerms": [
+     "景区"
+    ]
+   },
+   {
+    "resourceName": "苏州市乡村旅游重点村情况",
+    "dept": "市文化广电和旅游局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-02-25 15:09:48",
+    "downloadCount": 48,
+    "viewCount": 650,
+    "id": "1148306245096271872",
+    "intro": "2023年苏州市乡村旅游重点村名录：名称、级别等。",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "苏州市文旅消费聚集区情况",
+    "dept": "市文化广电和旅游局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-02-25 15:08:28",
+    "downloadCount": 64,
+    "viewCount": 625,
+    "id": "1148307417081249792",
+    "intro": "苏州市文旅消费聚集区名录：名称，获评时间。",
+    "matchedTerms": [
+     "文旅"
+    ]
+   },
+   {
+    "resourceName": "苏州市旅游创新产品（业态）情况",
+    "dept": "市文化广电和旅游局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-02-25 14:19:39",
+    "downloadCount": 43,
+    "viewCount": 486,
+    "id": "1148307606751870976",
+    "intro": "苏州市旅游创新产品（业态）名录：名称、评选年度等。",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "常熟市公共服务-停车场管理",
+    "dept": "常熟市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-14 14:41:05",
+    "downloadCount": 0,
+    "viewCount": 722,
+    "id": "1110928837691244544",
+    "intro": "停车场外部编号，停车场名称，停车场地址，纬度，经度，服务电话，停车场负责人，停车场负责人电话，停车场类别，景区，收费类别，支付通道，停车场分类数量，停车场总泊位，剩余空位数，停车场状态，停车场类型，停车场属性，停车场合作性质，是否备案，备案号，，停车场充电桩总数",
+    "matchedTerms": [
+     "景区"
+    ]
+   },
+   {
+    "resourceName": "苏州工业园区个体演出备案证明",
+    "dept": "苏州工业园区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-10 22:00:33",
+    "downloadCount": 0,
+    "viewCount": 737,
+    "id": "1051246141553967104",
+    "intro": "苏州工业园区个体演出备案证明\n",
+    "matchedTerms": [
+     "演出"
+    ]
+   },
+   {
+    "resourceName": "苏州工业园区A级景区信息查询",
+    "dept": "苏州工业园区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-10 21:36:34",
+    "downloadCount": 0,
+    "viewCount": 1125,
+    "id": "1051241895962017792",
+    "intro": "苏州工业园区A级景区信息查询",
+    "matchedTerms": [
+     "景区"
+    ]
+   },
+   {
+    "resourceName": "苏州旅游休闲街区名录",
+    "dept": "市文化广电和旅游局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-04 15:07:38",
+    "downloadCount": 72,
+    "viewCount": 2270,
+    "id": "1051816347548479488",
+    "intro": "苏州旅游休闲街区名录：包含名称、地址、级别等情况",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "苏州旅游度假区名录",
+    "dept": "市文化广电和旅游局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-04 15:08:51",
+    "downloadCount": 47,
+    "viewCount": 1344,
+    "id": "1051815782781222912",
+    "intro": "苏州旅游度假区名录：名称、地址、级别等",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "苏州市旅游咨询点名录",
+    "dept": "市文化广电和旅游局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-04 15:09:35",
+    "downloadCount": 13,
+    "viewCount": 736,
+    "id": "1051815972028219392",
+    "intro": "苏州市旅游咨询点名称、地址、级别等",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "苏州市全域旅游示范区名录",
+    "dept": "市文化广电和旅游局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-04 15:13:41",
+    "downloadCount": 28,
+    "viewCount": 412,
+    "id": "1051815908954275840",
+    "intro": "苏州市全域旅游示范区包含名称和区县",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "苏州市生态旅游示范区名录",
+    "dept": "市文化广电和旅游局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-04 15:14:24",
+    "downloadCount": 31,
+    "viewCount": 646,
+    "id": "1051816663111135232",
+    "intro": "苏州市生态旅游示范区名称、地址级别等",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "苏州市工业旅游区名录",
+    "dept": "市文化广电和旅游局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-04 15:17:43",
+    "downloadCount": 23,
+    "viewCount": 512,
+    "id": "1051816224512737280",
+    "intro": "苏州工业旅游区名录：包含名称、地址等",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "苏州市乡村旅游重点村名录",
+    "dept": "市文化广电和旅游局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-04 15:19:57",
+    "downloadCount": 29,
+    "viewCount": 689,
+    "id": "1051816473788641280",
+    "intro": "苏州市乡村旅游重点村情况：包含名称、地址等",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "苏州市A级景区名录",
+    "dept": "市文化广电和旅游局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-04 15:43:22",
+    "downloadCount": 86,
+    "viewCount": 1068,
+    "id": "1051816032019378176",
+    "intro": "苏州A级景区名录：包含名称、地址等",
+    "matchedTerms": [
+     "景区"
+    ]
+   },
+   {
+    "resourceName": "吴中区文化体育和旅游局政务服务事项清单",
+    "dept": "吴中区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "2",
+    "dataUpdateTime": "2026-10-15 22:15:43",
+    "downloadCount": 0,
+    "viewCount": 177,
+    "id": "1050442113521774592",
+    "intro": "吴中区文化体育和旅游局政务服务事项清单",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "常熟市级旅游业转型升级专项资金扶持方案",
+    "dept": "常熟市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请公开",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-08 10:10:50",
+    "downloadCount": 0,
+    "viewCount": 378,
+    "id": "1049614486011604992",
+    "intro": "常熟市级旅游业转型升级专项资金扶持方案",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "太仓市接收卫星传送的境外电视节目许可证延续审批流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2025-12-30 15:19:03",
+    "downloadCount": 8,
+    "viewCount": 217,
+    "id": "1047529638006583296",
+    "intro": "太仓市文体广电和旅游局《接收卫星传送的境外电视节目许可证》延续审批流程信息",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "太仓市互联网上网服务营业场所经营单位信息流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2025-12-30 15:19:42",
+    "downloadCount": 8,
+    "viewCount": 220,
+    "id": "1047529511728672768",
+    "intro": "太仓市文体广电和旅游局互联网上网服务营业场所经营单位信息流程信息",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "太仓市个体演出经纪人备案证明变更流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2025-12-30 15:20:27",
+    "downloadCount": 7,
+    "viewCount": 217,
+    "id": "1047529701126664192",
+    "intro": "太仓市文体广电和旅游局个体演出经纪人备案证明变更流程信息",
+    "matchedTerms": [
+     "旅游",
+     "演出"
+    ]
+   },
+   {
+    "resourceName": "相城区主要景区（点）开放时间表",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-04 11:05:19",
+    "downloadCount": 16,
+    "viewCount": 274,
+    "id": "1073279149567864832",
+    "intro": "相城区主要景区、景点的开放时间表，包括景区名称、开放时间、地址等信息。",
+    "matchedTerms": [
+     "景区"
+    ]
+   },
+   {
+    "resourceName": "吴中区行政审批局举办内地营业演出活动审批办件信息",
+    "dept": "吴中区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-15 22:15:46",
+    "downloadCount": 0,
+    "viewCount": 58,
+    "id": "1047541591642931200",
+    "intro": "吴中区行政审批局举办内地营业演出活动审批办件信息",
+    "matchedTerms": [
+     "演出"
+    ]
+   },
+   {
+    "resourceName": "太仓市文体广电和旅游局公共图书馆免费开放流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 13:51:53",
+    "downloadCount": 8,
+    "viewCount": 219,
+    "id": "1047129832834662400",
+    "intro": "太仓市文体广电和旅游局公共图书馆免费开放流程信息",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "太仓市文体广电和旅游局对非物质文化遗产代表性项目传承人的组织推荐评审认定流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 13:52:37",
+    "downloadCount": 9,
+    "viewCount": 158,
+    "id": "1047129769706192896",
+    "intro": "太仓市文体广电和旅游局对非物质文化遗产代表性项目传承人的组织推荐评审认定流程信息",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "太仓市文体广电和旅游局艺术品经营单位信息流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 13:21:01",
+    "downloadCount": 7,
+    "viewCount": 151,
+    "id": "1047129643419893760",
+    "intro": "太仓市文体广电和旅游局艺术品经营单位信息流程信息",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "太仓市文体广电和旅游局演出场所经营单位申请举办内地营业性演出活动流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 13:57:56",
+    "downloadCount": 8,
+    "viewCount": 161,
+    "id": "1047129453908656128",
+    "intro": "太仓市文体广电和旅游局演出场所经营单位申请举办内地营业性演出活动流程信息",
+    "matchedTerms": [
+     "旅游",
+     "演出"
+    ]
+   },
+   {
+    "resourceName": "太仓市文体广电和旅游局文物保护单位建设控制地带的划定并公布流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 13:59:19",
+    "downloadCount": 13,
+    "viewCount": 248,
+    "id": "1047129514856116224",
+    "intro": "太仓市文体广电和旅游局文物保护单位建设控制地带的划定并公布流程信息",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "太仓市文体广电和旅游局文化馆培训基层队伍和业余文艺骨干流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 14:00:34",
+    "downloadCount": 49,
+    "viewCount": 300,
+    "id": "1047130274801057792",
+    "intro": "太仓市文体广电和旅游局文化馆培训基层队伍和业余文艺骨干流程信息",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "太仓市文体广电和旅游局社会艺术水平考级机构委托承办单位承办艺术考级活动备案流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 14:01:47",
+    "downloadCount": 7,
+    "viewCount": 153,
+    "id": "1047130148493787136",
+    "intro": "太仓市文体广电和旅游局社会艺术水平考级机构委托承办单位承办艺术考级活动备案流程信息",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "太仓市文体广电和旅游局社会体育指导员公益培训流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 14:03:13",
+    "downloadCount": 8,
+    "viewCount": 175,
+    "id": "1047130022228459520",
+    "intro": "太仓市文体广电和旅游局社会体育指导员公益培训流程信息",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "太仓市文体广电和旅游局三级社会体育指导员技术等级称号认定流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 13:23:26",
+    "downloadCount": 9,
+    "viewCount": 196,
+    "id": "1047129641079500800",
+    "intro": "太仓市文体广电和旅游局三级社会体育指导员技术等级称号认定流程信息",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "太仓市文体广电和旅游局内地营业性演出活动变更演员流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 14:03:53",
+    "downloadCount": 7,
+    "viewCount": 158,
+    "id": "1047130590598594560",
+    "intro": "太仓市文体广电和旅游局内地营业性演出活动变更演员流程信息",
+    "matchedTerms": [
+     "旅游",
+     "演出"
+    ]
+   },
+   {
+    "resourceName": "太仓市文体广电和旅游局卫星地面接收设施安装服务审批流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2025-12-29 14:58:00",
+    "downloadCount": 7,
+    "viewCount": 152,
+    "id": "1047131472815943680",
+    "intro": "太仓市文体广电和旅游局卫星地面接收设施安装服务审批流程信息",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "太仓市文体广电和旅游局内地营业性演出活动变更演出日期流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2025-12-29 14:58:40",
+    "downloadCount": 7,
+    "viewCount": 182,
+    "id": "1047131409687474176",
+    "intro": "太仓市文体广电和旅游局内地营业性演出活动变更演出日期流程信息",
+    "matchedTerms": [
+     "旅游",
+     "演出"
+    ]
+   },
+   {
+    "resourceName": "太仓市文体广电和旅游局临时占用公共体育场馆设施审批流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2025-12-29 15:00:36",
+    "downloadCount": 7,
+    "viewCount": 173,
+    "id": "1047132174485254144",
+    "intro": "太仓市文体广电和旅游局临时占用公共体育场（馆）设施审批流程信息",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "高新区我省居民赴港澳地区团队旅游签注的许可",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2026-10-15 22:18:36",
+    "downloadCount": 0,
+    "viewCount": 142,
+    "id": "1046055087594762240",
+    "intro": "",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "昆山市旅游情况",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-29 18:06:38",
+    "downloadCount": 29,
+    "viewCount": 708,
+    "id": "1046998511466541056",
+    "intro": "昆山市旅游情况",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "高新区内地营业性演出活动变更演出内容",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "申请人同意或相关法律法规要求",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2026-10-15 22:18:04",
+    "downloadCount": 0,
+    "viewCount": 200,
+    "id": "1045635014874853376",
+    "intro": "高新区内地营业性演出活动变更演出内容",
+    "matchedTerms": [
+     "演出"
+    ]
+   },
+   {
+    "resourceName": "高新区内地营业性演出活动变更演出日期",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "申请人同意或相关法律法规要求",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2026-10-15 22:18:08",
+    "downloadCount": 0,
+    "viewCount": 146,
+    "id": "1045638686044286976",
+    "intro": "高新区内地营业性演出活动变更演出日期",
+    "matchedTerms": [
+     "演出"
+    ]
+   },
+   {
+    "resourceName": "高新区演出场所经营单位申请举办内地营业性演出活动",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "申请人同意或相关法律法规要求",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2026-10-15 22:18:07",
+    "downloadCount": 0,
+    "viewCount": 191,
+    "id": "1045639191382421504",
+    "intro": "高新区演出场所经营单位申请举办内地营业性演出活动",
+    "matchedTerms": [
+     "演出"
+    ]
+   },
+   {
+    "resourceName": "昆山市水利风景区功能分区",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-22 15:00:40",
+    "downloadCount": 12,
+    "viewCount": 364,
+    "id": "1044622959829020672",
+    "intro": "昆山市水利风景区功能分区",
+    "matchedTerms": [
+     "景区"
+    ]
+   },
+   {
+    "resourceName": "昆山市台湾通行证旅游签注办理指南",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-22 15:09:13",
+    "downloadCount": 8,
+    "viewCount": 177,
+    "id": "1044622078291148800",
+    "intro": " 昆山市台湾通行证旅游签注办理指南",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "昆山市旅游停车场",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-22 10:16:53",
+    "downloadCount": 15,
+    "viewCount": 328,
+    "id": "1044197786684424192",
+    "intro": "昆山市旅游停车场",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "昆山市古镇旅游景点信息",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-23 10:02:57",
+    "downloadCount": 19,
+    "viewCount": 526,
+    "id": "1044624389801472000",
+    "intro": "昆山市古镇旅游景点信息",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "苏州工业园区特色旅游线路",
+    "dept": "苏州工业园区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2026-10-14 14:46:26",
+    "downloadCount": 25,
+    "viewCount": 493,
+    "id": "1041657306465660928",
+    "intro": "苏州工业园区特色旅游线路",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "苏州工业园区金鸡湖景区上榜江苏省智慧旅游景区名录",
+    "dept": "苏州工业园区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2026-10-14 14:50:37",
+    "downloadCount": 13,
+    "viewCount": 438,
+    "id": "1041657685827846144",
+    "intro": "苏州工业园区金鸡湖景区上榜江苏省智慧旅游景区名录",
+    "matchedTerms": [
+     "旅游",
+     "景区"
+    ]
+   },
+   {
+    "resourceName": "常熟市景区人流统计信息",
+    "dept": "常熟市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-06 16:29:14",
+    "downloadCount": 0,
+    "viewCount": 162,
+    "id": "1181532673858039808",
+    "intro": "常熟市文体广电和旅游局发布的景区人流统计信息，包括统计月份、接待人数、备注等信息",
+    "matchedTerms": [
+     "旅游",
+     "景区",
+     "接待"
+    ]
+   },
+   {
+    "resourceName": "常熟市旅游包车基本信息",
+    "dept": "常熟市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-06 16:03:10",
+    "downloadCount": 0,
+    "viewCount": 202,
+    "id": "1181530357696262144",
+    "intro": "常熟市交通运输局发布的旅游包车基本信息，包括业户名称、企业统一社会代码、负责人姓名等信息",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "常熟市旅游度假区信息",
+    "dept": "常熟市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依申请公开",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:16:09",
+    "downloadCount": 20,
+    "viewCount": 458,
+    "id": "1035488753622413312",
+    "intro": "常熟市旅游度假区信息",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "常熟市生态旅游示范区信息",
+    "dept": "常熟市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依申请公开",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:16:10",
+    "downloadCount": 14,
+    "viewCount": 361,
+    "id": "1035488944337416192",
+    "intro": "常熟市生态旅游示范区信息",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "常熟市工业旅游区（点）",
+    "dept": "常熟市",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请公开",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:16:08",
+    "downloadCount": 0,
+    "viewCount": 403,
+    "id": "1035489326027468800",
+    "intro": "常熟市工业旅游区（点）\n",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "常熟市红色旅游点信息",
+    "dept": "常熟市",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请公开",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:16:08",
+    "downloadCount": 0,
+    "viewCount": 405,
+    "id": "1035489453131657216",
+    "intro": "常熟市红色旅游点信息",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "常熟市图书馆展览信息",
+    "dept": "常熟市",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请公开",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:16:07",
+    "downloadCount": 0,
+    "viewCount": 306,
+    "id": "1035489643896991744",
+    "intro": "常熟市图书馆展览信息",
+    "matchedTerms": [
+     "展览"
+    ]
+   },
+   {
+    "resourceName": "常熟市全年展览信息",
+    "dept": "常熟市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依申请公开",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:16:07",
+    "downloadCount": 15,
+    "viewCount": 377,
+    "id": "1035490561807810560",
+    "intro": "常熟市全年展览信息",
+    "matchedTerms": [
+     "展览"
+    ]
+   },
+   {
+    "resourceName": "常熟市翁同龢纪念馆展览信息",
+    "dept": "常熟市",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:16:10",
+    "downloadCount": 0,
+    "viewCount": 284,
+    "id": "1035490879819939840",
+    "intro": "常熟市翁同龢纪念馆展览信息",
+    "matchedTerms": [
+     "展览"
+    ]
+   },
+   {
+    "resourceName": "常熟市旅游民宿登记备案信息",
+    "dept": "常熟市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请公开",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-11-30 13:45:33",
+    "downloadCount": 0,
+    "viewCount": 347,
+    "id": "1035491262143332352",
+    "intro": "常熟市旅游民宿登记备案信息",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "常熟市演出计划信息",
+    "dept": "常熟市",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请公开",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2026-10-15 22:16:11",
+    "downloadCount": 0,
+    "viewCount": 266,
+    "id": "1037732618177806336",
+    "intro": "常熟市演出计划信息",
+    "matchedTerms": [
+     "演出"
+    ]
+   },
+   {
+    "resourceName": "常熟市旅游线路信息",
+    "dept": "常熟市",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请公开",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2026-10-15 22:16:08",
+    "downloadCount": 0,
+    "viewCount": 296,
+    "id": "1037732745281994752",
+    "intro": "常熟市旅游线路信息",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "常熟市展览总结信息",
+    "dept": "常熟市",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请公开",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2026-10-15 22:16:11",
+    "downloadCount": 0,
+    "viewCount": 335,
+    "id": "1037733562462466048",
+    "intro": "常熟市展览总结信息",
+    "matchedTerms": [
+     "展览"
+    ]
+   },
+   {
+    "resourceName": "常熟市临时性大型演出信息",
+    "dept": "常熟市",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请共享",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2026-10-15 22:16:08",
+    "downloadCount": 0,
+    "viewCount": 331,
+    "id": "1037733626069086208",
+    "intro": "常熟市临时性大型演出信息",
+    "matchedTerms": [
+     "演出"
+    ]
+   },
+   {
+    "resourceName": "常熟市美术馆展览信息",
+    "dept": "常熟市",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请公开",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:16:09",
+    "downloadCount": 0,
+    "viewCount": 330,
+    "id": "1035489084154511360",
+    "intro": "常熟市美术馆展览信息",
+    "matchedTerms": [
+     "展览"
+    ]
+   },
+   {
+    "resourceName": "常熟市演出活动计划信息",
+    "dept": "常熟市",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请公开",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2026-10-15 22:16:11",
+    "downloadCount": 0,
+    "viewCount": 393,
+    "id": "1037732293458984960",
+    "intro": "常熟市演出活动计划信息",
+    "matchedTerms": [
+     "演出"
+    ]
+   },
+   {
+    "resourceName": "常熟市专项资金扶持名单旅游业",
+    "dept": "常熟市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-06 15:35:28",
+    "downloadCount": 0,
+    "viewCount": 327,
+    "id": "963762268465725440",
+    "intro": "常熟市专项资金扶持名单旅游业",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "常熟市清明节A级景区接待数据信息",
+    "dept": "常熟市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请公开",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-25 10:05:18",
+    "downloadCount": 0,
+    "viewCount": 361,
+    "id": "963762256641982464",
+    "intro": "常熟市清明节A级景区接待数据信息",
+    "matchedTerms": [
+     "景区",
+     "接待"
+    ]
+   },
+   {
+    "resourceName": "常熟农业旅游示范区信息",
+    "dept": "常熟市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:16:09",
+    "downloadCount": 26,
+    "viewCount": 470,
+    "id": "963762253823410176",
+    "intro": "常熟农业旅游示范区信息",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "常熟市备案旅游民宿扶持补助名单",
+    "dept": "常熟市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-05 17:33:58",
+    "downloadCount": 0,
+    "viewCount": 328,
+    "id": "963762248718942208",
+    "intro": "常熟市备案旅游民宿扶持补助名单",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "常熟市星级旅游饭店扶持补助名单",
+    "dept": "常熟市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "不向社会开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-05 17:27:39",
+    "downloadCount": 0,
+    "viewCount": 407,
+    "id": "1029820898075672576",
+    "intro": "常熟市星级旅游饭店扶持补助名单",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局陈列展览信息",
+    "dept": "张家港市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:16:47",
+    "downloadCount": 13,
+    "viewCount": 145,
+    "id": "1029828987055177728",
+    "intro": "各展览的信息图片文字说明",
+    "matchedTerms": [
+     "旅游",
+     "展览"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局相约悦读活动信息表",
+    "dept": "张家港市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "3",
+    "dataUpdateTime": "2026-10-15 22:16:48",
+    "downloadCount": 15,
+    "viewCount": 185,
+    "id": "1029829113551192064",
+    "intro": "活动信息表",
+    "matchedTerms": [
+     "旅游"
+    ]
+   },
+   {
+    "resourceName": "张家港市文体广电和旅游局文体社团表",
+    "dept": "张家港市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:16:48",
+    "downloadCount": 14,
+    "viewCount": 229,
+    "id": "1029829240487608320",
+    "intro": "文体社团表",
+    "matchedTerms": [
+     "旅游"
+    ]
+   }
+  ],
+  "城市交通:地铁进出站/公共交通客流": [
+   {
+    "resourceName": "张家港市城管局城市开放停车位信息",
+    "dept": "张家港市城市管理局",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:01:53",
+    "downloadCount": 1,
+    "viewCount": 2,
+    "id": "1513489481747099648",
+    "intro": "张家港市城管局城市开放停车位信息,时间范围：2023-至今,包含：序号、提供开放车位单位名称、提供开放车位单位地址、开放位数、开放时间段",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "苏州工业园区停车场地图信息",
+    "dept": "工业园区行政审批局",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2026-10-16 21:00:01",
+    "downloadCount": 4,
+    "viewCount": 25,
+    "id": "1513489374372917248",
+    "intro": "苏州工业园区停车场地图信息，时间范围: 2025-2025，包含：序号、停车场名称、距离、地址、类型",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "苏州工业园区宠物免疫点清单信息",
+    "dept": "工业园区行政审批局",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2026-10-16 21:00:02",
+    "downloadCount": 2,
+    "viewCount": 8,
+    "id": "1511303217316851712",
+    "intro": "苏州工业园区宠物免疫点清单信息，时间范围: 2025-2025，包含：序号、宠物免疫点名称、地址、电话、附近停车场",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "苏州工业园区儿童关爱之家清单信息",
+    "dept": "工业园区行政审批局",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2026-10-16 21:00:01",
+    "downloadCount": 2,
+    "viewCount": 6,
+    "id": "1511303200539635712",
+    "intro": "苏州工业园区儿童关爱之家清单信息，时间范围: 2025-2025，包含：序号、儿童关爱之家位置、地址、周边停车情况、停车场距离",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "张家港市市级机关事务管理中心全市机关及企事业单位停车场免费错时开放名单信息",
+    "dept": "市级机关事务管理中心",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:00:32",
+    "downloadCount": 1,
+    "viewCount": 2,
+    "id": "1510998970184462336",
+    "intro": "张家港市市级机关事务管理中心全市机关及企事业单位停车场免费错时开放名单信息,时间范围：2023-至今,包含：单位名单、单位地址、停车位个数、开放时间段、咨询电话",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "张家港市公安局张家港市交通事故理赔中心信息",
+    "dept": "张家港市公安局",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:01:56",
+    "downloadCount": 1,
+    "viewCount": 3,
+    "id": "1510998773165420544",
+    "intro": "张家港市公安局张家港市交通事故理赔中心信息,时间范围：2021-至今,包含：理赔中心名称、地址、电话",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "张家港市公安局张家港市非现场交通违法处罚点信息",
+    "dept": "张家港市公安局",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:01:55",
+    "downloadCount": 1,
+    "viewCount": 1,
+    "id": "1510998707289681920",
+    "intro": "张家港市公安局张家港市非现场交通违法处罚点信息,时间范围：2021-至今,包含：处罚点、地址、联系电话",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "张家港市城管局城市收费道路停车泊位信息",
+    "dept": "张家港市城市管理局",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:01:54",
+    "downloadCount": 1,
+    "viewCount": 4,
+    "id": "1510998546366820352",
+    "intro": "张家港市城管局城市收费道路停车泊位信息,时间范围：2023-至今,包含：序号、县级市（区）、道路名称、泊位数 （个）、收费标准、收费定价形式",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "张家港市统计局交通和用电和社零信息统计数据",
+    "dept": "张家港市统计局",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:10",
+    "downloadCount": 0,
+    "viewCount": 3,
+    "id": "1508792834924441600",
+    "intro": "张家港市统计局交通和用电和社零信息统计数据,时间范围：2020-至今,包含：全社会用电量/万千瓦时、客运量_全社会/万人次、客运量_公路/万人次、居民用电量/万千瓦时、工业用电量/万千瓦时、年度、电信业务总量/万吨、社会消费品零售总额/万元、货运量_全社会/万吨、货运量_公路/万吨等",
+    "matchedTerms": [
+     "交通",
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "苏州工业园区道路交通噪声监测信息",
+    "dept": "工业园区生态环境局",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "6",
+    "dataUpdateTime": "2026-10-16 21:00:02",
+    "downloadCount": 0,
+    "viewCount": 10,
+    "id": "1508428893840961536",
+    "intro": "苏州工业园区道路交通噪声监测信息，时间范围: 2018-至今，包含：主键、测点名称、监测时间、路段名称、大型车车流量、小型车车流量、Leq监测结果、L10监测结果、L50监测结果、L90监测结果",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "常熟市公交站点经纬度信息",
+    "dept": "常熟市交通运输局",
+    "resourceType": "接口",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 22:25:53",
+    "downloadCount": 0,
+    "viewCount": 33,
+    "id": "1505973270742237184",
+    "intro": "常熟市公交站点经纬度信息，包含主键、站点名称、经度、纬度、站点方位、途经线路。",
+    "matchedTerms": [
+     "公交"
+    ]
+   },
+   {
+    "resourceName": "常熟市公交站点经纬度信息",
+    "dept": "常熟市交通运输局",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 20:58:52",
+    "downloadCount": 0,
+    "viewCount": 16,
+    "id": "1486307188100263936",
+    "intro": "常熟市公交站点经纬度信息，包含主键、站点名称、经度、纬度、站点方位、途经线路。",
+    "matchedTerms": [
+     "公交"
+    ]
+   },
+   {
+    "resourceName": "张家港市城管局城市公共收费停车场信息",
+    "dept": "张家港市城市管理局",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:01:54",
+    "downloadCount": 1,
+    "viewCount": 3,
+    "id": "1502318249320345600",
+    "intro": "张家港市城管局城市公共收费停车场信息,时间范围：2023-至今,包含：序号、县级市（区）、设施名称、设施地址、泊位数 （个）、收费标准、收费定价形式",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "常熟市公交线路信息",
+    "dept": "常熟市交通运输局",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "6",
+    "dataUpdateTime": "2026-10-16 20:58:52",
+    "downloadCount": 0,
+    "viewCount": 21,
+    "id": "1486022827262046208",
+    "intro": "常熟市公交线路信息，包含序号、性质、属性、线路、线路号、起讫站点、起点站、终点站、起点站时间、终点站时间、线路里程、票价。",
+    "matchedTerms": [
+     "公交"
+    ]
+   },
+   {
+    "resourceName": "常熟市渔业船舶交通事故责任认定信息",
+    "dept": "常熟市农业农村局",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 20:58:59",
+    "downloadCount": 0,
+    "viewCount": 2,
+    "id": "1445358975789002752",
+    "intro": "常熟市渔业船舶交通事故责任认定信息，包含事故地点、责任人、事故时间、认定单位、认定时间。",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "常熟市交通事故处理中心信息",
+    "dept": "常熟市公安局",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 20:58:48",
+    "downloadCount": 0,
+    "viewCount": 3,
+    "id": "1445344632481476608",
+    "intro": "常熟市交通事故处理中心信息，包含序号、机构名称、详细地址、联系电话。",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "昆山市轨道交通企业名录信息",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-23 16:04:41",
+    "downloadCount": 0,
+    "viewCount": 95,
+    "id": "1283427680319111168",
+    "intro": "昆山市轨道交通企业名录信息，包含企业名称，地址，法人，联系电话字段",
+    "matchedTerms": [
+     "轨道",
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "昆山市公交专用道明细信息",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-23 11:03:00",
+    "downloadCount": 0,
+    "viewCount": 60,
+    "id": "1281186843304591360",
+    "intro": "昆山市公交专用道明细信息包含字段序号 ，名称，专用道形式 ，单侧长度，双侧长度",
+    "matchedTerms": [
+     "公交"
+    ]
+   },
+   {
+    "resourceName": "昆山市铁路客运站名录信息",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-10-23 11:03:56",
+    "downloadCount": 0,
+    "viewCount": 59,
+    "id": "1280833319001587712",
+    "intro": "昆山铁路客运站名录信息包含字段名称，建筑面积，站台规模，建成时间，地址，主要线路",
+    "matchedTerms": [
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "昆山市客运站企业名录信息",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-23 11:05:13",
+    "downloadCount": 0,
+    "viewCount": 43,
+    "id": "1280833362081284096",
+    "intro": "昆山市客运站企业名录信息包含字段名称，建成时间，地址",
+    "matchedTerms": [
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "昆山市公交便民服务中心名录信息",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-23 11:06:13",
+    "downloadCount": 0,
+    "viewCount": 64,
+    "id": "1280833405202923520",
+    "intro": "昆山市公交便民服务中心名录信息包含字段序号，服务点，地址，联系电话",
+    "matchedTerms": [
+     "公交"
+    ]
+   },
+   {
+    "resourceName": "昆山市公交满意度信息",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-23 11:07:19",
+    "downloadCount": 0,
+    "viewCount": 46,
+    "id": "1280834115114041344",
+    "intro": "昆山市公交满意度信息包含字段年度，满意度，更新频次",
+    "matchedTerms": [
+     "公交"
+    ]
+   },
+   {
+    "resourceName": "昆山市水路客运周转量信息",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-23 16:09:16",
+    "downloadCount": 0,
+    "viewCount": 45,
+    "id": "1281629044782333952",
+    "intro": "昆山市水路客运周转量信息包含客运量本期完成，客运量上年同期，客运量本期比上年等字段",
+    "matchedTerms": [
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "昆山市毗邻公交线路信息",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-25 09:49:35",
+    "downloadCount": 0,
+    "viewCount": 46,
+    "id": "1280838546501074944",
+    "intro": "昆山市毗邻公交线路信息包含字段序号，末站开始时间，末站结束时间，末站名称等字段",
+    "matchedTerms": [
+     "公交"
+    ]
+   },
+   {
+    "resourceName": "昆山市网约车平台公司业户名录信息",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-23 14:39:20",
+    "downloadCount": 0,
+    "viewCount": 61,
+    "id": "1280830573649264640",
+    "intro": "昆山市网约车平台公司业户名录信息序号，业户名称，经营许可证字号，经济类型，经营范围，地址，状态",
+    "matchedTerms": [
+     "网约车"
+    ]
+   },
+   {
+    "resourceName": "昆山市轨道服务质量考核结果信息",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-23 15:43:45",
+    "downloadCount": 0,
+    "viewCount": 37,
+    "id": "1280204343669358592",
+    "intro": "昆山市轨道服务质量考核结果信息包含字段指标名称，乘客满意度，服务保障能力，运营关键指标，总计",
+    "matchedTerms": [
+     "轨道"
+    ]
+   },
+   {
+    "resourceName": "昆山市网约车驾驶员资格证考点名录信息",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-23 10:46:01",
+    "downloadCount": 0,
+    "viewCount": 81,
+    "id": "1280165011642347520",
+    "intro": "昆山市网约车驾驶员资格证考点名录信息包含字段名称，地址，联系电话",
+    "matchedTerms": [
+     "网约车"
+    ]
+   },
+   {
+    "resourceName": "昆山市出租车驾驶员资格证考点名录信息",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-23 10:47:49",
+    "downloadCount": 0,
+    "viewCount": 44,
+    "id": "1280165204114763776",
+    "intro": "昆山市出租车驾驶员资格证考点名录信息包含字段名称，地址，联系电话",
+    "matchedTerms": [
+     "出租车"
+    ]
+   },
+   {
+    "resourceName": "昆山市户外公交卡补登点名录信息",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-23 10:49:57",
+    "downloadCount": 0,
+    "viewCount": 37,
+    "id": "1280165290722918400",
+    "intro": "昆山市户外公交卡补登点名录信息包含字段补登机编号，地址",
+    "matchedTerms": [
+     "公交"
+    ]
+   },
+   {
+    "resourceName": "昆山市客运企业名录信息",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-25 10:08:36",
+    "downloadCount": 0,
+    "viewCount": 50,
+    "id": "1280121363710017536",
+    "intro": "昆山市客运企业名录信息包含字段业户名称，经营许可证字号，档案编号，经济类型，经营范围，业户地址，负责人，法人，证件初领日期，证照",
+    "matchedTerms": [
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "昆山市年度新能源出租车新增信息",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-23 16:58:04",
+    "downloadCount": 0,
+    "viewCount": 48,
+    "id": "1282651569855332352",
+    "intro": "昆山市年度新能源出租车新增信息包含字段车牌号码，车辆所有人，车辆所有人身份证号，车辆所有人联系电话，车辆所有人地址，服务公司信息",
+    "matchedTerms": [
+     "出租车"
+    ]
+   },
+   {
+    "resourceName": "太仓市停车场车位信息",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2026-10-15 22:15:35",
+    "downloadCount": 30,
+    "viewCount": 143,
+    "id": "1275774706058985472",
+    "intro": "全市停车场车位信息主要包括信息：停车场编码、总泊位数、可用泊位数、更新时间等信息",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "太仓市充电站点",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:18",
+    "downloadCount": 26,
+    "viewCount": 187,
+    "id": "1189194942221844480",
+    "intro": "太仓市充电站点主要包括：充电站名称、详细地址、经度、纬度、类型、状态、充电桩总数、可停放进行充电的车位总数、建设场所、停车方式、是否需要提前预约后才能使用、是否支持开票、营业时间、站点照片等信息",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "吴江区交通禁止左转路口清单",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-10-05 10:44:05",
+    "downloadCount": 19,
+    "viewCount": 165,
+    "id": "1177281590910480384",
+    "intro": "吴江区交通禁止左转路口清单",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "苏州市公交客运线路信息",
+    "dept": "苏州市公交集团有限公司",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "需经申请，明确数据用途",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-30 10:56:25",
+    "downloadCount": 3,
+    "viewCount": 346,
+    "id": "1267785410815393792",
+    "intro": "公交客运线路信息",
+    "matchedTerms": [
+     "公交",
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "苏州轨道交通乘客服务热线服务统计数据",
+    "dept": "苏州轨道交通大数据有限公司",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-25 10:15:42",
+    "downloadCount": 32,
+    "viewCount": 172,
+    "id": "1265972300928479232",
+    "intro": "苏州轨道交通乘客服务情况",
+    "matchedTerms": [
+     "轨道",
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "苏州轨道交通运营线路信息",
+    "dept": "苏州轨道交通大数据有限公司",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-25 10:15:24",
+    "downloadCount": 128,
+    "viewCount": 2468,
+    "id": "1176936234632835072",
+    "intro": "苏州轨道交通运营线路相关数据",
+    "matchedTerms": [
+     "轨道",
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "高新区公共标识标牌分布信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:18:40",
+    "downloadCount": 0,
+    "viewCount": 88,
+    "id": "1247503304549953536",
+    "intro": "苏州高新区公共标识牌分布情况信息，包含限高、输油（气）标志、交通标志牌等分布情况。",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "高新区公共立杆分布信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:18:41",
+    "downloadCount": 0,
+    "viewCount": 54,
+    "id": "1263898513521209344",
+    "intro": "苏州高新区公共立杆分布情况信息，包含公交立杆、电力立杆、特殊立杆等公共立杆设施分布情况。",
+    "matchedTerms": [
+     "公交"
+    ]
+   },
+   {
+    "resourceName": "高新区交通设施分布信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:18:41",
+    "downloadCount": 0,
+    "viewCount": 72,
+    "id": "1271047705863614464",
+    "intro": "苏州高新区交通设施分布情况信息，包含交通信号灯、防撞桶等交通设施分布情况。",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "高新区停车场停车咪表分布信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:18:41",
+    "downloadCount": 0,
+    "viewCount": 85,
+    "id": "1272545601297514496",
+    "intro": "苏州高新区停车分布情况信息，包含各乡镇板块停车场、停车咪表等分布情况。",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "太仓市镇村公交线路走向、站点、班次时刻汇总",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:38",
+    "downloadCount": 26,
+    "viewCount": 105,
+    "id": "1189579419951525888",
+    "intro": "太仓镇村公交线路走向、站点、班次时刻汇总",
+    "matchedTerms": [
+     "公交"
+    ]
+   },
+   {
+    "resourceName": "太仓市公安局非现场交通违法处罚点",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件共享",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:36",
+    "downloadCount": 14,
+    "viewCount": 81,
+    "id": "1190229365268611072",
+    "intro": "太仓市公安局非现场交通违法处罚点",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "太仓市城乡公交线路走向、站点、班次时刻汇总",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:36",
+    "downloadCount": 15,
+    "viewCount": 105,
+    "id": "1189578900784742400",
+    "intro": "太仓城乡公交线路走向、站点、班次时刻汇总",
+    "matchedTerms": [
+     "公交"
+    ]
+   },
+   {
+    "resourceName": "太仓市城市公交线路走向、站点、班次时刻汇总",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件共享",
+    "updateFrequencyCode": "5",
+    "dataUpdateTime": "2026-10-15 22:15:36",
+    "downloadCount": 20,
+    "viewCount": 138,
+    "id": "1189580456162717696",
+    "intro": "太仓城市公交线路走向、站点、班次时刻汇总",
+    "matchedTerms": [
+     "公交"
+    ]
+   },
+   {
+    "resourceName": "常熟市交通局双随机案件信息表",
+    "dept": "常熟市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请审核同意后开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-15 17:01:09",
+    "downloadCount": 0,
+    "viewCount": 150,
+    "id": "1184915434501271552",
+    "intro": "常熟市交通局双随机案件信息表,包含主键、检查对象、检查对象代码、执法人员、抽查事项、抽查时间、所属区域、执法证号、实施机构、检查结果、市辖区县代码、市辖区县名称、条线代码等字段。",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "太仓市交运局对公共汽车客运经营者的经营条件的年度审验",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:16",
+    "downloadCount": 10,
+    "viewCount": 43,
+    "id": "1184890953858744320",
+    "intro": "对公共汽车客运经营者的经营条件的年度审验",
+    "matchedTerms": [
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "太仓市交运局对出租汽车客运经营者的营运车辆的年度审验",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "太仓市交运局对出租汽车客运经营者的营运车辆的年度审验",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2026-10-15 22:15:24",
+    "downloadCount": 10,
+    "viewCount": 44,
+    "id": "1184890699969163264",
+    "intro": "对出租汽车客运经营者的营运车辆的年度审验",
+    "matchedTerms": [
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "太仓市交运局对出租汽车客运经营者的经营条件的年度审验",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2026-10-15 22:15:16",
+    "downloadCount": 9,
+    "viewCount": 61,
+    "id": "1184890091077828608",
+    "intro": "对出租汽车客运经营者的经营条件的年度审验",
+    "matchedTerms": [
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "苏州市数字城管部件交通信号灯",
+    "dept": "市城市管理局",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "需要苏州市城管局同意",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2026-10-16 13:32:19",
+    "downloadCount": 1,
+    "viewCount": 342,
+    "id": "1151921812470460416",
+    "intro": "交通信号灯",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "太仓市交运局对道路旅客运输经营者的营运车辆的年度审验",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:24",
+    "downloadCount": 10,
+    "viewCount": 43,
+    "id": "1184880113092853760",
+    "intro": "太仓市交运局对道路旅客运输经营者的营运车辆的年度审验",
+    "matchedTerms": [
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "太仓市交运局对公共汽车客运经营者的营运车辆的年度审验",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:24",
+    "downloadCount": 9,
+    "viewCount": 49,
+    "id": "1184879942061748224",
+    "intro": "太仓市交运局对公共汽车客运经营者的营运车辆的年度审验",
+    "matchedTerms": [
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "姑苏区交通事故处理点",
+    "dept": "姑苏区",
+    "resourceType": "接口",
+    "openAttributeName": "无条件开放",
+    "openCondition": "需求场景与申请数据有明确关联性，确保场景合规、数据安全。",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 22:26:23",
+    "downloadCount": 0,
+    "viewCount": 53,
+    "id": "1184449689220743168",
+    "intro": "姑苏区交通事故处理点，包括交通事故处理点、地址、联系电话",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "姑苏区经营性停车场备案办理流程",
+    "dept": "姑苏区",
+    "resourceType": "接口",
+    "openAttributeName": "无条件开放",
+    "openCondition": "需求场景与申请数据有明确关联性，确保场景合规、数据安全。",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 22:26:24",
+    "downloadCount": 0,
+    "viewCount": 38,
+    "id": "1182688096703180800",
+    "intro": "姑苏区经营性停车场备案办理流程包括事项名称、办理地址、联系电话、办理备案需递交的材料等信息。",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "姑苏区轨道交通火车站站点首末班车时间",
+    "dept": "姑苏区",
+    "resourceType": "接口",
+    "openAttributeName": "无条件开放",
+    "openCondition": "需求场景与申请数据有明确关联性，确保场景合规、数据安全。",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 22:26:24",
+    "downloadCount": 0,
+    "viewCount": 23,
+    "id": "1182685562131382272",
+    "intro": "姑苏区轨道交通火车站站点首末班车时间包括线路、方向、首班车、末班车、备注等信息。",
+    "matchedTerms": [
+     "轨道",
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "姑苏区苏州火车站周边停车场情况",
+    "dept": "姑苏区",
+    "resourceType": "接口",
+    "openAttributeName": "无条件开放",
+    "openCondition": "需求场景与申请数据有明确关联性，确保场景合规、数据安全。",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 22:26:24",
+    "downloadCount": 0,
+    "viewCount": 56,
+    "id": "1184187984653778944",
+    "intro": "姑苏区苏州火车站周边停车场情况包括序号、停车场地点、车位数、主要用途、备注等信息。",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "苏州市姑苏区道路停车和地下管线管理站机构设置",
+    "dept": "姑苏区",
+    "resourceType": "接口",
+    "openAttributeName": "无条件开放",
+    "openCondition": "需求场景与申请数据有明确关联性，确保场景合规、数据安全。",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 22:26:24",
+    "downloadCount": 0,
+    "viewCount": 27,
+    "id": "1182686568961503232",
+    "intro": "苏州市姑苏区道路停车和地下管线管理站机构设置包括单位名称、单位地址、机构设置、主要职能等信息。",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "苏州轨道交通运营数据信息",
+    "dept": "苏州轨道交通大数据有限公司",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-02-24 13:49:57",
+    "downloadCount": 113,
+    "viewCount": 361,
+    "id": "1266087679029899264",
+    "intro": "苏州轨道交通运营服务相关数据",
+    "matchedTerms": [
+     "轨道",
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "太仓市交运局对道路旅客运输经营者的经营条件的年度审验",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:16",
+    "downloadCount": 9,
+    "viewCount": 43,
+    "id": "1184883397786533888",
+    "intro": "对道路运输经营者的经营条件以及营运车辆的年度审验",
+    "matchedTerms": [
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "相城区客运站地理分布信息",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-17 09:38:23",
+    "downloadCount": 12,
+    "viewCount": 184,
+    "id": "1171855613703188480",
+    "intro": "相城区客运站地理分布信息，包括地址及经纬度等信息。",
+    "matchedTerms": [
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "相城区交运局道路旅客运输用户信用评定",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-30 14:24:07",
+    "downloadCount": 12,
+    "viewCount": 205,
+    "id": "1156993904610050048",
+    "intro": "相城区交运局发布的相城道路旅客运输用户信用评定情况，包括业户名称、业户类别、统一社会信用代码、经营许可证号、评定年度、年度信用等级等信息。",
+    "matchedTerms": [
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "苏州市城管静态停车场资源信息",
+    "dept": "市城市管理局",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "苏州市城管局同意",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2026-10-16 13:32:19",
+    "downloadCount": 28,
+    "viewCount": 2420,
+    "id": "1155958751364345856",
+    "intro": "苏州市城管静态停车场资源信息",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "吴中区交通运输局运输企业分布",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "申请后开放",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-25 11:08:21",
+    "downloadCount": 0,
+    "viewCount": 205,
+    "id": "1155801642156912640",
+    "intro": "吴中区交通运输局运输企业分布",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "相城区交通违章处理点信息",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "政务内部数据，不对外开放。",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-11-08 13:35:41",
+    "downloadCount": 11,
+    "viewCount": 418,
+    "id": "1150492026011320320",
+    "intro": "相城区交通违章处理点信息,包含名称、地址等信息。",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "相城区城管局全区公共停车场信息",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-11-09 10:57:14",
+    "downloadCount": 33,
+    "viewCount": 373,
+    "id": "1150489959960084480",
+    "intro": "相城区城管局全区公共停车场信息包含停车场名称、停车场编号等信息",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "苏州市火车站停车场机动车停放服务收费标准",
+    "dept": "市发展和改革委员会（市粮食和物资储备局）",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-08 15:33:42",
+    "downloadCount": 47,
+    "viewCount": 805,
+    "id": "1149726508526563328",
+    "intro": "苏州市火车站停车场机动车停放服务收费标准",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "苏州市发改委公交票价",
+    "dept": "市发展和改革委员会（市粮食和物资储备局）",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-08 14:17:48",
+    "downloadCount": 16,
+    "viewCount": 431,
+    "id": "1149697568177090560",
+    "intro": "公交票价",
+    "matchedTerms": [
+     "公交"
+    ]
+   },
+   {
+    "resourceName": "苏州市发改委出租车运价",
+    "dept": "市发展和改革委员会（市粮食和物资储备局）",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-08 14:18:32",
+    "downloadCount": 28,
+    "viewCount": 659,
+    "id": "1149697441970483200",
+    "intro": "出租车运价",
+    "matchedTerms": [
+     "出租车"
+    ]
+   },
+   {
+    "resourceName": "苏州市发改委地铁票价",
+    "dept": "市发展和改革委员会（市粮食和物资储备局）",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-08 14:20:38",
+    "downloadCount": 15,
+    "viewCount": 542,
+    "id": "1149696686387589120",
+    "intro": "地铁票价",
+    "matchedTerms": [
+     "地铁"
+    ]
+   },
+   {
+    "resourceName": "苏州市交通事故理赔中心信息",
+    "dept": "市公安局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-12 14:28:25",
+    "downloadCount": 18,
+    "viewCount": 404,
+    "id": "1149641243241967616",
+    "intro": "交通事故理赔中心信息",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "张家港市交通运输局政务服务事项清单",
+    "dept": "张家港市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2026-10-16 10:28:16",
+    "downloadCount": 20,
+    "viewCount": 290,
+    "id": "1149629540471107584",
+    "intro": "张家港市交通运输局政务服务事项清单",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "苏州市交通事故多发道路",
+    "dept": "市公安局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-12 14:42:04",
+    "downloadCount": 37,
+    "viewCount": 722,
+    "id": "1149641698550444032",
+    "intro": "交通事故多发道路",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "苏州市非现场交通违法处罚点",
+    "dept": "市公安局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-12 15:26:22",
+    "downloadCount": 13,
+    "viewCount": 326,
+    "id": "1149641733430247424",
+    "intro": "非现场交通违法处罚点",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "太仓市公安局交通禁止左转路口",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:20",
+    "downloadCount": 13,
+    "viewCount": 145,
+    "id": "1149370960480268288",
+    "intro": "太仓市公安局交通禁止左转路口",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "太仓市公安局交通单行线",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:19",
+    "downloadCount": 14,
+    "viewCount": 143,
+    "id": "1149370897402130432",
+    "intro": "太仓市公安局交通单行线",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "太仓市客运业户信息",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2026-10-15 22:15:37",
+    "downloadCount": 14,
+    "viewCount": 134,
+    "id": "1149370078015455232",
+    "intro": "太仓市客运公司基本信息",
+    "matchedTerms": [
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "太仓市公交车辆基础信息",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:26",
+    "downloadCount": 21,
+    "viewCount": 374,
+    "id": "1149369749932802048",
+    "intro": "太仓市公交车辆基础信息",
+    "matchedTerms": [
+     "公交"
+    ]
+   },
+   {
+    "resourceName": "太仓交通局港口码头情况统计表",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:26",
+    "downloadCount": 42,
+    "viewCount": 538,
+    "id": "1149369813082243072",
+    "intro": "太仓交通局管辖的港口码头的基本情况",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "公交满意度",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请共享",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-22 14:03:11",
+    "downloadCount": 1,
+    "viewCount": 236,
+    "id": "1146749556052131840",
+    "intro": "公交满意度",
+    "matchedTerms": [
+     "公交"
+    ]
+   },
+   {
+    "resourceName": "昆山市铁路客运站名录",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请共享",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-22 14:04:08",
+    "downloadCount": 0,
+    "viewCount": 101,
+    "id": "1146750307335864320",
+    "intro": "铁路客运站名录",
+    "matchedTerms": [
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "客运站企业名录",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请共享",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-22 14:05:03",
+    "downloadCount": 0,
+    "viewCount": 190,
+    "id": "1146750753324597248",
+    "intro": "客运站企业名录",
+    "matchedTerms": [
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "公交便民服务中心名录",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请共享",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-22 14:05:55",
+    "downloadCount": 0,
+    "viewCount": 93,
+    "id": "1146751301075533824",
+    "intro": "公交便民服务中心名录",
+    "matchedTerms": [
+     "公交"
+    ]
+   },
+   {
+    "resourceName": "苏州市校园定制公交工作优秀案例",
+    "dept": "市教育局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-05 13:55:55",
+    "downloadCount": 10,
+    "viewCount": 87,
+    "id": "1147227862572662784",
+    "intro": "苏州市校园定制公交工作优秀案例",
+    "matchedTerms": [
+     "公交"
+    ]
+   },
+   {
+    "resourceName": "苏州市客运索道使用登记信息(苏州市场监管)",
+    "dept": "市市场监督管理局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-28 09:44:12",
+    "downloadCount": 10,
+    "viewCount": 144,
+    "id": "1146865850915188736",
+    "intro": "使用证编号、使用单位名称、设备使用地点、设备种类、设备类别、设备品种、单位内部编码、设备注册代码、产品编号、登记机关、使用状态、发证日期",
+    "matchedTerms": [
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "城管局城市部件交通护栏",
+    "dept": "高新区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-08 18:54:03",
+    "downloadCount": 0,
+    "viewCount": 92,
+    "id": "1149767480513855488",
+    "intro": "城市部件数据",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "常熟市公共服务-停车场管理",
+    "dept": "常熟市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-14 14:41:05",
+    "downloadCount": 0,
+    "viewCount": 722,
+    "id": "1110928837691244544",
+    "intro": "停车场外部编号，停车场名称，停车场地址，纬度，经度，服务电话，停车场负责人，停车场负责人电话，停车场类别，景区，收费类别，支付通道，停车场分类数量，停车场总泊位，剩余空位数，停车场状态，停车场类型，停车场属性，停车场合作性质，是否备案，备案号，，停车场充电桩总数",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "苏州交通运输应急物资信息",
+    "dept": "市交通运输局",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-10-19 09:03:41",
+    "downloadCount": 0,
+    "viewCount": 4246,
+    "id": "1052629649866321920",
+    "intro": "苏州市交通运输行业应急物资分布基本情况",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "吴中区交通运输局政务服务事项清单",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-26 12:47:29",
+    "downloadCount": 0,
+    "viewCount": 79,
+    "id": "1050441356286324736",
+    "intro": "吴中区交通运输局政务服务事项清单",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "吴江区-道路客运站经营者变更及终止经营的许可信息",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "根据审批申请",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-10-01 23:38:44",
+    "downloadCount": 0,
+    "viewCount": 198,
+    "id": "1047975725255323648",
+    "intro": "吴江区-道路客运站经营者变更及终止经营的许可信息",
+    "matchedTerms": [
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "吴江区-因施工需分流、中断交通许可信息",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "根据审批申请",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-10-02 11:07:37",
+    "downloadCount": 0,
+    "viewCount": 151,
+    "id": "1047976104835641344",
+    "intro": "吴江区-因施工需分流、中断交通许可信息",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "相城区对道路旅客运输经营者的经营条件的年度审验清单",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-30 21:01:26",
+    "downloadCount": 7,
+    "viewCount": 173,
+    "id": "1047544137384132608",
+    "intro": "相城区行政审批局发布的对道路旅客运输经营者的经营条件的年度审验清单，包括责任部门、收费情况、办理地点、监督投诉等信息。\n",
+    "matchedTerms": [
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "相城区对道路旅客运输经营者的营运车辆的年度审验清单",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-30 21:00:53",
+    "downloadCount": 7,
+    "viewCount": 177,
+    "id": "1047544200550350848",
+    "intro": "相城区行政审批局发布的对道路旅客运输经营者的营运车辆的年度审验清单，包括责任部门、收费情况、办理地点、监督投诉等信息。",
+    "matchedTerms": [
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "吴江区-救援队伍",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-01 10:49:03",
+    "downloadCount": 0,
+    "viewCount": 344,
+    "id": "1047468196268015616",
+    "intro": "吴江区交通局-救援队伍，各项指标",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "吴江区-救援物资",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-01 13:11:58",
+    "downloadCount": 0,
+    "viewCount": 154,
+    "id": "1047468196741971968",
+    "intro": "吴江区交通局-救援物资，各项指标",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "吴中区行政审批局对道路旅客运输经营者的营运车辆的年度审验办件信息",
+    "dept": "吴中区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:44",
+    "downloadCount": 0,
+    "viewCount": 38,
+    "id": "1181234041518751744",
+    "intro": "吴中区行政审批局对道路旅客运输经营者的营运车辆的年度审验办件信息",
+    "matchedTerms": [
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "太仓市交通物流经营许可流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2025-12-30 15:46:58",
+    "downloadCount": 8,
+    "viewCount": 260,
+    "id": "1047530395619520512",
+    "intro": "太仓市行政审批局交通物流经营许可流程信息",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "吴中区统计局-道路交通事故和火灾情况",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-19 16:49:07",
+    "downloadCount": 0,
+    "viewCount": 357,
+    "id": "1047200191780974592",
+    "intro": "",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "太仓市住房和城乡建设局对城市轨道交通工程验收进行监督流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2025-12-29 14:04:29",
+    "downloadCount": 9,
+    "viewCount": 304,
+    "id": "1047130527440764928",
+    "intro": "太仓市住建局对城市轨道交通工程验收进行监督流程信息",
+    "matchedTerms": [
+     "轨道",
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "太仓市交通运输局注销网约车道路运输证件流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 14:08:09",
+    "downloadCount": 7,
+    "viewCount": 261,
+    "id": "1047130401099939840",
+    "intro": "太仓市交通运输局注销网约车道路运输证件流程信息",
+    "matchedTerms": [
+     "交通",
+     "网约车"
+    ]
+   },
+   {
+    "resourceName": "太仓市交通运输局暂停县内客运班线经营流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 13:22:15",
+    "downloadCount": 7,
+    "viewCount": 150,
+    "id": "1047130716939419648",
+    "intro": "太仓市交通运输局暂停县内客运班线经营流程信息",
+    "matchedTerms": [
+     "交通",
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "太仓市交通运输局巡游出租汽车道路运输证延续流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2025-12-29 13:24:09",
+    "downloadCount": 7,
+    "viewCount": 173,
+    "id": "1047130653773201408",
+    "intro": "太仓市交通运输局巡游出租汽车道路运输证延续流程信息",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "太仓市交通运输局危险品运输车辆道路运输证的注销流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 14:10:23",
+    "downloadCount": 8,
+    "viewCount": 173,
+    "id": "1047131790387642368",
+    "intro": "太仓市交通运输局危险品运输车辆道路运输证的注销流程信息",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "太仓市交通运输局网络预约出租汽车平台经营状态的变更停业流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 14:14:04",
+    "downloadCount": 7,
+    "viewCount": 195,
+    "id": "1047130272762654720",
+    "intro": "太仓市交通运输局网络预约出租汽车平台经营状态的变更（停业）流程信息",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "太仓市交通运输局收取航道赔补偿费流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 14:20:09",
+    "downloadCount": 7,
+    "viewCount": 170,
+    "id": "1047130209617408000",
+    "intro": "太仓市交通运输局收取航道赔（补）偿费流程信息",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "太仓市交通运输局内河通航水域水上突发事件应急救援12395流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 14:23:14",
+    "downloadCount": 8,
+    "viewCount": 291,
+    "id": "1047131600964485120",
+    "intro": "太仓市交通运输局内河通航水域水上突发事件应急救援(12395)流程信息",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "太仓市交通运输局航道建设项目设计变更审批流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 14:24:08",
+    "downloadCount": 7,
+    "viewCount": 156,
+    "id": "1047130525486247936",
+    "intro": "太仓市交通运输局航道建设项目设计变更审批流程信息",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "太仓市交通运输局对路产损失调查处理流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 15:20:08",
+    "downloadCount": 7,
+    "viewCount": 152,
+    "id": "1047130462349389824",
+    "intro": "太仓市交通运输局对路产损失调查处理流程信息",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "太仓市交通运输局道路运输服务质量投诉调解流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 15:22:47",
+    "downloadCount": 7,
+    "viewCount": 153,
+    "id": "1047131853507723264",
+    "intro": "太仓市交通运输局道路运输服务质量投诉调解流程信息",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "太仓市交通运输局道路客运站经营许可变更流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 15:22:16",
+    "downloadCount": 7,
+    "viewCount": 152,
+    "id": "1047131032623710208",
+    "intro": "太仓市交通运输局道路客运站经营许可变更流程信息",
+    "matchedTerms": [
+     "交通",
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "太仓市交通运输局道路货物运输经营者暂停经营流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 15:21:16",
+    "downloadCount": 7,
+    "viewCount": 153,
+    "id": "1047130969491046400",
+    "intro": "太仓市交通运输局道路货物运输经营者暂停经营流程信息",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "太仓市交通运输局城市公共汽车客运经营补证流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 14:56:48",
+    "downloadCount": 8,
+    "viewCount": 171,
+    "id": "1047130778255978496",
+    "intro": "太仓市交通运输局城市公共汽车客运经营补证流程信息",
+    "matchedTerms": [
+     "交通",
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "太仓市交通运输局城际旅客运输车辆道路运输证的报停流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 15:16:38",
+    "downloadCount": 7,
+    "viewCount": 149,
+    "id": "1047131158968729600",
+    "intro": "太仓市交通运输局城际旅客运输车辆道路运输证的报停流程信息",
+    "matchedTerms": [
+     "交通",
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "太仓市交通运输局县内客运业户扩大经营范围经营许可流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2025-12-29 15:25:03",
+    "downloadCount": 7,
+    "viewCount": 151,
+    "id": "1047132300779941888",
+    "intro": "太仓市交通运输局县内客运业户（扩大经营范围）经营许可流程信息",
+    "matchedTerms": [
+     "交通",
+     "客运"
+    ]
+   },
+   {
+    "resourceName": "太仓市交通运输局评标结果备案流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2025-12-29 15:26:06",
+    "downloadCount": 7,
+    "viewCount": 159,
+    "id": "1047132237634695168",
+    "intro": "太仓市交通运输局评标结果备案流程信息",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "太仓市城厢镇交通卡口核酸便民采样点信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2025-12-29 10:10:55",
+    "downloadCount": 8,
+    "viewCount": 171,
+    "id": "1046991802597601280",
+    "intro": "太仓市城厢镇交通卡口核酸便民采样点信息",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "高新区渔业船舶交通事故办件信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:18:38",
+    "downloadCount": 0,
+    "viewCount": 160,
+    "id": "1046064807659401216",
+    "intro": "高新区渔业船舶交通事故办件信息，其中是高新区渔业船舶交通事故责任认定相关信息。",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "昆山市旅游停车场",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-22 10:16:53",
+    "downloadCount": 15,
+    "viewCount": 328,
+    "id": "1044197786684424192",
+    "intro": "昆山市旅游停车场",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "昆山市公共停车场信息分区镇",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-23 09:50:56",
+    "downloadCount": 14,
+    "viewCount": 328,
+    "id": "1044627044007374848",
+    "intro": "昆山市公共停车场信息分区镇",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2019年交通运输主要情况",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-18 13:52:00",
+    "downloadCount": 0,
+    "viewCount": 134,
+    "id": "1043108272008265728",
+    "intro": "吴江区统计局-2019年交通运输主要情况。2019年各项指标",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2020年交通运输主要情况",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-18 10:27:20",
+    "downloadCount": 0,
+    "viewCount": 181,
+    "id": "1043108272117317632",
+    "intro": "吴江区统计局-2020年交通运输主要情况。2020年各项指标",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2021年交通运输主要情况",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-18 10:25:40",
+    "downloadCount": 1,
+    "viewCount": 425,
+    "id": "1043108272255729664",
+    "intro": "吴江区统计局-2021年交通运输主要情况。2021年各项指标",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "昆山市”公共场所（不含公园、体育场馆、公共交通工具）卫生许可“审批信息抄告函",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2025-12-17 13:50:28",
+    "downloadCount": 0,
+    "viewCount": 197,
+    "id": "1042433176222498816",
+    "intro": "昆山市”公共场所（不含公园、体育场馆、公共交通工具）卫生许可“审批信息抄告函",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "昆山市“智慧停车”停车场地址信息",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "有条件开放",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2025-12-16 15:33:45",
+    "downloadCount": 0,
+    "viewCount": 271,
+    "id": "1040192652530905088",
+    "intro": "昆山市“智慧停车”停车场地址信息",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "太仓市接入停车场信息",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:13",
+    "downloadCount": 27,
+    "viewCount": 342,
+    "id": "1039845402927628288",
+    "intro": "太仓市接入停车场信息",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "太仓市出租车运价",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:14",
+    "downloadCount": 14,
+    "viewCount": 270,
+    "id": "1039469634049503232",
+    "intro": "出租车运价",
+    "matchedTerms": [
+     "出租车"
+    ]
+   },
+   {
+    "resourceName": "太仓市公交票价",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:14",
+    "downloadCount": 15,
+    "viewCount": 211,
+    "id": "1039469507490574336",
+    "intro": "太仓市公交票价",
+    "matchedTerms": [
+     "公交"
+    ]
+   },
+   {
+    "resourceName": "太仓市交通卡口便民采样点",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:37",
+    "downloadCount": 13,
+    "viewCount": 179,
+    "id": "1037303733019672576",
+    "intro": "太仓市交通卡口便民采样点",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "常熟市交通局交通建设项目信息",
+    "dept": "常熟市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-07 11:05:42",
+    "downloadCount": 0,
+    "viewCount": 233,
+    "id": "1181528088489689088",
+    "intro": "常熟市交通局交通建设项目信息建设单位，组织机构代码，项目名称，建设地点等信息",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "常熟市旅游包车基本信息",
+    "dept": "常熟市",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-06 16:03:10",
+    "downloadCount": 0,
+    "viewCount": 202,
+    "id": "1181530357696262144",
+    "intro": "常熟市交通运输局发布的旅游包车基本信息，包括业户名称、企业统一社会代码、负责人姓名等信息",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "常熟市交通运输企业信用等级信息（运管）",
+    "dept": "常熟市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依申请开放",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:16:00",
+    "downloadCount": 23,
+    "viewCount": 430,
+    "id": "1035488498969440256",
+    "intro": "常熟市交通运输企业信用等级信息（运管）",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "太仓市停车场信息",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:18",
+    "downloadCount": 50,
+    "viewCount": 2360,
+    "id": "1032953154583621632",
+    "intro": "太仓市停车场信息",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "苏州工业园区挂牌督办重大隐患项目预报表（交通事故多发路段）",
+    "dept": "苏州工业园区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-29 20:51:31",
+    "downloadCount": 11,
+    "viewCount": 220,
+    "id": "1029798865124159488",
+    "intro": "苏州工业园区2021年挂牌督办重大隐患项目预报表（交通事故多发路段）",
+    "matchedTerms": [
+     "交通"
+    ]
+   },
+   {
+    "resourceName": "苏州工业园区金鸡湖周边各大停车场（位置+收费标准）",
+    "dept": "苏州工业园区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-05 11:12:44",
+    "downloadCount": 21,
+    "viewCount": 454,
+    "id": "1029798548177383424",
+    "intro": "苏州工业园区金鸡湖周边各大停车场（位置+收费标准）",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "高新区公共停车综合应用平台停车记录-出场",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2026-10-15 22:16:38",
+    "downloadCount": 0,
+    "viewCount": 301,
+    "id": "963761949748953088",
+    "intro": "高新区公共停车综合应用平台停车记录-出场",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "高新区公共停车综合应用平台停车记录-进场",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:16:37",
+    "downloadCount": 0,
+    "viewCount": 251,
+    "id": "963761949828644864",
+    "intro": "高新区公共停车综合应用平台停车记录-进场，其中包括进场时间、入口、进场图片。\n",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "高新区公共停车综合应用平台停车场基本信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:16:38",
+    "downloadCount": 0,
+    "viewCount": 383,
+    "id": "963761949899948032",
+    "intro": "高新区公共停车综合应用平台停车场基本信息\n",
+    "matchedTerms": [
+     "停车"
+    ]
+   },
+   {
+    "resourceName": "苏州市停车场资源信息",
+    "dept": "市城市管理局",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "主管部门同意",
+    "updateFrequencyCode": "9",
+    "dataUpdateTime": "2026-10-16 13:32:19",
+    "downloadCount": 11,
+    "viewCount": 678,
+    "id": "1069558498805903360",
+    "intro": "苏州市停车场资源信息",
+    "matchedTerms": [
+     "停车"
+    ]
+   }
+  ],
+  "经济监测:商业区营业额": [
+   {
+    "resourceName": "张家港市统计局历年社会消费品零售总额信息",
+    "dept": "张家港市统计局",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:09",
+    "downloadCount": 2,
+    "viewCount": 4,
+    "id": "1511804762793930752",
+    "intro": "张家港市统计局历年社会消费品零售总额信息,时间范围：2022-至今,包含：年份、全市",
+    "matchedTerms": [
+     "零售总额"
+    ]
+   },
+   {
+    "resourceName": "张家港市统计局张家港市经济发展指标信息",
+    "dept": "张家港市统计局",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-16 21:02:10",
+    "downloadCount": 1,
+    "viewCount": 9,
+    "id": "1508792857678540800",
+    "intro": "张家港市统计局张家港市经济发展指标信息,时间范围：2018-至今,包含：报告期、规模以上工业总产值、全社会固定资产投资、工业投资、服务业投资、新兴产业投资、社会消费品零售总额、规模以上工业企业主营业务收入、规模以上工业企业利税总额、规模以上工业企业利润总额等",
+    "matchedTerms": [
+     "零售总额"
+    ]
+   },
+   {
+    "resourceName": "张家港市统计局交通和用电和社零信息统计数据",
+    "dept": "张家港市统计局",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:10",
+    "downloadCount": 0,
+    "viewCount": 3,
+    "id": "1508792834924441600",
+    "intro": "张家港市统计局交通和用电和社零信息统计数据,时间范围：2020-至今,包含：全社会用电量/万千瓦时、客运量_全社会/万人次、客运量_公路/万人次、居民用电量/万千瓦时、工业用电量/万千瓦时、年度、电信业务总量/万吨、社会消费品零售总额/万元、货运量_全社会/万吨、货运量_公路/万吨等",
+    "matchedTerms": [
+     "零售总额",
+     "社零"
+    ]
+   },
+   {
+    "resourceName": "张家港市商务局政务服务事项清单信息",
+    "dept": "张家港市商务局",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 21:02:07",
+    "downloadCount": 0,
+    "viewCount": 2,
+    "id": "1505958643979481088",
+    "intro": "张家港市商务局政务服务事项清单信息,时间范围：2023-至今,包含：实施清单名称、业务项名称、基本编码、业务编码、事项类型、审批结果名称",
+    "matchedTerms": [
+     "商务"
+    ]
+   },
+   {
+    "resourceName": "姑苏区社会消费品零售总额信息",
+    "dept": "姑苏区统计局",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-16 20:59:54",
+    "downloadCount": 0,
+    "viewCount": 47,
+    "id": "1496078246579761152",
+    "intro": "姑苏区社会消费品零售总额信息，时间范围：2020-至今，包含：唯一性主键、计量单位、统计时间、本月完成、累计完成、同比增幅（%）",
+    "matchedTerms": [
+     "零售总额"
+    ]
+   },
+   {
+    "resourceName": "姑苏区统计局对外开放数据",
+    "dept": "姑苏区统计局",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-16 20:59:54",
+    "downloadCount": 0,
+    "viewCount": 28,
+    "id": "1494407505325027328",
+    "intro": "姑苏区统计局对外开放数据，时间范围: 2021-至今，包含：唯一性主键、一般公共预算收入、一般公共预算支出、社会消费品零售总额、限额以上批零住餐企业社会消费品零售总额、全社会固定资产投资额、规模以上工业总产值、单位、统计时间",
+    "matchedTerms": [
+     "零售总额"
+    ]
+   },
+   {
+    "resourceName": "常熟市规上装备制造企业主要经济指标数据信息",
+    "dept": "常熟市工业和信息化局",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-16 20:58:50",
+    "downloadCount": 0,
+    "viewCount": 94,
+    "id": "1445105059851628544",
+    "intro": "常熟市规上装备制造企业主要经济指标数据信息，包含主键、组织机构代码、单位名称、行业代码、产值累计、营业收入累计、利税累计、利润总额累计、批次编号、更新时间、数据状态、数据版本、数据标识时间、审批时间、数据上报部门编号、数据上报部门名称、业务数据所属开始时间、业务数据所属结束时间。",
+    "matchedTerms": [
+     "营业收入",
+     "经济指标"
+    ]
+   },
+   {
+    "resourceName": "高新区旅游住宿酒店节假日营业信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-15 22:18:56",
+    "downloadCount": 2,
+    "viewCount": 165,
+    "id": "1217424764806823936",
+    "intro": "高新区旅游住宿节假日信息，每逢佳佳日由各酒店按天填报，信息项包含名称、年、节假日、日期、营业收入（万元）、平均房价（元）、平均出租率等",
+    "matchedTerms": [
+     "营业收入"
+    ]
+   },
+   {
+    "resourceName": "高新区旅游住宿酒店营业信息（月度）",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-15 22:18:56",
+    "downloadCount": 2,
+    "viewCount": 148,
+    "id": "1217430693954650112",
+    "intro": "高新区旅游住宿月度信息，每月由各酒店填报，信息项包含酒店名称、年、月、营业收入（万元）、平均房价（元）、平均出租率等",
+    "matchedTerms": [
+     "营业收入"
+    ]
+   },
+   {
+    "resourceName": "高新区旅游景区营业收入信息（月度）",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "数据提供方同意或相关法律法规要求",
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-15 22:18:56",
+    "downloadCount": 2,
+    "viewCount": 161,
+    "id": "1217425402387197952",
+    "intro": "高新区旅游景区月度信息，每月由各景区填报，信息项包含名称、年、月、总游客量（万人）、景区营业收入（万元）等",
+    "matchedTerms": [
+     "营业收入"
+    ]
+   },
+   {
+    "resourceName": "相城区黄埭镇主要经济指标信息",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "有较完善的数据安全保护体系，可在自身业务范围内进行科学研究、咨询报告、业务支撑等场景，不得针对具体组织对外发布新闻等信息。",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-10-26 15:07:08",
+    "downloadCount": 0,
+    "viewCount": 118,
+    "id": "1199396076756627456",
+    "intro": "相城区黄埭镇经济发展主要经济指标信息，包含年份、地区生产总值（万元）、",
+    "matchedTerms": [
+     "经济指标"
+    ]
+   },
+   {
+    "resourceName": "姑苏区吴门桥街道楼宇信息",
+    "dept": "姑苏区",
+    "resourceType": "接口",
+    "openAttributeName": "有条件开放",
+    "openCondition": "需求场景与申请数据有明确关联性，确保场景合规、数据安全。",
+    "updateFrequencyCode": "4",
+    "dataUpdateTime": "2026-10-16 22:26:23",
+    "downloadCount": 0,
+    "viewCount": 26,
+    "id": "1184428063250935808",
+    "intro": "姑苏区吴门桥街道楼宇信息，包括楼宇名称、地址、建筑面积、商务面积、空置面积、产权单位",
+    "matchedTerms": [
+     "商务"
+    ]
+   },
+   {
+    "resourceName": "吴江区主要经济指标完成情况",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "根据审批申请",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-04 14:06:56",
+    "downloadCount": 0,
+    "viewCount": 113,
+    "id": "1181198287417602048",
+    "intro": "2023年1-9月吴江区主要经济指标完成情况",
+    "matchedTerms": [
+     "经济指标"
+    ]
+   },
+   {
+    "resourceName": "吴中区统计局限上社会消费品零售总额",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-26 12:51:59",
+    "downloadCount": 17,
+    "viewCount": 196,
+    "id": "1154368362324885504",
+    "intro": "吴中区统计局限上社会消费品零售总额",
+    "matchedTerms": [
+     "零售总额"
+    ]
+   },
+   {
+    "resourceName": "相城区统计局相城区各地主要经济指标完成情况",
+    "dept": "相城区",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-11 15:25:15",
+    "downloadCount": 20,
+    "viewCount": 547,
+    "id": "1150491318172217344",
+    "intro": "相城区统计局相城区各地主要经济完成指标，包括规上工业总产值、固定资产投资、招商引资等指标",
+    "matchedTerms": [
+     "经济指标"
+    ]
+   },
+   {
+    "resourceName": "太仓市工业电子商务创新发展示范企业",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2026-10-15 22:15:21",
+    "downloadCount": 14,
+    "viewCount": 182,
+    "id": "1149671341089320960",
+    "intro": "江苏省太仓市工业电子商务创新发展示范企业",
+    "matchedTerms": [
+     "商务"
+    ]
+   },
+   {
+    "resourceName": "苏州市商务局贸易促进计划表",
+    "dept": "市商务局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-02-24 15:35:50",
+    "downloadCount": 20,
+    "viewCount": 722,
+    "id": "1149363701788405760",
+    "intro": "苏州市商务局贸易促进计划，包括序号、名称、时间、地点、主办单位",
+    "matchedTerms": [
+     "商务"
+    ]
+   },
+   {
+    "resourceName": "高新区创新企业财务信息",
+    "dept": "高新区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "申请人同意或相关法律法规要求",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-16 13:31:17",
+    "downloadCount": 0,
+    "viewCount": 107,
+    "id": "1071007502517338112",
+    "intro": "高新区创新企业财务信息，其中包括企业主表ID，年度，总收入，营业收入，高品收入等相关信息。\n",
+    "matchedTerms": [
+     "营业收入"
+    ]
+   },
+   {
+    "resourceName": "苏州工业园区APEC商务旅行卡",
+    "dept": "苏州工业园区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "无",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-10-10 21:34:20",
+    "downloadCount": 0,
+    "viewCount": 447,
+    "id": "1051241577236856832",
+    "intro": "苏州工业园区APEC商务旅行卡",
+    "matchedTerms": [
+     "商务"
+    ]
+   },
+   {
+    "resourceName": "吴中区商务局政务服务事项清单",
+    "dept": "吴中区",
+    "resourceType": "库表",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:43",
+    "downloadCount": 0,
+    "viewCount": 67,
+    "id": "1050441071971205120",
+    "intro": "吴中区商务局政务服务事项清单",
+    "matchedTerms": [
+     "商务"
+    ]
+   },
+   {
+    "resourceName": "吴中区统计局-限上社会消费品零售总额",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-19 16:50:31",
+    "downloadCount": 0,
+    "viewCount": 200,
+    "id": "1047199873483632640",
+    "intro": "",
+    "matchedTerms": [
+     "零售总额"
+    ]
+   },
+   {
+    "resourceName": "吴中区统计局分月社会消费品零售总额和比重",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-19 16:51:10",
+    "downloadCount": 0,
+    "viewCount": 164,
+    "id": "1047202909652189184",
+    "intro": "吴中区统计局-分月社会消费品零售总额和比重",
+    "matchedTerms": [
+     "零售总额"
+    ]
+   },
+   {
+    "resourceName": "吴中区统计局-大中型工业主要经济指标",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-26 11:39:22",
+    "downloadCount": 0,
+    "viewCount": 176,
+    "id": "1072524128169426944",
+    "intro": "大中型工业主要经济指标",
+    "matchedTerms": [
+     "经济指标"
+    ]
+   },
+   {
+    "resourceName": "吴中区统计局-规模以上工业主要经济指标",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-26 11:57:22",
+    "downloadCount": 0,
+    "viewCount": 162,
+    "id": "1072524441391689728",
+    "intro": "吴中区统计局-规模以上工业主要经济指标",
+    "matchedTerms": [
+     "经济指标"
+    ]
+   },
+   {
+    "resourceName": "吴中区统计局-规模以上外资工业主要经济指标",
+    "dept": "吴中区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": "经审批通过",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2025-12-26 11:56:38",
+    "downloadCount": 0,
+    "viewCount": 265,
+    "id": "1072524505140916224",
+    "intro": "吴中区统计局-规模以上外资工业主要经济指标",
+    "matchedTerms": [
+     "经济指标"
+    ]
+   },
+   {
+    "resourceName": "太仓市商务局单用途商业预付卡发卡企业的备案流程信息",
+    "dept": "太仓市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "1",
+    "dataUpdateTime": "2025-12-29 09:53:17",
+    "downloadCount": 7,
+    "viewCount": 242,
+    "id": "1046991171782668288",
+    "intro": "苏州太仓市商务局单用途商业预付卡发卡企业的备案流程信息",
+    "matchedTerms": [
+     "商务"
+    ]
+   },
+   {
+    "resourceName": "昆山市部分年份对外经济指标",
+    "dept": "昆山市",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": "无条件开放",
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-29 18:08:09",
+    "downloadCount": 8,
+    "viewCount": 158,
+    "id": "1046997799332413440",
+    "intro": "昆山市部分年份对外经济指标",
+    "matchedTerms": [
+     "经济指标"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2019年社会消费品零售总额",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-25 10:53:30",
+    "downloadCount": 0,
+    "viewCount": 178,
+    "id": "1045279343012675584",
+    "intro": "吴江区统计局-2019年社会消费品零售总额，2019年各项指标",
+    "matchedTerms": [
+     "零售总额"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2020年社会消费品零售总额及分行业核算增速",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-25 10:51:41",
+    "downloadCount": 0,
+    "viewCount": 153,
+    "id": "1045279343172059136",
+    "intro": "吴江区统计局-2020年社会消费品零售总额及分行业核算增速，2020年各项指标",
+    "matchedTerms": [
+     "零售总额"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2021年社会消费品零售总额及分行业核算增速",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-25 10:52:40",
+    "downloadCount": 0,
+    "viewCount": 131,
+    "id": "1045279343318859776",
+    "intro": "吴江区统计局-2021年社会消费品零售总额及分行业核算增速，2021年各项指标",
+    "matchedTerms": [
+     "零售总额"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2019年全区工业企业主要经济指标",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-23 10:32:09",
+    "downloadCount": 0,
+    "viewCount": 149,
+    "id": "1044916964173217792",
+    "intro": "2019年全区工业企业主要经济指标",
+    "matchedTerms": [
+     "经济指标"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2020年全区工业企业主要经济指标",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-23 13:46:52",
+    "downloadCount": 0,
+    "viewCount": 149,
+    "id": "1044916964261298176",
+    "intro": "2020年全区工业企业主要经济指标",
+    "matchedTerms": [
+     "经济指标"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2021年全区工业企业主要经济指标",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-23 14:44:30",
+    "downloadCount": 0,
+    "viewCount": 172,
+    "id": "1044916964345184256",
+    "intro": "2021年全区工业企业主要经济指标",
+    "matchedTerms": [
+     "经济指标"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2019年规模以上工业企业主要经济指标",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-21 16:00:03",
+    "downloadCount": 0,
+    "viewCount": 216,
+    "id": "1044279800775245824",
+    "intro": "2019年规模以上工业企业主要经济指标",
+    "matchedTerms": [
+     "经济指标"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2020年规模以上工业企业主要经济指标",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-21 15:57:44",
+    "downloadCount": 0,
+    "viewCount": 172,
+    "id": "1044279801857376256",
+    "intro": "2020年规模以上工业企业主要经济指标",
+    "matchedTerms": [
+     "经济指标"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2021年规模以上工业企业主要经济指标",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-21 16:03:37",
+    "downloadCount": 0,
+    "viewCount": 172,
+    "id": "1044279802322944000",
+    "intro": "2021年规模以上工业企业主要经济指标",
+    "matchedTerms": [
+     "经济指标"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2019年规模以上工业企业主要经济指标（大行业）",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-18 14:56:36",
+    "downloadCount": 0,
+    "viewCount": 236,
+    "id": "1043177045490860032",
+    "intro": "吴江区统计局-2019年规模以上工业企业主要经济指标（大行业），2019年各项指标",
+    "matchedTerms": [
+     "经济指标"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2020年规模以上工业企业主要经济指标（大行业）",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-18 14:57:27",
+    "downloadCount": 0,
+    "viewCount": 194,
+    "id": "1043177045792849920",
+    "intro": "吴江区统计局-2020年规模以上工业企业主要经济指标（大行业），2020年各项指标",
+    "matchedTerms": [
+     "经济指标"
+    ]
+   },
+   {
+    "resourceName": "吴江区统计局-2021年规模以上工业企业主要经济指标（大行业）",
+    "dept": "吴江区",
+    "resourceType": "文件",
+    "openAttributeName": "有条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-12-18 14:55:49",
+    "downloadCount": 0,
+    "viewCount": 261,
+    "id": "1043177046069673984",
+    "intro": "吴江区统计局-2021年规模以上工业企业主要经济指标（大行业），2021年各项指标",
+    "matchedTerms": [
+     "经济指标"
+    ]
+   },
+   {
+    "resourceName": "太仓市主要经济指标",
+    "dept": "太仓市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依据申请提供",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:15:41",
+    "downloadCount": 22,
+    "viewCount": 473,
+    "id": "1036569228893974528",
+    "intro": "1-8月主要经济指标",
+    "matchedTerms": [
+     "经济指标"
+    ]
+   },
+   {
+    "resourceName": "历年社会消费品零售总额",
+    "dept": "市统计局",
+    "resourceType": "文件",
+    "openAttributeName": "无条件开放",
+    "openCondition": null,
+    "updateFrequencyCode": "8",
+    "dataUpdateTime": "2025-11-05 15:46:13",
+    "downloadCount": 37,
+    "viewCount": 451,
+    "id": "924979025713233920",
+    "intro": "历年社会消费品零售总额",
+    "matchedTerms": [
+     "零售总额"
+    ]
+   },
+   {
+    "resourceName": "常熟市商务局红名单企业情况汇总表",
+    "dept": "常熟市",
+    "resourceType": "库表",
+    "openAttributeName": "无条件开放",
+    "openCondition": "依申请公开",
+    "updateFrequencyCode": "7",
+    "dataUpdateTime": "2026-10-15 22:16:06",
+    "downloadCount": 17,
+    "viewCount": 553,
+    "id": "963762243530588160",
+    "intro": "常熟市商务局红名单企业情况汇总表",
+    "matchedTerms": [
+     "商务"
+    ]
+   }
+  ]
+ }
+}
