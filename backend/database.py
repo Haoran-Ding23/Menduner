@@ -51,9 +51,11 @@ def initialize(path):
 
         # Attendance is a separate, human-collected dataset rather than part of the crawl
         # projection, so its table is created here alongside the other schemas instead of by
-        # a crawler run.
-        from crawler import attendance
+        # a crawler run. Places (restaurants and public transport around a venue) are the same
+        # kind of resource as hotels: a table the enrichment script fills and the graph reads.
+        from crawler import attendance, places
         attendance.ensure_schema(con)
+        places.ensure_schema(con)
 
 def aggregate_status(statuses):
     for value in ('Conflicting', 'Needs Review', 'Unverified', 'Missing'):
@@ -72,7 +74,7 @@ def snapshot(path):
                          source_url=row['source_url'], verification_status=row['verification_status'])
                     for row in con.execute('SELECT * FROM evidence ORDER BY id')]
         resources = {name: [json.loads(row['payload']) for row in con.execute(f'SELECT payload FROM {name} ORDER BY id')]
-                     for name in ('venues', 'hotels', 'districts')}
+                     for name in ('venues', 'hotels', 'districts', 'places')}
         sources = [dict(row) for row in con.execute('SELECT * FROM sources ORDER BY id')]
         last = con.execute('SELECT * FROM runs ORDER BY id DESC LIMIT 1').fetchone()
         counts = {status: sum(e['verification_status'] == status for e in events)

@@ -1,0 +1,82 @@
+[
+  {
+    "id": "p-b0ffg9vc8p",
+    "kind": "restaurant",
+    "subtype": "咖啡厅",
+    "name": "星巴克臻选(苏州科文中心店)",
+    "address": "观枫街1号苏州科技文化艺术中心103商铺",
+    "city": "苏州市",
+    "district": "吴中区",
+    "coordinates": {
+      "lng": 120.703358,
+      "lat": 31.320534,
+      "system": "GCJ-02",
+      "status": "Verified",
+      "sourceUrl": "https://ditu.amap.com/place/B0FFG9VC8P"
+    },
+    "declaredType": "餐饮服务;咖啡厅;星巴克咖啡",
+    "sampledNearVenueId": "v-theatre",
+    "sampledRadiusM": 1500,
+    "distanceToVenueKm": 0.21
+  },
+  {
+    "id": "p-b0ffhxvbq7",
+    "kind": "restaurant",
+    "subtype": "中餐厅",
+    "name": "稻山村·苏州菜·松鼠桂鱼(月光码头店)",
+    "address": "苏州工业园区月光码头休闲广场11幢101室",
+    "city": "苏州市",
+    "district": "吴中区",
+    "coordinates": {
+      "lng": 120.704895,
+      "lat": 31.320697,
+      "system": "GCJ-02",
+      "status": "Verified",
+      "sourceUrl": "https://ditu.amap.com/place/B0FFHXVBQ7"
+    },
+    "declaredType": "餐饮服务;中餐厅;中餐厅",
+    "sampledNearVenueId": "v-theatre",
+    "sampledRadiusM": 1500,
+    "distanceToVenueKm": 0.31
+  },
+  {
+    "id": "p-b0ffgzwz6g",
+    "kind": "transport",
+    "subtype": "地铁站",
+    "name": "文化博览中心(地铁站)",
+    "address": "1号线",
+    "city": "苏州市",
+    "district": "吴中区",
+    "coordinates": {
+      "lng": 120.704346,
+      "lat": 31.323217,
+      "system": "GCJ-02",
+      "status": "Verified",
+      "sourceUrl": "https://ditu.amap.com/place/B0FFGZWZ6G"
+    },
+    "declaredType": "交通设施服务;地铁站;地铁站",
+    "sampledNearVenueId": "v-theatre",
+    "sampledRadiusM": 2000,
+    "distanceToVenueKm": 0.34
+  },
+  {
+    "id": "p-b0ffj2xk3l",
+    "kind": "transport",
+    "subtype": "公交车站",
+    "name": "艺术中心(公交站)",
+    "address": "1007M路北线;1007M路南线;136路;28路;观光巴士1号线",
+    "city": "苏州市",
+    "district": "吴中区",
+    "coordinates": {
+      "lng": 120.703164,
+      "lat": 31.32309,
+      "system": "GCJ-02",
+      "status": "Verified",
+      "sourceUrl": "https://ditu.amap.com/place/B0FFJ2XK3L"
+    },
+    "declaredType": "交通设施服务;公交车站;公交车站相关",
+    "sampledNearVenueId": "v-theatre",
+    "sampledRadiusM": 1000,
+    "distanceToVenueKm": 0.12
+  }
+]

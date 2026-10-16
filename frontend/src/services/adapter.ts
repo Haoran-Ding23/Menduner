@@ -3,6 +3,7 @@ import type {
   Event,
   Evidence,
   Category,
+  Place,
   Status,
   Coordinates,
 } from "../types";
@@ -139,6 +140,30 @@ export function normalizeDataset(input: unknown): Dataset {
     demo: d.demo !== false,
     description: text(d.description) ?? "归属需独立核验",
   }));
+  // A place is only a place when the source said which category it belongs to; an unknown kind
+  // is dropped rather than drawn as a vague dot on the graph.
+  const places = array("places")
+    .map((p) => {
+      const kind = text(p.kind);
+      if (kind !== "restaurant" && kind !== "transport") return null;
+      return {
+        id: text(p.id) ?? "",
+        kind: kind as Place["kind"],
+        subtype: text(p.subtype) ?? "",
+        name: text(p.name) ?? "未命名地点",
+        address: text(p.address),
+        city: text(p.city),
+        district: text(p.district),
+        coordinates: coordinate(p.coordinates),
+        declaredType: text(p.declaredType),
+        sampledNearVenueId: text(p.sampledNearVenueId),
+        sampledRadiusM:
+          typeof p.sampledRadiusM === "number" ? p.sampledRadiusM : null,
+        distanceToVenueKm:
+          typeof p.distanceToVenueKm === "number" ? p.distanceToVenueKm : null,
+      };
+    })
+    .filter((p): p is Place => p !== null);
   const stamp =
     typeof data.updatedAt === "string" && !isNaN(Date.parse(data.updatedAt))
       ? data.updatedAt
@@ -178,6 +203,7 @@ export function normalizeDataset(input: unknown): Dataset {
     venues,
     hotels,
     districts,
+    places,
     evidence,
   })) {
     const ids = list.map((x) => x.id);
@@ -210,5 +236,13 @@ export function normalizeDataset(input: unknown): Dataset {
           note: "导入值尚未独立核验。",
         });
     }
-  return { events, venues, hotels, districts, evidence, updatedAt: stamp };
+  return {
+    events,
+    venues,
+    hotels,
+    districts,
+    places,
+    evidence,
+    updatedAt: stamp,
+  };
 }

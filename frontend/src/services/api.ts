@@ -293,8 +293,8 @@ export async function loadApiDataset(
     const body = await response.json();
     if (
       !body ||
-      !["events", "venues", "hotels", "districts", "evidence"].every((key) =>
-        Array.isArray(body[key]),
+      !["events", "venues", "hotels", "districts", "places", "evidence"].every(
+        (key) => Array.isArray(body[key]),
       ) ||
       !body.status ||
       !Array.isArray(body.status.sources) ||

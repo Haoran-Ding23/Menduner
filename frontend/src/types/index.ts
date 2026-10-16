@@ -81,14 +81,50 @@ export interface District {
   demo: boolean;
   description: string;
 }
+/**
+ * A restaurant or a public-transport stop around a venue, taken from the source's own POI record.
+ *
+ * The row keeps the AMap place URL and the declared type string it was classified from, because
+ * the knowledge graph draws a relation to it: "0.42 km from this venue" is only checkable when
+ * the coordinate behind it is.
+ */
+export interface Place {
+  id: string;
+  kind: "restaurant" | "transport";
+  /** The source's own middle category: 中餐厅 / 咖啡厅 / 地铁站 / 公交车站 / 火车站 / 机场 … */
+  subtype: string;
+  name: string;
+  address: string | null;
+  city: string | null;
+  district: string | null;
+  coordinates: Coordinates | null;
+  declaredType: string | null;
+  /** The venue this row was sampled around, and the radius that defined the sample. */
+  sampledNearVenueId: string | null;
+  sampledRadiusM: number | null;
+  distanceToVenueKm: number | null;
+}
+export type GraphNodeKind =
+  | "Event"
+  | "Venue"
+  | "District"
+  | "Hotel"
+  | "Restaurant"
+  | "Transport"
+  | "Audience";
 export interface GraphNode {
   id: string;
   label: string;
-  kind: "Event" | "Venue" | "District" | "Hotel";
+  kind: GraphNodeKind;
   explanation?: string;
   analytical?: boolean;
   demo: boolean;
   entityId: string;
+  /** The rule that put this node in the graph, and why it applies to this event. */
+  rule?: string;
+  reason?: string;
+  /** The record behind the node, when it has one (AMap place, source page, …). */
+  sourceUrl?: string | null;
 }
 export interface GraphEdge {
   analytical?: boolean;
@@ -97,12 +133,24 @@ export interface GraphEdge {
   target: string;
   label: string;
   demo: boolean;
+  /** Same contract as on the node: which rule drew this relation. */
+  rule?: string;
+  reason?: string;
+}
+/** One rule that fired for the selected event, with how many relations it produced. */
+export interface FiredRule {
+  id: string;
+  label: string;
+  detail: string;
+  relations: number;
+  analytical: boolean;
 }
 export interface Dataset {
   events: Event[];
   venues: Venue[];
   hotels: Hotel[];
   districts: District[];
+  places: Place[];
   evidence: Evidence[];
   updatedAt: string;
 }

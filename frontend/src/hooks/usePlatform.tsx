@@ -21,6 +21,7 @@ function useStateValue(initialDataset?: Dataset) {
       venues: [],
       hotels: [],
       districts: [],
+      places: [],
       evidence: [],
       updatedAt: "",
     },
@@ -48,6 +49,7 @@ function useStateValue(initialDataset?: Dataset) {
         venues: [],
         hotels: [],
         districts: [],
+        places: [],
         evidence: [],
         updatedAt: "",
       });

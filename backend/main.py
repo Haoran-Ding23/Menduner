@@ -164,6 +164,11 @@ def create_app(db_path: Path | None = None):
     def districts():
         return snapshot(path)['districts']
 
+    @app.get('/places')
+    def places():
+        """Restaurants and public transport sampled around the venues that hold events."""
+        return snapshot(path)['places']
+
     @app.get('/status')
     def status():
         return snapshot(path)['status']
