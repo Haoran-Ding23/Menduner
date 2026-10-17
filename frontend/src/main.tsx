@@ -31,7 +31,7 @@ function describe(reason: unknown): { message: string; stack?: string } {
   }
 }
 
-function report(reason: unknown, source: string) {
+function report(reason: unknown, source: string, extra?: Record<string, unknown>) {
   const { message, stack } = describe(reason);
   void reportClientError({
     message,
@@ -40,6 +40,7 @@ function report(reason: unknown, source: string) {
     page: window.location.pathname,
     userAgent: navigator.userAgent,
     viewport: `${window.innerWidth}x${window.innerHeight}`,
+    extra,
   }).catch(() => {
     /* the reporter must never be able to make things worse */
   });
@@ -48,12 +49,22 @@ function report(reason: unknown, source: string) {
 window.addEventListener('error', (event) => {
   // Resource load failures (a script or image that 404s) also fire here and carry no error
   // object; they are reported with the tag name so they are distinguishable in the log.
-  if (event.error) report(event.error, 'window.error');
-  else if (event.target && event.target !== window) {
+  if (event.error) {
+    // filename/line/column name the script that failed. Without them a script that received
+    // HTML instead of JavaScript is recorded only as `SyntaxError: Unexpected token '<'`, and
+    // finding WHICH request produced it meant reading nginx's access log by hand. The
+    // `/_AMapService` failures were exactly that: 98 rows, none of them saying where.
+    report(event.error, 'window.error', {
+      filename: event.filename || null,
+      lineno: event.lineno || null,
+      colno: event.colno || null,
+    });
+  } else if (event.target && event.target !== window) {
     const el = event.target as HTMLElement;
     report(
       { message: `资源加载失败: ${el.tagName} ${(el as HTMLScriptElement).src ?? ""}` },
       'resource',
+      { tag: el.tagName, src: (el as HTMLScriptElement).src ?? null },
     );
   }
 });

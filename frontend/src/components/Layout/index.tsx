@@ -179,11 +179,9 @@ export default function PlatformLayout({
             {
               key: "map",
               label: "地图配置",
-              children:
-                import.meta.env.VITE_AMAP_KEY &&
-                import.meta.env.VITE_AMAP_SERVICE_HOST
-                  ? "已提供配置；连接结果见地图"
-                  : "尚未配置",
+              children: import.meta.env.VITE_AMAP_KEY
+                ? "已提供配置；连接结果见地图"
+                : "尚未配置",
             },
           ]}
         />

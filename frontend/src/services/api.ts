@@ -215,6 +215,8 @@ export interface StoredClientError {
   page: string | null;
   user_agent: string | null;
   viewport: string | null;
+  /** The failing script's URL and position, when the browser reported them. */
+  extra: Record<string, unknown> | null;
 }
 
 /** Recent browser-side errors, newest first. */

@@ -22,15 +22,45 @@ declare global {
   }
 }
 let loading: Promise<SDK> | null = null;
+/**
+ * Where the AMap JS API should send its REST calls, or null when there is no usable proxy.
+ *
+ * The security key must not ship in the bundle, so AMap wants those calls proxied (the dev
+ * server provides `/_AMapService` in vite.config.ts). That relative path is meaningless once the
+ * app is served by nginx: the SPA fallback answers it with index.html, and the SDK — which asks
+ * for JSON and JSONP — receives HTML and dies with `SyntaxError: Unexpected token '<'` on every
+ * page that shows a map. That is not hypothetical: it was the whole of the recorded frontend
+ * error log until this guard existed.
+ *
+ * So a relative host is accepted in development only. A production build accepts the setting
+ * only when it points at a different origin, i.e. a real deployed proxy. Returning null leaves
+ * the SDK calling AMap directly: the map body, markers and circles work, custom map styles fall
+ * back to the default (documented in deploy/DEPLOY.md).
+ */
+export function amapServiceHost(
+  configured: string | undefined,
+  { dev, origin }: { dev: boolean; origin: string },
+): string | null {
+  if (!configured) return null;
+  let url: URL;
+  try {
+    url = new URL(configured, origin);
+  } catch {
+    return null;
+  }
+  if (!url.pathname.replace(/\/+$/, "").endsWith("/_AMapService")) return null;
+  if (!dev && url.origin === origin) return null;
+  return url.href;
+}
 function loadSDK() {
   const key = import.meta.env.VITE_AMAP_KEY;
-  const host = import.meta.env.VITE_AMAP_SERVICE_HOST;
-  if (!key || !host || !host.endsWith("/_AMapService"))
-    return Promise.reject(new Error("configuration"));
+  const host = amapServiceHost(import.meta.env.VITE_AMAP_SERVICE_HOST, {
+    dev: import.meta.env.DEV,
+    origin: window.location.origin,
+  });
+  if (!key) return Promise.reject(new Error("configuration"));
   if (!loading) {
-    window._AMapSecurityConfig = {
-      serviceHost: new URL(host, window.location.origin).href,
-    };
+    if (host) window._AMapSecurityConfig = { serviceHost: host };
     loading = AMapLoader.load({
       key,
       version: "2.0",

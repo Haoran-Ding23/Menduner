@@ -205,7 +205,10 @@ http://你的公网IP
 
 - 地图本体、标记、半径圈都正常显示
 - **自定义地图样式失效**（底图用高德默认样式）
-- 浏览器控制台会看到几条 `/_AMapService/...` 请求返回 **404**——这是**预期行为**，不是故障，不影响使用
+- **生产包里不会再用 `/_AMapService`**：`.env.local` 里的 `VITE_AMAP_SERVICE_HOST=/_AMapService` 是给开发服务器用的相对路径，打进生产包后它指向一个 nginx 上不存在的代理，而 nginx 的 SPA 回退会把这个路径回答成 `index.html` —— 高德 SDK 拿 HTML 当 JSON/JSONP 执行，每个带地图的页面都会报
+  `SyntaxError: Unexpected token '<'`（这就是之前前端错误页里 98 条错误的唯一来源）。
+  `frontend/src/components/Map/index.tsx` 现在只在**开发环境**接受相对路径，生产环境只接受**另一个域的绝对代理地址**，否则就让 SDK 直接请求高德。
+- 如果以后真部署了签名代理，把它配成绝对地址（`https://你的代理域名/_AMapService`）并改 `deploy/nginx-menduner.conf` 里的 `^~ /_AMapService/` 块。**没有代理时**该块会按高德期望的格式回答（JSONP 返回合法 JS、普通请求返回高德错误信封），绝不返回 HTML。
 
 已确认：前端包里**只有 JS Key**（本来就该公开），安全密钥没有被打进包，是正确的。
 

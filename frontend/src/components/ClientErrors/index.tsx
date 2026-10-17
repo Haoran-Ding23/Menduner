@@ -73,7 +73,14 @@ export default function ClientErrors() {
               {`页面: ${row.page ?? "?"}
 尺寸: ${row.viewport ?? "?"}
 来源: ${row.source ?? "?"}
-UA: ${row.user_agent ?? "?"}
+UA: ${row.user_agent ?? "?"}${
+                row.extra && (row.extra.filename || row.extra.src)
+                  ? `
+出错文件: ${String(row.extra.filename ?? row.extra.src)}${
+                      row.extra.lineno ? `:${row.extra.lineno}` : ""
+                    }${row.extra.colno ? `:${row.extra.colno}` : ""}`
+                  : ""
+              }
 
 ${row.stack ?? "（没有堆栈）"}`}
             </Typography.Paragraph>
