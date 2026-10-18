@@ -362,13 +362,31 @@ cd /srv/menduner
 
 ---
 
-## 13. 后面想绑域名
+## 13. 域名与 HTTPS(2026-10-18 已配置 entgroup14.com)
 
-1. 买域名，解析 A 记录到公网 IP
-2. **大陆服务器必须 ICP 备案**（2-20 天）——不备案域名访问会被拦
-3. 备案通过后把 nginx 配置里的 `server_name` 改成域名
-4. 想用 HTTPS 就 `apt install certbot python3-certbot-nginx && certbot --nginx -d 你的域名`
-5. **别忘了**把新域名加到高德 Key 的白名单，并重新构建前端
+已完成:
+1. 域名 `entgroup14.com`(阿里云注册,NS = dns7/dns8.hichina.com),云解析加了两条 A 记录:
+   `@ -> 47.116.133.230`、`www -> 47.116.133.230`。
+2. 站点配置拆成三块(见 `deploy/nginx-menduner.conf` + `deploy/nginx-menduner-app.conf`):
+   - `47.116.133.230:80`(default_server):保留原始 IP 的明文 HTTP,已发出的链接不失效;
+   - `entgroup14.com/*:80`:只放行 `/.well-known/acme-challenge/`,其余 301 到 HTTPS;
+   - `entgroup14.com/*:443`:Let's Encrypt 证书 + 与 IP 块共享同一份应用配置(认证规则不会漂移)。
+3. 证书:`certbot certonly --webroot -w /srv/menduner/frontend-dist -d entgroup14.com -d www.entgroup14.com`,
+   有效期至 **2027-01-16**;`certbot.timer` 每天检查自动续期,续期后由
+   `/etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh` reload nginx。
+4. 后端会话 Cookie 在 TLS 请求上带 `Secure`(依据 nginx 的 `X-Forwarded-Proto`),明文 IP 访问时不带。
+   HSTS 暂未启用:应用 location 自己有 `add_header`(缓存头),server 级 HSTS 不会继承到 HTML 响应,
+   等安全头统一到一个 include 后再开。
+
+**必须处理:ICP 备案。** 大陆服务器绑定域名建站需要备案;未备案时阿里云会拦截外部访问
+(实测外部请求 `http://entgroup14.com/` 返回阿里云 `Non-compliance ICP Filing` 拦截页,HTTP-01 续期验证也会
+拿到 403)。这与证书、DNS 无关。可选路径:
+- **备案(推荐,长期)**:在阿里云备案系统提交(主体证件 + 服务器备案服务号),通过后 80 端口恢复,自动续期自然正常。
+- **临时绕开续期问题**:改用 DNS-01(不依赖 80 端口)——需要在阿里云 RAM 建一个**只授权云解析**
+  的子账号并给 AccessKey,配 `certbot-dns-aliyun`。注意这只解决证书续期,不解决外部访问被备案拦截。
+- 短期课程演示:继续用 `http://47.116.133.230`(IP 不受备案限制);域名给出正式客户前务必备案。
+
+5. **别忘了**把域名加到高德 Key 的白名单,并重新构建前端(当前前端未按域名写死任何 URL,安全)。
 
 ---
 

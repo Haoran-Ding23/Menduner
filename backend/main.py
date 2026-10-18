@@ -1,4 +1,4 @@
-﻿import hashlib
+import hashlib
 import json
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
@@ -134,6 +134,17 @@ class InviteRequest(BaseModel):
 def _client_ip(request: Request) -> str | None:
     """The nginx-forwarded client address (falls back to the direct peer)."""
     return request.headers.get('x-real-ip') or (request.client.host if request.client else None)
+
+
+def _is_https(request: Request) -> bool:
+    """Whether the browser reached us over TLS (nginx sets X-Forwarded-Proto).
+
+    The site serves both http://<ip> (for the current deployment) and https://<domain> (after the
+    certificate exists), so the session cookie gets the Secure flag only on TLS: forcing it while
+    the IP is still http would make customer logins silently stop working there.
+    """
+    forwarded = (request.headers.get('x-forwarded-proto') or '').split(',')[0].strip()
+    return forwarded == 'https'
 
 
 def _session_token(request: Request) -> str | None:
@@ -338,6 +349,7 @@ def create_app(db_path: Path | None = None):
                 raise HTTPException(status_code=status, detail=detail) from exc
             response.set_cookie(
                 accounts.SESSION_COOKIE, token, httponly=True, samesite='lax',
+                secure=_is_https(request),
                 max_age=accounts.SESSION_DAYS * 86400, path='/',
             )
             return _account_state(con, request, token)
@@ -354,6 +366,7 @@ def create_app(db_path: Path | None = None):
             token = accounts.create_session(con, account['id'])
             response.set_cookie(
                 accounts.SESSION_COOKIE, token, httponly=True, samesite='lax',
+                secure=_is_https(request),
                 max_age=accounts.SESSION_DAYS * 86400, path='/',
             )
             return _account_state(con, request, token)

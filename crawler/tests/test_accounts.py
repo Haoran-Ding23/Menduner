@@ -1,4 +1,4 @@
-"""Customer accounts: invite-code trials, sessions, offline payment requests and activation.
+﻿"""Customer accounts: invite-code trials, sessions, offline payment requests and activation.
 
 These are product accounts (password hash + session cookie), not the operator HTTP-Basic accounts
 in backend/auth.py. The behaviour that matters most: the effective plan is derived from the dates
@@ -225,3 +225,22 @@ def test_calendar_month_arithmetic():
     assert accounts.add_months(start, 1).month == 2
     assert accounts.add_months(start, 1).day == 28
     assert accounts.add_months(start, 12) == datetime(2027, 1, 31, tzinfo=timezone.utc)
+
+def test_the_session_cookie_is_secure_only_behind_tls(client):
+    """The site answers on http://<ip> too, so forcing Secure everywhere would hide the cookie
+    from the plain-http deployment; behind nginx TLS (X-Forwarded-Proto=https) it must be set."""
+    code = make_invite(client)
+    plain = client.post("/account/register", json={
+        "invite_code": code, "login": "plain-one", "password": "secret-pass-1", "name": "A",
+    })
+    assert "Secure" not in plain.headers["set-cookie"]
+    client.post("/account/logout")
+    other = make_invite(client)
+    secure = client.post(
+        "/account/register",
+        json={"invite_code": other, "login": "tls-one", "password": "secret-pass-1", "name": "B"},
+        headers={"X-Forwarded-Proto": "https"},
+    )
+    cookie = secure.headers["set-cookie"]
+    assert "Secure" in cookie
+    assert "HttpOnly" in cookie and "SameSite=lax" in cookie
