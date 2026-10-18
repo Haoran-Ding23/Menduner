@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
   Button,
@@ -67,6 +67,34 @@ export default function BusinessPlanPage() {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [probing, setProbing] = useState(false);
+  const probed = useRef(false);
+
+  // The review console answers a login challenge by calling a gated endpoint; this page must do
+  // the same, or an admin without cached credentials would sit on 403 with no way to log in.
+  // nginx challenges GET /api/plan (401 + WWW-Authenticate), so the browser can ask for the
+  // password and the page can recover. One probe per mount, bounded so an unanswered challenge
+  // cannot leave the page on a spinner for ever.
+  const probe = useCallback(async () => {
+    if (probed.current) return;
+    probed.current = true;
+    setProbing(true);
+    // The spinner is bounded, the request is not: a person answering a password dialog may take
+    // longer than the spinner, and when they finally succeed the page should open by itself.
+    const stopSpinner = setTimeout(() => setProbing(false), 15_000);
+    try {
+      await loadPlan();
+      await refresh();
+    } catch {
+      /* not authenticated (or no answer): the notice below is the result */
+    } finally {
+      clearTimeout(stopSpinner);
+      setProbing(false);
+    }
+  }, [refresh]);
+  useEffect(() => {
+    if (!identityLoading && !admin && !identity.authenticated) void probe();
+  }, [identityLoading, admin, identity.authenticated, probe]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -129,7 +157,7 @@ export default function BusinessPlanPage() {
     return rows;
   }, [dataset, plan?.pipeline]);
 
-  if (identityLoading) {
+  if (identityLoading || probing) {
     return (
       <div className="loading-page">
         <Spin size="large" />
@@ -137,6 +165,10 @@ export default function BusinessPlanPage() {
     );
   }
   if (!admin) {
+    const retry = () => {
+      probed.current = false;
+      void probe();
+    };
     return (
       <Result
         status="403"
@@ -144,11 +176,11 @@ export default function BusinessPlanPage() {
         subTitle={
           identity.authenticated
             ? `当前账号 ${identity.login ?? "—"} 的角色是 ${identity.role ?? "未配置"}。价格假设与试点名单属于内部规划，不对客户或审核员开放。`
-            : "当前未登录。请用管理员账号登录；浏览器会在请求时弹出认证框。"
+            : "当前未登录。点下面的按钮会用管理员账号验证；浏览器会弹出认证框，输入管理员用户名和口令即可。"
         }
         extra={[
-          <Button key="retry" type="primary" onClick={() => void refresh()}>
-            重新检查身份
+          <Button key="retry" type="primary" onClick={retry}>
+            用管理员账号登录
           </Button>,
           <Button key="back" onClick={() => window.location.assign("/evidence")}>
             返回数据质量页

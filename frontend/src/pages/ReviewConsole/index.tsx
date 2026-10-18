@@ -53,29 +53,29 @@ export default function ReviewConsole() {
   // A reviewer who has already logged in gets a role from /api/auth/me; a fresh browser may not.
   // This one probe makes the console recoverable: the gated GET is challenged by nginx, the
   // browser asks for the password, and on success we re-read the identity and render the page.
-  // It runs at most once per mount so an anonymous visitor is not prompted in a loop, and it is
-  // bounded: a challenge nobody answers would otherwise leave the page on a spinner for ever.
+  // It runs at most once per mount so an anonymous visitor is not prompted in a loop, and the
+  // spinner is bounded: answering a password dialog can take a while, and the page should open
+  // by itself once the answer arrives instead of giving up on the request.
   const probe = useCallback(async () => {
     if (probed.current) return;
     probed.current = true;
     setProbing(true);
+    const stopSpinner = setTimeout(() => setProbing(false), 15_000);
     try {
-      await Promise.race([
-        loadReviewQueue(),
-        new Promise((_, reject) => {
-          setTimeout(() => reject(new Error("probe timed out")), 20_000);
-        }),
-      ]);
+      await loadReviewQueue();
       await refresh();
     } catch {
       /* refused or unanswered: the gate notice below is the result */
     } finally {
+      clearTimeout(stopSpinner);
       setProbing(false);
     }
   }, [refresh]);
   useEffect(() => {
-    if (!identityLoading && !allowed) void probe();
-  }, [identityLoading, allowed, probe]);
+    // Only an anonymous visitor gets the challenge-and-recover path. An authenticated account
+    // that simply lacks the role is told so instead of being prompted for another password.
+    if (!identityLoading && !allowed && !identity.authenticated) void probe();
+  }, [identityLoading, allowed, identity.authenticated, probe]);
 
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");

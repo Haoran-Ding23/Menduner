@@ -1,9 +1,10 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+﻿import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { PlatformProvider } from "../src/hooks/usePlatform";
 import { IdentityProvider } from "../src/hooks/useIdentity";
 import { sampleDataset } from "../src/services/repository";
+import { ANONYMOUS } from "../src/services/api";
 import {
   DEFAULT_PLAN,
   annualRevenue,
@@ -74,7 +75,7 @@ function stubApi(saved: unknown = null) {
   return calls;
 }
 
-function mount(identity: typeof ADMIN | typeof REVIEWER) {
+function mount(identity: typeof ADMIN | typeof REVIEWER | typeof ANONYMOUS) {
   return render(
     <MemoryRouter initialEntries={["/plan"]}>
       <PlatformProvider initialDataset={sampleDataset}>
@@ -126,6 +127,30 @@ describe("business plan panel", () => {
     await screen.findByText("商业规划仅管理员可见");
     expect(document.body.textContent).toContain("reviewer");
     expect(calls.filter((call) => call.url.includes("/api/plan"))).toHaveLength(0);
+  });
+
+  it("answers an anonymous challenge once, then shows the admin notice", async () => {
+    // A browser without cached credentials must get one chance to answer the login challenge;
+    // without it the page was a dead end (the reported "什么情况" on /plan).
+    const calls: string[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url: string, init?: RequestInit) => {
+        const target = String(url);
+        calls.push(`${init?.method ?? "GET"} ${target}`);
+        if (target.includes("/api/plan")) {
+          return Promise.resolve(new Response("{}", { status: 401 }));
+        }
+        if (target.includes("/api/auth/me")) {
+          return Promise.resolve(jsonResponse(ANONYMOUS));
+        }
+        return Promise.resolve(jsonResponse([]));
+      }),
+    );
+    mount(ANONYMOUS);
+    await screen.findByText("商业规划仅管理员可见");
+    expect(calls.filter((call) => call.includes("/api/plan"))).toHaveLength(1);
+    expect(document.body.textContent).toContain("未登录");
   });
 });
 
