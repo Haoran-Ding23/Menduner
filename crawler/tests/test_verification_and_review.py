@@ -191,7 +191,7 @@ def test_human_decisions_survive_a_full_evidence_rebuild(db):
         )
         assert posted.status_code == 200, posted.text
         assert posted.json()["decision"] == "Verified"
-        stored = client.get(f"/review/{event_id}").json()
+        stored = client.get(f"/review/{event_id}", headers=WRITER).json()
         assert stored[0]["field"] == field and stored[0]["reviewer"] == "revenue-manager"
 
     # Simulate the next crawl: the whole evidence set is thrown away and rebuilt.
@@ -385,8 +385,8 @@ def test_review_can_be_withdrawn(db):
                 "reviewer": "rm",
             },
         )
-        assert client.get(f"/review/{event_id}").json()
+        assert client.get(f"/review/{event_id}", headers=WRITER).json()
         removed = client.delete(f"/review/{event_id}/name", headers=WRITER)
         assert removed.json()["removed"] == 1
-        assert client.get(f"/review/{event_id}").json() == []
-        assert client.get("/review").json() == []
+        assert client.get(f"/review/{event_id}", headers=WRITER).json() == []
+        assert client.get("/review", headers=WRITER).json() == []

@@ -110,3 +110,38 @@ def test_the_role_file_can_be_pointed_elsewhere(db, monkeypatch, tmp_path):
     with TestClient(create_app(db)) as client:
         assert write(client, {"X-Menduner-Login": "pilot-reviewer"}).status_code == 404
         assert write(client, {"X-Menduner-Login": "test-reviewer"}).status_code == 403
+
+
+# --- what counts as internal data -------------------------------------------------------
+#
+# Splitting the old /evidence page into a public "数据质量与来源" page and an internal review
+# console is only honest if the internal reads are not still open to everyone: the maintenance
+# queues, the review log and the frontend error log are operational data.
+INTERNAL_READS = (
+    "/review",
+    "/review/some-event",
+    "/client-errors",
+    "/crawl/runs",
+    "/venues/edits",
+    "/venues/duplicates",
+    "/venues/coordinates/needed",
+)
+
+
+def test_internal_read_endpoints_need_a_reviewer(db):
+    with TestClient(create_app(db)) as client:
+        for path in INTERNAL_READS:
+            anonymous = client.get(path)
+            assert anonymous.status_code == 401, (path, anonymous.text)
+            viewer = client.get(path, headers={"X-Menduner-Login": "test-viewer"})
+            assert viewer.status_code == 403, (path, viewer.text)
+            reviewer = client.get(path, headers={"X-Menduner-Login": "test-reviewer"})
+            assert reviewer.status_code == 200, (path, reviewer.text)
+
+
+def test_public_reads_stay_open_for_anyone(db):
+    """The trust argument is public: sources, evidence and status are what a buyer reads first."""
+    with TestClient(create_app(db)) as client:
+        for path in ("/dataset", "/status", "/venues", "/evidence", "/crawl/health",
+                     "/auth/me"):
+            assert client.get(path).status_code == 200, path

@@ -1,4 +1,4 @@
-import { sampleDataset } from "../src/services/repository";
+﻿import { sampleDataset } from "../src/services/repository";
 import { describe, it, expect, vi, afterEach } from "vitest";
 import {
   render,
@@ -38,7 +38,7 @@ describe("Integrated platform routes and interactions", () => {
     ["graph", "知识图谱"],
     ["hotels", "酒店活动情报"],
     ["insights", "商圈洞察"],
-    ["evidence", "证据与数据质量"],
+    ["evidence", "数据质量与来源"],
   ])
     it(`loads /${route} using shared layout`, async () => {
       mount("/" + route);
@@ -116,7 +116,7 @@ describe("Integrated platform routes and interactions", () => {
   });
   it("searches evidence index and shows conflict provenance", async () => {
     mount("/evidence?event=demo-02");
-    await screen.findByRole("heading", { name: "证据与数据质量" });
+    await screen.findByRole("heading", { name: "数据质量与来源" });
     fireEvent.change(screen.getByRole("searchbox", { name: "搜索活动证据" }), {
       target: { value: "秋季文化展" },
     });

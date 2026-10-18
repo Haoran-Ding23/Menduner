@@ -1,4 +1,4 @@
-"""End-to-end: real pipeline data + the auto-verification rule + human review.
+﻿"""End-to-end: real pipeline data + the auto-verification rule + human review.
 
 These tests close the V1.6.3 loop on REAL crawler records rather than the demo fixtures,
 because the demo path always carried ``demo: true``, which short-circuits every verification
@@ -289,7 +289,7 @@ def test_human_decision_survives_a_recrawl_and_changes_the_served_status(db):
         assert restored["status"] == "Verified"
         assert restored["decidedBy"] == "revenue-manager"
         assert restored["origin"] == f"verification:{review.ORIGIN_HUMAN}"
-        stored = client.get(f"/review/{event_id}").json()
+        stored = client.get(f"/review/{event_id}", headers=WRITER).json()
         assert stored[0]["reviewer"] == "revenue-manager"
         assert stored[0]["note"] == "confirmed as a cultural festival"
 
@@ -353,5 +353,5 @@ def test_a_human_decision_lapses_when_the_value_changes(db):
         assert current["decidedBy"] != "rm", current
         assert current["status"] != "Verified", current
         # The decision itself stays on record, so a reviewer can see it needs repeating.
-        stored = client.get(f"/review/{event_id}").json()
+        stored = client.get(f"/review/{event_id}", headers=WRITER).json()
         assert stored and stored[0]["reviewer"] == "rm"

@@ -8,6 +8,7 @@ import {
   HomeOutlined,
   BarChartOutlined,
   SafetyCertificateOutlined,
+  ToolOutlined,
   SettingOutlined,
   UploadOutlined,
   ReloadOutlined,
@@ -15,6 +16,7 @@ import {
   ShopOutlined,
 } from "@ant-design/icons";
 import { usePlatform } from "../../hooks/usePlatform";
+import { canReview, useIdentity } from "../../hooks/useIdentity";
 export const pages = [
   {
     path: "/map",
@@ -60,11 +62,19 @@ export const pages = [
   },
   {
     path: "/evidence",
-    title: "证据与数据质量",
-    label: "证据与数据质量",
+    title: "数据质量与来源",
+    label: "数据质量与来源",
     icon: <SafetyCertificateOutlined />,
   },
 ];
+// Internal operations. Not a public page: shown only to a reviewer/admin, and its endpoints
+// are server-side role-checked regardless of what the navigation renders.
+export const consolePage = {
+  path: "/review",
+  title: "审核台",
+  label: "审核台",
+  icon: <ToolOutlined />,
+};
 export default function PlatformLayout({
   children,
 }: {
@@ -73,7 +83,9 @@ export default function PlatformLayout({
   const location = useLocation();
   const { dataset, filters, go, importData, resetData, dataMode, reloadData } =
     usePlatform();
-  const page = pages.find((p) => p.path === location.pathname);
+  const { identity } = useIdentity();
+  const navPages = canReview(identity) ? [...pages, consolePage] : pages;
+  const page = navPages.find((p) => p.path === location.pathname);
   const [settings, setSettings] = useState(false);
   const input = useRef<HTMLInputElement>(null);
   const [api, holder] = message.useMessage();
@@ -89,7 +101,7 @@ export default function PlatformLayout({
         </div>
         <div className="nav-section">工作空间</div>
         <nav>
-          {pages.map((p) => (
+          {navPages.map((p) => (
             <button
               key={p.path}
               className={

@@ -2,15 +2,20 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { PlatformProvider } from "../src/hooks/usePlatform";
+import { IdentityProvider } from "../src/hooks/useIdentity";
 import { sampleDataset } from "../src/services/repository";
-import EvidenceQuality from "../src/pages/EvidenceQuality";
+import ReviewConsole from "../src/pages/ReviewConsole";
 
 /**
- * The human review workflow on the Evidence & Data Quality page.
+ * The human review workflow on the internal review console.
  *
  * Pins the rule: a reviewer approves / rejects / corrects ONE field of ONE event, the
  * decision is POSTed to the API, and the dataset is reloaded so the new status is visible.
  * A reviewer name is mandatory because a review decision must be attributable.
+ *
+ * The console is gated by an identity; the one below is a reviewer with no display name, so
+ * the actions render while the reviewer field still starts empty (the state the "name
+ * required" scenarios need). backend/auth.py enforces the role again server-side.
  *
  * Why this is ONE test with sequential scenarios: antd registers a module-level
  * responsiveObserver against window.matchMedia, and that registration survives
@@ -21,6 +26,12 @@ import EvidenceQuality from "../src/pages/EvidenceQuality";
  * Note: antd renders two-character Chinese button labels with a space ("通 过"), so the
  * accessible-name matchers are regexes rather than exact strings.
  */
+const REVIEWER_IDENTITY = {
+  authenticated: true,
+  login: "test-reviewer",
+  role: "reviewer" as const,
+  name: null,
+};
 const APPROVE = /通\s*过/;
 const REJECT = /驳\s*回/;
 
@@ -70,9 +81,15 @@ function stubApi(): Traffic {
     "fetch",
     vi.fn((url: string, init?: RequestInit) => {
       const target = String(url);
+      if (target.includes("/api/auth/me")) {
+        return Promise.resolve(jsonResponse(REVIEWER_IDENTITY));
+      }
       if (target.includes("/api/crawl/health")) {
-        // The evidence page also shows crawl-source health; it is unrelated to this test.
         return Promise.resolve(jsonResponse({ sources: [], alerts: [] }));
+      }
+      // The decision log is a GET; the decisions themselves are POSTs to /api/review.
+      if (target.endsWith("/api/review") && init?.method !== "POST") {
+        return Promise.resolve(jsonResponse([]));
       }
       if (target.includes("/api/review")) {
         const body = JSON.parse(String(init?.body ?? "{}"));
@@ -80,6 +97,12 @@ function stubApi(): Traffic {
         traffic.urls.push(target);
         if (traffic.failNext) return Promise.resolve(new Response("nope", { status: 500 }));
         return Promise.resolve(jsonResponse({ decision: body.decision }));
+      }
+      if (target.includes("/api/client-errors")) {
+        return Promise.resolve(jsonResponse([]));
+      }
+      if (target.includes("/api/venues/")) {
+        return Promise.resolve(jsonResponse([]));
       }
       traffic.datasets += 1;
       return Promise.resolve(jsonResponse(snapshot()));
@@ -118,9 +141,11 @@ describe("Evidence page human review", () => {
     async () => {
     const traffic = stubApi();
     render(
-      <MemoryRouter initialEntries={["/evidence"]}>
+      <MemoryRouter initialEntries={["/review"]}>
         <PlatformProvider>
-          <EvidenceQuality />
+          <IdentityProvider initialIdentity={REVIEWER_IDENTITY}>
+            <ReviewConsole />
+          </IdentityProvider>
         </PlatformProvider>
       </MemoryRouter>,
     );

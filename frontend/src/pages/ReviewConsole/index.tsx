@@ -1,26 +1,28 @@
-import TrustCenter from "../../components/TrustCenter";
-import { useState , useEffect} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Alert,
+  Button,
+  Empty,
   Input,
+  Popconfirm,
+  Result,
   Select,
+  Space,
+  Spin,
   Table,
   Tag,
-  Button,
-  Alert,
-  Space,
-  Empty,
-  Popconfirm,
   message,
 } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
+import { canReview, useIdentity } from "../../hooks/useIdentity";
 import {
-  submitReview,
   clearReview,
   checkWholeEvent,
+  loadReviewQueue,
+  submitReview,
   type ReviewDecision,
 } from "../../services/api";
 import VenueMaintenance from "../../components/VenueMaintenance";
-import CrawlHealth from "../../components/CrawlHealth";
 import ClientErrors from "../../components/ClientErrors";
 import VenueEvents from "../../components/VenueEvents";
 import {
@@ -31,15 +33,57 @@ import {
   valueText,
 } from "../../utils/data";
 import type { Event, Evidence, Status } from "../../types";
-export default function EvidenceQuality() {
+
+/**
+ * Internal review console: approve claims, merge venues, read the error log.
+ *
+ * Split out of the public "数据质量与来源" page because the two have different audiences and
+ * different permissions. This page is gated twice: the UI refuses to render it for an anonymous
+ * visitor or a customer (`viewer`) account, and every endpoint it calls is server-side
+ * role-checked — the gate here is a courtesy, not the permission.
+ */
+export default function ReviewConsole() {
   const { dataset, repository, selected, update, openEvent, reloadData } =
     usePlatform();
+  const { identity, loading: identityLoading, refresh } = useIdentity();
+  const allowed = canReview(identity);
+  const [probing, setProbing] = useState(false);
+  const probed = useRef(false);
+
+  // A reviewer who has already logged in gets a role from /api/auth/me; a fresh browser may not.
+  // This one probe makes the console recoverable: the gated GET is challenged by nginx, the
+  // browser asks for the password, and on success we re-read the identity and render the page.
+  // It runs at most once per mount so an anonymous visitor is not prompted in a loop, and it is
+  // bounded: a challenge nobody answers would otherwise leave the page on a spinner for ever.
+  const probe = useCallback(async () => {
+    if (probed.current) return;
+    probed.current = true;
+    setProbing(true);
+    try {
+      await Promise.race([
+        loadReviewQueue(),
+        new Promise((_, reject) => {
+          setTimeout(() => reject(new Error("probe timed out")), 20_000);
+        }),
+      ]);
+      await refresh();
+    } catch {
+      /* refused or unanswered: the gate notice below is the result */
+    } finally {
+      setProbing(false);
+    }
+  }, [refresh]);
+  useEffect(() => {
+    if (!identityLoading && !allowed) void probe();
+  }, [identityLoading, allowed, probe]);
+
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
+  const [openVenueId, setOpenVenueId] = useState<string | null>(null);
+  const [queueError, setQueueError] = useState("");
+  const [decisions, setDecisions] = useState(0);
   // A reviewer name is required so a decision is attributable. Kept in memory only.
   const [reviewer, setReviewer] = useState(() => {
-    // Remembered so a reviewer does not have to retype it on every visit; an empty name
-    // silently blocks every action, which reads as a broken button.
     try {
       return window.localStorage.getItem("menduner.reviewer") ?? "";
     } catch {
@@ -47,17 +91,36 @@ export default function EvidenceQuality() {
     }
   });
   const [busy, setBusy] = useState("");
-  const canReview = reviewer.trim().length > 0;
+  const canSubmit = reviewer.trim().length > 0;
+
+  // The authenticated account already carries a display name; prefill it so the reviewer does
+  // not sign decisions with an empty field (which used to disable every button silently).
+  useEffect(() => {
+    if (!reviewer.trim() && identity.name) setReviewer(identity.name);
+  }, [identity.name, reviewer]);
   useEffect(() => {
     try {
-      if (canReview) window.localStorage.setItem("menduner.reviewer", reviewer);
+      if (canSubmit) window.localStorage.setItem("menduner.reviewer", reviewer);
     } catch {
-      // Storage may be unavailable (private mode); the name simply will not persist.
+      /* Storage may be unavailable (private mode); the name simply will not persist. */
     }
-  }, [reviewer, canReview]);
-  // Which venue's events are open. A theatre programmes many events, so the venue is the
-  // useful lens: clicking it lists everything held there.
-  const [openVenueId, setOpenVenueId] = useState<string | null>(null);
+  }, [reviewer, canSubmit]);
+
+  // The decision log is internal too; loading it proves the role works end to end.
+  const loadQueue = useCallback(async () => {
+    if (!allowed) return;
+    try {
+      const rows = await loadReviewQueue();
+      setDecisions(rows.length);
+      setQueueError("");
+    } catch (error) {
+      setQueueError(error instanceof Error ? error.message : "读取审核记录失败");
+    }
+  }, [allowed]);
+  useEffect(() => {
+    void loadQueue();
+  }, [loadQueue]);
+
   const review = async (
     eventId: string,
     field: string,
@@ -70,14 +133,9 @@ export default function EvidenceQuality() {
     }
     setBusy(`${eventId}:${field}`);
     try {
-      await submitReview({
-        eventId,
-        field,
-        decision,
-        reviewer: reviewer.trim(),
-        ...detail,
-      });
+      await submitReview({ eventId, field, decision, reviewer: reviewer.trim(), ...detail });
       await reloadData();
+      await loadQueue();
       message.success(`已记录：${field} → ${decision}`);
     } catch (error) {
       message.error(error instanceof Error ? error.message : "审核提交失败");
@@ -86,17 +144,15 @@ export default function EvidenceQuality() {
     }
   };
   const checkAll = async (eventId: string) => {
-    if (!canReview) {
+    if (!canSubmit) {
       message.warning("请先填写审核人姓名");
       return;
     }
     setBusy(`${eventId}:__all__`);
     try {
-      const result = await checkWholeEvent({
-        eventId,
-        reviewer: reviewer.trim(),
-      });
+      const result = await checkWholeEvent({ eventId, reviewer: reviewer.trim() });
       await reloadData();
+      await loadQueue();
       const parts = [
         `已核验 ${result.settled} 个字段`,
         result.confirmed_absent.length
@@ -109,11 +165,8 @@ export default function EvidenceQuality() {
           ? `；${result.not_applicable.length} 个派生字段（编号/分类/来源）不需人工核验`
           : "",
       ].filter(Boolean);
-      if (result.needs_attention) {
-        message.warning(parts.join(""));
-      } else {
-        message.success(parts.join(""));
-      }
+      if (result.needs_attention) message.warning(parts.join(""));
+      else message.success(parts.join(""));
     } catch (error) {
       message.error(error instanceof Error ? error.message : "全部核查失败");
     } finally {
@@ -125,6 +178,7 @@ export default function EvidenceQuality() {
     try {
       await clearReview(eventId, field);
       await reloadData();
+      await loadQueue();
       message.success(`已撤回：${field}`);
     } catch (error) {
       message.error(error instanceof Error ? error.message : "撤回失败");
@@ -132,6 +186,40 @@ export default function EvidenceQuality() {
       setBusy("");
     }
   };
+
+  if (identityLoading || probing) {
+    return (
+      <div className="loading-page">
+        <Spin size="large" />
+      </div>
+    );
+  }
+  if (!allowed) {
+    const retry = () => {
+      probed.current = false;
+      void probe();
+    };
+    return (
+      <Result
+        status="403"
+        title="审核台需要审核员权限"
+        subTitle={
+          identity.authenticated
+            ? `当前账号 ${identity.login ?? "—"} 的角色是 ${identity.role ?? "未配置"}，只能浏览数据；审核、合并场馆与坐标需要 reviewer 权限。`
+            : "当前未登录。审核台只对审核员/管理员开放；浏览器会在请求时弹出认证框。"
+        }
+        extra={[
+          <Button key="retry" type="primary" onClick={retry}>
+            重新检查身份
+          </Button>,
+          <Button key="back" onClick={() => window.location.assign("/evidence")}>
+            返回数据质量页
+          </Button>,
+        ]}
+      />
+    );
+  }
+
   const records = dataset.events.filter(
     (e) =>
       (e.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -141,22 +229,21 @@ export default function EvidenceQuality() {
   const event = repository.getEventById(selected ?? records[0]?.id ?? "");
   const venue = dataset.venues.find((v) => v.id === event?.venueId);
   const fields = event
-    ? [
-        ...repository.getEvidence(event.id),
-        ...(venue ? repository.getEvidence(venue.id) : []),
-      ]
+    ? [...repository.getEvidence(event.id), ...(venue ? repository.getEvidence(venue.id) : [])]
     : [];
-  // The venue whose row is being shown, so its own claims can offer the venue's events.
   const entityVenue =
     venue && fields.some((f) => f.entityId === venue.id) ? venue : null;
   const count = (s: Status) =>
     dataset.evidence.filter((e) => effectiveStatus(e) === s).length;
+
   return (
     <>
       <div className="page-heading">
-        <div className="eyebrow">可信与溯源</div>
-        <h1>证据与数据质量</h1>
-        <p>逐字段查看值、来源、核验状态与更新时间</p>
+        <div className="eyebrow">内部操作</div>
+        <h1>审核台</h1>
+        <p>
+          逐字段核验、合并场馆、录入坐标；所有决定按登录身份记录，写接口由服务端校验角色。
+        </p>
       </div>
       <div className="stats-strip">
         <div>
@@ -180,12 +267,32 @@ export default function EvidenceQuality() {
         className="gap-bottom"
         showIcon
         type="info"
-        message={`最后更新：${dataset.updatedAt} · 自动核验规则：官方政府/场馆来源 + 确定性提取才标记「已核验」；聚合站与规则推测的值一律进入人工审核。缺少来源 URL 的已核验字段自动降为待复核。`}
+        message={`最后更新：${dataset.updatedAt} · 自动核验规则：官方政府/场馆来源 + 确定性提取才标记「已核验」；聚合站与规则推测的值一律进入人工审核。`}
       />
-      <section className="panel gap-bottom" aria-label="人工审核">
+      {queueError && (
+        <Alert
+          className="gap-bottom"
+          showIcon
+          type="warning"
+          message="审核记录读取失败"
+          description={`${queueError}（若角色刚变更，可点右侧重新检查身份）`}
+          action={
+            <Button size="small" onClick={() => void refresh()}>
+              重新检查身份
+            </Button>
+          }
+        />
+      )}
+      <section className="panel gap-bottom" aria-label="当前身份与审核人">
         <div className="panel-heading">
           <Space wrap>
-            <strong>人工审核</strong>
+            <Tag color="blue">
+              当前身份：{identity.name ?? identity.login ?? "已登录"}（
+              {identity.role === "admin" ? "管理员" : "审核员"}）
+            </Tag>
+            <Tag color={decisions > 0 ? "green" : "default"}>
+              已记录审核 {decisions} 条
+            </Tag>
             <Input
               aria-label="审核人"
               placeholder="审核人姓名（必填）"
@@ -216,19 +323,12 @@ export default function EvidenceQuality() {
       />
       {openVenueId && (
         <section className="panel gap-bottom">
-          <VenueEvents
-            venueId={openVenueId}
-            onClose={() => setOpenVenueId(null)}
-          />
+          <VenueEvents venueId={openVenueId} onClose={() => setOpenVenueId(null)} />
         </section>
       )}
       <section className="panel gap-bottom" aria-label="前端错误">
         <ClientErrors />
       </section>
-      <section className="panel gap-bottom" aria-label="采集来源状态">
-        <CrawlHealth />
-      </section>
-      <TrustCenter />
       <div className="evidence-layout">
         <section className="panel">
           <div className="panel-heading">
@@ -301,8 +401,8 @@ export default function EvidenceQuality() {
                     size="small"
                     type="primary"
                     loading={busy === `${event.id}:__all__`}
-                    disabled={!canReview}
-                    title={canReview ? "一次核验该活动的全部事实字段" : "请先填写审核人姓名"}
+                    disabled={!canSubmit}
+                    title={canSubmit ? "一次核验该活动的全部事实字段" : "请先填写审核人姓名"}
                   >
                     全部核查完毕
                   </Button>
@@ -347,8 +447,7 @@ export default function EvidenceQuality() {
                   width: 240,
                   render: (_, e) => (
                     <>
-                      {Array.isArray(e.value) &&
-                      effectiveStatus(e) === "Conflicting" ? (
+                      {Array.isArray(e.value) && effectiveStatus(e) === "Conflicting" ? (
                         e.value.map((value, i) => (
                           <div key={i}>
                             候选 {i + 1}：{valueText(value)}
@@ -357,17 +456,11 @@ export default function EvidenceQuality() {
                       ) : (
                         <span className="value-wrap">{valueText(e.value)}</span>
                       )}
-                      {["Conflicting", "Needs Review"].includes(
-                        effectiveStatus(e),
-                      ) && (
-                        <Tag color="orange">
-                          核验状态：待复核
-                        </Tag>
+                      {["Conflicting", "Needs Review"].includes(effectiveStatus(e)) && (
+                        <Tag color="orange">核验状态：待复核</Tag>
                       )}
                       <small className="block muted">{e.method}</small>
-                      {e.note && (
-                        <small className="block muted">{e.note}</small>
-                      )}
+                      {e.note && <small className="block muted">{e.note}</small>}
                     </>
                   ),
                 },
@@ -381,14 +474,10 @@ export default function EvidenceQuality() {
                       </Tag>
                       {e.decidedBy && (
                         <Tag color={e.decidedBy === "automatic" ? "blue" : "green"}>
-                          {e.decidedBy === "automatic"
-                            ? "自动核验"
-                            : `人工：${e.decidedBy}`}
+                          {e.decidedBy === "automatic" ? "自动核验" : `人工：${e.decidedBy}`}
                         </Tag>
                       )}
-                      <small className="block">
-                        {e.sourceName ?? "来源待核验"}
-                      </small>
+                      <small className="block">{e.sourceName ?? "来源待核验"}</small>
                       {e.sourceUrl ? (
                         <a href={e.sourceUrl} target="_blank" rel="noreferrer">
                           原始来源 ↗
@@ -414,29 +503,23 @@ export default function EvidenceQuality() {
                     if (!isEventClaim)
                       return <small className="muted">场馆/酒店参考值</small>;
                     return (
-                      <Space
-                        direction="vertical"
-                        size={4}
-                        className="review-action"
-                      >
+                      <Space direction="vertical" size={4} className="review-action">
                         <Space size={4} wrap>
                           <Button
                             size="small"
                             type="primary"
                             ghost
                             loading={busy === key}
-                            disabled={e.decidedBy === "automatic" || !canReview}
+                            disabled={e.decidedBy === "automatic" || !canSubmit}
                             title={
-                              !canReview
+                              !canSubmit
                                 ? "请先填写审核人姓名"
                                 : e.decidedBy === "automatic"
                                   ? "该字段已按规则自动核验"
                                   : "确认此值正确"
                             }
                             onClick={() =>
-                              void review(e.entityId, e.field, "Verified", {
-                                value: e.value,
-                              })
+                              void review(e.entityId, e.field, "Verified", { value: e.value })
                             }
                           >
                             通过
@@ -445,8 +528,8 @@ export default function EvidenceQuality() {
                             size="small"
                             danger
                             loading={busy === key}
-                            disabled={!canReview}
-                            title={canReview ? "驳回此值" : "请先填写审核人姓名"}
+                            disabled={!canSubmit}
+                            title={canSubmit ? "驳回此值" : "请先填写审核人姓名"}
                             onClick={() =>
                               void review(e.entityId, e.field, "Rejected", {
                                 value: e.value,
@@ -459,8 +542,8 @@ export default function EvidenceQuality() {
                           <Button
                             size="small"
                             loading={busy === key}
-                            disabled={!canReview}
-                            title={canReview ? "修正此值" : "请先填写审核人姓名"}
+                            disabled={!canSubmit}
+                            title={canSubmit ? "修正此值" : "请先填写审核人姓名"}
                             onClick={() => {
                               const next = window.prompt(
                                 `修正 ${e.field} 的值`,
@@ -479,9 +562,7 @@ export default function EvidenceQuality() {
                           {e.decidedBy && (
                             <Popconfirm
                               title="撤回该审核决定？"
-                              onConfirm={() =>
-                                void withdraw(e.entityId, e.field)
-                              }
+                              onConfirm={() => void withdraw(e.entityId, e.field)}
                             >
                               <Button size="small" type="text">
                                 撤回

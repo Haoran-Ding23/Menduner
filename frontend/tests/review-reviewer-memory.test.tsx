@@ -3,7 +3,15 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { PlatformProvider } from "../src/hooks/usePlatform";
 import { normalizeDataset } from "../src/services/adapter";
-import EvidenceQuality from "../src/pages/EvidenceQuality";
+import { IdentityProvider } from "../src/hooks/useIdentity";
+import ReviewConsole from "../src/pages/ReviewConsole";
+
+const REVIEWER_IDENTITY = {
+  authenticated: true,
+  login: "test-reviewer",
+  role: "reviewer" as const,
+  name: null,
+};
 
 /**
  * A reviewer's name is remembered.
@@ -87,9 +95,11 @@ describe("remembered reviewer", () => {
     window.localStorage.setItem("menduner.reviewer", "revenue-manager");
 
     render(
-      <MemoryRouter initialEntries={[`/evidence?event=${EVENT_ID}`]}>
+      <MemoryRouter initialEntries={[`/review?event=${EVENT_ID}`]}>
         <PlatformProvider initialDataset={dataset}>
-          <EvidenceQuality />
+          <IdentityProvider initialIdentity={REVIEWER_IDENTITY}>
+            <ReviewConsole />
+          </IdentityProvider>
         </PlatformProvider>
       </MemoryRouter>,
     );

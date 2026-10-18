@@ -219,12 +219,55 @@ export interface StoredClientError {
   extra: Record<string, unknown> | null;
 }
 
-/** Recent browser-side errors, newest first. */
+/** Recent browser-side errors, newest first. Internal: the API requires a reviewer role. */
 export async function loadClientErrors(limit = 50): Promise<StoredClientError[]> {
   return jsonBody(
     await fetch(`/api/client-errors?limit=${limit}`, { cache: "no-store" }),
     "读取前端错误",
   );
+}
+
+/**
+ * Who is behind this browser.
+ *
+ * The backend maps the nginx basic-auth login to a role (admin / reviewer / viewer). The public
+ * pages need nothing but the dataset; the review console needs this to decide whether to render
+ * at all, and still relies on the SERVER to enforce the rule — hiding a button is not a
+ * permission. Failing to load it is treated as anonymous: a customer account is a normal case.
+ */
+export interface Identity {
+  authenticated: boolean;
+  login: string | null;
+  role: "admin" | "reviewer" | "viewer" | null;
+  name?: string | null;
+}
+
+export const ANONYMOUS: Identity = {
+  authenticated: false,
+  login: null,
+  role: null,
+};
+
+export async function loadIdentity(): Promise<Identity> {
+  const body = await jsonBody(
+    await fetch("/api/auth/me", { cache: "no-store" }),
+    "读取当前身份",
+  );
+  const role =
+    body?.role === "admin" || body?.role === "viewer" || body?.role === "reviewer"
+      ? body.role
+      : null;
+  return {
+    authenticated: Boolean(body?.authenticated),
+    login: typeof body?.login === "string" ? body.login : null,
+    role,
+    name: typeof body?.name === "string" ? body.name : null,
+  };
+}
+
+/** True for roles allowed to use the review console. The server checks this again. */
+export function canReview(identity: Identity | null): boolean {
+  return identity?.role === "admin" || identity?.role === "reviewer";
 }
 
 export interface ReviewRecord {
@@ -236,6 +279,14 @@ export interface ReviewRecord {
   reviewer: string;
   note: string | null;
   decided_at: string;
+}
+
+/** The decision log. Internal: the API requires a reviewer role. */
+export async function loadReviewQueue(): Promise<ReviewRecord[]> {
+  return jsonBody(
+    await fetch("/api/review", { cache: "no-store" }),
+    "读取审核记录",
+  );
 }
 
 export async function submitReview(input: {

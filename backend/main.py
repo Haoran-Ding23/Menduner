@@ -236,8 +236,8 @@ def create_app(db_path: Path | None = None):
         return auth.identity(request)
 
     @app.get('/review')
-    def review_queue():
-        """Every recorded human decision, newest first."""
+    def review_queue(principal: str = Depends(auth.require_role(auth.ROLE_REVIEWER))):
+        """Every recorded human decision, newest first. Internal: reviewer role required."""
         with connect(path) as con:
             review.ensure_schema(con)
             return [
@@ -262,9 +262,10 @@ def create_app(db_path: Path | None = None):
             }
 
     @app.get('/crawl/runs')
-    def crawl_runs(limit: int = 100):
+    def crawl_runs(limit: int = 100,
+                   principal: str = Depends(auth.require_role(auth.ROLE_REVIEWER))):
         """The per-source crawl log: when each source ran, its status, how many events it
-        produced and why it failed."""
+        produced and why it failed. Operational detail, not a customer-facing trust signal."""
         with connect(path) as con:
             return crawl_log.recent_runs(con, limit=max(1, min(limit, 1000)))
 
@@ -285,8 +286,13 @@ def create_app(db_path: Path | None = None):
         return {'ok': True}
 
     @app.get('/client-errors')
-    def list_client_errors(limit: int = 50):
-        """Recent browser errors, newest first, so a phone failure can be read from a desktop."""
+    def list_client_errors(limit: int = 50,
+                          principal: str = Depends(auth.require_role(auth.ROLE_REVIEWER))):
+        """Recent browser errors, newest first, so a phone failure can be read from a desktop.
+
+        Internal: the log names pages and devices of real visitors. Ingestion above stays open
+        because a crashing client cannot authenticate; reading it does not have that excuse.
+        """
         with connect(path) as con:
             return client_errors.recent(con, limit=limit)
 
@@ -312,7 +318,9 @@ def create_app(db_path: Path | None = None):
         return result
 
     @app.get('/review/{event_id}')
-    def event_review(event_id: str):
+    def event_review(event_id: str,
+                     principal: str = Depends(auth.require_role(auth.ROLE_REVIEWER))):
+        """One event's recorded decisions. Internal: it is the audit trail, not public data."""
         with connect(path) as con:
             return list(review.decisions_for(con, event_id).values())
 
@@ -385,17 +393,20 @@ def create_app(db_path: Path | None = None):
         return {'removed': cur.rowcount, 'authenticated_as': principal}
 
     @app.get('/venues/duplicates')
-    def venue_duplicates():
-        """Pairs that LOOK like one place. Nothing merges until a human says so."""
+    def venue_duplicates(principal: str = Depends(auth.require_role(auth.ROLE_REVIEWER))):
+        """Pairs that LOOK like one place. Nothing merges until a human says so.
+
+        Internal: the maintenance queue is operational work, not a trust signal customers read.
+        """
         return venue_store.duplicates(path)
 
     @app.get('/venues/coordinates/needed')
-    def coordinates_needed():
+    def coordinates_needed(principal: str = Depends(auth.require_role(auth.ROLE_REVIEWER))):
         """Venues an event references but which carry no usable coordinate yet."""
         return venue_store.coordinate_targets(path)
 
     @app.get('/venues/edits')
-    def edits():
+    def edits(principal: str = Depends(auth.require_role(auth.ROLE_REVIEWER))):
         return venue_store.venue_edits(path)
 
     @app.post('/venues/merge')

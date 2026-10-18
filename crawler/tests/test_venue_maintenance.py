@@ -1,4 +1,4 @@
-"""Venue duplicate resolution and coordinate entry.
+﻿"""Venue duplicate resolution and coordinate entry.
 
 Merging venues and pinning coordinates are both decisions that are hard to notice once wrong,
 so the rules under test are the safety ones: nothing merges without a named reviewer and a
@@ -816,10 +816,10 @@ def test_api_exposes_and_writes_venue_maintenance(seeded, monkeypatch):
     # instead of the tracked repository file.
     monkeypatch.setenv("MENDUNER_VENUE_ALIASES", str(alias_file))
     with TestClient(create_app(db)) as client:
-        duplicates = client.get("/venues/duplicates").json()
+        duplicates = client.get("/venues/duplicates", headers=WRITER).json()
         assert any(d["alias_id"] == "dup" for d in duplicates)
 
-        needed = client.get("/venues/coordinates/needed").json()
+        needed = client.get("/venues/coordinates/needed", headers=WRITER).json()
         assert any(t["id"] == "dup" and not t["has_coordinates"] for t in needed)
 
         bad = client.post(
@@ -875,7 +875,7 @@ def test_api_exposes_and_writes_venue_maintenance(seeded, monkeypatch):
         assert merged.status_code == 200, merged.text
         assert merged.json()["events_moved"] == 1
 
-        assert any(e["kind"] == "merge" for e in client.get("/venues/edits").json())
+        assert any(e["kind"] == "merge" for e in client.get("/venues/edits", headers=WRITER).json())
 
         reverted = client.post(
             "/venues/merge",

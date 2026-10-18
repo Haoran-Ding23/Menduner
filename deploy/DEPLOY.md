@@ -301,6 +301,23 @@ sudo systemctl restart menduner-backend   # 角色文件按请求读取,重启�
 - **审核员建议每人一个账号**:`/venues/edits`、`/review` 记录的 `reviewer` 是签署名,
   而 `authenticated_as` 是实际调用者,两者一起才可追溯。
 
+**页面与接口的边界**(2026-10-18 拆分):
+
+- `/evidence` = **数据质量与来源**,公开只读:来源、字段证据、核验状态、采集来源状态。
+  匿名可读,这是信任基础,不要给它加口令。
+- `/review` = **审核台**,仅 `reviewer`/`admin`:审核、合并场馆、坐标、前端错误日志。
+  导航项只对审核员显示;匿名或客户账号看到 403 说明,而不是一页按钮。
+- **内部读接口也按角色校验**(匿名 401、viewer 403):`GET /review`、`GET /review/{id}`、
+  `GET /client-errors`、`GET /crawl/runs`、`/venues/duplicates`、`/venues/coordinates/needed`、
+  `/venues/edits`。公开读保持开放:`/dataset`、`/evidence`、`/venues`、`/crawl/health`、`/auth/me`。
+- 自检:
+
+```bash
+curl -o /dev/null -w '%{http_code}\n' http://127.0.0.1/api/review                    # 401(匿名)
+curl -o /dev/null -w '%{http_code}\n' -u liuge:'<口令>' http://127.0.0.1/api/review  # 200
+curl -o /dev/null -w '%{http_code}\n' http://127.0.0.1/api/client-errors             # 401(匿名)
+```
+
 ---
 
 ## 12. 日常维护
