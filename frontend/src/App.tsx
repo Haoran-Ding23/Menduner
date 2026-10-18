@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+﻿import { Routes, Route, Navigate } from 'react-router-dom';
 import { Suspense } from 'react';
 import { Spin } from 'antd';
 import PlatformLayout from './components/Layout';
@@ -18,6 +18,7 @@ const Hotels = lazyWithReload(() => import('./pages/HotelIntelligence'));
 const Insights = lazyWithReload(() => import('./pages/DistrictInsights'));
 const DataQuality = lazyWithReload(() => import('./pages/DataQuality'));
 const ReviewConsole = lazyWithReload(() => import('./pages/ReviewConsole'));
+const BusinessPlan = lazyWithReload(() => import('./pages/BusinessPlan'));
 
 /**
  * Each page gets its own boundary.
@@ -49,6 +50,7 @@ export default function App() {
             <Route path="/insights" element={<Page name="商圈洞察"><Insights /></Page>}/>
             <Route path="/evidence" element={<Page name="数据质量与来源"><DataQuality /></Page>}/>
             <Route path="/review" element={<Page name="审核台"><ReviewConsole /></Page>}/>
+            <Route path="/plan" element={<Page name="商业规划"><BusinessPlan /></Page>}/>
             <Route path="*" element={<Navigate to="/map" replace/>}/>
           </Routes>
         </Suspense>

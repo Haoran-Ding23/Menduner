@@ -8,6 +8,7 @@ import {
   HomeOutlined,
   BarChartOutlined,
   SafetyCertificateOutlined,
+  AccountBookOutlined,
   ToolOutlined,
   SettingOutlined,
   UploadOutlined,
@@ -16,7 +17,7 @@ import {
   ShopOutlined,
 } from "@ant-design/icons";
 import { usePlatform } from "../../hooks/usePlatform";
-import { canReview, useIdentity } from "../../hooks/useIdentity";
+import { canReview, isAdmin, useIdentity } from "../../hooks/useIdentity";
 export const pages = [
   {
     path: "/map",
@@ -67,6 +68,15 @@ export const pages = [
     icon: <SafetyCertificateOutlined />,
   },
 ];
+// Internal planning. Admin-only: pricing assumptions and customer names must not be shown to a
+// reviewer or a customer, and the API enforces it.
+export const planPage = {
+  path: "/plan",
+  title: "商业规划",
+  label: "商业规划",
+  icon: <AccountBookOutlined />,
+};
+
 // Internal operations. Not a public page: shown only to a reviewer/admin, and its endpoints
 // are server-side role-checked regardless of what the navigation renders.
 export const consolePage = {
@@ -84,7 +94,11 @@ export default function PlatformLayout({
   const { dataset, filters, go, importData, resetData, dataMode, reloadData } =
     usePlatform();
   const { identity } = useIdentity();
-  const navPages = canReview(identity) ? [...pages, consolePage] : pages;
+  const navPages = [
+    ...pages,
+    ...(isAdmin(identity) ? [planPage] : []),
+    ...(canReview(identity) ? [consolePage] : []),
+  ];
   const page = navPages.find((p) => p.path === location.pathname);
   const [settings, setSettings] = useState(false);
   const input = useRef<HTMLInputElement>(null);

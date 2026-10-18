@@ -270,6 +270,11 @@ export function canReview(identity: Identity | null): boolean {
   return identity?.role === "admin" || identity?.role === "reviewer";
 }
 
+/** True for the owner account: commercial planning is admin-only. */
+export function isAdmin(identity: Identity | null): boolean {
+  return identity?.role === "admin";
+}
+
 export interface ReviewRecord {
   event_id: string;
   field: string;

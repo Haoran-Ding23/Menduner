@@ -1,4 +1,4 @@
-# 部署手册（阿里云轻量应用服务器 / Ubuntu）
+﻿# 部署手册（阿里云轻量应用服务器 / Ubuntu）
 
 面向：**1 台 2核2G 轻量应用服务器 + Ubuntu 22.04/24.04**，用 IP 直接访问，不买域名、不备案。
 
@@ -309,7 +309,7 @@ sudo systemctl restart menduner-backend   # 角色文件按请求读取,重启�
   导航项只对审核员显示;匿名或客户账号看到 403 说明,而不是一页按钮。
 - **内部读接口也按角色校验**(匿名 401、viewer 403):`GET /review`、`GET /review/{id}`、
   `GET /client-errors`、`GET /crawl/runs`、`/venues/duplicates`、`/venues/coordinates/needed`、
-  `/venues/edits`。公开读保持开放:`/dataset`、`/evidence`、`/venues`、`/crawl/health`、`/auth/me`。
+  `/venues/edits`。公开读保持开放:`/dataset`、`/evidence`、`/venues`、`/crawl/health`、`/auth/me`。`/api/plan`(商业规划)是**admin-only**,匿名 401、审核员 403。
 - 自检:
 
 ```bash
