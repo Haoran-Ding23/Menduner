@@ -226,6 +226,15 @@ def create_app(db_path: Path | None = None):
     def status():
         return snapshot(path)['status']
 
+    @app.get('/auth/me')
+    def whoami(request: Request):
+        """Who this browser is, so the UI can show the role or a read-only notice.
+
+        Never raises: an anonymous visitor is the normal case (the public pages read the dataset
+        without a login), and this endpoint must not become a second login wall.
+        """
+        return auth.identity(request)
+
     @app.get('/review')
     def review_queue():
         """Every recorded human decision, newest first."""
@@ -282,7 +291,7 @@ def create_app(db_path: Path | None = None):
             return client_errors.recent(con, limit=limit)
 
     @app.post('/review/event')
-    def check_whole_event(body: CheckEventRequest, principal: str = Depends(auth.principal)):
+    def check_whole_event(body: CheckEventRequest, principal: str = Depends(auth.require_role(auth.ROLE_REVIEWER))):
         """Settle every factual field of one event, and report what remains."""
         try:
             result = bulk_review.check_event(path, body.event_id, body.reviewer)
@@ -308,7 +317,7 @@ def create_app(db_path: Path | None = None):
             return list(review.decisions_for(con, event_id).values())
 
     @app.post('/review')
-    def record_review(body: ReviewRequest, principal: str = Depends(auth.principal)):
+    def record_review(body: ReviewRequest, principal: str = Depends(auth.require_role(auth.ROLE_REVIEWER))):
         """Record a human decision bound to the claim that was on screen.
 
         A decision records the value the reviewer actually saw. If the request names a value
@@ -364,7 +373,7 @@ def create_app(db_path: Path | None = None):
 
     @app.delete('/review/{event_id}/{field}')
     def clear_review(event_id: str, field: str,
-                     principal: str = Depends(auth.principal)):
+                     principal: str = Depends(auth.require_role(auth.ROLE_REVIEWER))):
         """Withdraw a decision, returning the field to the unreviewed queue."""
         with connect(path) as con:
             review.ensure_schema(con)
@@ -390,7 +399,7 @@ def create_app(db_path: Path | None = None):
         return venue_store.venue_edits(path)
 
     @app.post('/venues/merge')
-    def merge_venues(body: MergeRequest, principal: str = Depends(auth.principal)):
+    def merge_venues(body: MergeRequest, principal: str = Depends(auth.require_role(auth.ROLE_REVIEWER))):
         """Collapse two venue rows, recording the reviewer and the reason."""
         try:
             result = venue_store.merge(
@@ -409,7 +418,7 @@ def create_app(db_path: Path | None = None):
 
     @app.post('/venues/coordinates')
     def set_venue_coordinates(body: CoordinatesRequest,
-                              principal: str = Depends(auth.principal)):
+                              principal: str = Depends(auth.require_role(auth.ROLE_REVIEWER))):
         """Record a human-checked coordinate. Bounds and provenance are enforced."""
         try:
             lng, lat = body.parsed()

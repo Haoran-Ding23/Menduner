@@ -266,6 +266,41 @@ curl -o /dev/null -w '%{http_code}\n' -X POST -H 'Content-Type: application/json
   http://127.0.0.1:8000/review           # 401(后端直连)
 ```
 
+### 11.1 角色:谁能写、谁只能读
+
+**共享登录区分不了"审核员"和"客户只读"**,所以写操作再按角色放行一次。映射先放配置文件
+`backend/roles.json`(可用 `MENDUNER_ROLES_PATH` 指向别处),每个 nginx 账号一条:
+
+```json
+{
+  "users": {
+    "menduner":  { "role": "admin",    "name": "管理员" },
+    "reviewer1": { "role": "reviewer", "name": "审核员" },
+    "hotel-a":   { "role": "viewer",   "name": "客户只读" }
+  }
+}
+```
+
+| 角色 | 能做什么 |
+|---|---|
+| `admin` | 全部(含未来账号/授权管理) |
+| `reviewer` | 审核证据、合并场馆、录入坐标 |
+| `viewer` | 只读;调用写接口返回 **403**(客户账号) |
+
+- **没有条目的账号 = 拒绝**(403),理由:nginx 里可能有本文件未授权的账号。
+- 文件缺失或 JSON 损坏 = 全部写操作 403(fail-closed),不会重新开放。
+- `GET /auth/me` 返回当前身份与角色,便于前端区分只读界面。
+- 加人:**两边都要加**——nginx 账号 + 角色条目:
+
+```bash
+sudo htpasswd -b /etc/nginx/.htpasswd reviewer1 '<口令>'
+sudo /srv/menduner/venv/bin/python -m json.tool /srv/menduner/backend/roles.json >/dev/null  # 确认格式
+sudo systemctl restart menduner-backend   # 角色文件按请求读取,重启只为保险
+```
+
+- **审核员建议每人一个账号**:`/venues/edits`、`/review` 记录的 `reviewer` 是签署名,
+  而 `authenticated_as` 是实际调用者,两者一起才可追溯。
+
 ---
 
 ## 12. 日常维护

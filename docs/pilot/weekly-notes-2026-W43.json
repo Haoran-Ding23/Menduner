@@ -1,0 +1,35 @@
+{
+  "_note": "第 1 期(2026-W43)的编辑判断,输入给 scripts/build_weekly_report.py。只列能写出一条具体关注理由的活动;longRunningIds 是窗口开始时已在展的活动,单独列出,不作为新增信号。",
+  "hotel": "苏州洲际酒店",
+  "weekStart": "2026-10-19",
+  "radiusKm": 3,
+  "notes": {
+    "evt-b7db6602dc60a9b72d8d4601": {
+      "reason": "距酒店 0.56 km、持续 3 天,工业技术展会;参展商与专业观众可能产生短途住宿。主办方预计规模未记录。",
+      "categoryReview": "爬虫归类 others → 人工:工业/商务展会",
+      "action": "向主办方核实参展企业数与外地观众比例;若有组团住宿需求,提前报团队价。"
+    },
+    "evt-da1bfc766917b42d0e341153": {
+      "reason": "距酒店 0.56 km、持续 3 天,纳米技术博览会;与同周的紧固件展同期,可能叠加客流。人数未记录。",
+      "categoryReview": "爬虫归类 others → 人工:工业/商务展会",
+      "action": "确认与紧固件展是否共用展馆/同期;合并评估一周的团队房需求。"
+    },
+    "evt-2c4dc66ca12621a515b3a2ba": {
+      "reason": "距酒店 0.56 km、持续 3 天,中国厨师节暨博览会(行业会议 + 公众活动);既有行业参会者也可能吸引本地客流。",
+      "categoryReview": "类别 business 正确",
+      "action": "确认是否对公众开放、是否设会议注册台;向会务组确认住宿协议是否已定。"
+    },
+    "evt-8b207f081b36a72760213cda": {
+      "reason": "距酒店 0.56 km、持续 4 天的全国性学会年会 + 技术展,通常有较大外地参会规模;距本期结束还有 4 天,属于提前可触达的机会。",
+      "categoryReview": "类别 business 正确",
+      "action": "本周联系会务组;同一活动在 cnena 与场馆官网各有一条,核对以哪个为准。"
+    }
+  },
+  "longRunningIds": [
+    "evt-809a4c2d333b35b11cb37e85",
+    "evt-dccd6ecf699546cdcdd9c934",
+    "evt-f8c75d6557f4d4eebbda06a7",
+    "evt-51ec5d6b462656d72abccd9c",
+    "evt-9de9ad6fe5cdfb4eadce2921"
+  ]
+}
