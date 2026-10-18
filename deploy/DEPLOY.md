@@ -309,7 +309,7 @@ sudo systemctl restart menduner-backend   # 角色文件按请求读取,重启�
   导航项只对审核员显示;匿名或客户账号看到 403 说明,而不是一页按钮。
 - **内部读接口也按角色校验**(匿名 401、viewer 403):`GET /review`、`GET /review/{id}`、
   `GET /client-errors`、`GET /crawl/runs`、`/venues/duplicates`、`/venues/coordinates/needed`、
-  `/venues/edits`、`/api/plan`(商业规划,admin-only)。公开读保持开放:`/dataset`、`/evidence`、`/venues`、`/crawl/health`、`/auth/me`。
+  `/venues/edits`。公开读保持开放:`/dataset`、`/evidence`、`/venues`、`/crawl/health`、`/auth/me`。
 - 自检:
 
 ```bash

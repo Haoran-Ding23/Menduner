@@ -1,4 +1,4 @@
-"""Small SQLite store; each request uses its own connection and read snapshot."""
+﻿"""Small SQLite store; each request uses its own connection and read snapshot."""
 import json
 import os
 import sqlite3
@@ -53,13 +53,9 @@ def initialize(path):
         # projection, so its table is created here alongside the other schemas instead of by
         # a crawler run. Places (restaurants and public transport around a venue) are the same
         # kind of resource as hotels: a table the enrichment script fills and the graph reads.
-        # The business plan is an internal document (pricing assumptions, pilot pipeline) and is
-        # admin-only; it lives here so it survives deploys.
         from crawler import attendance, places
-        from backend import business_plan
         attendance.ensure_schema(con)
         places.ensure_schema(con)
-        business_plan.ensure_schema(con)
 
 def aggregate_status(statuses):
     for value in ('Conflicting', 'Needs Review', 'Unverified', 'Missing'):

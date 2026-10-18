@@ -1,9 +1,11 @@
-﻿import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { Suspense } from 'react';
 import { Spin } from 'antd';
 import PlatformLayout from './components/Layout';
 import EventDetail from './components/EventDetail';
 import ErrorBoundary from './components/ErrorBoundary';
+import PlanGate from './components/PlanGate';
+import { EntitlementsProvider } from './hooks/useEntitlements';
 import { IdentityProvider } from './hooks/useIdentity';
 import { lazyWithReload } from './utils/lazyWithReload';
 // lazyWithReload, not lazy: a tab left open across a deploy holds an index.html naming the
@@ -17,8 +19,8 @@ const Graph = lazyWithReload(() => import('./pages/KnowledgeGraph'));
 const Hotels = lazyWithReload(() => import('./pages/HotelIntelligence'));
 const Insights = lazyWithReload(() => import('./pages/DistrictInsights'));
 const DataQuality = lazyWithReload(() => import('./pages/DataQuality'));
+const Plans = lazyWithReload(() => import('./pages/Plans'));
 const ReviewConsole = lazyWithReload(() => import('./pages/ReviewConsole'));
-const BusinessPlan = lazyWithReload(() => import('./pages/BusinessPlan'));
 
 /**
  * Each page gets its own boundary.
@@ -33,32 +35,36 @@ function Page({ name, children }: { name: string; children: React.ReactNode }) {
 }
 
 export default function App() {
-  // The identity is loaded once for the whole app: the navigation hides the internal console
-  // from visitors and customer accounts, and the console page reads the role again itself.
-  // None of this is the permission — backend/auth.py checks the role on every write.
+  // Identity: the navigation hides internal tools from visitors and customer accounts.
+  // Entitlements: which paid workflow this browser has unlocked (demo switch, see the plans page).
+  // Neither is the enforcement point — backend/auth.py checks the role on every write; plan
+  // enforcement becomes server-side once customer accounts exist.
   return (
     <IdentityProvider>
-      <PlatformLayout>
-        <Suspense fallback={<div className="loading-page"><Spin size="large"/></div>}>
-          <Routes>
-            <Route path="/map" element={<Page name="城市活动地图"><Map /></Page>}/>
-            <Route path="/calendar" element={<Page name="活动日历"><Calendar /></Page>}/>
-            <Route path="/agenda" element={<Page name="活动清单"><Agenda /></Page>}/>
-            <Route path="/venues" element={<Page name="场馆活动清单"><Venues /></Page>}/>
-            <Route path="/graph" element={<Page name="知识图谱"><Graph /></Page>}/>
-            <Route path="/hotels" element={<Page name="酒店活动情报"><Hotels /></Page>}/>
-            <Route path="/insights" element={<Page name="商圈洞察"><Insights /></Page>}/>
-            <Route path="/evidence" element={<Page name="数据质量与来源"><DataQuality /></Page>}/>
-            <Route path="/review" element={<Page name="审核台"><ReviewConsole /></Page>}/>
-            <Route path="/plan" element={<Page name="商业规划"><BusinessPlan /></Page>}/>
-            <Route path="*" element={<Navigate to="/map" replace/>}/>
-          </Routes>
-        </Suspense>
-        {/* The event drawer renders outside the routes, so it needs its own boundary too. */}
-        <ErrorBoundary where="活动详情">
-          <EventDetail />
-        </ErrorBoundary>
-      </PlatformLayout>
+      <EntitlementsProvider>
+        <PlatformLayout>
+          <Suspense fallback={<div className="loading-page"><Spin size="large"/></div>}>
+            <Routes>
+              <Route path="/map" element={<Page name="城市活动地图"><Map /></Page>}/>
+              <Route path="/calendar" element={<Page name="活动日历"><Calendar /></Page>}/>
+              <Route path="/agenda" element={<Page name="活动清单"><Agenda /></Page>}/>
+              <Route path="/venues" element={<Page name="场馆活动清单"><Venues /></Page>}/>
+              <Route path="/graph" element={<Page name="知识图谱"><Graph /></Page>}/>
+              {/* Paid workflow: public data stays free, these two unlock the hotel-centric work. */}
+              <Route path="/hotels" element={<Page name="酒店活动情报"><PlanGate feature="hotel_intel"><Hotels /></PlanGate></Page>}/>
+              <Route path="/insights" element={<Page name="商圈洞察"><PlanGate feature="insights"><Insights /></PlanGate></Page>}/>
+              <Route path="/evidence" element={<Page name="数据质量与来源"><DataQuality /></Page>}/>
+              <Route path="/plans" element={<Page name="套餐与升级"><Plans /></Page>}/>
+              <Route path="/review" element={<Page name="审核台"><ReviewConsole /></Page>}/>
+              <Route path="*" element={<Navigate to="/map" replace/>}/>
+            </Routes>
+          </Suspense>
+          {/* The event drawer renders outside the routes, so it needs its own boundary too. */}
+          <ErrorBoundary where="活动详情">
+            <EventDetail />
+          </ErrorBoundary>
+        </PlatformLayout>
+      </EntitlementsProvider>
     </IdentityProvider>
   );
 }

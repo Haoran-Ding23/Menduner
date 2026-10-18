@@ -1,4 +1,4 @@
-﻿import {
+import {
   createContext,
   useCallback,
   useContext,
@@ -10,7 +10,6 @@
 import {
   ANONYMOUS,
   canReview,
-  isAdmin,
   loadIdentity,
   type Identity,
 } from "../services/api";
@@ -85,5 +84,5 @@ export function useIdentity(): IdentityState {
   return useContext(IdentityContext);
 }
 
-export { canReview, isAdmin };
+export { canReview };
 export type { Identity };

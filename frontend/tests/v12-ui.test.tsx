@@ -1,5 +1,5 @@
 import { sampleDataset } from "../src/services/repository";
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import { render, screen, fireEvent, cleanup, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { PlatformProvider } from "../src/hooks/usePlatform";
@@ -15,7 +15,23 @@ vi.mock("echarts", () => ({
     dispose: vi.fn(),
   }),
 }));
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  try {
+    window.localStorage.removeItem("menduner.plan");
+  } catch {
+    /* storage unavailable */
+  }
+});
+// These pages exercise the PAID workflow (hotel intelligence / district insights), so the demo
+// entitlement is seeded before each mount; tests/plans.test.tsx covers the locked state.
+beforeEach(() => {
+  try {
+    window.localStorage.setItem("menduner.plan", "enterprise");
+  } catch {
+    /* storage unavailable */
+  }
+});
 const mount = (path: string) =>
   render(
     <MemoryRouter initialEntries={[path]}>

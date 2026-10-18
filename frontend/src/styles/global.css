@@ -1,4 +1,4 @@
-* {
+﻿* {
   box-sizing: border-box;
 }
 body {
@@ -91,6 +91,12 @@ h3 {
   letter-spacing: 1.2px;
   padding: 12px 12px 17px;
 }
+.nav-lock {
+  margin-left: auto;
+  color: #b7791f;
+  font-size: 12px;
+}
+
 .nav-item {
   display: flex;
   align-items: center;

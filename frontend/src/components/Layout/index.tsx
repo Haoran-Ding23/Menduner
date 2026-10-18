@@ -8,7 +8,8 @@ import {
   HomeOutlined,
   BarChartOutlined,
   SafetyCertificateOutlined,
-  AccountBookOutlined,
+  CrownOutlined,
+  LockOutlined,
   ToolOutlined,
   SettingOutlined,
   UploadOutlined,
@@ -17,8 +18,18 @@ import {
   ShopOutlined,
 } from "@ant-design/icons";
 import { usePlatform } from "../../hooks/usePlatform";
-import { canReview, isAdmin, useIdentity } from "../../hooks/useIdentity";
-export const pages = [
+import { canReview, useIdentity } from "../../hooks/useIdentity";
+import { useEntitlements } from "../../hooks/useEntitlements";
+import { PLAN_LABELS, type PlanId } from "../../services/plans";
+export interface NavPage {
+  path: string;
+  title: string;
+  label: string;
+  icon: React.ReactNode;
+  /** Paid workflow: the item stays visible but shows a lock until the plan reaches this tier. */
+  minPlan?: PlanId;
+}
+export const pages: NavPage[] = [
   {
     path: "/map",
     title: "城市活动地图",
@@ -54,12 +65,14 @@ export const pages = [
     title: "酒店活动情报",
     label: "酒店活动情报",
     icon: <HomeOutlined />,
+    minPlan: "pro",
   },
   {
     path: "/insights",
     title: "商圈洞察",
     label: "商圈洞察",
     icon: <BarChartOutlined />,
+    minPlan: "pro",
   },
   {
     path: "/evidence",
@@ -68,18 +81,19 @@ export const pages = [
     icon: <SafetyCertificateOutlined />,
   },
 ];
-// Internal planning. Admin-only: pricing assumptions and customer names must not be shown to a
-// reviewer or a customer, and the API enforces it.
-export const planPage = {
-  path: "/plan",
-  title: "商业规划",
-  label: "商业规划",
-  icon: <AccountBookOutlined />,
+
+// The customer's upgrade entry. Visible to everyone: a customer must be able to see what a paid
+// plan would unlock before deciding anything.
+export const plansPage: NavPage = {
+  path: "/plans",
+  title: "套餐与升级",
+  label: "套餐与升级",
+  icon: <CrownOutlined />,
 };
 
 // Internal operations. Not a public page: shown only to a reviewer/admin, and its endpoints
 // are server-side role-checked regardless of what the navigation renders.
-export const consolePage = {
+export const consolePage: NavPage = {
   path: "/review",
   title: "审核台",
   label: "审核台",
@@ -94,9 +108,12 @@ export default function PlatformLayout({
   const { dataset, filters, go, importData, resetData, dataMode, reloadData } =
     usePlatform();
   const { identity } = useIdentity();
-  const navPages = [
+  const { plan, canUse, label } = useEntitlements();
+  // Paid workflow stays visible but locked: a customer must be able to see what exists and what
+  // an upgrade would unlock. The lock is product communication, not enforcement.
+  const navPages: NavPage[] = [
     ...pages,
-    ...(isAdmin(identity) ? [planPage] : []),
+    plansPage,
     ...(canReview(identity) ? [consolePage] : []),
   ];
   const page = navPages.find((p) => p.path === location.pathname);
@@ -115,23 +132,31 @@ export default function PlatformLayout({
         </div>
         <div className="nav-section">工作空间</div>
         <nav>
-          {navPages.map((p) => (
-            <button
-              key={p.path}
-              className={
-                "nav-item " + (p.path === location.pathname ? "active" : "")
-              }
-              onClick={() => go(p.path)}
-            >
-              {p.icon}
-              <span>{p.label}</span>
-            </button>
-          ))}
+          {navPages.map((p) => {
+            const locked = p.minPlan ? !canUse(p.minPlan) : false;
+            return (
+              <button
+                key={p.path}
+                className={
+                  "nav-item " + (p.path === location.pathname ? "active" : "")
+                }
+                onClick={() => go(p.path)}
+                title={locked ? `需要${PLAN_LABELS[p.minPlan as PlanId]}` : undefined}
+              >
+                {p.icon}
+                <span>{p.label}</span>
+                {locked && <LockOutlined className="nav-lock" />}
+              </button>
+            );
+          })}
         </nav>
         <div className="sidebar-foot">
           <Tag color="cyan">ENT303TC · 第 14 组</Tag>
           <p>苏州 · 城市活动知识图谱</p>
           <small>V1.3 / 采集管线原型</small>
+          <div className="gap-top">
+            <Tag color={plan === "free" ? "default" : "gold"}>当前:{label}</Tag>
+          </div>
         </div>
       </aside>
       <div className="workspace">

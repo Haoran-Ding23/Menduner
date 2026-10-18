@@ -1,4 +1,4 @@
-import hashlib
+﻿import hashlib
 import json
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
@@ -7,7 +7,6 @@ from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from pydantic import BaseModel, Field
 from backend import auth
 from backend import bulk_review
-from backend import business_plan
 from backend import client_errors
 from backend.amap import amap_place_url
 from backend import venues as venue_store
@@ -99,15 +98,6 @@ class CheckEventRequest(BaseModel):
     event_id: str = Field(min_length=1)
     reviewer: str = Field(min_length=1, max_length=80)
 
-
-class BusinessPlanRequest(BaseModel):
-    """The whole business-plan document: pricing assumptions, costs, pilot pipeline, milestones.
-
-    Deliberately an opaque object with a size limit (enforced in backend/business_plan.py): the
-    planning fields change faster than a schema would, and the panel is the only writer.
-    """
-
-    document: dict
 
 
 def reproject_event(db_path: Path, event_id: str) -> None:
@@ -245,32 +235,6 @@ def create_app(db_path: Path | None = None):
         without a login), and this endpoint must not become a second login wall.
         """
         return auth.identity(request)
-
-    @app.get('/plan')
-    def read_business_plan(principal: str = Depends(auth.require_role(auth.ROLE_ADMIN))):
-        """The internal business plan (pricing, costs, pipeline, milestones).
-
-        Admin-only: it contains price assumptions and customer names, and none of that may be
-        served to a customer account. No document yet returns document=None so the panel can
-        show its defaults instead of an empty page.
-        """
-        with connect(path) as con:
-            return business_plan.load(con)
-
-    @app.put('/plan')
-    def write_business_plan(body: BusinessPlanRequest,
-                            principal: str = Depends(auth.require_role(auth.ROLE_ADMIN))):
-        """Replace the whole plan document. The writer is recorded, not just the time."""
-        try:
-            with connect(path) as con:
-                return business_plan.save(
-                    con,
-                    body.document,
-                    updated_by=principal,
-                    now=datetime.now(timezone.utc).isoformat(),
-                )
-        except ValueError as exc:
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @app.get('/review')
     def review_queue(principal: str = Depends(auth.require_role(auth.ROLE_REVIEWER))):

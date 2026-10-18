@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Button,
   Select,
@@ -12,6 +12,7 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import { usePlatform } from "../../hooks/usePlatform";
+import { useEntitlements } from "../../hooks/useEntitlements";
 import {
   distanceKm,
   overlaps,
@@ -59,6 +60,9 @@ function tierOptions(
 
 export default function HotelIntelligence() {
   const { dataset, filters, params, update } = usePlatform();
+  // 专业版盯一家酒店,企业版管理多家:套餐决定这里能选几家(演示版套餐在本机切换)。
+  const { plan } = useEntitlements();
+  const singleHotel = plan === "pro";
   const [portfolio, setPortfolio] = useState<string[] | null>(null);
   const owned = dataset.hotels.filter(
     (h) => portfolio === null || portfolio.includes(h.id),
@@ -67,7 +71,12 @@ export default function HotelIntelligence() {
   const [radius, setRadius] = useState(10);
   const [custom, setCustom] = useState<[string, string] | null>(null);
   const range = custom ?? monthRange(filters.year, filters.month);
-  const hotel = owned.find((h) => h.id === hotelId) ?? owned[0];
+  // 专业版:当前酒店下拉列出全部酒店,选中即把"组合"收敛为它;企业版沿用多选组合。
+  const selectable = singleHotel ? dataset.hotels : owned;
+  const hotel = selectable.find((h) => h.id === hotelId) ?? selectable[0];
+  useEffect(() => {
+    if (singleHotel && hotel) setPortfolio([hotel.id]);
+  }, [singleHotel, hotel]);
   const dated = dataset.events.filter(
     (e) =>
       (filters.includeDemo || !e.demo) &&
@@ -107,15 +116,21 @@ export default function HotelIntelligence() {
         <div className="field-grid">
           <label>
             <small>酒店组合</small>
-            <Select
-              aria-label="酒店组合"
-              mode="multiple"
-              maxTagCount="responsive"
-              style={{ width: "100%" }}
-              value={portfolio ?? dataset.hotels.map((h) => h.id)}
-              options={tierOptions(dataset.hotels)}
-              onChange={setPortfolio}
-            />
+            {singleHotel ? (
+              <div className="muted" style={{ paddingTop: 6 }}>
+                专业版聚焦一家酒店;多店组合对比属于企业版(可在「套餐与升级」解锁)。
+              </div>
+            ) : (
+              <Select
+                aria-label="酒店组合"
+                mode="multiple"
+                maxTagCount="responsive"
+                style={{ width: "100%" }}
+                value={portfolio ?? dataset.hotels.map((h) => h.id)}
+                options={tierOptions(dataset.hotels)}
+                onChange={setPortfolio}
+              />
+            )}
           </label>
           <label>
             <small>当前酒店</small>
@@ -123,7 +138,7 @@ export default function HotelIntelligence() {
               aria-label="酒店"
               style={{ width: "100%" }}
               value={hotel?.id}
-              options={owned.map((h) => ({
+              options={selectable.map((h) => ({
                 label: h.tierLabel ? `${h.tierLabel} · ${h.name}` : h.name,
                 value: h.id,
               }))}
@@ -156,38 +171,44 @@ export default function HotelIntelligence() {
           </label>
         </div>
         <Space wrap size={8} className="gap-top">
-          <Button
-            size="small"
-            onClick={() => setPortfolio(dataset.hotels.map((h) => h.id))}
-          >
-            全选 {dataset.hotels.length} 家
-          </Button>
-          <Button size="small" onClick={() => setPortfolio([])}>
-            清空
-          </Button>
-          {(["high", "mid", "comfort"] as const).map((tier) => {
-            const ids = dataset.hotels.filter((h) => h.tier === tier).map((h) => h.id);
-            if (!ids.length) return null;
-            return (
+          {!singleHotel && (
+            <>
               <Button
-                key={tier}
                 size="small"
-                onClick={() =>
-                  setPortfolio((prev) => {
-                    const current = prev ?? dataset.hotels.map((h) => h.id);
-                    const all = ids.every((id) => current.includes(id));
-                    return all
-                      ? current.filter((id) => !ids.includes(id))
-                      : [...new Set([...current, ...ids])];
-                  })
-                }
+                onClick={() => setPortfolio(dataset.hotels.map((h) => h.id))}
               >
-                只选{TierLabel[tier]}（{ids.length}）
+                全选 {dataset.hotels.length} 家
               </Button>
-            );
-          })}
+              <Button size="small" onClick={() => setPortfolio([])}>
+                清空
+              </Button>
+              {(["high", "mid", "comfort"] as const).map((tier) => {
+                const ids = dataset.hotels.filter((h) => h.tier === tier).map((h) => h.id);
+                if (!ids.length) return null;
+                return (
+                  <Button
+                    key={tier}
+                    size="small"
+                    onClick={() =>
+                      setPortfolio((prev) => {
+                        const current = prev ?? dataset.hotels.map((h) => h.id);
+                        const all = ids.every((id) => current.includes(id));
+                        return all
+                          ? current.filter((id) => !ids.includes(id))
+                          : [...new Set([...current, ...ids])];
+                      })
+                    }
+                  >
+                    只选{TierLabel[tier]}（{ids.length}）
+                  </Button>
+                );
+              })}
+            </>
+          )}
           <small className="muted">
-            已选 {hotel ? owned.length : 0} 家 · 共 {dataset.hotels.length} 家
+            {singleHotel
+              ? `专业版 · 当前 1 家酒店 · 共 ${dataset.hotels.length} 家可选`
+              : `已选 ${hotel ? owned.length : 0} 家 · 共 ${dataset.hotels.length} 家`}
           </small>
         </Space>
       </section>
