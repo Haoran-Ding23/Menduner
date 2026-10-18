@@ -1,5 +1,5 @@
 import { sampleDataset } from "../src/services/repository";
-import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import {
   render,
   screen,
@@ -10,6 +10,7 @@ import {
 import { MemoryRouter } from "react-router-dom";
 import { PlatformProvider } from "../src/hooks/usePlatform";
 import App from "../src/App";
+import { ENTERPRISE_ACCOUNT } from "./fixtures";
 vi.mock("@amap/amap-jsapi-loader", () => ({
   default: { load: vi.fn().mockRejectedValue(new Error("offline")) },
 }));
@@ -21,28 +22,14 @@ vi.mock("echarts", () => ({
     dispose: vi.fn(),
   }),
 }));
-afterEach(() => {
-  cleanup();
-  try {
-    window.localStorage.removeItem("menduner.plan");
-  } catch {
-    /* storage unavailable */
-  }
-});
-// These pages exercise the PAID workflow (hotel intelligence / district insights), so the demo
-// entitlement is seeded before each mount; tests/plans.test.tsx covers the locked state.
-beforeEach(() => {
-  try {
-    window.localStorage.setItem("menduner.plan", "enterprise");
-  } catch {
-    /* storage unavailable */
-  }
-});
+afterEach(cleanup);
 function mount(path: string) {
   return render(
     <MemoryRouter initialEntries={[path]}>
       <PlatformProvider initialDataset={sampleDataset}>
-        <App />
+        {/* These pages exercise the PAID workflow (hotel intelligence / district insights), so the
+            active enterprise account is seeded; tests/plans.test.tsx covers the locked states. */}
+        <App initialAccount={ENTERPRISE_ACCOUNT} />
       </PlatformProvider>
     </MemoryRouter>,
   );
@@ -56,6 +43,8 @@ describe("Integrated platform routes and interactions", () => {
     ["insights", "商圈洞察"],
     ["evidence", "数据质量与来源"],
     ["plans", "套餐与升级"],
+    ["login", "登录"],
+    ["register", "注册"],
   ])
     it(`loads /${route} using shared layout`, async () => {
       mount("/" + route);

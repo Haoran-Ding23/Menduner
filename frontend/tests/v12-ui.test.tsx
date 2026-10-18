@@ -1,9 +1,10 @@
 import { sampleDataset } from "../src/services/repository";
-import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { PlatformProvider } from "../src/hooks/usePlatform";
 import App from "../src/App";
+import { ENTERPRISE_ACCOUNT } from "./fixtures";
 vi.mock("@amap/amap-jsapi-loader", () => ({
   default: { load: vi.fn().mockRejectedValue(new Error("offline")) },
 }));
@@ -15,28 +16,13 @@ vi.mock("echarts", () => ({
     dispose: vi.fn(),
   }),
 }));
-afterEach(() => {
-  cleanup();
-  try {
-    window.localStorage.removeItem("menduner.plan");
-  } catch {
-    /* storage unavailable */
-  }
-});
-// These pages exercise the PAID workflow (hotel intelligence / district insights), so the demo
-// entitlement is seeded before each mount; tests/plans.test.tsx covers the locked state.
-beforeEach(() => {
-  try {
-    window.localStorage.setItem("menduner.plan", "enterprise");
-  } catch {
-    /* storage unavailable */
-  }
-});
+afterEach(cleanup);
 const mount = (path: string) =>
   render(
     <MemoryRouter initialEntries={[path]}>
       <PlatformProvider initialDataset={sampleDataset}>
-        <App />
+        {/* Active enterprise account: these pages exercise the paid hotel/insight workflow. */}
+        <App initialAccount={ENTERPRISE_ACCOUNT} />
       </PlatformProvider>
     </MemoryRouter>,
   );

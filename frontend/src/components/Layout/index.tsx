@@ -19,7 +19,7 @@ import {
 } from "@ant-design/icons";
 import { usePlatform } from "../../hooks/usePlatform";
 import { canReview, useIdentity } from "../../hooks/useIdentity";
-import { useEntitlements } from "../../hooks/useEntitlements";
+import { useAccount, useEntitlements } from "../../hooks/useEntitlements";
 import { PLAN_LABELS, type PlanId } from "../../services/plans";
 export interface NavPage {
   path: string;
@@ -109,6 +109,7 @@ export default function PlatformLayout({
     usePlatform();
   const { identity } = useIdentity();
   const { plan, canUse, label } = useEntitlements();
+  const { state: accountState } = useAccount();
   // Paid workflow stays visible but locked: a customer must be able to see what exists and what
   // an upgrade would unlock. The lock is product communication, not enforcement.
   const navPages: NavPage[] = [
@@ -155,7 +156,15 @@ export default function PlatformLayout({
           <p>苏州 · 城市活动知识图谱</p>
           <small>V1.3 / 采集管线原型</small>
           <div className="gap-top">
-            <Tag color={plan === "free" ? "default" : "gold"}>当前:{label}</Tag>
+            {accountState.authenticated ? (
+              <Tag color={plan === "free" ? "default" : "gold"}>
+                {accountState.account?.login} · {label}
+              </Tag>
+            ) : (
+              <Button size="small" onClick={() => go("/login")}>
+                登录 / 注册
+              </Button>
+            )}
           </div>
         </div>
       </aside>

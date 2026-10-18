@@ -181,7 +181,7 @@ msedge --headless=new --no-pdf-header-footer \
 | **P1a(试点)** | 第 1 期按 **2026-10-19 当周** 起,手动出 4 期周报(PDF+Excel);第 2 期起比较变化;记录 §1 五项指标。**阻塞:试点酒店未定** | 试点反馈 + 付费意愿信号 |
 | **P1b** | 变化日志(状态机见 §5)+ 关注清单 + 周报导出 | 可卖的专业版工作流 |
 | **P2** | 用户表 / 套餐开关 / 用量记录 | 正式开通与计费基础 |
-| 客户侧 | **套餐与升级页** `/plans`:三档套餐、能力对照、锁定功能升级/解锁(演示版,支付未接入) | 见 [PLANS_AND_UPGRADE.md](PLANS_AND_UPGRADE.md) |
+| 客户侧 | **套餐与升级页** `/plans` + **客户账号** `/login` `/register`:邀请码试用四周、对公转账开通、服务端按日期判定套餐 | 见 [PLANS_AND_UPGRADE.md](PLANS_AND_UPGRADE.md) / [ACCOUNTS_AND_ACTIVATION.md](ACCOUNTS_AND_ACTIVATION.md) |
 | **P3(暂缓)** | 租户隔离 + 企业私有数据 + API | 企业版前提 |
 
 ## 9. 现在不建议做的

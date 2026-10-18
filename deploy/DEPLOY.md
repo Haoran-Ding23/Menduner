@@ -1,4 +1,4 @@
-﻿# 部署手册（阿里云轻量应用服务器 / Ubuntu）
+# 部署手册（阿里云轻量应用服务器 / Ubuntu）
 
 面向：**1 台 2核2G 轻量应用服务器 + Ubuntu 22.04/24.04**，用 IP 直接访问，不买域名、不备案。
 
@@ -310,12 +310,21 @@ sudo systemctl restart menduner-backend   # 角色文件按请求读取,重启�
 - **内部读接口也按角色校验**(匿名 401、viewer 403):`GET /review`、`GET /review/{id}`、
   `GET /client-errors`、`GET /crawl/runs`、`/venues/duplicates`、`/venues/coordinates/needed`、
   `/venues/edits`。公开读保持开放:`/dataset`、`/evidence`、`/venues`、`/crawl/health`、`/auth/me`。
+- **客户账号接口 `POST /api/account/*` 不走 Basic**:客户没有运营账号,由后端会话 Cookie
+  认证(Set-Cookie HttpOnly/SameSite=Lax),登录失败在服务端限流;`GET /api/account` 读取当前
+  账户与套餐。`/api/admin/*`(邀请码/客户/订单)则始终要求 Basic 且只放行 admin。
+- 客户相关表在启动时自动创建:`customer_accounts`、`customer_sessions`、`invite_codes`、
+  `customer_orders`。开通流程与安全边界见 `docs/ACCOUNTS_AND_ACTIVATION.md`。
 - 自检:
 
 ```bash
 curl -o /dev/null -w '%{http_code}\n' http://127.0.0.1/api/review                    # 401(匿名)
 curl -o /dev/null -w '%{http_code}\n' -u liuge:'<口令>' http://127.0.0.1/api/review  # 200
 curl -o /dev/null -w '%{http_code}\n' http://127.0.0.1/api/client-errors             # 401(匿名)
+curl -o /dev/null -w '%{http_code}\n' -X POST -H 'Content-Type: application/json' \
+  -d '{"invite_code":"MND-0000-0000","login":"probe","password":"12345678","name":"探针"}' \
+  http://127.0.0.1/api/account/register                                              # 400(不是 401)
+curl -s -D - -o /dev/null http://127.0.0.1/api/admin/accounts | head -5              # 401 + WWW-Authenticate
 ```
 
 ---

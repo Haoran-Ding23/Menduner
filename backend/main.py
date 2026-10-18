@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from pydantic import BaseModel, Field
+from backend import accounts
 from backend import auth
 from backend import bulk_review
 from backend import client_errors
@@ -97,6 +98,82 @@ class CheckEventRequest(BaseModel):
 
     event_id: str = Field(min_length=1)
     reviewer: str = Field(min_length=1, max_length=80)
+
+
+class RegisterRequest(BaseModel):
+    """A customer self-registration; the invite code is what authorises the trial."""
+
+    invite_code: str = Field(min_length=1, max_length=40)
+    login: str = Field(min_length=1, max_length=32)
+    password: str = Field(min_length=1, max_length=200)
+    name: str = Field(min_length=1, max_length=40)
+    hotel: str | None = Field(default=None, max_length=80)
+
+
+class LoginRequest(BaseModel):
+    login: str = Field(min_length=1, max_length=40)
+    password: str = Field(min_length=1, max_length=200)
+
+
+class OrderRequest(BaseModel):
+    """A payment request for the offline (对公转账) flow. The amount is computed server-side."""
+
+    plan: str = Field(min_length=2, max_length=20)
+    months: int = Field(ge=1, le=36)
+    note: str | None = Field(default=None, max_length=200)
+
+
+class InviteRequest(BaseModel):
+    plan: str = Field(default="pro", min_length=2, max_length=20)
+    trial_days: int = Field(default=28, ge=1, le=365)
+    max_uses: int = Field(default=1, ge=1, le=100)
+    expires_in_days: int | None = Field(default=30, ge=1, le=365)
+    note: str | None = Field(default=None, max_length=200)
+
+
+def _client_ip(request: Request) -> str | None:
+    """The nginx-forwarded client address (falls back to the direct peer)."""
+    return request.headers.get('x-real-ip') or (request.client.host if request.client else None)
+
+
+def _session_token(request: Request) -> str | None:
+    return request.cookies.get(accounts.SESSION_COOKIE)
+
+
+def _public_order(row: dict) -> dict:
+    return {
+        'id': row['id'],
+        'plan': row['plan'],
+        'months': row['months'],
+        'amountCny': row['amount_cny'],
+        'note': row.get('note'),
+        'status': row['status'],
+        'createdAt': row['created_at'],
+        'confirmedAt': row.get('confirmed_at'),
+    }
+
+
+def _admin_order(row: dict) -> dict:
+    return {
+        **_public_order(row),
+        'confirmedBy': row.get('confirmed_by'),
+        'accountLogin': row.get('account_login'),
+        'accountName': row.get('account_name'),
+        'accountHotel': row.get('account_hotel'),
+    }
+
+
+def _account_state(con, request: Request, token: str | None = None) -> dict:
+    """The customer's own view: who they are, the plan derived from their dates, their orders."""
+    account = accounts.session_account(con, token or _session_token(request))
+    if account is None:
+        return {'authenticated': False, 'account': None, 'orders': []}
+    rows = accounts.list_orders(con, account_id=account['id'])
+    return {
+        'authenticated': True,
+        'account': accounts.public_account(account),
+        'orders': [_public_order(row) for row in rows],
+    }
 
 
 
@@ -235,6 +312,136 @@ def create_app(db_path: Path | None = None):
         without a login), and this endpoint must not become a second login wall.
         """
         return auth.identity(request)
+
+    # --- customer accounts: the product side (session cookie, no HTTP Basic) -----------------
+    # nginx must not challenge these with Basic (customers do not have operator credentials);
+    # they authenticate themselves with the session cookie and the backend rate-limits logins.
+    @app.post('/account/register')
+    def customer_register(body: RegisterRequest, request: Request, response: Response):
+        """Redeem an invite code, create the account on a trial, and sign in."""
+        with connect(path) as con:
+            try:
+                account, token = accounts.register(
+                    con,
+                    invite_code=body.invite_code,
+                    login=body.login,
+                    password=body.password,
+                    name=body.name,
+                    hotel=body.hotel,
+                    remote=_client_ip(request),
+                )
+            except LookupError as exc:
+                raise HTTPException(status_code=400, detail=str(exc)) from exc
+            except ValueError as exc:
+                detail = str(exc)
+                status = 409 if '已被使用' in detail else 400
+                raise HTTPException(status_code=status, detail=detail) from exc
+            response.set_cookie(
+                accounts.SESSION_COOKIE, token, httponly=True, samesite='lax',
+                max_age=accounts.SESSION_DAYS * 86400, path='/',
+            )
+            return _account_state(con, request, token)
+
+    @app.post('/account/login')
+    def customer_login(body: LoginRequest, request: Request, response: Response):
+        with connect(path) as con:
+            try:
+                account = accounts.authenticate(
+                    con, login=body.login, password=body.password, remote=_client_ip(request)
+                )
+            except PermissionError as exc:
+                raise HTTPException(status_code=401, detail=str(exc)) from exc
+            token = accounts.create_session(con, account['id'])
+            response.set_cookie(
+                accounts.SESSION_COOKIE, token, httponly=True, samesite='lax',
+                max_age=accounts.SESSION_DAYS * 86400, path='/',
+            )
+            return _account_state(con, request, token)
+
+    @app.post('/account/logout')
+    def customer_logout(request: Request, response: Response):
+        with connect(path) as con:
+            accounts.delete_session(con, _session_token(request))
+        response.delete_cookie(accounts.SESSION_COOKIE, path='/')
+        return {'authenticated': False, 'account': None, 'orders': []}
+
+    @app.get('/account')
+    def customer_account(request: Request):
+        """Who the customer is and which plan their dates currently grant (never raises)."""
+        with connect(path) as con:
+            return _account_state(con, request)
+
+    @app.post('/account/orders')
+    def customer_order(body: OrderRequest, request: Request):
+        """File an offline payment request. Nothing is unlocked until an operator confirms it."""
+        with connect(path) as con:
+            account = accounts.session_account(con, _session_token(request))
+            if account is None:
+                raise HTTPException(status_code=401, detail='请先登录')
+            try:
+                order = accounts.request_order(
+                    con, account=account, plan=body.plan, months=body.months, note=body.note
+                )
+            except ValueError as exc:
+                raise HTTPException(status_code=400, detail=str(exc)) from exc
+            return {'order': _public_order(order), 'account': accounts.public_account(account)}
+
+    # --- operator side: invites, customers and the offline payment queue (HTTP Basic, admin) --
+    @app.post('/admin/invites')
+    def create_invite(body: InviteRequest,
+                      principal: str = Depends(auth.require_role(auth.ROLE_ADMIN))):
+        with connect(path) as con:
+            try:
+                invite = accounts.create_invite(
+                    con, plan=body.plan, trial_days=body.trial_days, max_uses=body.max_uses,
+                    note=body.note, created_by=principal, expires_in_days=body.expires_in_days,
+                )
+            except ValueError as exc:
+                raise HTTPException(status_code=400, detail=str(exc)) from exc
+            return {'invite': invite, 'invites': accounts.list_invites(con)}
+
+    @app.get('/admin/invites')
+    def admin_invites(principal: str = Depends(auth.require_role(auth.ROLE_ADMIN))):
+        with connect(path) as con:
+            return {'invites': accounts.list_invites(con)}
+
+    @app.get('/admin/accounts')
+    def admin_accounts(principal: str = Depends(auth.require_role(auth.ROLE_ADMIN))):
+        with connect(path) as con:
+            return {'accounts': accounts.list_accounts(con)}
+
+    @app.get('/admin/orders')
+    def admin_orders(status: str | None = None,
+                     principal: str = Depends(auth.require_role(auth.ROLE_ADMIN))):
+        with connect(path) as con:
+            rows = accounts.list_orders(con, status=status)
+            return {'orders': [_admin_order(row) for row in rows]}
+
+    @app.post('/admin/orders/{order_id}/confirm')
+    def admin_confirm_order(order_id: str,
+                            principal: str = Depends(auth.require_role(auth.ROLE_ADMIN))):
+        """Money arrived offline: extend the subscription by calendar months and open the plan."""
+        with connect(path) as con:
+            try:
+                result = accounts.confirm_order(con, order_id=order_id, confirmed_by=principal)
+            except LookupError as exc:
+                raise HTTPException(status_code=404, detail=str(exc)) from exc
+            except ValueError as exc:
+                raise HTTPException(status_code=409, detail=str(exc)) from exc
+            return {'order': _admin_order(result['order']),
+                    'account': accounts.public_account(result['account'])}
+
+    @app.post('/admin/orders/{order_id}/cancel')
+    def admin_cancel_order(order_id: str,
+                           principal: str = Depends(auth.require_role(auth.ROLE_ADMIN))):
+        with connect(path) as con:
+            try:
+                order = accounts.cancel_order(con, order_id=order_id)
+            except LookupError as exc:
+                raise HTTPException(status_code=404, detail=str(exc)) from exc
+            except ValueError as exc:
+                raise HTTPException(status_code=409, detail=str(exc)) from exc
+            return {'order': _public_order(order)}
 
     @app.get('/review')
     def review_queue(principal: str = Depends(auth.require_role(auth.ROLE_REVIEWER))):

@@ -5,8 +5,9 @@ import PlatformLayout from './components/Layout';
 import EventDetail from './components/EventDetail';
 import ErrorBoundary from './components/ErrorBoundary';
 import PlanGate from './components/PlanGate';
-import { EntitlementsProvider } from './hooks/useEntitlements';
+import { AccountProvider } from './hooks/useEntitlements';
 import { IdentityProvider } from './hooks/useIdentity';
+import type { AccountState } from './services/account';
 import { lazyWithReload } from './utils/lazyWithReload';
 // lazyWithReload, not lazy: a tab left open across a deploy holds an index.html naming the
 // previous chunk hashes, and importing a missing chunk killed the page. It reloads once to
@@ -20,6 +21,8 @@ const Hotels = lazyWithReload(() => import('./pages/HotelIntelligence'));
 const Insights = lazyWithReload(() => import('./pages/DistrictInsights'));
 const DataQuality = lazyWithReload(() => import('./pages/DataQuality'));
 const Plans = lazyWithReload(() => import('./pages/Plans'));
+const Login = lazyWithReload(() => import('./pages/Login'));
+const Register = lazyWithReload(() => import('./pages/Register'));
 const ReviewConsole = lazyWithReload(() => import('./pages/ReviewConsole'));
 
 /**
@@ -34,14 +37,14 @@ function Page({ name, children }: { name: string; children: React.ReactNode }) {
   return <ErrorBoundary where={name}>{children}</ErrorBoundary>;
 }
 
-export default function App() {
-  // Identity: the navigation hides internal tools from visitors and customer accounts.
-  // Entitlements: which paid workflow this browser has unlocked (demo switch, see the plans page).
-  // Neither is the enforcement point — backend/auth.py checks the role on every write; plan
-  // enforcement becomes server-side once customer accounts exist.
+export default function App({ initialAccount }: { initialAccount?: AccountState }) {
+  // Identity: the operator side (HTTP Basic) — hides the review console from visitors.
+  // Account: the customer side (session cookie) — decides which paid workflow is unlocked.
+  // Neither is the enforcement point for writes: backend/auth.py checks operator roles and
+  // backend/accounts.py derives the customer plan from the dates on every request.
   return (
     <IdentityProvider>
-      <EntitlementsProvider>
+      <AccountProvider initialState={initialAccount}>
         <PlatformLayout>
           <Suspense fallback={<div className="loading-page"><Spin size="large"/></div>}>
             <Routes>
@@ -55,6 +58,8 @@ export default function App() {
               <Route path="/insights" element={<Page name="商圈洞察"><PlanGate feature="insights"><Insights /></PlanGate></Page>}/>
               <Route path="/evidence" element={<Page name="数据质量与来源"><DataQuality /></Page>}/>
               <Route path="/plans" element={<Page name="套餐与升级"><Plans /></Page>}/>
+              <Route path="/login" element={<Page name="登录"><Login /></Page>}/>
+              <Route path="/register" element={<Page name="注册"><Register /></Page>}/>
               <Route path="/review" element={<Page name="审核台"><ReviewConsole /></Page>}/>
               <Route path="*" element={<Navigate to="/map" replace/>}/>
             </Routes>
@@ -64,7 +69,7 @@ export default function App() {
             <EventDetail />
           </ErrorBoundary>
         </PlatformLayout>
-      </EntitlementsProvider>
+      </AccountProvider>
     </IdentityProvider>
   );
 }

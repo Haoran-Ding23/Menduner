@@ -7,9 +7,9 @@
  * management, later the weekly report and change alerts), because locking public data would
  * destroy the reason anyone trusts the product in the first place.
  *
- * Entitlements are a prototype: there is no customer account or payment integration yet, so the
- * current plan is a local demo switch (see hooks/useEntitlements.tsx). The plans page says so
- * explicitly instead of pretending a purchase happened.
+ * Entitlements come from the customer's account (see hooks/useEntitlements.tsx and
+ * backend/accounts.py): an invite code starts a trial, and a paid period starts only after an
+ * operator confirms the offline payment order.
  */
 export type PlanId = "free" | "pro" | "enterprise";
 
@@ -155,25 +155,4 @@ export function planAtLeast(current: PlanId, required: PlanId): boolean {
 /** Features a plan unlocks, for the plan cards. */
 export function unlockedFeatures(plan: PlanId): FeatureRow[] {
   return FEATURES.filter((row) => planAtLeast(plan, row.minimum));
-}
-
-export const PLAN_STORAGE_KEY = "menduner.plan";
-
-export function readStoredPlan(): PlanId {
-  try {
-    const stored = window.localStorage.getItem(PLAN_STORAGE_KEY);
-    if (stored === "pro" || stored === "enterprise") return stored;
-  } catch {
-    /* storage unavailable (private mode): the free plan is the floor */
-  }
-  return "free";
-}
-
-export function storePlan(plan: PlanId): void {
-  try {
-    if (plan === "free") window.localStorage.removeItem(PLAN_STORAGE_KEY);
-    else window.localStorage.setItem(PLAN_STORAGE_KEY, plan);
-  } catch {
-    /* storage unavailable: the switch only lasts this session */
-  }
 }

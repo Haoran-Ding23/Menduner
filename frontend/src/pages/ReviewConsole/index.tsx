@@ -15,6 +15,7 @@ import {
 } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
 import { canReview, useIdentity } from "../../hooks/useIdentity";
+import CustomerAdmin from "../../components/CustomerAdmin";
 import {
   clearReview,
   checkWholeEvent,
@@ -315,6 +316,7 @@ export default function ReviewConsole() {
           />
         )}
       </section>
+      {identity.role === "admin" && <CustomerAdmin />}
       <VenueMaintenance
         reviewer={reviewer}
         onChanged={async () => {

@@ -1,68 +1,121 @@
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
-  PLAN_LABELS,
-  PLAN_RANK,
-  featureById,
-  planAtLeast,
-  readStoredPlan,
-  storePlan,
-  type FeatureId,
-  type PlanId,
-} from "../services/plans";
+  ANONYMOUS_ACCOUNT,
+  loadAccount,
+  loginAccount,
+  logoutAccount,
+  registerAccount,
+  type AccountState,
+  type RegisterPayload,
+} from "../services/account";
+import { PLAN_LABELS, featureById, planAtLeast, type FeatureId, type PlanId } from "../services/plans";
 
 /**
- * Which plan this browser is on.
+ * The customer account and the plan derived from it.
  *
- * There is no customer account or payment integration yet, so this is a DEMO entitlement: the
- * current plan lives in localStorage and the plans page offers an explicitly-labelled "演示解锁"
- * switch. It exists so the gated product can be demonstrated end to end; it is not a permission
- * boundary and must never be described as one. When customers exist, this becomes the plan field
- * of their account, checked by the server on the same feature ids.
+ * The effective plan comes from the server (backend/accounts.py derives it from the trial and
+ * subscription dates on every request), so an expired trial locks the paid workflow without any
+ * client cooperation. Anonymous visitors are `free`.
+ *
+ * The old localStorage "demo unlock" is gone: a plan now requires a real account, and a paid
+ * period requires an operator to confirm the offline payment.
  */
-interface EntitlementsState {
-  plan: PlanId;
-  setPlan: (plan: PlanId) => void;
-  has: (feature: FeatureId) => boolean;
-  canUse: (minimum: PlanId) => boolean;
-  label: string;
-  /** True while this is the local demo switch (always, until real billing exists). */
-  demo: boolean;
+interface AccountContextValue {
+  state: AccountState;
+  loading: boolean;
+  /** Set when the initial load failed (network), not for "not logged in". */
+  error: string;
+  refresh: () => Promise<void>;
+  login: (login: string, password: string) => Promise<void>;
+  register: (payload: RegisterPayload) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
-const EntitlementsContext = createContext<EntitlementsState | null>(null);
+const AccountContext = createContext<AccountContextValue | null>(null);
 
-export function EntitlementsProvider({
+export function AccountProvider({
   children,
-  initialPlan,
+  initialState,
 }: {
   children: React.ReactNode;
-  /** Tests seed a plan instead of touching localStorage. */
-  initialPlan?: PlanId;
+  /** Tests seed an account instead of calling the API. */
+  initialState?: AccountState;
 }) {
-  const [plan, setPlanState] = useState<PlanId>(() => initialPlan ?? readStoredPlan());
-  const value = useMemo<EntitlementsState>(
-    () => ({
-      plan,
-      setPlan: (next: PlanId) => {
-        storePlan(next);
-        setPlanState(next);
-      },
-      has: (feature: FeatureId) => planAtLeast(plan, featureById(feature).minimum),
-      canUse: (minimum: PlanId) => planAtLeast(plan, minimum),
-      label: PLAN_LABELS[plan],
-      demo: true,
-    }),
-    [plan],
+  const [state, setState] = useState<AccountState>(initialState ?? ANONYMOUS_ACCOUNT);
+  const [loading, setLoading] = useState(!initialState);
+  const [error, setError] = useState("");
+
+  const refresh = useCallback(async () => {
+    try {
+      setState(await loadAccount());
+      setError("");
+    } catch (loadError) {
+      // The site is usable without an account: a failed account load means anonymous, not broken.
+      setState(ANONYMOUS_ACCOUNT);
+      setError(loadError instanceof Error ? loadError.message : "账户状态读取失败");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!initialState) void refresh();
+  }, [initialState, refresh]);
+
+  const login = useCallback(async (loginName: string, password: string) => {
+    setState(await loginAccount(loginName, password));
+    setError("");
+  }, []);
+
+  const register = useCallback(async (payload: RegisterPayload) => {
+    setState(await registerAccount(payload));
+    setError("");
+  }, []);
+
+  const logout = useCallback(async () => {
+    try {
+      setState(await logoutAccount());
+    } finally {
+      setState(ANONYMOUS_ACCOUNT);
+    }
+  }, []);
+
+  const value = useMemo<AccountContextValue>(
+    () => ({ state, loading, error, refresh, login, register, logout }),
+    [state, loading, error, refresh, login, register, logout],
   );
-  return (
-    <EntitlementsContext.Provider value={value}>{children}</EntitlementsContext.Provider>
-  );
+  return <AccountContext.Provider value={value}>{children}</AccountContext.Provider>;
 }
 
-export function useEntitlements(): EntitlementsState {
-  const value = useContext(EntitlementsContext);
-  if (!value) throw new Error("Missing EntitlementsProvider");
+export function useAccount(): AccountContextValue {
+  const value = useContext(AccountContext);
+  if (!value) throw new Error("Missing AccountProvider");
   return value;
 }
 
-export { PLAN_RANK };
+export interface Entitlements {
+  plan: PlanId;
+  authenticated: boolean;
+  label: string;
+  canUse: (minimum: PlanId) => boolean;
+  has: (feature: FeatureId) => boolean;
+  /** True when the account exists but has no paid period left (expired trial, cancelled). */
+  expired: boolean;
+}
+
+/** The plan-derived capability view used by the navigation, the gate and the hotel page. */
+export function useEntitlements(): Entitlements {
+  const { state } = useAccount();
+  const plan = state.account?.plan ?? "free";
+  return useMemo(
+    () => ({
+      plan,
+      authenticated: state.authenticated,
+      label: PLAN_LABELS[plan],
+      canUse: (minimum: PlanId) => planAtLeast(plan, minimum),
+      has: (feature: FeatureId) => planAtLeast(plan, featureById(feature).minimum),
+      expired: state.authenticated && plan === "free",
+    }),
+    [plan, state.authenticated],
+  );
+}
