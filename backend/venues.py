@@ -129,6 +129,67 @@ def resolve_chain(alias_id: str, alias_path: Path | None = None) -> str:
     return current
 
 
+def _served_claim_rows(con, *, event_id: str, field: str) -> list:
+    return con.execute(
+        "SELECT id, value, payload FROM evidence WHERE entity_id=? AND field=?",
+        (event_id, field),
+    ).fetchall()
+
+
+def _rewrite_served_claim(con, *, row_id: str, value, payload: dict | None = None) -> None:
+    """Write a served claim's value into BOTH the column and the payload.
+
+    ``snapshot()`` serves ``evidence.payload`` — the value column is a convenience for SQL.
+    Rewriting only the column (which is what the merge did until 2026-10-18) leaves the API
+    serving the deleted venue id, and every reader that cross-checks a claim against the event
+    it belongs to finds nothing: the event says the canonical venue, the claim still says the
+    one the merge removed.
+    """
+    if payload is None:
+        existing = con.execute(
+            "SELECT payload FROM evidence WHERE id=?", (row_id,)
+        ).fetchone()
+        try:
+            payload = json.loads(existing["payload"]) if existing and existing["payload"] else {}
+        except ValueError:
+            payload = {}
+    payload = dict(payload)
+    payload["value"] = value
+    con.execute(
+        "UPDATE evidence SET value=?, payload=? WHERE id=?",
+        (
+            json.dumps(value, ensure_ascii=False),
+            json.dumps(payload, ensure_ascii=False, sort_keys=True),
+            row_id,
+        ),
+    )
+
+
+def _latest_merge_undo(con, *, alias_id: str, canonical_id: str) -> dict | None:
+    """The restore data recorded by the merge that produced this alias, if any.
+
+    Merges made before the undo record existed have none, and an undo that silently returns
+    success without putting the data back is worse than refusing: it is the exact complaint
+    that produced this code.
+    """
+    rows = con.execute(
+        "SELECT detail FROM venue_edits WHERE venue_id=? AND kind='merge' "
+        "ORDER BY edited_at DESC",
+        (canonical_id,),
+    ).fetchall()
+    for row in rows:
+        try:
+            detail = json.loads(row["detail"])
+        except ValueError:
+            continue
+        if detail.get("alias_id") != alias_id:
+            continue
+        undo = detail.get("undo")
+        if isinstance(undo, dict):
+            return undo
+    return None
+
+
 def merge(db_path: Path, *, alias_id: str, canonical_id: str, reviewer: str,
           reason: str, evidence_url: str | None = None,
           alias_path: Path | None = None, revert: bool = False) -> dict:
@@ -163,6 +224,135 @@ def merge(db_path: Path, *, alias_id: str, canonical_id: str, reviewer: str,
             ]
             if len(kept) == len(document.get("aliases", [])):
                 raise ValueError("No such alias to revert")
+            undo = _latest_merge_undo(con, alias_id=alias_id, canonical_id=canonical_id)
+            if undo is None:
+                raise ValueError(
+                    f"{alias_id} → {canonical_id} 的这次合并没有留下可恢复的数据"
+                    "（撤销能力是 2026-10-18 才加的）。不能假装撤销成功："
+                    "请核对 crawler_raw_items / crawler_observations 后重建，"
+                    "或从数据库备份恢复。"
+                )
+            if con.execute("SELECT 1 FROM venues WHERE id=?", (canonical_id,)).fetchone() is None:
+                raise ValueError(
+                    f"合并目标 {canonical_id} 已不存在（可能又被合并），无法撤销"
+                )
+            if con.execute("SELECT 1 FROM venues WHERE id=?", (alias_id,)).fetchone() is not None:
+                raise ValueError(
+                    f"{alias_id} 已经存在一行场馆记录，撤销会覆盖真实数据；请先核对"
+                )
+            alias_payload = undo.get("alias_payload")
+            if not isinstance(alias_payload, dict) or not alias_payload.get("name"):
+                raise ValueError(
+                    f"这次合并没有记录 {alias_id} 被删除时的场馆行，无法恢复"
+                )
+            con.execute(
+                "INSERT INTO venues(id, payload) VALUES(?, ?)",
+                (alias_id, json.dumps(alias_payload, ensure_ascii=False, sort_keys=True)),
+            )
+            # The merge may have lent the survivor a field the alias row alone held (a
+            # coordinate, an address). Give it back only while the survivor still carries
+            # exactly that value: if it was refined afterwards, that later human edit wins.
+            carried = undo.get("carried")
+            carried_removed: list[str] = []
+            carried_kept: list[str] = []
+            if isinstance(carried, dict) and carried:
+                survivor_row = con.execute(
+                    "SELECT payload FROM venues WHERE id=?", (canonical_id,)
+                ).fetchone()
+                survivor_payload = json.loads(survivor_row["payload"])
+                for field, value in carried.items():
+                    if survivor_payload.get(field) == value:
+                        survivor_payload.pop(field, None)
+                        carried_removed.append(field)
+                    else:
+                        carried_kept.append(field)
+                con.execute(
+                    "UPDATE venues SET payload=? WHERE id=?",
+                    (
+                        json.dumps(survivor_payload, ensure_ascii=False, sort_keys=True),
+                        canonical_id,
+                    ),
+                )
+
+            restored_events = 0
+            for item in undo.get("events", []):
+                event_id = item.get("event_id")
+                if not event_id:
+                    continue
+                event_row = con.execute(
+                    "SELECT payload FROM events WHERE id=?", (event_id,)
+                ).fetchone()
+                if event_row is None:
+                    continue
+                payload = json.loads(event_row["payload"])
+                payload["venueId"] = alias_id
+                con.execute(
+                    "UPDATE events SET venue=?, payload=? WHERE id=?",
+                    (
+                        alias_id,
+                        json.dumps(payload, ensure_ascii=False, sort_keys=True),
+                        event_id,
+                    ),
+                )
+                con.execute(
+                    "UPDATE crawler_unified_events SET normalized_json=? WHERE event_id=?",
+                    (json.dumps(payload, ensure_ascii=False, sort_keys=True), event_id),
+                )
+                claim = item.get("stored_claim") or {}
+                if "value_before" in claim:
+                    con.execute(
+                        "UPDATE crawler_evidence SET value=? "
+                        "WHERE event_id=? AND field_name='venue_id'",
+                        (claim["value_before"], event_id),
+                    )
+                served = item.get("served_claim") or {}
+                if served.get("id"):
+                    previous = served.get("payload")
+                    _rewrite_served_claim(
+                        con,
+                        row_id=served["id"],
+                        value=json.loads(served["value"]) if served.get("value") else None,
+                        payload=json.loads(previous) if isinstance(previous, str) else None,
+                    )
+                decision_id = item.get("decision_id")
+                if decision_id:
+                    con.execute(
+                        "DELETE FROM review_decisions WHERE id=?", (decision_id,)
+                    )
+                restored_events += 1
+
+            restored_observations = 0
+            for item in undo.get("observations", []):
+                source_id = item.get("source_id")
+                item_key = item.get("item_key")
+                if not source_id or not item_key:
+                    continue
+                row = con.execute(
+                    "SELECT normalized_json FROM crawler_observations "
+                    "WHERE source_id=? AND item_key=?",
+                    (source_id, item_key),
+                ).fetchone()
+                if row is None:
+                    continue
+                try:
+                    document_row = json.loads(row["normalized_json"])
+                except ValueError:
+                    continue
+                if document_row.get("venue_id") != canonical_id:
+                    # Rewritten again since the merge; do not clobber a later decision.
+                    continue
+                document_row["venue_id"] = alias_id
+                con.execute(
+                    "UPDATE crawler_observations SET normalized_json=? "
+                    "WHERE source_id=? AND item_key=?",
+                    (
+                        json.dumps(document_row, ensure_ascii=False, sort_keys=True),
+                        source_id,
+                        item_key,
+                    ),
+                )
+                restored_observations += 1
+
             document["aliases"] = kept
             alias_path.write_text(
                 json.dumps(document, ensure_ascii=False, indent=2) + "\n",
@@ -173,12 +363,27 @@ def merge(db_path: Path, *, alias_id: str, canonical_id: str, reviewer: str,
                 con,
                 venue_id=alias_id,
                 kind="merge_reverted",
-                detail={"canonical_id": canonical_id},
+                detail={
+                    "canonical_id": canonical_id,
+                    "restored_events": restored_events,
+                    "restored_observations": restored_observations,
+                },
                 reviewer=reviewer,
                 note=reason,
                 now=now,
             )
-            return {"reverted": True, "alias_id": alias_id, "canonical_id": canonical_id}
+            return {
+                "reverted": True,
+                "alias_id": alias_id,
+                "canonical_id": canonical_id,
+                "restored": {
+                    "venue": True,
+                    "carried_removed": carried_removed,
+                    "carried_kept": carried_kept,
+                    "events": restored_events,
+                    "observations": restored_observations,
+                },
+            }
 
         alias_name = (
             json.loads(alias_row["payload"]).get("name") if alias_row else alias_id
@@ -196,7 +401,7 @@ def merge(db_path: Path, *, alias_id: str, canonical_id: str, reviewer: str,
         #
         # Only a field the canonical row is missing is filled, the value is copied verbatim,
         # and nothing is derived, guessed or overwritten.
-        carried: list[str] = []
+        carried: dict[str, object] = {}
         if alias_row is not None:
             alias_payload = json.loads(alias_row["payload"])
             canonical_payload = json.loads(canonical_row["payload"])
@@ -204,7 +409,7 @@ def merge(db_path: Path, *, alias_id: str, canonical_id: str, reviewer: str,
             for field in ("coordinates", "address"):
                 if not canonical_payload.get(field) and alias_payload.get(field):
                     updated[field] = alias_payload[field]
-                    carried.append(field)
+                    carried[field] = alias_payload[field]
             if carried:
                 con.execute(
                     "UPDATE venues SET payload=? WHERE id=?",
@@ -229,9 +434,17 @@ def merge(db_path: Path, *, alias_id: str, canonical_id: str, reviewer: str,
         events = con.execute(
             "SELECT id, payload FROM events WHERE venue=?", (alias_id,)
         ).fetchall()
+        moved_events: list[dict] = []
         for event in events:
             payload = json.loads(event["payload"])
             payload["venueId"] = canonical_id
+            # Capture what a later undo has to put back, before anything is overwritten.
+            served_before = _served_claim_rows(con, event_id=event["id"], field="venueId")
+            stored_before = con.execute(
+                "SELECT value FROM crawler_evidence "
+                "WHERE event_id=? AND field_name='venue_id'",
+                (event["id"],),
+            ).fetchone()
             con.execute(
                 "UPDATE events SET venue=?, payload=? WHERE id=?",
                 (
@@ -260,15 +473,17 @@ def merge(db_path: Path, *, alias_id: str, canonical_id: str, reviewer: str,
                 "WHERE event_id=? AND field_name='venue_id'",
                 (json.dumps(canonical_id, ensure_ascii=False), event["id"]),
             )
-            con.execute(
-                "UPDATE evidence SET value=? "
-                "WHERE entity_id=? AND field='venueId' AND value=?",
-                (
-                    json.dumps(canonical_id, ensure_ascii=False),
-                    event["id"],
-                    json.dumps(alias_id, ensure_ascii=False),
-                ),
-            )
+            # ... and the served claim carries the value in its payload, which is what the API
+            # reads. Rewriting the column alone is the bug the reviewer found on 2026-10-18:
+            # the event pointed at the survivor while its evidence still named the row the
+            # merge had just deleted.
+            for served in served_before:
+                _rewrite_served_claim(
+                    con,
+                    row_id=served["id"],
+                    value=canonical_id,
+                    payload=json.loads(served["payload"]) if served["payload"] else {},
+                )
             # Read back after the rewrite so the recorded decision names the value the event
             # now carries; recording the superseded id would leave the audit trail pointing
             # at the venue this merge just removed.
@@ -276,7 +491,7 @@ def merge(db_path: Path, *, alias_id: str, canonical_id: str, reviewer: str,
                 "SELECT value FROM crawler_evidence WHERE event_id=? AND field_name='venue_id'",
                 (event["id"],),
             ).fetchone()
-            review.record(
+            recorded = review.record(
                 con,
                 event_id=event["id"],
                 field="venueId",
@@ -286,8 +501,27 @@ def merge(db_path: Path, *, alias_id: str, canonical_id: str, reviewer: str,
                 note=f"venue duplicate merged: {alias_name} -> {name}",
                 decided_at=now,
             )
+            moved_events.append(
+                {
+                    "event_id": event["id"],
+                    "stored_claim": {
+                        "value_before": stored_before["value"] if stored_before else None
+                    },
+                    "served_claim": (
+                        {
+                            "id": served_before[0]["id"],
+                            "value": served_before[0]["value"],
+                            "payload": served_before[0]["payload"],
+                        }
+                        if served_before
+                        else None
+                    ),
+                    "decision_id": recorded["id"],
+                }
+            )
 
         observations = 0
+        moved_observations: list[dict] = []
         for row in con.execute(
             "SELECT source_id, item_key, normalized_json FROM crawler_observations"
         ).fetchall():
@@ -306,6 +540,9 @@ def merge(db_path: Path, *, alias_id: str, canonical_id: str, reviewer: str,
                     row["source_id"],
                     row["item_key"],
                 ),
+            )
+            moved_observations.append(
+                {"source_id": row["source_id"], "item_key": row["item_key"]}
             )
             observations += 1
 
@@ -330,6 +567,14 @@ def merge(db_path: Path, *, alias_id: str, canonical_id: str, reviewer: str,
                 "events_moved": len(events),
                 "observations_moved": observations,
                 "evidence_url": evidence_url,
+                # Everything a revert needs. Without it "撤销成功" was a lie: the venue row,
+                # the event references and the claims stayed gone.
+                "undo": {
+                    "alias_payload": json.loads(alias_row["payload"]) if alias_row else None,
+                    "carried": carried,
+                    "events": moved_events,
+                    "observations": moved_observations,
+                },
             },
             reviewer=reviewer,
             note=reason,

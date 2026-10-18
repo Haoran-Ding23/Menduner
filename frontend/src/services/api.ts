@@ -278,6 +278,17 @@ export async function clearReview(
   if (!response.ok) throw new Error(`撤回失败 (${response.status})`);
 }
 
+/**
+ * How long a first load may take.
+ *
+ * The dataset is ~5 MB of JSON (~1.2 MB gzipped) and 87% of it is evidence rows. On a phone
+ * that was measured at 11 seconds, which the old 10-second abort turned into a failed page for
+ * a request that would have succeeded. The budget is deliberately generous: a slow first load
+ * is a better outcome than no page. Repeat loads are cheap — the endpoint sends an ETag and the
+ * browser revalidates to a 304 with no body (see `cache: "no-cache"` below).
+ */
+export const DATASET_TIMEOUT_MS = 45_000;
+
 export async function loadApiDataset(
   signal?: AbortSignal,
 ): Promise<ApiSnapshot> {
@@ -285,11 +296,13 @@ export async function loadApiDataset(
   const cancel = () => controller.abort();
   signal?.addEventListener("abort", cancel, { once: true });
   if (signal?.aborted) controller.abort();
-  const timer = setTimeout(() => controller.abort(), 10000);
+  const timer = setTimeout(() => controller.abort(), DATASET_TIMEOUT_MS);
   try {
     const response = await fetch("/api/dataset", {
       signal: controller.signal,
-      cache: "no-store",
+      // Revalidate with the ETag instead of always re-downloading: "no-store" made every page
+      // load fetch the whole snapshot again.
+      cache: "no-cache",
     });
     if (!response.ok) throw new Error(`API 请求失败 (${response.status})`);
     const body = await response.json();

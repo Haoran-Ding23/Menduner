@@ -1,13 +1,16 @@
+import hashlib
+import json
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from pydantic import BaseModel, Field
+from backend import auth
 from backend import bulk_review
 from backend import client_errors
 from backend.amap import amap_place_url
 from backend import venues as venue_store
-from backend.database import connect, database_path, initialize, snapshot
+from backend.database import connect, database_path, initialize, snapshot, snapshot_bytes
 from crawler import crawl_log, review
 
 
@@ -120,6 +123,45 @@ def reproject_event(db_path: Path, event_id: str) -> None:
         refresh_event(con, event_id, datetime.now(timezone.utc).isoformat(), meta)
 
 
+def stored_claim(db_path: Path, event_id: str, field: str) -> tuple[bool, object]:
+    """``(exists, value)`` of the claim a reviewer is judging, as the API serves it.
+
+    The served value lives in ``evidence.payload`` (``snapshot`` reads that, not the value
+    column), so that is what a decision has to be bound to. Binding it is the whole point of
+    the review table: a decision stands for the one value the reviewer saw.
+    """
+    with connect(db_path) as con:
+        row = con.execute(
+            "SELECT value, payload FROM evidence WHERE entity_id=? AND field=?",
+            (event_id, field),
+        ).fetchone()
+    if row is None:
+        return False, None
+    try:
+        payload = json.loads(row["payload"]) if row["payload"] else {}
+    except ValueError:
+        payload = {}
+    if "value" in payload:
+        return True, payload["value"]
+    try:
+        return True, json.loads(row["value"]) if row["value"] is not None else None
+    except ValueError:
+        return True, row["value"]
+
+
+def _etag_matches(header: str | None, etag: str) -> bool:
+    """Whether an If-None-Match header covers this ETag (weak prefixes and lists allowed)."""
+    if not header:
+        return False
+    for candidate in header.split(','):
+        candidate = candidate.strip()
+        if candidate.startswith('W/'):
+            candidate = candidate[2:]
+        if candidate == etag or candidate == '*':
+            return True
+    return False
+
+
 def create_app(db_path: Path | None = None):
     path = db_path or database_path()
 
@@ -132,9 +174,20 @@ def create_app(db_path: Path | None = None):
                   description='Local SQLite prototype. Field claims are verified only from official sources with deterministic extraction; everything else is queued for human review. No pricing or revenue prediction.')
 
     @app.get('/dataset')
-    def dataset():
-        """One read transaction keeps all six frontend pages on a consistent revision."""
-        return snapshot(path)
+    def dataset(request: Request):
+        """One read transaction keeps all six frontend pages on a consistent revision.
+
+        The body is ~5 MB, so it is served with a strong ETag: a returning browser revalidates
+        and gets a 304 with no body instead of re-downloading the whole snapshot. That is not a
+        micro-optimisation — the payload is 87% evidence rows, the link is often a phone, and a
+        10 s client timeout used to abort a first load on a slow one.
+        """
+        body = snapshot_bytes(path)
+        etag = '"' + hashlib.sha256(body).hexdigest()[:32] + '"'
+        headers = {'ETag': etag, 'Cache-Control': 'no-cache'}
+        if _etag_matches(request.headers.get('if-none-match'), etag):
+            return Response(status_code=304, headers=headers)
+        return Response(content=body, media_type='application/json', headers=headers)
 
     @app.get('/events')
     def events():
@@ -229,7 +282,7 @@ def create_app(db_path: Path | None = None):
             return client_errors.recent(con, limit=limit)
 
     @app.post('/review/event')
-    def check_whole_event(body: CheckEventRequest):
+    def check_whole_event(body: CheckEventRequest, principal: str = Depends(auth.principal)):
         """Settle every factual field of one event, and report what remains."""
         try:
             result = bulk_review.check_event(path, body.event_id, body.reviewer)
@@ -246,6 +299,7 @@ def create_app(db_path: Path | None = None):
             None,
         )
         result['venue_reference_status'] = row['status'] if row else None
+        result['authenticated_as'] = principal
         return result
 
     @app.get('/review/{event_id}')
@@ -254,8 +308,16 @@ def create_app(db_path: Path | None = None):
             return list(review.decisions_for(con, event_id).values())
 
     @app.post('/review')
-    def record_review(body: ReviewRequest):
-        """Record a human decision. A correction must carry a replacement value."""
+    def record_review(body: ReviewRequest, principal: str = Depends(auth.principal)):
+        """Record a human decision bound to the claim that was on screen.
+
+        A decision records the value the reviewer actually saw. If the request names a value
+        that is no longer the stored claim, the page was stale and the decision would bind to
+        something the reviewer never saw, so it is refused with 409 and the reviewer reloads.
+        Omitting the value is not an error: the binding is read from the stored claim. It used
+        to mean "no binding at all", which let one value-less approval keep verifying every
+        later value that appeared — a review that silently extends past what a human approved.
+        """
         if body.decision not in review.DECISIONS:
             raise HTTPException(
                 status_code=400,
@@ -267,13 +329,27 @@ def create_app(db_path: Path | None = None):
             )
         if body.event_id not in {e['id'] for e in snapshot(path)['events']}:
             raise HTTPException(status_code=404, detail='Event not found')
+        exists, current = stored_claim(path, body.event_id, body.field)
+        if not exists:
+            raise HTTPException(
+                status_code=404,
+                detail=f"活动 {body.event_id} 没有字段 {body.field} 的证据记录，无法审核",
+            )
+        if body.value is not None and review.normalized(body.value) != review.normalized(current):
+            raise HTTPException(
+                status_code=409,
+                detail=(
+                    f"字段 {body.field} 的证据已变化（当前值：{json.dumps(current, ensure_ascii=False)}）。"
+                    "请刷新后重新审核。"
+                ),
+            )
         with connect(path) as con:
             recorded = review.record(
                 con,
                 event_id=body.event_id,
                 field=body.field,
                 decision=body.decision,
-                reviewed_value=body.value,
+                reviewed_value=current,
                 corrected_value=body.corrected_value,
                 reviewer=body.reviewer,
                 note=body.note,
@@ -283,10 +359,12 @@ def create_app(db_path: Path | None = None):
         # because the served rows are stored, not computed. Without this the reviewer would
         # approve a field and see no change until the next crawl.
         reproject_event(path, body.event_id)
+        recorded['authenticated_as'] = principal
         return recorded
 
     @app.delete('/review/{event_id}/{field}')
-    def clear_review(event_id: str, field: str):
+    def clear_review(event_id: str, field: str,
+                     principal: str = Depends(auth.principal)):
         """Withdraw a decision, returning the field to the unreviewed queue."""
         with connect(path) as con:
             review.ensure_schema(con)
@@ -295,7 +373,7 @@ def create_app(db_path: Path | None = None):
                 (event_id, field),
             )
         reproject_event(path, event_id)
-        return {'removed': cur.rowcount}
+        return {'removed': cur.rowcount, 'authenticated_as': principal}
 
     @app.get('/venues/duplicates')
     def venue_duplicates():
@@ -312,7 +390,7 @@ def create_app(db_path: Path | None = None):
         return venue_store.venue_edits(path)
 
     @app.post('/venues/merge')
-    def merge_venues(body: MergeRequest):
+    def merge_venues(body: MergeRequest, principal: str = Depends(auth.principal)):
         """Collapse two venue rows, recording the reviewer and the reason."""
         try:
             result = venue_store.merge(
@@ -326,10 +404,12 @@ def create_app(db_path: Path | None = None):
             )
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
+        result['authenticated_as'] = principal
         return result
 
     @app.post('/venues/coordinates')
-    def set_venue_coordinates(body: CoordinatesRequest):
+    def set_venue_coordinates(body: CoordinatesRequest,
+                              principal: str = Depends(auth.principal)):
         """Record a human-checked coordinate. Bounds and provenance are enforced."""
         try:
             lng, lat = body.parsed()
@@ -337,7 +417,7 @@ def create_app(db_path: Path | None = None):
             # from: the AMap place URL is resolved from the coordinate itself. AMap's own web
             # UI has no stable per-place URL, so asking for one was pure friction.
             source_url = (body.source_url or '').strip() or amap_place_url(lng, lat)
-            return venue_store.set_coordinates(
+            result = venue_store.set_coordinates(
                 path,
                 venue_id=body.venue_id,
                 lng=lng,
@@ -348,6 +428,8 @@ def create_app(db_path: Path | None = None):
             )
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
+        result['authenticated_as'] = principal
+        return result
 
     return app
 

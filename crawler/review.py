@@ -140,7 +140,14 @@ def resolve(decision: dict, current_value) -> tuple[str, object] | None:
         # the reviewer's "the source says nothing" no longer describes the claim.
         return ("Verified", current_value) if is_absent(current_value) else None
     reviewed = decision.get("reviewed_value")
-    if reviewed is not None and reviewed != normalized(current_value):
+    if reviewed is None:
+        # A decision with no bound value reviewed the ABSENCE of the claim (the caller writes
+        # None when the reviewer saw nothing). It is exactly as bounded as ABSENT: the moment
+        # a value appears, nobody has approved it. Treating a missing binding as "matches
+        # anything" made a review request that omitted `value` verify every later value for
+        # ever — a decision that silently extends past what the reviewer saw.
+        return ("Verified", current_value) if is_absent(current_value) else None
+    if reviewed != normalized(current_value):
         return None
     if kind == APPROVE:
         return "Verified", current_value

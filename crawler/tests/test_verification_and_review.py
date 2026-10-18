@@ -23,6 +23,11 @@ def db(tmp_path):
     return tmp_path / "review.sqlite3"
 
 
+# Write endpoints require an authenticated caller (nginx forwards its login here in
+# production). Tests send the same header the proxy sets; one test below asserts the refusal.
+WRITER = {"X-Menduner-Login": "test-reviewer"}
+
+
 def adapters():
     return [OfficialVenueAdapter(), GovernmentEventAdapter()]
 
@@ -174,6 +179,7 @@ def test_human_decisions_survive_a_full_evidence_rebuild(db):
         current = next(e for e in evidence if e["field"] == field)
         posted = client.post(
             "/review",
+            headers=WRITER,
             json={
                 "event_id": event_id,
                 "field": field,
@@ -228,6 +234,7 @@ def test_a_correction_must_carry_a_value(db):
     with TestClient(create_app(db)) as client:
         bad = client.post(
             "/review",
+            headers=WRITER,
             json={
                 "event_id": event_id,
                 "field": "name",
@@ -238,6 +245,7 @@ def test_a_correction_must_carry_a_value(db):
         assert bad.status_code == 400
         unknown = client.post(
             "/review",
+            headers=WRITER,
             json={
                 "event_id": event_id,
                 "field": "name",
@@ -248,6 +256,7 @@ def test_a_correction_must_carry_a_value(db):
         assert unknown.status_code == 400
         missing = client.post(
             "/review",
+            headers=WRITER,
             json={
                 "event_id": "does-not-exist",
                 "field": "name",
@@ -258,6 +267,109 @@ def test_a_correction_must_carry_a_value(db):
         assert missing.status_code == 404
 
 
+def test_a_write_without_a_login_is_refused(db):
+    """The reported defect: POST /review answered 200 to an anonymous caller."""
+    initialize(db)
+    ingest(db, adapters())
+    event_id = snapshot(db)["events"][0]["id"]
+    with TestClient(create_app(db)) as client:
+        attempts = [
+            ("post", "/review", {"event_id": event_id, "field": "name",
+                                 "decision": "Verified", "reviewer": "anonymous"}),
+            ("post", "/review/event", {"event_id": event_id, "reviewer": "anonymous"}),
+            ("delete", f"/review/{event_id}/name", None),
+            ("post", "/venues/merge", {"alias_id": "a", "canonical_id": "b",
+                                       "reviewer": "anonymous", "reason": "x"}),
+            ("post", "/venues/coordinates", {"venue_id": "a", "lng": 120.6, "lat": 31.3,
+                                             "reviewer": "anonymous"}),
+        ]
+        for method, path, body in attempts:
+            response = (
+                client.post(path, json=body) if method == "post" else client.delete(path)
+            )
+            assert response.status_code == 401, (method, path, response.text)
+            assert "写操作需要身份" in response.json()["detail"]
+    # Nothing was recorded by a refused write.
+    with connect(db) as con:
+        tables = {row[0] for row in con.execute(
+            "SELECT name FROM sqlite_master WHERE type='table'")}
+        if "review_decisions" in tables:
+            assert con.execute("SELECT COUNT(*) FROM review_decisions").fetchone()[0] == 0
+
+
+def test_a_bearer_token_authorises_a_script_without_a_login(db, monkeypatch):
+    initialize(db)
+    ingest(db, adapters())
+    event_id = snapshot(db)["events"][0]["id"]
+    monkeypatch.setenv("MENDUNER_WRITE_TOKEN", "s3cret-token")
+    with TestClient(create_app(db)) as client:
+        refused = client.post(
+            "/review",
+            headers={"Authorization": "Bearer wrong"},
+            json={"event_id": event_id, "field": "name", "decision": "Verified",
+                  "reviewer": "script"},
+        )
+        assert refused.status_code == 401
+        accepted = client.post(
+            "/review",
+            headers={"Authorization": "Bearer s3cret-token"},
+            json={"event_id": event_id, "field": "name", "decision": "Verified",
+                  "reviewer": "script"},
+        )
+        assert accepted.status_code == 200, accepted.text
+        assert accepted.json()["authenticated_as"] == "token"
+
+
+def test_a_review_without_a_value_binds_to_the_stored_claim(db):
+    """A value-less approval must bind to what was on screen, not to everything after it.
+
+    It used to store reviewed_value=NULL, which ``resolve`` read as "matches any value": one
+    approval kept verifying every later value nobody had looked at.
+    """
+    initialize(db)
+    ingest(db, adapters())
+    event_id = snapshot(db)["events"][0]["id"]
+    with TestClient(create_app(db)) as client:
+        current = next(
+            e for e in client.get(f"/evidence?event_id={event_id}").json()
+            if e["field"] == "name"
+        )
+        posted = client.post(
+            "/review",
+            headers=WRITER,
+            json={"event_id": event_id, "field": "name", "decision": "Verified",
+                  "reviewer": "rm"},
+        )
+        assert posted.status_code == 200, posted.text
+        assert posted.json()["reviewed_value"] == review.normalized(current["value"]), (
+            "the decision must carry the claim it reviewed"
+        )
+
+
+def test_a_stale_value_is_refused_instead_of_verifying_an_unseen_claim(db):
+    initialize(db)
+    ingest(db, adapters())
+    event_id = snapshot(db)["events"][0]["id"]
+    with TestClient(create_app(db)) as client:
+        stale = client.post(
+            "/review",
+            headers=WRITER,
+            json={"event_id": event_id, "field": "name", "decision": "Verified",
+                  "value": "a value that is not the current claim", "reviewer": "rm"},
+        )
+        assert stale.status_code == 409
+        assert "证据已变化" in stale.json()["detail"]
+
+
+def test_a_decision_for_an_absent_claim_lapses_when_a_value_appears():
+    """The same rule at the resolution layer, for decisions already in the table."""
+    unbound = {"decision": review.APPROVE, "reviewed_value": None}
+    assert review.resolve(unbound, None) == ("Verified", None)
+    assert review.resolve(unbound, "") == ("Verified", "")
+    assert review.resolve(unbound, "a later value") is None
+    assert review.resolve(unbound, "2026-11-19") is None
+
+
 def test_review_can_be_withdrawn(db):
     initialize(db)
     ingest(db, adapters())
@@ -265,6 +377,7 @@ def test_review_can_be_withdrawn(db):
     with TestClient(create_app(db)) as client:
         client.post(
             "/review",
+            headers=WRITER,
             json={
                 "event_id": event_id,
                 "field": "name",
@@ -273,7 +386,7 @@ def test_review_can_be_withdrawn(db):
             },
         )
         assert client.get(f"/review/{event_id}").json()
-        removed = client.delete(f"/review/{event_id}/name")
+        removed = client.delete(f"/review/{event_id}/name", headers=WRITER)
         assert removed.json()["removed"] == 1
         assert client.get(f"/review/{event_id}").json() == []
         assert client.get("/review").json() == []

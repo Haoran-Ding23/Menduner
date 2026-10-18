@@ -70,7 +70,7 @@ function useStateValue(initialDataset?: Dataset) {
       setDataError(
         error instanceof Error && error.name !== "AbortError"
           ? error.message
-          : "API 连接超时或不可用",
+          : "API 连接超时或不可用：数据集约 1.2 MB（压缩后），首次加载在慢网络下可能需要十几秒，请重试",
       );
     }
   }, []);

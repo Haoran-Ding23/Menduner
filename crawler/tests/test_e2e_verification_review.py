@@ -31,6 +31,10 @@ from crawler.schema import CollectedItem
 OFFICIAL_URL = "https://wglj.suzhou.gov.cn/szwhgdhlyj/hdxx/202610/test.shtml"
 AGGREGATOR_URL = "https://shanghaiconcerts.com/concerts/test-festival"
 
+# Write endpoints require an authenticated caller; nginx forwards its basic-auth login as this
+# header in production, and the tests send the same one.
+WRITER = {"X-Menduner-Login": "test-reviewer"}
+
 
 def article(venue: str = "苏州测试展览馆", name: str = "2026苏州测试文化节") -> str:
     """The selector shape the wglj.suzhou.gov.cn extractor requires: title = .con_details h2,
@@ -260,6 +264,7 @@ def test_human_decision_survives_a_recrawl_and_changes_the_served_status(db):
         assert target["status"] != "Verified"
         posted = client.post(
             "/review",
+            headers=WRITER,
             json={
                 "event_id": event_id,
                 "field": "category",
@@ -311,6 +316,7 @@ def test_a_human_decision_lapses_when_the_value_changes(db):
         assert row["status"] != "Verified", row
         posted = client.post(
             "/review",
+            headers=WRITER,
             json={
                 "event_id": event_id,
                 "field": "category",

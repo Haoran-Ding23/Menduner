@@ -25,6 +25,14 @@ export default defineConfig(({ mode }) => {
           target: "http://127.0.0.1:8000",
           changeOrigin: true,
           rewrite: (path: string) => path.replace(/^\/api/, ""),
+          // The backend requires an authenticated caller for writes. In production nginx sets
+          // this header from its basic-auth login; the dev server can play the same role when
+          // MENDUNER_WRITE_LOGIN is set in .env.local. Without it, local writes are refused
+          // (401) exactly like an anonymous request to the deployed API — set the variable to
+          // keep working on the review pages locally.
+          headers: env.MENDUNER_WRITE_LOGIN
+            ? { "X-Menduner-Login": env.MENDUNER_WRITE_LOGIN }
+            : {},
         },
         ...(env.AMAP_SECURITY_CODE
           ? {

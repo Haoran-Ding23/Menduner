@@ -52,6 +52,11 @@ def event(event_id: str, venue_id: str | None) -> dict:
     return {"id": event_id, "name": f"event {event_id}", "venueId": venue_id}
 
 
+# Write endpoints require an authenticated caller; nginx forwards its basic-auth login in this
+# header in production and the tests send the same one.
+WRITER = {"X-Menduner-Login": "test-reviewer"}
+
+
 # --- normalisation and detection ------------------------------------------------
 
 def test_normalisation_ignores_punctuation_and_region_prefixes():
@@ -340,7 +345,15 @@ def test_merge_rewrites_the_stored_venue_claim_to_the_survivor(seeded):
             if "raw_item_id" in columns:
                 row["raw_item_id"] = "raw-1"
             if "payload" in columns:
-                row["payload"] = "{}"
+                row["payload"] = json.dumps(
+                    {
+                        "id": f"claim-{table}",
+                        "entityId": "evt-2",
+                        "field": "venueId",
+                        "value": "dup",
+                        "status": "Needs Review",
+                    }
+                )
             names = ", ".join(row)
             marks = ", ".join("?" for _ in row)
             con.execute(f"INSERT INTO {table}({names}) VALUES({marks})", tuple(row.values()))
@@ -366,6 +379,13 @@ def test_merge_rewrites_the_stored_venue_claim_to_the_survivor(seeded):
         ).fetchall()
     assert json.loads(stored) == "keep", "the claim must name the surviving venue"
     assert json.loads(projected) == "keep"
+    # The API serves the payload, not the value column. Rewriting only the column left every
+    # reader that cross-checks a claim against its event finding the deleted venue instead.
+    served = next(
+        e for e in snapshot(db)["evidence"]
+        if e["entityId"] == "evt-2" and e["field"] == "venueId"
+    )
+    assert served["value"] == "keep", "the served payload must carry the surviving venue"
     # The recorded decision must name the value the event now carries, not the deleted id.
     assert [r[0] for r in decisions] == ["keep"]
 
@@ -595,7 +615,43 @@ def test_merge_requires_a_named_reviewer_and_a_reason(seeded):
 
 
 def test_merge_can_be_reverted(seeded):
+    """A revert must put the data back, not merely drop the alias.
+
+    The undo used to delete the alias mapping and return ``{"reverted": True}`` while the venue
+    row, the event references and the claims stayed gone. Success was reported for a restore
+    that never happened.
+    """
     db, alias_file = seeded
+    with connect(db) as con:
+        # A stored crawler claim needs a collected page to point at.
+        now = "2026-10-15T00:00:00+00:00"
+        con.execute(
+            "INSERT INTO crawler_jobs(id, started_at, status) VALUES(?,?,?)",
+            ("job-1", now, "Success"),
+        )
+        con.execute(
+            "INSERT INTO crawler_raw_items"
+            "(id, job_id, source_id, item_key, original_url, source_name, crawl_time, "
+            " raw_content, mock, validation_status)"
+            " VALUES(?,?,?,?,?,?,?,?,?,?)",
+            ("raw-1", "job-1", "venue-suzhou-orchestra", "item-1",
+             "https://example.invalid/src", "test", now, "<html></html>", 0, "Published"),
+        )
+        # Give the moved event a stored claim naming the row that the merge will delete.
+        con.execute(
+            "INSERT INTO evidence VALUES(?,?,?,?,?,?,?,?)",
+            ("claim-1", "evt-2", "evt-2", "venueId", json.dumps("dup"),
+             "https://example.invalid/src", "Needs Review",
+             json.dumps({"id": "claim-1", "entityId": "evt-2", "field": "venueId",
+                         "value": "dup", "status": "Needs Review"})),
+        )
+        con.execute(
+            "INSERT INTO crawler_evidence"
+            "(id, event_id, field_name, value, source, source_url, confidence, raw_item_id,"
+            " verification_status) VALUES(?,?,?,?,?,?,?,?,?)",
+            ("claim-stored", "evt-2", "venue_id", json.dumps("dup"), "venue-suzhou-orchestra",
+             "https://example.invalid/src", 0.6, "raw-1", "Needs Review"),
+        )
     venue_store.merge(
         db,
         alias_id="dup",
@@ -604,7 +660,14 @@ def test_merge_can_be_reverted(seeded):
         reason="same theatre",
         alias_path=alias_file,
     )
-    venue_store.merge(
+    with connect(db) as con:
+        assert con.execute("SELECT COUNT(*) FROM venues WHERE id='dup'").fetchone()[0] == 0
+        served = json.loads(con.execute(
+            "SELECT payload FROM evidence WHERE entity_id='evt-2' AND field='venueId'"
+        ).fetchone()[0])
+        assert served["value"] == "keep"
+
+    result = venue_store.merge(
         db,
         alias_id="dup",
         canonical_id="keep",
@@ -613,9 +676,71 @@ def test_merge_can_be_reverted(seeded):
         alias_path=alias_file,
         revert=True,
     )
+    assert result["reverted"] is True
+    assert result["restored"]["venue"] is True
+    assert result["restored"]["events"] == 1
     document = json.loads(alias_file.read_text(encoding="utf-8"))
     assert document["aliases"] == []
     assert venue_store.venue_edits(db)[0]["kind"] == "merge_reverted"
+
+    snap = snapshot(db)
+    # The deleted venue row is back, the event points at it again, and the served claim is back
+    # in the payload the API reads (not just in the value column).
+    assert any(v["id"] == "dup" and v["name"] == "开明大戏院" for v in snap["venues"])
+    assert {e["id"]: e["venueId"] for e in snap["events"]}["evt-2"] == "dup"
+    claim = next(e for e in snap["evidence"] if e["entityId"] == "evt-2" and e["field"] == "venueId")
+    assert claim["value"] == "dup", "the API reads payload; restoring the column only is not enough"
+    with connect(db) as con:
+        stored = con.execute(
+            "SELECT value FROM crawler_evidence WHERE event_id='evt-2' AND field_name='venue_id'"
+        ).fetchone()[0]
+        decisions = con.execute(
+            "SELECT COUNT(*) FROM review_decisions WHERE event_id='evt-2' AND field='venueId'"
+        ).fetchone()[0]
+    assert json.loads(stored) == "dup"
+    assert decisions == 0, "the merge's approval must not survive the revert"
+
+
+def test_a_revert_without_a_recorded_undo_refuses_instead_of_lying(seeded):
+    """An alias written by a pre-undo merge cannot be restored, and must say so."""
+    db, alias_file = seeded
+    document = json.loads(alias_file.read_text(encoding="utf-8"))
+    document["aliases"] = [{"alias_id": "dup", "canonical_id": "keep", "name": "x"}]
+    alias_file.write_text(json.dumps(document), encoding="utf-8")
+    reset_cache()
+    with connect(db) as con:
+        venue_store.ensure_schema(con)
+        # A pre-2026-10-18 merge row: it has no undo payload.
+        con.execute(
+            "INSERT INTO venue_edits VALUES(?,?,?,?,?,?,?)",
+            ("old-merge", "keep", "merge", json.dumps({"alias_id": "dup"}), "rm", "old", 
+             "2026-10-15T00:00:00+00:00"),
+        )
+    with pytest.raises(ValueError, match="没有留下可恢复的数据"):
+        venue_store.merge(
+            db, alias_id="dup", canonical_id="keep", reviewer="rm", reason="revert",
+            alias_path=alias_file, revert=True,
+        )
+    # The alias is still declared: a refused revert must not half-apply.
+    assert json.loads(alias_file.read_text(encoding="utf-8"))["aliases"]
+
+
+def test_a_revert_refuses_to_overwrite_an_existing_venue_row(seeded):
+    db, alias_file = seeded
+    venue_store.merge(
+        db, alias_id="dup", canonical_id="keep", reviewer="rm", reason="same theatre",
+        alias_path=alias_file,
+    )
+    with connect(db) as con:
+        payload = json.loads(con.execute("SELECT payload FROM venues WHERE id='keep'").fetchone()[0])
+        con.execute("INSERT INTO venues(id,payload) VALUES(?,?)",
+                    ("dup", json.dumps(dict(payload, id="dup", name="重新采集的场馆"),
+                                       ensure_ascii=False)))
+    with pytest.raises(ValueError, match="已经存在一行场馆记录"):
+        venue_store.merge(
+            db, alias_id="dup", canonical_id="keep", reviewer="rm", reason="revert",
+            alias_path=alias_file, revert=True,
+        )
 
 
 # --- coordinates ----------------------------------------------------------------
@@ -699,6 +824,7 @@ def test_api_exposes_and_writes_venue_maintenance(seeded, monkeypatch):
 
         bad = client.post(
             "/venues/coordinates",
+            headers=WRITER,
             json={
                 "venue_id": "dup",
                 "lng": 10.0,
@@ -709,8 +835,22 @@ def test_api_exposes_and_writes_venue_maintenance(seeded, monkeypatch):
         )
         assert bad.status_code == 400 and "Suzhou" in bad.json()["detail"]
 
+        # A write with no authenticated caller is refused, and says why.
+        anonymous = client.post(
+            "/venues/coordinates",
+            json={
+                "venue_id": "dup",
+                "lng": 120.625335,
+                "lat": 31.309339,
+                "reviewer": "rm",
+            },
+        )
+        assert anonymous.status_code == 401
+        assert "写操作需要身份" in anonymous.json()["detail"]
+
         ok = client.post(
             "/venues/coordinates",
+            headers=WRITER,
             json={
                 "venue_id": "dup",
                 "lng": 120.625335,
@@ -720,9 +860,11 @@ def test_api_exposes_and_writes_venue_maintenance(seeded, monkeypatch):
             },
         )
         assert ok.status_code == 200
+        assert ok.json()["authenticated_as"] == "test-reviewer"
 
         merged = client.post(
             "/venues/merge",
+            headers=WRITER,
             json={
                 "alias_id": "dup",
                 "canonical_id": "keep",
@@ -734,3 +876,18 @@ def test_api_exposes_and_writes_venue_maintenance(seeded, monkeypatch):
         assert merged.json()["events_moved"] == 1
 
         assert any(e["kind"] == "merge" for e in client.get("/venues/edits").json())
+
+        reverted = client.post(
+            "/venues/merge",
+            headers=WRITER,
+            json={
+                "alias_id": "dup",
+                "canonical_id": "keep",
+                "reviewer": "rm",
+                "reason": "two different halls after all",
+                "revert": True,
+            },
+        )
+        assert reverted.status_code == 200, reverted.text
+        assert reverted.json()["restored"]["venue"] is True
+        assert any(v["id"] == "dup" for v in client.get("/venues").json())

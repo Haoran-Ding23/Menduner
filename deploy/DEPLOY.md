@@ -216,29 +216,55 @@ http://你的公网IP
 
 ---
 
-## 11. 加访问口令（强烈建议）
+## 11. 写接口鉴权(必须做)
 
-**这个项目所有写接口都是开放的**：任何知道网址的人都能批准/驳回证据、合并场馆、改坐标。对"证明数据可信"的系统来说这是逻辑矛盾，公开前至少加一层：
+**读接口公开,写接口必须登录。** 任何知道网址的人都能读数据集是这个演示的前提;但如果写接口也开放,任何人都能批准/驳回证据、合并场馆、改坐标——对"证明数据可信"的系统是逻辑矛盾,而且一次匿名写入无法从来源页重建。这一层现在是**两层**:
+
+**第一层:nginx 只对写方法要口令。** 方法映射单独放在 `/etc/nginx/conf.d/menduner-auth.conf`(仓库里是 `deploy/nginx-menduner-auth.conf`):
+
+```nginx
+map $request_method $menduner_deny {
+    default "Menduner";   # POST / PUT / PATCH / DELETE 要口令
+    GET off; HEAD off; OPTIONS off;   # 读不需要
+}
+```
 
 ```bash
 apt install -y apache2-utils
-htpasswd -c /etc/nginx/.htpasswd menduner     # 会提示你设密码
-nano /etc/nginx/sites-available/menduner
+htpasswd -c /etc/nginx/.htpasswd menduner     # 只做一次,之后用 htpasswd -b 加用户
 ```
 
-把 `location /api/` 里这两行的注释去掉：
+站点配置 `location /api/` 里用这张表,并把登录名转发给后端:
 
 ```nginx
-auth_basic "Menduner";
+auth_basic $menduner_deny;
 auth_basic_user_file /etc/nginx/.htpasswd;
+proxy_set_header X-Menduner-Login $remote_user;
 ```
+
+`$remote_user` 由 nginx 填写,客户端自己带的同名头会被覆盖,所以不能伪造。
+
+**第二层:后端也拒绝无身份的写**(`backend/auth.py`)。写接口缺少 `X-Menduner-Login` 时返回 **401**,不会静默执行——这样即使哪天 nginx 规则丢了,写接口是"坏掉"而不是"重新开放"。脚本可以带令牌调用:
 
 ```bash
-nginx -t && systemctl reload nginx
+# systemd 里设置 MENDUNER_WRITE_TOKEN=<随机串>
+curl -u menduner:口令 -X POST http://127.0.0.1/api/review ...        # 浏览器/人
+curl -H "Authorization: Bearer $MENDUNER_WRITE_TOKEN" ...            # 脚本
+curl -X POST http://127.0.0.1:8000/review ...                        # 直连后端 -> 401
 ```
 
-> 这只保护了 API。如果想整站都要口令，把上面两行加到 `location /` 里。
-> 注意加了之后，浏览器对 `/api` 的请求会弹认证框——演示时先输入一次即可。
+> **浏览器提示框**:第一次写操作(审核、合并、保存坐标)会弹认证框,输一次即可。
+> **本地开发**:Vite 代理没有 nginx,所以要在 `frontend/.env.local` 写 `MENDUNER_WRITE_LOGIN=local-dev`,代理会把这个名字作为登录名转发;不设就是"陌生人",写操作会 401(这正是线上匿名请求的结果)。
+> **只保护 API**:如果想整站都要口令,把 `auth_basic` 加到 `location /` 里。
+
+**部署后自检**(应当看到 401/404,而不是 200):
+
+```bash
+curl -o /dev/null -w '%{http_code}\n' -X POST -H 'Content-Type: application/json' -d '{}' \
+  http://127.0.0.1/api/review            # 401(nginx)
+curl -o /dev/null -w '%{http_code}\n' -X POST -H 'Content-Type: application/json' -d '{}' \
+  http://127.0.0.1:8000/review           # 401(后端直连)
+```
 
 ---
 

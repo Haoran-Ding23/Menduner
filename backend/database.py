@@ -84,3 +84,13 @@ def snapshot(path):
                   'verificationCounts': counts, 'lastUpdated': last['updated_at'] if last else None,
                   'revision': last['id'] if last else 0, 'sources': sources}
         return dict(events=events, evidence=evidence, **resources, updatedAt=status['lastUpdated'], status=status)
+
+
+def snapshot_bytes(path) -> bytes:
+    """The dataset as the bytes the API serves.
+
+    Serialised once here so the same bytes can be hashed into an ETag: the payload is ~5 MB of
+    text, every page load used to re-download it, and the browser had no way to ask "is this
+    still the same one?". Compact separators because this is wire format, not a debug dump.
+    """
+    return json.dumps(snapshot(path), ensure_ascii=False, separators=(',', ':')).encode('utf-8')
