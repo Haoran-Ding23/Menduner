@@ -8,6 +8,7 @@ import PlanGate from './components/PlanGate';
 import { AccountProvider } from './hooks/useEntitlements';
 import { IdentityProvider } from './hooks/useIdentity';
 import type { AccountState } from './services/account';
+import { FILING_MODE } from './config';
 import { lazyWithReload } from './utils/lazyWithReload';
 // lazyWithReload, not lazy: a tab left open across a deploy holds an index.html naming the
 // previous chunk hashes, and importing a missing chunk killed the page. It reloads once to
@@ -53,13 +54,15 @@ export default function App({ initialAccount }: { initialAccount?: AccountState 
               <Route path="/agenda" element={<Page name="活动清单"><Agenda /></Page>}/>
               <Route path="/venues" element={<Page name="场馆活动清单"><Venues /></Page>}/>
               <Route path="/graph" element={<Page name="知识图谱"><Graph /></Page>}/>
-              {/* Paid workflow: public data stays free, these two unlock the hotel-centric work. */}
-              <Route path="/hotels" element={<Page name="酒店活动情报"><PlanGate feature="hotel_intel"><Hotels /></PlanGate></Page>}/>
-              <Route path="/insights" element={<Page name="商圈洞察"><PlanGate feature="insights"><Insights /></PlanGate></Page>}/>
+              {/* Paid workflow: public data stays free, these two unlock the hotel-centric work.
+                  During the ICP filing review the reviewers must see a non-commercial information
+                  site, so the commercial routes redirect to the public map (FILING_MODE). */}
+              <Route path="/hotels" element={FILING_MODE ? <Navigate to="/map" replace/> : <Page name="酒店活动情报"><PlanGate feature="hotel_intel"><Hotels /></PlanGate></Page>}/>
+              <Route path="/insights" element={FILING_MODE ? <Navigate to="/map" replace/> : <Page name="商圈洞察"><PlanGate feature="insights"><Insights /></PlanGate></Page>}/>
               <Route path="/evidence" element={<Page name="数据质量与来源"><DataQuality /></Page>}/>
-              <Route path="/plans" element={<Page name="套餐与升级"><Plans /></Page>}/>
-              <Route path="/login" element={<Page name="登录"><Login /></Page>}/>
-              <Route path="/register" element={<Page name="注册"><Register /></Page>}/>
+              <Route path="/plans" element={FILING_MODE ? <Navigate to="/map" replace/> : <Page name="套餐与升级"><Plans /></Page>}/>
+              <Route path="/login" element={FILING_MODE ? <Navigate to="/map" replace/> : <Page name="登录"><Login /></Page>}/>
+              <Route path="/register" element={FILING_MODE ? <Navigate to="/map" replace/> : <Page name="注册"><Register /></Page>}/>
               <Route path="/review" element={<Page name="审核台"><ReviewConsole /></Page>}/>
               <Route path="*" element={<Navigate to="/map" replace/>}/>
             </Routes>

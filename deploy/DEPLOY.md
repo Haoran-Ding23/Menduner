@@ -388,6 +388,21 @@ cd /srv/menduner
 
 5. **别忘了**把域名加到高德 Key 的白名单,并重新构建前端(当前前端未按域名写死任何 URL,安全)。
 
+### 13.1 备案展示模式(当前线上)
+
+首次备案审核期间,网站必须是非商业信息站。用构建参数切换,商业代码不删除:
+
+```powershell
+# 备案展示版(隐藏套餐/登录/付费页,统一名称为「城市活动信息」)
+$env:VITE_FILING_MODE = "1"; npx vite build
+# 备案通过后恢复完整商业版
+Remove-Item Env:\VITE_FILING_MODE; npx vite build
+```
+
+开关在 `frontend/src/config.ts`;`/plans`、`/login`、`/register`、`/hotels`、`/insights` 在备案模式下
+重定向到 `/map`;`/review` 审核台保留(需管理员 Basic,不在公开导航中出现)。备案通过后还需:
+页脚展示备案号(我方可代加)、30 日内公安备案、`sudo certbot renew --dry-run` 验证续期恢复。
+
 ---
 
 ## 已知限制（如实说明）

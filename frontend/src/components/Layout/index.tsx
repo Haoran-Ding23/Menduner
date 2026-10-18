@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { Button, Tag, Modal, Alert, Space, message, Descriptions } from "antd";
 import {
@@ -21,6 +21,7 @@ import { usePlatform } from "../../hooks/usePlatform";
 import { canReview, useIdentity } from "../../hooks/useIdentity";
 import { useAccount, useEntitlements } from "../../hooks/useEntitlements";
 import { PLAN_LABELS, type PlanId } from "../../services/plans";
+import { FILING_MODE, SITE_SHORT, SITE_TAGLINE, SITE_TITLE } from "../../config";
 export interface NavPage {
   path: string;
   title: string;
@@ -110,17 +111,23 @@ export default function PlatformLayout({
   const { identity } = useIdentity();
   const { plan, canUse, label } = useEntitlements();
   const { state: accountState } = useAccount();
+  // Filing review must see a non-commercial information site: the paid workflow, the plan page and
+  // the account entry disappear (their routes also redirect, see App.tsx). Nothing is deleted.
+  const visiblePages = FILING_MODE ? pages.filter((item) => !item.minPlan) : pages;
   // Paid workflow stays visible but locked: a customer must be able to see what exists and what
   // an upgrade would unlock. The lock is product communication, not enforcement.
   const navPages: NavPage[] = [
-    ...pages,
-    plansPage,
+    ...visiblePages,
+    ...(FILING_MODE ? [] : [plansPage]),
     ...(canReview(identity) ? [consolePage] : []),
   ];
   const page = navPages.find((p) => p.path === location.pathname);
   const [settings, setSettings] = useState(false);
   const input = useRef<HTMLInputElement>(null);
   const [api, holder] = message.useMessage();
+  useEffect(() => {
+    document.title = SITE_TITLE;
+  }, []);
   return (
     <div className="platform">
       {holder}
@@ -128,7 +135,7 @@ export default function PlatformLayout({
         <div className="brand">
           <span className="brand-symbol">M</span>
           <div>
-            Menduner<small>苏州城市活动情报</small>
+            Menduner<small>{SITE_TAGLINE}</small>
           </div>
         </div>
         <div className="nav-section">工作空间</div>
@@ -156,7 +163,9 @@ export default function PlatformLayout({
           <p>苏州 · 城市活动知识图谱</p>
           <small>V1.3 / 采集管线原型</small>
           <div className="gap-top">
-            {accountState.authenticated ? (
+            {FILING_MODE ? (
+              <Tag>公开活动信息展示</Tag>
+            ) : accountState.authenticated ? (
               <Tag color={plan === "free" ? "default" : "gold"}>
                 {accountState.account?.login} · {label}
               </Tag>
@@ -177,7 +186,7 @@ export default function PlatformLayout({
           <Space>
             <span className="header-year">{filters.year}</span>
             <Tag color="blue">
-             城市活动情报 · {dataset.events.length} 条
+             {SITE_SHORT} · {dataset.events.length} 条
             </Tag>
             {/* The status strip was removed from the page body, but a refresh control must
                 stay reachable, and a connection failure has to be visible because it
