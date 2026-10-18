@@ -1,0 +1,948 @@
+{
+ "generatedAt": "2026-10-18",
+ "hotels": [
+  {
+   "hotel": "沃姆酒店(星尚邻里)",
+   "tier": "舒适",
+   "coordinatesVerified": true,
+   "windows": {
+    "30d": {
+     "total": 150,
+     "within3km": 14,
+     "within5km": 95,
+     "verified": 0,
+     "needsReview": 150,
+     "multiDay": 84
+    },
+    "60d": {
+     "total": 197,
+     "within3km": 17,
+     "within5km": 129,
+     "verified": 0,
+     "needsReview": 197,
+     "multiDay": 101
+    }
+   },
+   "nearest5": [
+    {
+     "id": "evt-ded705d3a98fc9a4bf1043ae",
+     "name": "2026第五届苏州金鸡湖中法文化艺术周",
+     "start": "2026-10-10",
+     "end": "2026-10-19",
+     "venue": "李公堤文化创意街区",
+     "distanceKm": 0.22,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-8e3c702dcdebf0324b39d564",
+     "name": "虹·美术馆:刺猬的优雅",
+     "start": "2026-07-26",
+     "end": "2026-10-26",
+     "venue": "虹·美术馆",
+     "distanceKm": 1.54,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-d31ef98c63320c306229ca7e",
+     "name": "苏州文化艺术中心:滑稽戏导赏与沉浸式体验——《姑苏笑林苑》第二季",
+     "start": "2026-10-18",
+     "end": null,
+     "venue": "苏州文化中心国风剧场",
+     "distanceKm": 2.81,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-ad4f399cf839fc0ca1c2731f",
+     "name": "苏州文化艺术中心:滑稽戏导赏与沉浸式体验——《姑苏笑林苑》第二季",
+     "start": "2026-10-25",
+     "end": null,
+     "venue": "苏州文化中心国风剧场",
+     "distanceKm": 2.81,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-a7e2fb759d4acc6bbcb53244",
+     "name": "苏州文化艺术中心:滑稽戏导赏与沉浸式体验——《姑苏笑林苑》第二季",
+     "start": "2026-11-01",
+     "end": null,
+     "venue": "苏州文化中心国风剧场",
+     "distanceKm": 2.81,
+     "status": "Needs Review",
+     "category": "culture"
+    }
+   ]
+  },
+  {
+   "hotel": "金鸡湖大酒店1号楼",
+   "tier": "高端",
+   "coordinatesVerified": true,
+   "windows": {
+    "30d": {
+     "total": 144,
+     "within3km": 1,
+     "within5km": 91,
+     "verified": 0,
+     "needsReview": 144,
+     "multiDay": 81
+    },
+    "60d": {
+     "total": 191,
+     "within3km": 1,
+     "within5km": 126,
+     "verified": 0,
+     "needsReview": 191,
+     "multiDay": 98
+    }
+   },
+   "nearest5": [
+    {
+     "id": "evt-8e3c702dcdebf0324b39d564",
+     "name": "虹·美术馆:刺猬的优雅",
+     "start": "2026-07-26",
+     "end": "2026-10-26",
+     "venue": "虹·美术馆",
+     "distanceKm": 2.3,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-9de9ad6fe5cdfb4eadce2921",
+     "name": "苏州之眼:“天空奇遇”主题活动",
+     "start": "2026-09-25",
+     "end": "2026-11-30",
+     "venue": "苏州之眼",
+     "distanceKm": 3.52,
+     "status": "Needs Review",
+     "category": "others"
+    },
+    {
+     "id": "evt-51ec5d6b462656d72abccd9c",
+     "name": "苏州当代美术馆:亘——艺术的穿越方式展览",
+     "start": "2026-08-30",
+     "end": "2026-11-08",
+     "venue": "苏州当代美术馆",
+     "distanceKm": 3.61,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-dccd6ecf699546cdcdd9c934",
+     "name": "苏州当代美术馆:BIG唯物主义展览",
+     "start": "2026-08-30",
+     "end": "2027-10-31",
+     "venue": "苏州当代美术馆",
+     "distanceKm": 3.61,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-f8c75d6557f4d4eebbda06a7",
+     "name": "苏州当代美术馆:编码与天幕——超越算法时代的艺术展览",
+     "start": "2026-08-30",
+     "end": "2026-11-15",
+     "venue": "苏州当代美术馆",
+     "distanceKm": 3.61,
+     "status": "Needs Review",
+     "category": "culture"
+    }
+   ]
+  },
+  {
+   "hotel": "苏州洲际酒店",
+   "tier": "高端",
+   "coordinatesVerified": true,
+   "windows": {
+    "30d": {
+     "total": 147,
+     "within3km": 88,
+     "within5km": 91,
+     "verified": 0,
+     "needsReview": 147,
+     "multiDay": 84
+    },
+    "60d": {
+     "total": 194,
+     "within3km": 122,
+     "within5km": 126,
+     "verified": 0,
+     "needsReview": 194,
+     "multiDay": 101
+    }
+   },
+   "nearest5": [
+    {
+     "id": "evt-809a4c2d333b35b11cb37e85",
+     "name": "苏州工业园区城市艺术客厅:浮生清趣——张迎春中国画作品雅赏",
+     "start": "2026-09-05",
+     "end": "2026-10-18",
+     "venue": "苏州工业园区城市艺术客厅",
+     "distanceKm": 0.29,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-51ec5d6b462656d72abccd9c",
+     "name": "苏州当代美术馆:亘——艺术的穿越方式展览",
+     "start": "2026-08-30",
+     "end": "2026-11-08",
+     "venue": "苏州当代美术馆",
+     "distanceKm": 0.54,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-dccd6ecf699546cdcdd9c934",
+     "name": "苏州当代美术馆:BIG唯物主义展览",
+     "start": "2026-08-30",
+     "end": "2027-10-31",
+     "venue": "苏州当代美术馆",
+     "distanceKm": 0.54,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-f8c75d6557f4d4eebbda06a7",
+     "name": "苏州当代美术馆:编码与天幕——超越算法时代的艺术展览",
+     "start": "2026-08-30",
+     "end": "2026-11-15",
+     "venue": "苏州当代美术馆",
+     "distanceKm": 0.54,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-b7db6602dc60a9b72d8d4601",
+     "name": "金蜘蛛苏州紧固件与技术展",
+     "start": "2026-10-21",
+     "end": "2026-10-23",
+     "venue": "苏州国际博览中心",
+     "distanceKm": 0.56,
+     "status": "Needs Review",
+     "category": "others"
+    }
+   ]
+  },
+  {
+   "hotel": "如意酒店(石路广济南路地铁站)",
+   "tier": "舒适",
+   "coordinatesVerified": true,
+   "windows": {
+    "30d": {
+     "total": 152,
+     "within3km": 44,
+     "within5km": 59,
+     "verified": 0,
+     "needsReview": 152,
+     "multiDay": 86
+    },
+    "60d": {
+     "total": 200,
+     "within3km": 50,
+     "within5km": 71,
+     "verified": 0,
+     "needsReview": 200,
+     "multiDay": 104
+    }
+   },
+   "nearest5": [
+    {
+     "id": "evt-c6bd3dc504d10801f2dfd25e",
+     "name": "【王牌回归】开心麻花爆笑舞台剧《乌龙山伯爵》",
+     "start": "2026-10-24",
+     "end": "2026-10-24",
+     "venue": "开心麻花运河剧场",
+     "distanceKm": 0.83,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-7b57b8d801a9d7bbd303df0b",
+     "name": "H+美术馆:“谁人来和”丨韩国艺术家李珍珠、李正培双人展",
+     "start": "2026-09-21",
+     "end": "2027-01-04",
+     "venue": "H+美术馆",
+     "distanceKm": 1.47,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-1e2912e0ca3623cca1f3ebba",
+     "name": "苏州图书馆:《解密〈西游记〉中的文化密码》课程",
+     "start": "2026-10-20",
+     "end": null,
+     "venue": "苏州图书馆",
+     "distanceKm": 1.66,
+     "status": "Needs Review",
+     "category": "others"
+    },
+    {
+     "id": "evt-8b27ca5027819cbb52f08f2d",
+     "name": "苏州图书馆:《智享银龄——AI实用妙招》课程",
+     "start": "2026-10-23",
+     "end": null,
+     "venue": "苏州图书馆",
+     "distanceKm": 1.66,
+     "status": "Needs Review",
+     "category": "others"
+    },
+    {
+     "id": "evt-129af04e24d45d6571ff8d50",
+     "name": "苏州图书馆:《智享银龄——AI实用妙招》课程",
+     "start": "2026-10-30",
+     "end": null,
+     "venue": "苏州图书馆",
+     "distanceKm": 1.66,
+     "status": "Needs Review",
+     "category": "others"
+    }
+   ]
+  },
+  {
+   "hotel": "濠韵楼商务酒店",
+   "tier": "舒适",
+   "coordinatesVerified": true,
+   "windows": {
+    "30d": {
+     "total": 158,
+     "within3km": 48,
+     "within5km": 56,
+     "verified": 0,
+     "needsReview": 158,
+     "multiDay": 92
+    },
+    "60d": {
+     "total": 206,
+     "within3km": 54,
+     "within5km": 68,
+     "verified": 0,
+     "needsReview": 206,
+     "multiDay": 110
+    }
+   },
+   "nearest5": [
+    {
+     "id": "evt-1d21befe4044e662c01a8616",
+     "name": "光裕书厅:【日场】光前裕后·苏州评弹专场(10月16日-10月30日)",
+     "start": "2026-10-01",
+     "end": "2026-10-30",
+     "venue": "光裕书厅",
+     "distanceKm": 0.06,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-5acba65e28a001b9e6337103",
+     "name": "光裕书厅:【夜场】光前裕后·苏州评弹专场(10月1日至10月30日)",
+     "start": "2026-10-01",
+     "end": "2026-10-30",
+     "venue": "光裕书厅",
+     "distanceKm": 0.06,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-4cb74f7e187650ff8bd6c7bc",
+     "name": "开明大戏院:不同喜剧秀",
+     "start": "2026-10-17",
+     "end": "2026-10-18",
+     "venue": "开明大戏院",
+     "distanceKm": 0.15,
+     "status": "Needs Review",
+     "category": "others"
+    },
+    {
+     "id": "evt-4ed4d223ef29c9f83443e491",
+     "name": "开明大戏院:笑开演相声大会",
+     "start": "2026-10-17",
+     "end": "2026-10-18",
+     "venue": "开明大戏院",
+     "distanceKm": 0.15,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-77ccff2bb9aa5217be6a925a",
+     "name": "[9.9元起]不同喜剧-盲盒开放麦 新段子实验秀",
+     "start": "2026-10-20",
+     "end": "2026-10-27",
+     "venue": "苏州开明大戏院",
+     "distanceKm": 0.15,
+     "status": "Needs Review",
+     "category": "culture"
+    }
+   ]
+  },
+  {
+   "hotel": "苏州吴宫泛太平洋酒店大堂",
+   "tier": "高端",
+   "coordinatesVerified": true,
+   "windows": {
+    "30d": {
+     "total": 156,
+     "within3km": 37,
+     "within5km": 56,
+     "verified": 0,
+     "needsReview": 156,
+     "multiDay": 90
+    },
+    "60d": {
+     "total": 203,
+     "within3km": 43,
+     "within5km": 68,
+     "verified": 0,
+     "needsReview": 203,
+     "multiDay": 107
+    }
+   },
+   "nearest5": [
+    {
+     "id": "evt-98a25863e2fe7c2323e8f1d3",
+     "name": "盘门景区:“秋至姑苏 盘门邀月”中秋国庆双节活动",
+     "start": "2026-09-25",
+     "end": "2026-10-31",
+     "venue": "盘门景区",
+     "distanceKm": 0.22,
+     "status": "Needs Review",
+     "category": "folk"
+    },
+    {
+     "id": "evt-343bda2219b1f4974d3f1d37",
+     "name": "苏州碑刻博物馆:石语寻迹——九江地区摩崖石刻拓片展",
+     "start": "2026-09-24",
+     "end": "2026-11-22",
+     "venue": "苏州碑刻博物馆",
+     "distanceKm": 0.79,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-1541d63db98dcdd77cff94ec",
+     "name": "苏州第一丝厂:“百步芳草 四季书香” 2026’苏州阅读之夜系列活动",
+     "start": "2026-10-16",
+     "end": "2026-10-18",
+     "venue": "苏州第一丝厂",
+     "distanceKm": 1.22,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-1e2912e0ca3623cca1f3ebba",
+     "name": "苏州图书馆:《解密〈西游记〉中的文化密码》课程",
+     "start": "2026-10-20",
+     "end": null,
+     "venue": "苏州图书馆",
+     "distanceKm": 1.26,
+     "status": "Needs Review",
+     "category": "others"
+    },
+    {
+     "id": "evt-8b27ca5027819cbb52f08f2d",
+     "name": "苏州图书馆:《智享银龄——AI实用妙招》课程",
+     "start": "2026-10-23",
+     "end": null,
+     "venue": "苏州图书馆",
+     "distanceKm": 1.26,
+     "status": "Needs Review",
+     "category": "others"
+    }
+   ]
+  },
+  {
+   "hotel": "冠云大酒店",
+   "tier": "中端",
+   "coordinatesVerified": true,
+   "windows": {
+    "30d": {
+     "total": 71,
+     "within3km": 11,
+     "within5km": 54,
+     "verified": 0,
+     "needsReview": 71,
+     "multiDay": 46
+    },
+    "60d": {
+     "total": 85,
+     "within3km": 11,
+     "within5km": 61,
+     "verified": 0,
+     "needsReview": 85,
+     "multiDay": 49
+    }
+   },
+   "nearest5": [
+    {
+     "id": "evt-7b57b8d801a9d7bbd303df0b",
+     "name": "H+美术馆:“谁人来和”丨韩国艺术家李珍珠、李正培双人展",
+     "start": "2026-09-21",
+     "end": "2027-01-04",
+     "venue": "H+美术馆",
+     "distanceKm": 0.93,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-c6bd3dc504d10801f2dfd25e",
+     "name": "【王牌回归】开心麻花爆笑舞台剧《乌龙山伯爵》",
+     "start": "2026-10-24",
+     "end": "2026-10-24",
+     "venue": "开心麻花运河剧场",
+     "distanceKm": 1.7,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-5e9f3199871b638a5cfa087d",
+     "name": "虎丘山风景名胜区:2026年金秋虎丘庙会",
+     "start": "2026-09-25",
+     "end": "2026-10-31",
+     "venue": "虎丘山风景名胜区",
+     "distanceKm": 2.02,
+     "status": "Needs Review",
+     "category": "folk"
+    },
+    {
+     "id": "evt-4ea33fa5e8ef75ef38141371",
+     "name": "苏州寒山寺和合美术馆:和合聆香——郑尧锦沉香雕刻艺术展",
+     "start": "2026-09-22",
+     "end": "2026-11-10",
+     "venue": "苏州寒山寺和合美术馆",
+     "distanceKm": 2.16,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-1ffe1f7858e85e71b86e9be3",
+     "name": "苏州美术馆:翰墨结同心 丹青庆七秩——苏州民进70周年书画作品展",
+     "start": "2026-09-15",
+     "end": "2026-10-18",
+     "venue": "苏州美术馆",
+     "distanceKm": 2.61,
+     "status": "Needs Review",
+     "category": "culture"
+    }
+   ]
+  },
+  {
+   "hotel": "新东吴珍珠大酒店",
+   "tier": "舒适",
+   "coordinatesVerified": true,
+   "windows": {
+    "30d": {
+     "total": 71,
+     "within3km": 8,
+     "within5km": 54,
+     "verified": 0,
+     "needsReview": 71,
+     "multiDay": 46
+    },
+    "60d": {
+     "total": 85,
+     "within3km": 8,
+     "within5km": 61,
+     "verified": 0,
+     "needsReview": 85,
+     "multiDay": 49
+    }
+   },
+   "nearest5": [
+    {
+     "id": "evt-7b57b8d801a9d7bbd303df0b",
+     "name": "H+美术馆:“谁人来和”丨韩国艺术家李珍珠、李正培双人展",
+     "start": "2026-09-21",
+     "end": "2027-01-04",
+     "venue": "H+美术馆",
+     "distanceKm": 1.08,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-c6bd3dc504d10801f2dfd25e",
+     "name": "【王牌回归】开心麻花爆笑舞台剧《乌龙山伯爵》",
+     "start": "2026-10-24",
+     "end": "2026-10-24",
+     "venue": "开心麻花运河剧场",
+     "distanceKm": 1.83,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-4ea33fa5e8ef75ef38141371",
+     "name": "苏州寒山寺和合美术馆:和合聆香——郑尧锦沉香雕刻艺术展",
+     "start": "2026-09-22",
+     "end": "2026-11-10",
+     "venue": "苏州寒山寺和合美术馆",
+     "distanceKm": 1.85,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-5e9f3199871b638a5cfa087d",
+     "name": "虎丘山风景名胜区:2026年金秋虎丘庙会",
+     "start": "2026-09-25",
+     "end": "2026-10-31",
+     "venue": "虎丘山风景名胜区",
+     "distanceKm": 2.07,
+     "status": "Needs Review",
+     "category": "folk"
+    },
+    {
+     "id": "evt-2d871f23a96e343c75040d2f",
+     "name": "苏州市体育中心:秀域·欢子「我的青春有你」2026巡回演唱会",
+     "start": "2026-10-31",
+     "end": null,
+     "venue": "苏州市体育中心",
+     "distanceKm": 2.6,
+     "status": "Needs Review",
+     "category": "sports"
+    }
+   ]
+  },
+  {
+   "hotel": "长城大厦(广济路)",
+   "tier": "舒适",
+   "coordinatesVerified": true,
+   "windows": {
+    "30d": {
+     "total": 146,
+     "within3km": 37,
+     "within5km": 52,
+     "verified": 0,
+     "needsReview": 146,
+     "multiDay": 81
+    },
+    "60d": {
+     "total": 187,
+     "within3km": 43,
+     "within5km": 58,
+     "verified": 0,
+     "needsReview": 187,
+     "multiDay": 92
+    }
+   },
+   "nearest5": [
+    {
+     "id": "evt-7b57b8d801a9d7bbd303df0b",
+     "name": "H+美术馆:“谁人来和”丨韩国艺术家李珍珠、李正培双人展",
+     "start": "2026-09-21",
+     "end": "2027-01-04",
+     "venue": "H+美术馆",
+     "distanceKm": 0.81,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-c6bd3dc504d10801f2dfd25e",
+     "name": "【王牌回归】开心麻花爆笑舞台剧《乌龙山伯爵》",
+     "start": "2026-10-24",
+     "end": "2026-10-24",
+     "venue": "开心麻花运河剧场",
+     "distanceKm": 1.17,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-1ffe1f7858e85e71b86e9be3",
+     "name": "苏州美术馆:翰墨结同心 丹青庆七秩——苏州民进70周年书画作品展",
+     "start": "2026-09-15",
+     "end": "2026-10-18",
+     "venue": "苏州美术馆",
+     "distanceKm": 1.53,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-b3c1c6cfa83f0e3a4f096580",
+     "name": "苏州美术馆:墨舞人生——夏小斌绘画作品展",
+     "start": "2026-10-13",
+     "end": "2026-11-01",
+     "venue": "苏州美术馆",
+     "distanceKm": 1.53,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-f5ace41018183ee232c1dd6d",
+     "name": "苏州丝绸博物馆:格致东西——苏州丝绸AI世界的中意对话展",
+     "start": "2026-09-12",
+     "end": "2026-11-29",
+     "venue": "苏州丝绸博物馆",
+     "distanceKm": 1.62,
+     "status": "Needs Review",
+     "category": "culture"
+    }
+   ]
+  },
+  {
+   "hotel": "王府金科大酒店",
+   "tier": "高端",
+   "coordinatesVerified": true,
+   "windows": {
+    "30d": {
+     "total": 71,
+     "within3km": 9,
+     "within5km": 12,
+     "verified": 0,
+     "needsReview": 71,
+     "multiDay": 47
+    },
+    "60d": {
+     "total": 85,
+     "within3km": 10,
+     "within5km": 13,
+     "verified": 0,
+     "needsReview": 85,
+     "multiDay": 50
+    }
+   },
+   "nearest5": [
+    {
+     "id": "evt-4ea33fa5e8ef75ef38141371",
+     "name": "苏州寒山寺和合美术馆:和合聆香——郑尧锦沉香雕刻艺术展",
+     "start": "2026-09-22",
+     "end": "2026-11-10",
+     "venue": "苏州寒山寺和合美术馆",
+     "distanceKm": 0.68,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-6b7602158a881287803828c2",
+     "name": "2026 SAPA-China第六届医药产业大会",
+     "start": "2026-10-29",
+     "end": "2026-10-30",
+     "venue": "苏州狮山国际会议中心",
+     "distanceKm": 2.09,
+     "status": "Needs Review",
+     "category": "business"
+    },
+    {
+     "id": "evt-2cc5240022299acd32851156",
+     "name": "SoundVibe呈现|Charles Berthoud《极限低音》Play With Fire 贝斯巡演 苏州站",
+     "start": "2026-10-25",
+     "end": "2026-10-25",
+     "venue": "山丘livehouse-红唐店",
+     "distanceKm": 2.14,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-30ffbf44048addaeb20bd362",
+     "name": "狮山·放肆喜剧《喜剧精品秀》脱口秀 | 即兴喜剧丨漫才丨单口丨爆笑解压",
+     "start": "2026-10-18",
+     "end": "2026-10-31",
+     "venue": "众戏剧文化艺术空间",
+     "distanceKm": 2.39,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-2d871f23a96e343c75040d2f",
+     "name": "苏州市体育中心:秀域·欢子「我的青春有你」2026巡回演唱会",
+     "start": "2026-10-31",
+     "end": null,
+     "venue": "苏州市体育中心",
+     "distanceKm": 2.53,
+     "status": "Needs Review",
+     "category": "sports"
+    }
+   ]
+  },
+  {
+   "hotel": "时风雅致国际假日酒店",
+   "tier": "中端",
+   "coordinatesVerified": true,
+   "windows": {
+    "30d": {
+     "total": 3,
+     "within3km": 2,
+     "within5km": 2,
+     "verified": 0,
+     "needsReview": 3,
+     "multiDay": 3
+    },
+    "60d": {
+     "total": 4,
+     "within3km": 3,
+     "within5km": 3,
+     "verified": 0,
+     "needsReview": 4,
+     "multiDay": 3
+    }
+   },
+   "nearest5": [
+    {
+     "id": "evt-1f34ca0c87c38b4b16e261a8",
+     "name": "常熟市图书馆:童心孝道 墨传文脉——常熟市昆承小学学生书法作品展",
+     "start": "2026-09-28",
+     "end": "2026-10-28",
+     "venue": "常熟市图书馆",
+     "distanceKm": 1.67,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-ae0e819caac0e69783c9af46",
+     "name": "常熟美术馆:翰墨颂华章·光影映初心——庆祝常熟市政协成立70周年专题书画展",
+     "start": "2026-09-25",
+     "end": "2026-10-18",
+     "venue": "常熟美术馆",
+     "distanceKm": 1.91,
+     "status": "Needs Review",
+     "category": "culture"
+    },
+    {
+     "id": "evt-ae3893c6a078159e377c79f0",
+     "name": "尚湖风景区:中秋国庆活动",
+     "start": "2026-09-24",
+     "end": "2026-10-31",
+     "venue": "尚湖风景区",
+     "distanceKm": 6.55,
+     "status": "Needs Review",
+     "category": "folk"
+    }
+   ]
+  },
+  {
+   "hotel": "港湾假日酒店",
+   "tier": "中端",
+   "coordinatesVerified": true,
+   "windows": {
+    "30d": {
+     "total": 0,
+     "within3km": 0,
+     "within5km": 0,
+     "verified": 0,
+     "needsReview": 0,
+     "multiDay": 0
+    },
+    "60d": {
+     "total": 0,
+     "within3km": 0,
+     "within5km": 0,
+     "verified": 0,
+     "needsReview": 0,
+     "multiDay": 0
+    }
+   },
+   "nearest5": []
+  },
+  {
+   "hotel": "东山宾馆1区",
+   "tier": "高端",
+   "coordinatesVerified": true,
+   "windows": {
+    "30d": {
+     "total": 0,
+     "within3km": 0,
+     "within5km": 0,
+     "verified": 0,
+     "needsReview": 0,
+     "multiDay": 0
+    },
+    "60d": {
+     "total": 0,
+     "within3km": 0,
+     "within5km": 0,
+     "verified": 0,
+     "needsReview": 0,
+     "multiDay": 0
+    }
+   },
+   "nearest5": []
+  },
+  {
+   "hotel": "万怡宾馆",
+   "tier": "中端",
+   "coordinatesVerified": true,
+   "windows": {
+    "30d": {
+     "total": 2,
+     "within3km": 0,
+     "within5km": 0,
+     "verified": 0,
+     "needsReview": 2,
+     "multiDay": 1
+    },
+    "60d": {
+     "total": 2,
+     "within3km": 0,
+     "within5km": 0,
+     "verified": 0,
+     "needsReview": 2,
+     "multiDay": 1
+    }
+   },
+   "nearest5": [
+    {
+     "id": "evt-21d7763c2cc78f00449e62a7",
+     "name": "昆山戏曲百戏博物馆:重阳节系列活动——重阳雅集",
+     "start": "2026-10-18",
+     "end": null,
+     "venue": "昆山戏曲百戏博物馆",
+     "distanceKm": 9.45,
+     "status": "Needs Review",
+     "category": "folk"
+    },
+    {
+     "id": "evt-d73c0fda88b39cc04cf08c8c",
+     "name": "昆山戏曲百戏博物馆:百戏聚首 国宝归源——圆明园兽首暨海外回流文物特展",
+     "start": "2026-10-31",
+     "end": "2027-01-05",
+     "venue": "昆山戏曲百戏博物馆",
+     "distanceKm": 9.45,
+     "status": "Needs Review",
+     "category": "culture"
+    }
+   ]
+  },
+  {
+   "hotel": "云上四季-昆山人民路玉山广场地铁站店",
+   "tier": "高端",
+   "coordinatesVerified": true,
+   "windows": {
+    "30d": {
+     "total": 2,
+     "within3km": 0,
+     "within5km": 0,
+     "verified": 0,
+     "needsReview": 2,
+     "multiDay": 1
+    },
+    "60d": {
+     "total": 2,
+     "within3km": 0,
+     "within5km": 0,
+     "verified": 0,
+     "needsReview": 2,
+     "multiDay": 1
+    }
+   },
+   "nearest5": [
+    {
+     "id": "evt-21d7763c2cc78f00449e62a7",
+     "name": "昆山戏曲百戏博物馆:重阳节系列活动——重阳雅集",
+     "start": "2026-10-18",
+     "end": null,
+     "venue": "昆山戏曲百戏博物馆",
+     "distanceKm": 9.25,
+     "status": "Needs Review",
+     "category": "folk"
+    },
+    {
+     "id": "evt-d73c0fda88b39cc04cf08c8c",
+     "name": "昆山戏曲百戏博物馆:百戏聚首 国宝归源——圆明园兽首暨海外回流文物特展",
+     "start": "2026-10-31",
+     "end": "2027-01-05",
+     "venue": "昆山戏曲百戏博物馆",
+     "distanceKm": 9.25,
+     "status": "Needs Review",
+     "category": "culture"
+    }
+   ]
+  }
+ ]
+}
