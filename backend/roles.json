@@ -1,6 +1,7 @@
 {
-  "_comment": "写操作按角色放行。admin=全部;reviewer=审核/合并/坐标;viewer=只读(客户账号)。每个账号一条,同时在 nginx 建同名 basic-auth 账号:sudo htpasswd -b /etc/nginx/.htpasswd <login> <password>。没有条目的账号 = 拒绝(写操作 403)。路径可用 MENDUNER_ROLES_PATH 覆盖。",
+  "_comment": "写操作按角色放行。admin=全部;reviewer=审核/合并/坐标;viewer=只读(客户账号)。每个账号一条,同时在 nginx 建同名 basic-auth 账号:sudo htpasswd -b /etc/nginx/.htpasswd <login> <password>。没有条目的账号 = 拒绝(写操作 403)。路径可用 MENDUNER_ROLES_PATH 覆盖。口令不写在本文件,由管理员单独保管。",
   "users": {
-    "menduner": { "role": "admin", "name": "管理员" }
+    "menduner": { "role": "admin", "name": "管理员" },
+    "liuge": { "role": "reviewer", "name": "刘哥" }
   }
 }
