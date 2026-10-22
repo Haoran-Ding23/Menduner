@@ -44,13 +44,13 @@ export default function RegisterPage() {
   };
 
   return (
-    <>
+    <div className="auth-page">
       <div className="page-heading">
         <div className="eyebrow">客户账号</div>
         <h1>用邀请码注册</h1>
         <p>邀请码由我们提供；注册成功后立即开始四周专业版试用，试用不需要付款。</p>
       </div>
-      <section className="panel" style={{ maxWidth: 560 }}>
+      <section className="panel auth-panel">
         {error && <Alert className="gap-bottom" type="error" showIcon message={error} />}
         <Form layout="vertical" onFinish={(values) => void submit(values)}>
           <Form.Item
@@ -98,6 +98,6 @@ export default function RegisterPage() {
           已有账号？<Link to="/login">登录</Link> · <Link to="/plans">查看套餐</Link>
         </p>
       </section>
-    </>
+    </div>
   );
 }

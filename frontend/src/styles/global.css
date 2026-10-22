@@ -1484,3 +1484,41 @@ main {
     gap: 6px;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Account pages: the form sits in the middle of the page
+   -------------------------------------------------------------------------- */
+.auth-page {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 8px 0 40px;
+}
+.auth-panel {
+  padding: 24px 28px;
+}
+
+/* The overflow chip on a calendar day. A bare +N reads as "more here" without spending a whole
+   line on the sentence it replaces. */
+.calendar-more {
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 0 6px;
+  border: 1px solid #d6e4f0;
+  border-radius: 8px;
+  background: #f4f8fc;
+  color: #1677ff;
+  font-size: 11px;
+  line-height: 16px;
+  cursor: pointer;
+}
+.calendar-more:hover {
+  background: #e8f2ff;
+}
+/* One line per event: the title truncates and the tooltip carries the dates. */
+.calendar-event > span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+

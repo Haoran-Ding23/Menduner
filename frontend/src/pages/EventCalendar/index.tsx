@@ -119,7 +119,11 @@ export default function EventCalendar() {
                 <div className="day-label">
                   {d.date()} {records.length > 0 && <Tag>{records.length}</Tag>}
                 </div>
-                {records.slice(0, mode === "week" ? 6 : 2).map((e) => {
+                {/* Compact cells: a long exhibition repeats in every day it covers, so a tall
+                    card per day turned the whole month into the same paragraph fourteen times.
+                    Titles only, one line each, and the overflow is a small +N chip rather than
+                    a sentence - the day's full list is one click away in the modal. */}
+                {records.slice(0, mode === "week" ? 6 : 3).map((e) => {
                   const level = assessDemand(e, dataset).level;
                   return (
                     <button
@@ -134,21 +138,18 @@ export default function EventCalendar() {
                         {e.demo ? "D · " : ""}
                         {e.name}
                       </span>
-                      <small className="block calendar-impact">
-                        关注等级：{level}
-                        {e.demo ? " · DEMO" : ""}
-                      </small>
                     </button>
                   );
                 })}
-                {records.length > (mode === "week" ? 6 : 2) && (
-                  <Button
-                    type="link"
-                    size="small"
+                {records.length > (mode === "week" ? 6 : 3) && (
+                  <button
+                    type="button"
+                    className="calendar-more"
                     onClick={() => setExpanded(date)}
+                    aria-label={`还有 ${records.length - (mode === "week" ? 6 : 3)} 条，查看全部`}
                   >
-                    查看全部 {records.length} 条
-                  </Button>
+                    +{records.length - (mode === "week" ? 6 : 3)}
+                  </button>
                 )}
               </div>
             );

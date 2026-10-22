@@ -199,20 +199,6 @@ export default function EventAgenda() {
 
       {section("1 · 新开始", "在这段时间内开幕或开演，是新的需求信号", starting, "green")}
       {section("2 · 进行中", "更早开始、这段时间内仍在进行，需求已持续", running, "default")}
-
-      <section className="panel">
-        <div className="panel-heading">
-          <h3 style={{ margin: 0 }}>3 · 为什么这样分</h3>
-        </div>
-        <p className="muted" style={{ margin: 0, lineHeight: 1.8 }}>
-          酒店关心的是「附近会不会突然多出需求」。<strong>新开始的活动</strong>才是增量信号 ——
-          一个从 8 月开到 10 月的展览已经影响了很多天的入住率，今天并不构成变化。
-          把两者混在一起，列表会读成一片没有重点的流水账。
-          <br />
-          切换「本日 / 本周 / 本月」看不同时间窗。点击任意活动会跳到地图，
-          自动定位到它的年份和月份，并打开详情。
-        </p>
-      </section>
     </>
   );
 }
