@@ -38,7 +38,11 @@ def copy_registry(tmp_path):
 def test_registry_contains_all_tier1_sources_and_manual_wechat():
     definitions = load_registry()
     assert len(definitions) == len({d.source_id for d in definitions})
-    assert len(tier1_keys()) == 10
+    # 11 since 太仓市文体广电和旅游局's 太仓文化 column was registered: it is the only official
+    # channel that lists the county-level city's exhibitions, and without it 太仓's calendar
+    # held 8 events taken from the city-wide tourism portal. Bumping this count is the point of
+    # the test - the registry growth has to be deliberate.
+    assert len(tier1_keys()) == 11
     assert set(yaml.safe_load(REGISTRY_PATH.read_text(encoding='utf-8'))['categories']) == set(CATEGORIES)
     assert {d.adapter for d in definitions if d.adapter} == set(SOURCES)
     for d in definitions:
@@ -214,8 +218,11 @@ def test_tier1_cli_records_failures_and_never_visits_wechat(monkeypatch, tmp_pat
     report = json.loads(capsys.readouterr().out)
     coverage = report['sourceCoverage']
     assert coverage['registeredSources'] == len(load_registry(path))
-    assert coverage['attemptedSources'] == 10
-    assert len(coverage['failedSources']) == 10
+    # 11 tier-1 adapters since 太仓文化 was registered; the manual-only WeChat source is never
+    # attempted, so every tier-1 adapter is expected to fail here against a client that denies
+    # every URL.
+    assert coverage['attemptedSources'] == 11
+    assert len(coverage['failedSources']) == 11
     assert coverage['eventsExtracted'] == coverage['evidenceGenerated'] == 0
     assert output.exists() and client.client.is_closed
     assert all('wechat' not in url and 'weixin' not in url for url in visited)

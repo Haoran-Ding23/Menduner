@@ -89,7 +89,12 @@ def main():
             adapter.trust_level = definition.trust_level
             if hasattr(adapter, "detail_urls"):
                 adapter.detail_urls = definition.detail_urls
-            if hasattr(adapter, "listing_url"):
+            # ``listing_url`` is a string on the adapters that take one from the registry. Check
+            # that it is not a method before overwriting it: an adapter that computes its own
+            # per-page URLs can legitimately define listing_url() as a function, and assigning a
+            # string over it previously failed at collect() time with "'str' object is not
+            # callable" rather than anywhere near this line.
+            if hasattr(adapter, "listing_url") and not callable(adapter.listing_url):
                 adapter.listing_url = definition.crawl_url
             if hasattr(adapter, "crawl_url"):
                 adapter.crawl_url = definition.crawl_url

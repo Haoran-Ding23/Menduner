@@ -7,19 +7,38 @@ import Filters from "../../components/Filters";
 import EventMap from "../../components/Map";
 import EventCard from "../../components/EventCard";
 import VenueHotspots from "../../components/VenueHotspots";
+import RegionNav, { DEFAULT_REGION } from "../../components/RegionNav";
 export default function CityEventMap() {
   const { dataset, filters } = usePlatform();
   // Hotels are drawn on request rather than always. The map is about where the demand is;
   // the hotel layer answers the follow-up question, and leaving it on by default buries the
   // event markers under a cluster of H pins in the same few districts.
   const [showHotels, setShowHotels] = useState(true);
+
+  // The map opens on 太仓: a hotel plans its own county first and the whole city second. An
+  // absent ?district= therefore means 太仓 rather than "everything", and 全市 is an explicit
+  // choice carried as district=all. Keeping both in one parameter means the region buttons,
+  // the dropdown and the URL can never disagree about where the reader is.
+  //
+  // The default only applies when 太仓 is actually present in the data. A build or an import
+  // without it - a fresh dataset, a test fixture, a partial snapshot - would otherwise open on
+  // an empty map with no way to tell that the region simply is not loaded.
+  const hasDefaultRegion = dataset.districts.some((d) => d.id === DEFAULT_REGION);
+  const region = filters.district || (hasDefaultRegion ? DEFAULT_REGION : "all");
+  const activeDistrict = region === "all" ? "" : region;
+  const regionName =
+    region === "all"
+      ? "苏州全市"
+      : dataset.districts.find((d) => d.id === region)?.name ?? "太仓市";
+
   const events = useMemo(
-    () => filterEvents(dataset.events, filters),
+    () =>
+      filterEvents(dataset.events, { ...filters, district: activeDistrict }),
     [
       dataset.events,
       filters.year,
       filters.month,
-      filters.district,
+      activeDistrict,
       filters.category,
       filters.includeDemo,
     ],
@@ -46,10 +65,11 @@ export default function CityEventMap() {
     <>
       <div className="page-heading">
         <div className="eyebrow">空间情报</div>
-        <h1>苏州城市活动地图</h1>
+        <h1>{regionName}活动地图</h1>
         <p>城市活动空间情报 · 连接活动、场馆与周边酒店资源</p>
       </div>
-      <Filters />
+      <Filters regions={false} />
+      <RegionNav />
       <div className="stats-strip">
         <div>
           <small>当前筛选活动</small>

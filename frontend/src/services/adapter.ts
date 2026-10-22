@@ -6,6 +6,7 @@ import type {
   Place,
   Status,
   Coordinates,
+  District,
 } from "../types";
 import { categories, validDate, safeUrl, effectiveStatus } from "../utils/data";
 const text = (v: unknown): string | null =>
@@ -47,7 +48,9 @@ export function normalizeEvent(
     startDate: validDate(start) ? start : null,
     endDate: validDate(end) ? end : null,
     venueId: text(first(raw, "venueId", "venue_id")),
-    districtId: text(first(raw, "districtId", "district_id")),
+    // The API snapshot names this column `district`; the import path and this type use
+    // `districtId`. Accepting both is what lets the region navigation filter by 太仓 at all.
+    districtId: text(first(raw, "districtId", "district_id", "district")),
     organizer: text(first(raw, "organizer", "Organizer", "主办方")),
     attendance:
       typeof attendance === "number" &&
@@ -134,12 +137,26 @@ export function normalizeDataset(input: unknown): Dataset {
     tierSource: text(v.tierSource),
     tierEvidence: text(v.tierEvidence),
   }));
-  const districts = array("districts").map((d) => ({
-    id: text(d.id) ?? "",
-    name: text(d.name) ?? "未命名商圈",
-    demo: d.demo !== false,
-    description: text(d.description) ?? "归属需独立核验",
-  }));
+  const districts = array("districts").map((d) => {
+    // Administrative divisions carry a kind (市辖区 / 代管县级市); older rows carry a
+    // business-area kind from an earlier geocoding model. Dropping the field made every region
+    // look identical, so the map could not offer 太仓 and 姑苏区 as places to go to.
+    const rawKind = text(d.kind);
+    const kind =
+      rawKind === "city" || rawKind === "district" || rawKind === "county_city" ||
+      rawKind === "business_area" || rawKind === "subdistrict"
+        ? (rawKind as District["kind"])
+        : undefined;
+    return {
+      id: text(d.id) ?? "",
+      name: text(d.name) ?? "未命名商圈",
+      demo: d.demo !== false,
+      description: text(d.description) ?? "归属需独立核验",
+      kind,
+      parentId: text(d.parentId),
+      level: typeof d.level === "number" ? d.level : undefined,
+    };
+  });
   // A place is only a place when the source said which category it belongs to; an unknown kind
   // is dropped rather than drawn as a vague dot on the graph.
   const places = array("places")

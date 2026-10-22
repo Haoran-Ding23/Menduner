@@ -80,6 +80,14 @@ export interface District {
   name: string;
   demo: boolean;
   description: string;
+  /**
+   * What kind of region this is, so the interface can group them the way Suzhou is actually
+   * organised: 市辖区 (districts) and 代管县级市 (county-level cities) sit side by side under
+   * 苏州市. Older rows carry business-area kinds and are not offered as regions at all.
+   */
+  kind?: "city" | "district" | "county_city" | "business_area" | "subdistrict";
+  parentId?: string | null;
+  level?: number;
 }
 /**
  * A restaurant or a public-transport stop around a venue, taken from the source's own POI record.

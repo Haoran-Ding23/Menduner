@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
 import { Empty, Space, Table, Tag, Typography } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
-import { categories, venueHotspots, HOTSPOT_MIN } from "../../utils/data";
+import { categories, filterEvents, venueHotspots, HOTSPOT_MIN } from "../../utils/data";
 import VenueEvents from "../VenueEvents";
+import { DEFAULT_REGION } from "../RegionNav";
 
 /**
  * Demand clustered by venue.
@@ -15,13 +16,34 @@ import VenueEvents from "../VenueEvents";
  * traceable back to the events behind it.
  */
 export default function VenueHotspots() {
-  const { dataset, go } = usePlatform();
+  const { dataset, go, filters } = usePlatform();
   const [openVenue, setOpenVenue] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
 
+  // The hotspot table follows the region the reader is looking at. Without this, opening 太仓
+  // still listed the venues of 吴中区 underneath the 太仓 map, which reads as if those venues
+  // were in 太仓. Defaulting to the map's own default keeps the two panels on one subject.
+  const hasDefaultRegion = dataset.districts.some((d) => d.id === DEFAULT_REGION);
+  const region = filters.district || (hasDefaultRegion ? DEFAULT_REGION : "all");
+  const activeDistrict = region === "all" ? "" : region;
+
+  const scopedEvents = useMemo(
+    () =>
+      filterEvents(dataset.events, { ...filters, district: activeDistrict }),
+    [
+      dataset.events,
+      filters.year,
+      filters.month,
+      filters.category,
+      filters.includeDemo,
+      filters.includePast,
+      activeDistrict,
+    ],
+  );
+
   const rows = useMemo(
-    () => venueHotspots(dataset.events, dataset.venues),
-    [dataset.events, dataset.venues],
+    () => venueHotspots(scopedEvents, dataset.venues),
+    [scopedEvents, dataset.venues],
   );
   const hotspots = rows.filter((row) => row.isHotspot);
   const shown = showAll ? rows : hotspots;

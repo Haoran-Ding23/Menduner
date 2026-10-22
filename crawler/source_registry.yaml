@@ -25,6 +25,25 @@ sources:
     No explicit leading event date; publication/relative dates are not substituted
   last_checked: '2026-10-13T20:46:57.659144+00:00'
   topic: null
+- source_id: government-taicang-culture
+  source_name: Taicang Culture (Taicang Municipal Culture, Sports, Radio, Television
+    and Tourism Bureau)
+  category: government
+  url: https://www.taicang.gov.cn/taicang/tcwh/zwfw_list.shtml
+  crawl_url: https://www.taicang.gov.cn/taicang/tcwh/zwfw_list.shtml
+  trust_level: OFFICIAL_GOVERNMENT
+  priority: 2
+  crawl_status: PARTIAL
+  tier: 1
+  adapter: taicang_culture
+  implementation: event_extraction
+  reason: '[{"error": "Page exceeds the 2 MB prototype limit", "url": "https://www.taicang.gov.cn/taicang/tcwh/202602/40b52633e9a641ffab81aba9fb454dba.shtml"},
+    {"error": "Page exceeds the 2 MB prototype limit", "url": "https://www.taicang.gov.cn/taicang/tcwh/202602/19ce4186beba4132b75c4eeacebe9ad9.shtml"},
+    {"error": "Page exceeds the 2 MB prototype limit", "url": "https://www.taicang.gov.cn/taicang/tcwh/202602/414906676e014d62baa4bc5867ad438b.shtml"}];
+    Exhibition date line did not yield a date range: 2025年6年24日—8月31日（9:00-17:00周一馆休）
+    展览地点：太仓市图书馆一楼展厅 简介：文明的交融，始于; No exhibition date line in this Taicang culture notice'
+  last_checked: '2026-10-22T14:34:43.731381+00:00'
+  topic: taicang
 - source_id: government-suzhou
   source_name: Suzhou Government
   category: government
