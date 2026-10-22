@@ -77,6 +77,11 @@ export default function EventDetail() {
             ))}
           </Space>
           <h3>字段证据</h3>
+          {/* Two lines per field, and no extraction-rule name. A hotel's revenue manager is
+              asking "where did this come from", not "which parser produced it": the method
+              string (explicit_title_keyword_to_category_rule, taicang_culture_labelled_venue_line)
+              is internal machinery, and printing it pushed the one useful fact - the publisher
+              - behind jargon. So the second line is the source name, linking to the page. */}
           {repository.getEvidence(event.id).map((e) => (
             <div className="evidence-row" key={e.id}>
               <strong>{e.field}</strong>
@@ -85,13 +90,14 @@ export default function EventDetail() {
               </Tag>
               <span>{valueText(e.value)}</span>
               <small>
-                {e.method} · {e.sourceName ?? "来源待核验"}
+                {e.sourceUrl ? (
+                  <a href={e.sourceUrl} target="_blank" rel="noreferrer">
+                    {e.sourceName ?? "查看原始来源"} ↗
+                  </a>
+                ) : (
+                  (e.sourceName ?? "来源待核验")
+                )}
               </small>
-              {e.sourceUrl && (
-                <a href={e.sourceUrl} target="_blank" rel="noreferrer">
-                  打开原始来源 ↗
-                </a>
-              )}
             </div>
           ))}
         </>

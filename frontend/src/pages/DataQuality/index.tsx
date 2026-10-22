@@ -377,16 +377,17 @@ export default function DataQuality() {
                             : `人工：${e.decidedBy}`}
                         </Tag>
                       )}
+                      {/* The source name IS the link: a separate 原始来源 line made the reader
+                          match two lines up to find who published the value. */}
                       <small className="block">
-                        {e.sourceName ?? "来源待核验"}
+                        {e.sourceUrl ? (
+                          <a href={e.sourceUrl} target="_blank" rel="noreferrer">
+                            {e.sourceName ?? "查看原始来源"} ↗
+                          </a>
+                        ) : (
+                          (e.sourceName ?? "来源待核验")
+                        )}
                       </small>
-                      {e.sourceUrl ? (
-                        <a href={e.sourceUrl} target="_blank" rel="noreferrer">
-                          原始来源 ↗
-                        </a>
-                      ) : (
-                        <small className="muted">来源待核验</small>
-                      )}
                       <small className="block muted">
                         {(e.decidedAt ?? e.updatedAt).slice(0, 10)}
                       </small>
