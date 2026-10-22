@@ -27,13 +27,13 @@ export default function LoginPage() {
   };
 
   return (
-    <>
+    <div className="auth-page">
       <div className="page-heading">
         <div className="eyebrow">客户账号</div>
         <h1>登录</h1>
         <p>登录后查看套餐、试用剩余时间和开通申请。</p>
       </div>
-      <section className="panel" style={{ maxWidth: 520 }}>
+      <section className="panel auth-panel">
         {error && <Alert className="gap-bottom" type="error" showIcon message={error} />}
         <Form layout="vertical" onFinish={(values) => void submit(values)}>
           <Form.Item label="登录名" name="login" rules={[{ required: true, message: "请输入登录名" }]}>
@@ -50,6 +50,6 @@ export default function LoginPage() {
           还没有账号？<Link to="/register">用邀请码注册试用</Link> · <Link to="/plans">查看套餐</Link>
         </p>
       </section>
-    </>
+    </div>
   );
 }

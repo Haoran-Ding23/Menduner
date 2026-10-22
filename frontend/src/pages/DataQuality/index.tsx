@@ -150,27 +150,6 @@ export default function DataQuality() {
       <section className="panel gap-bottom" aria-label="采集来源状态">
         <CrawlHealth />
       </section>
-      <Alert
-        className="gap-bottom"
-        type="warning"
-        showIcon
-        message="这份数据的已知边界"
-        description={
-          <ul style={{ margin: 0, paddingLeft: 18 }}>
-            <li>
-              没有活动人数、酒店入住率、平均房价、间夜——所以不做需求强弱判断，也不做收入预测。
-            </li>
-            <li>
-              活动类别由规则自动归类，可能存在误判（例如工业展被归为 others、演唱会被归为
-              sports）；核验状态以字段级证据为准。
-            </li>
-            <li>
-              同一活动可能在两个来源各有一条记录，尚未合并；以场馆/官方来源那条为准。
-            </li>
-            <li>覆盖范围是已采集的公开来源，不是全城活动的完整清单。</li>
-          </ul>
-        }
-      />
       {/* Per-region quality, so a reviewer can see which part of the city is short of evidence
           before scrolling a global list of 663 events. Selecting a row scopes the index below. */}
       <section className="panel gap-bottom" aria-label="分地区数据质量">

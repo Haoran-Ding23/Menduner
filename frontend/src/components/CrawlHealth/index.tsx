@@ -51,25 +51,6 @@ export default function CrawlHealth() {
 
   return (
     <>
-      {alerts.length > 0 && (
-        <Alert
-          className="gap-bottom"
-          type="error"
-          showIcon
-          message={`${alerts.length} 个来源连续失败，可能已经失效`}
-          description={
-            <ul style={{ margin: 0, paddingLeft: 18 }}>
-              {alerts.map((a) => (
-                <li key={a.source_id}>
-                  <strong>{a.source_name ?? a.source_id}</strong> 连续失败{" "}
-                  {a.consecutive_failures} 次：{a.reason ?? "原因未记录"}
-                </li>
-              ))}
-            </ul>
-          }
-        />
-      )}
-
       <div className="panel-heading">
         <Space wrap>
           <strong>采集来源状态</strong>
