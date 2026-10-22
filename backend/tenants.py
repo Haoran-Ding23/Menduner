@@ -235,6 +235,81 @@ def members_of(db_path: Path, tenant_id: str) -> list[dict]:
         )]
 
 
+def role_of(db_path: Path, tenant_id: str, login: str) -> str | None:
+    """The role a login holds in one tenant, or None when it does not belong to it."""
+    with connect(db_path) as con:
+        ensure_schema(con)
+        row = con.execute(
+            "SELECT role FROM tenant_members WHERE tenant_id=? AND login=?",
+            (tenant_id, (login or "").strip()),
+        ).fetchone()
+        return row["role"] if row else None
+
+
+def can_manage(db_path: Path, tenant_id: str, login: str) -> bool:
+    """Only an owner may add or remove people, and only an owner may upload.
+
+    A member sees everything their hotel holds - the store manager and the front desk share one
+    ledger - but uploading is a decision that changes the record, so it stays with the owner.
+    This is the conservative reading; relaxing it later is a one-line change.
+    """
+    return role_of(db_path, tenant_id, login) == "owner"
+
+
+def remove_member(db_path: Path, *, tenant_id: str, login: str, acting_login: str) -> None:
+    """Remove someone from a hotel. An owner cannot remove themselves, so a hotel is never
+    left with nobody able to manage it."""
+    who = (login or "").strip()
+    if who == (acting_login or "").strip():
+        raise ValueError("不能移除自己；如需变更负责人，请先把另一位成员设为负责人")
+    with connect(db_path) as con:
+        ensure_schema(con)
+        row = con.execute(
+            "SELECT id FROM tenant_members WHERE tenant_id=? AND login=?", (tenant_id, who)
+        ).fetchone()
+        if row is None:
+            raise ValueError(f"{who} 不是本店成员")
+        con.execute("DELETE FROM tenant_members WHERE id=?", (row["id"],))
+
+
+def join_tenant(db_path: Path, base_dir: Path, *, tenant_id: str, login: str,
+                role: str = "member") -> dict:
+    """Move an account into a hotel it was invited to.
+
+    Registration gives every account its own hotel, so a colleague who registers before being
+    invited already owns an empty one. Joining therefore has to move them, and that is only safe
+    while their own ledger holds nothing: deleting a hotel that has data would destroy records
+    nobody agreed to lose. So the empty case is handled and the non-empty case is refused, with
+    the reason stated rather than the data quietly dropped.
+    """
+    who = (login or "").strip()
+    current = tenant_of_login(db_path, who)
+    if current == tenant_id:
+        return {"tenant_id": tenant_id, "login": who, "role": role_of(db_path, tenant_id, who)}
+    if current is not None:
+        # A sqlite3.Connection's context manager commits but does NOT close, and on Windows an
+        # open handle makes the file undeletable. This has to be closed explicitly before the
+        # ledger is removed.
+        con = open_tenant_db(base_dir, current)
+        try:
+            held = con.execute("SELECT COUNT(*) FROM private_metrics").fetchone()[0]
+        finally:
+            con.close()
+        if held:
+            raise ValueError(
+                f"{who} 已有自己的酒店数据（{held} 条），不能直接并入其他酒店；"
+                "请先导出或清除这些数据"
+            )
+        with connect(db_path) as con:
+            ensure_schema(con)
+            con.execute("DELETE FROM tenant_members WHERE login=?", (who,))
+            con.execute("DELETE FROM tenants WHERE id=?", (current,))
+        path = tenant_db_path(base_dir, current)
+        if path.exists():
+            path.unlink()
+    return add_member(db_path, tenant_id=tenant_id, login=who, role=role)
+
+
 def open_tenant_db(base_dir: Path, tenant_id: str) -> sqlite3.Connection:
     """The only way to reach a tenant's private data.
 

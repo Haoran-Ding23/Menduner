@@ -425,6 +425,62 @@ def create_app(db_path: Path | None = None):
             )
         return tenant
 
+    @app.get('/tenant/members')
+    def tenant_members(request: Request):
+        """Who shares this hotel's ledger. Readable by every member of the hotel."""
+        with connect(path) as con:
+            tenant = _tenant_of_request(con, request)
+            account = accounts.session_account(con, _session_token(request))
+            rows = tenants.members_of(path, tenant)
+        login = (account or {}).get('login')
+        return {
+            'tenant': tenant,
+            'login': login,
+            'canManage': tenants.can_manage(path, tenant, login or ''),
+            'members': rows,
+        }
+
+    class MemberRequest(BaseModel):
+        login: str = Field(min_length=3, max_length=32)
+
+    @app.post('/tenant/members')
+    def tenant_add_member(body: MemberRequest, request: Request):
+        """Invite an existing account into this hotel. Owners only."""
+        with connect(path) as con:
+            tenant = _tenant_of_request(con, request)
+            account = accounts.session_account(con, _session_token(request))
+            login = (account or {}).get('login', '')
+            if not tenants.can_manage(path, tenant, login):
+                raise HTTPException(status_code=403, detail='只有负责人可以添加成员')
+            target = con.execute(
+                "SELECT login FROM customer_accounts WHERE login=?", (body.login.strip(),)
+            ).fetchone()
+            if target is None:
+                raise HTTPException(
+                    status_code=404,
+                    detail='找不到该账号；请让对方先用邀请码注册，再加入本店',
+                )
+        try:
+            return tenants.join_tenant(path, _private_base(), tenant_id=tenant,
+                                       login=body.login.strip(), role='member')
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from None
+
+    @app.delete('/tenant/members/{member_login}')
+    def tenant_remove_member(member_login: str, request: Request):
+        with connect(path) as con:
+            tenant = _tenant_of_request(con, request)
+            account = accounts.session_account(con, _session_token(request))
+            login = (account or {}).get('login', '')
+            if not tenants.can_manage(path, tenant, login):
+                raise HTTPException(status_code=403, detail='只有负责人可以移除成员')
+        try:
+            tenants.remove_member(path, tenant_id=tenant, login=member_login,
+                                  acting_login=login)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from None
+        return {'removed': member_login}
+
     @app.get('/private/metrics')
     def private_metrics(request: Request):
         """This hotel's own numbers. Nothing here is shared with any other tenant."""
@@ -455,6 +511,12 @@ def create_app(db_path: Path | None = None):
         """
         with connect(path) as con:
             tenant = _tenant_of_request(con, request)
+            account = accounts.session_account(con, _session_token(request))
+            if not tenants.can_manage(path, tenant, (account or {}).get('login', '')):
+                raise HTTPException(
+                    status_code=403,
+                    detail='只有负责人可以上传经营数据；成员可以查看',
+                )
         data = await request.body()
         if not data:
             raise HTTPException(status_code=400, detail='没有收到文件内容')

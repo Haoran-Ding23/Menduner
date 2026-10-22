@@ -1,11 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Alert, Button, Empty, Select, Space, Table, Tag, message } from "antd";
+import { Alert, Button, Empty, Input, Select, Space, Table, Tag, message } from "antd";
 import {
   PRIVATE_METRIC_LABELS,
   PRIVATE_METRIC_UNITS,
+  addMember,
   importSpreadsheet,
+  loadMembers,
   loadPrivateMetrics,
+  removeMember,
   type ImportPreview,
+  type MemberList,
   type PrivateMetric,
   type PrivateRow,
   type PrivateSummary,
@@ -23,6 +27,129 @@ import {
  * Nothing on this page is shared with any other hotel: the backend resolves the hotel from the
  * session and reads its own database file.
  */
+/**
+ * Who shares this hotel's ledger.
+ *
+ * A colleague registers first and is then added here; the backend moves them out of the empty
+ * hotel their registration created and refuses if that hotel already holds data, so nothing is
+ * destroyed by joining. Only an owner can add or remove, and the backend enforces that too -
+ * hiding the buttons is a courtesy, not the rule.
+ */
+function Members() {
+  const [state, setState] = useState<MemberList | null>(null);
+  const [login, setLogin] = useState("");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const refresh = useCallback(async () => {
+    try {
+      setState(await loadMembers());
+      setError("");
+    } catch (exc) {
+      setError(exc instanceof Error ? exc.message : "读取失败");
+    }
+  }, []);
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
+
+  const add = async () => {
+    setBusy(true);
+    setError("");
+    try {
+      await addMember(login.trim());
+      setLogin("");
+      await refresh();
+    } catch (exc) {
+      setError(exc instanceof Error ? exc.message : "添加失败");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const drop = async (who: string) => {
+    setBusy(true);
+    setError("");
+    try {
+      await removeMember(who);
+      await refresh();
+    } catch (exc) {
+      setError(exc instanceof Error ? exc.message : "移除失败");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (error && !state) {
+    return <Alert type="warning" showIcon message={error} />;
+  }
+
+  return (
+    <>
+      {error && <Alert className="gap-bottom" type="warning" showIcon message={error} />}
+      <Table
+        size="small"
+        rowKey="login"
+        dataSource={state?.members ?? []}
+        pagination={false}
+        columns={[
+          { title: "账号", dataIndex: "login" },
+          {
+            title: "角色",
+            width: 110,
+            render: (_, row) => (
+              <Tag color={row.role === "owner" ? "gold" : "default"}>
+                {row.role === "owner" ? "负责人" : "成员"}
+              </Tag>
+            ),
+          },
+          {
+            title: "加入时间",
+            width: 130,
+            render: (_, row) => row.added_at.slice(0, 10),
+          },
+          {
+            title: "",
+            width: 90,
+            render: (_, row) =>
+              state?.canManage && row.login !== state.login ? (
+                <Button
+                  size="small"
+                  danger
+                  type="link"
+                  disabled={busy}
+                  onClick={() => void drop(row.login)}
+                >
+                  移除
+                </Button>
+              ) : null,
+          },
+        ]}
+      />
+      {state?.canManage ? (
+        <Space className="gap-top" wrap>
+          <Input
+            placeholder="对方注册时的登录名"
+            aria-label="要加入本店的账号"
+            value={login}
+            onChange={(e) => setLogin(e.target.value)}
+            style={{ width: 240 }}
+          />
+          <Button type="primary" loading={busy} disabled={!login.trim()} onClick={() => void add()}>
+            邀请加入本店
+          </Button>
+          <small className="muted">对方需要先用邀请码注册账号</small>
+        </Space>
+      ) : (
+        <p className="muted" style={{ marginTop: 12 }}>
+          只有负责人可以添加或移除成员。
+        </p>
+      )}
+    </>
+  );
+}
+
 export default function PrivateData() {
   const [data, setData] = useState<PrivateSummary | null>(null);
   const [error, setError] = useState("");
@@ -214,6 +341,14 @@ export default function PrivateData() {
       </section>
 
       <section className="panel">
+        <div className="panel-heading">
+          <h3 style={{ margin: 0 }}>本店成员</h3>
+          <small className="muted">成员可查看本店全部数据；上传与成员管理由负责人操作</small>
+        </div>
+        <Members />
+      </section>
+
+      <section className="panel gap-top">
         <div className="panel-heading">
           <h3 style={{ margin: 0 }}>已上传的数据</h3>
           <Space>

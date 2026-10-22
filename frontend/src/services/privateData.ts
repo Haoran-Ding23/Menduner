@@ -96,6 +96,36 @@ export function loadPrivateMetrics(): Promise<PrivateSummary> {
   return call<PrivateSummary>("/api/private/metrics");
 }
 
+export interface TenantMember {
+  login: string;
+  role: "owner" | "member";
+  added_at: string;
+}
+
+export interface MemberList {
+  tenant: string;
+  login: string | null;
+  canManage: boolean;
+  members: TenantMember[];
+}
+
+export function loadMembers(): Promise<MemberList> {
+  return call<MemberList>("/api/tenant/members");
+}
+
+/** Add an already-registered account to this hotel. Owners only; the backend enforces it. */
+export function addMember(login: string): Promise<{ tenant_id: string; login: string }> {
+  return call("/api/tenant/members", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ login }),
+  });
+}
+
+export function removeMember(login: string): Promise<{ removed: string }> {
+  return call(`/api/tenant/members/${encodeURIComponent(login)}`, { method: "DELETE" });
+}
+
 /** @param mapping columns the customer confirmed, as `{ metric: headerName }` */
 export function importSpreadsheet(
   file: File,
