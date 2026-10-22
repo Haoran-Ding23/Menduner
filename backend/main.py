@@ -9,6 +9,8 @@ from backend import accounts
 from backend import auth
 from backend import bulk_review
 from backend import client_errors
+from backend import private_import
+from backend import tenants
 from backend.amap import amap_place_url
 from backend import venues as venue_store
 from backend.database import connect, database_path, initialize, snapshot, snapshot_bytes
@@ -383,6 +385,104 @@ def create_app(db_path: Path | None = None):
         """Who the customer is and which plan their dates currently grant (never raises)."""
         with connect(path) as con:
             return _account_state(con, request)
+
+    # --- a hotel's own private ledger ------------------------------------------------------
+    # The tenant is resolved from the session and never from the request. Accepting a
+    # tenant_id parameter here would let any signed-in customer read another hotel's numbers
+    # by editing one field, and no other part of the design could compensate for that.
+
+    def _private_base() -> Path:
+        """Where tenant databases live: beside the main database, in its own directory."""
+        return database_path().parent
+
+    def _tenant_of_request(con, request: Request) -> str:
+        account = accounts.session_account(con, _session_token(request))
+        if account is None:
+            raise HTTPException(status_code=401, detail='请先登录')
+        tenant = tenants.tenant_of_login(con, account['login'])
+        if tenant is None:
+            raise HTTPException(
+                status_code=403,
+                detail='该账号尚未归属任何酒店，无法查看或上传经营数据',
+            )
+        return tenant
+
+    @app.get('/private/metrics')
+    def private_metrics(request: Request):
+        """This hotel's own numbers. Nothing here is shared with any other tenant."""
+        with connect(path) as con:
+            tenant = _tenant_of_request(con, request)
+        with tenants.open_tenant_db(_private_base(), tenant) as con:
+            rows = tenants.read_metrics(con)
+        return {
+            'tenant': tenant,
+            'metrics': tenants.METRICS,
+            'rows': rows,
+            'count': len(rows),
+        }
+
+    @app.post('/private/import')
+    async def private_import_route(
+        request: Request,
+        filename: str = '',
+        mapping: str = '',
+        apply: int = 0,
+    ):
+        """Preview, or apply, an upload of the hotel's own spreadsheet.
+
+        The file is taken as the raw request body rather than multipart so the endpoint has no
+        extra dependency. ``apply=0`` returns what would be stored; ``apply=1`` re-parses the
+        same bytes with the same mapping and writes only rows that pass validation again - the
+        server never trusts values the client sends back.
+        """
+        with connect(path) as con:
+            tenant = _tenant_of_request(con, request)
+        data = await request.body()
+        if not data:
+            raise HTTPException(status_code=400, detail='没有收到文件内容')
+        try:
+            headers, rows = private_import.parse_table(data, filename=filename)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from None
+
+        chosen = private_import.detect_mapping(headers)
+        if mapping:
+            try:
+                supplied = json.loads(mapping)
+            except ValueError:
+                raise HTTPException(status_code=400, detail='mapping 不是合法 JSON') from None
+            if not isinstance(supplied, dict):
+                raise HTTPException(status_code=400, detail='mapping 必须是对象')
+            chosen = {str(k): int(v) for k, v in supplied.items()}
+        try:
+            preview = private_import.build_preview(headers, rows, chosen)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from None
+
+        account = None
+        with connect(path) as con:
+            account = accounts.session_account(con, _session_token(request))
+        uploaded_by = (account or {}).get('login', '')
+
+        result = {
+            'tenant': tenant,
+            'dryRun': not bool(apply),
+            'headers': preview['headers'],
+            'mapping': {k: preview['headers'][v] for k, v in preview['mapping'].items()
+                        if v < len(preview['headers'])},
+            'metrics': preview['metrics'],
+            'rowsRead': preview['rows_read'],
+            'acceptedCount': len(preview['accepted']),
+            'issues': preview['issues'],
+            'sample': preview['accepted'][:10],
+        }
+        if apply:
+            with tenants.open_tenant_db(_private_base(), tenant) as con:
+                written = private_import.commit_preview(
+                    con, preview, uploaded_by=uploaded_by, source_file=filename or None)
+            result['written'] = written
+            result['dryRun'] = False
+        return result
 
     @app.post('/account/orders')
     def customer_order(body: OrderRequest, request: Request):

@@ -26,3 +26,6 @@ beautifulsoup4==4.15.0
 soupsieve==3.0.2
 socksio==1.0.0
 PyYAML==6.0.3
+# Excel import for a hotel's own spreadsheet (backend/private_import.py). The CSV path needs
+# nothing extra; xlsx needs this, and a hotel's export is almost always .xlsx.
+openpyxl==3.1.5
