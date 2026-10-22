@@ -8,7 +8,7 @@ import sqlite3
 import pytest
 
 from backend import tenants
-from backend.database import initialize
+from backend.database import connect, initialize
 
 
 @pytest.fixture
@@ -117,13 +117,15 @@ def test_an_unsupported_role_is_refused(db):
 # --- the private ledger refuses what it cannot trace ------------------------------
 
 def test_an_unknown_metric_is_refused(base):
-    with connect(base, "hotel-a") as con:
+    with open_db(base, "hotel-a") as con:
         with pytest.raises(ValueError, match="metric must be one of"):
             tenants.record_metric(con, metric="revenue", period_start="2026-10-01",
                                   value=1.0, uploaded_by="a")
 
 
-def connect(base, tenant_id):
+def open_db(base, tenant_id):
+    """Named distinctly from database.connect: a local connect shadowed it and the tests
+    that reached for the main database silently called this instead."""
     return tenants.open_tenant_db(base, tenant_id)
 
 
@@ -154,6 +156,64 @@ def test_a_metric_can_carry_its_channel_and_room_type(base):
                               value=31.5, channel="携程", uploaded_by="a")
         row = tenants.read_metrics(con)[0]
     assert row["channel"] == "携程"
+
+
+# --- every account ends up owning a hotel -----------------------------------------
+
+def test_an_account_gets_a_tenant_named_after_its_hotel(db):
+    account = {"id": "acct-1", "login": "manager", "name": "王经理", "hotel": "苏州洲际酒店"}
+    tenant = tenants.ensure_tenant_for_account(db, account)
+    assert tenants.tenant_of_login(db, "manager") == tenant
+    with connect(db) as con:
+        name = con.execute("SELECT name FROM tenants WHERE id=?", (tenant,)).fetchone()["name"]
+    assert name == "苏州洲际酒店"
+
+
+def test_an_account_without_a_hotel_name_still_gets_a_labelled_tenant(db):
+    account = {"id": "acct-2", "login": "staff", "name": "李四", "hotel": None}
+    tenant = tenants.ensure_tenant_for_account(db, account)
+    with connect(db) as con:
+        name = con.execute("SELECT name FROM tenants WHERE id=?", (tenant,)).fetchone()["name"]
+    assert "李四" in name and "待补" in name
+
+
+def test_ensuring_a_tenant_twice_does_not_create_a_second_one(db):
+    """Idempotent, so a retried registration or a re-run backfill is harmless."""
+    account = {"id": "acct-3", "login": "manager3", "name": "张三", "hotel": "A 酒店"}
+    first = tenants.ensure_tenant_for_account(db, account)
+    second = tenants.ensure_tenant_for_account(db, account)
+    assert first == second
+    with connect(db) as con:
+        assert con.execute("SELECT COUNT(*) FROM tenants").fetchone()[0] >= 2  # fixture's two
+
+
+def test_the_tenant_id_is_derived_from_the_account_so_it_is_stable(db):
+    account = {"id": "acct-stable", "login": "stable", "name": "x", "hotel": None}
+    assert tenants.tenant_id_for_account("acct-stable") == \
+        tenants.tenant_id_for_account("acct-stable")
+    # And it must satisfy the filename rule the accessor enforces.
+    tenants.tenant_db_path(db.parent, tenants.tenant_id_for_account("acct-stable"))
+
+
+def test_two_accounts_get_two_separate_ledgers(db, tmp_path):
+    base = tmp_path / "private"
+    base.mkdir()
+    a = tenants.ensure_tenant_for_account(
+        db, {"id": "acct-a", "login": "a-login", "name": "a", "hotel": "A"})
+    b = tenants.ensure_tenant_for_account(
+        db, {"id": "acct-b", "login": "b-login", "name": "b", "hotel": "B"})
+    assert a != b
+    with tenants.open_tenant_db(base, a) as con:
+        tenants.record_metric(con, metric="adr", period_start="2026-10-01",
+                              value=600.0, uploaded_by="a-login")
+    with tenants.open_tenant_db(base, b) as con:
+        assert tenants.read_metrics(con) == []
+
+
+def test_an_account_without_id_or_login_is_refused(db):
+    with pytest.raises(ValueError, match="needs an id and a login"):
+        tenants.ensure_tenant_for_account(db, {"id": "", "login": "x"})
+
 
 
 # --- the private table holds no price recommendation ------------------------------

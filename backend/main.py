@@ -354,7 +354,21 @@ def create_app(db_path: Path | None = None):
                 secure=_is_https(request),
                 max_age=accounts.SESSION_DAYS * 86400, path='/',
             )
-            return _account_state(con, request, token)
+            state = _account_state(con, request, token)
+
+        # A customer account is a hotel. Give it its own private ledger now rather than leaving
+        # registration half-done, because without it the private endpoints answer 403 for every
+        # new customer and the account looks broken from the first upload. This runs after the
+        # transaction above has committed: opening a second connection while that write is still
+        # held answers "database is locked", which is how the first version failed every
+        # registration test.
+        try:
+            tenants.ensure_tenant_for_account(path, account)
+        except Exception:
+            # Registration itself succeeded and the account is usable; the backfill script
+            # repairs a tenant that could not be created here.
+            pass
+        return state
 
     @app.post('/account/login')
     def customer_login(body: LoginRequest, request: Request, response: Response):
@@ -399,8 +413,12 @@ def create_app(db_path: Path | None = None):
         account = accounts.session_account(con, _session_token(request))
         if account is None:
             raise HTTPException(status_code=401, detail='请先登录')
-        tenant = tenants.tenant_of_login(con, account['login'])
+        tenant = tenants.tenant_of_login(path, account['login'])
         if tenant is None:
+            # Logged on failure only: a tenant that exists in the database but is invisible to
+            # the request is otherwise indistinguishable from an account that was never linked,
+            # and the two have completely different fixes.
+            print(f'[private] no tenant db={path} login={account["login"]!r}', flush=True)
             raise HTTPException(
                 status_code=403,
                 detail='该账号尚未归属任何酒店，无法查看或上传经营数据',

@@ -180,6 +180,52 @@ def tenant_of_login(db_path: Path, login: str) -> str | None:
         return row["tenant_id"] if row else None
 
 
+def tenant_id_for_account(account_id: str) -> str:
+    """A stable, filename-safe tenant id derived from the account that created it.
+
+    Derived rather than random so the same account cannot accidentally produce two tenants: a
+    repeated registration or a retried backfill lands on the same id and hits the existing row
+    instead of creating a second ledger.
+    """
+    import hashlib
+
+    digest = hashlib.sha256((account_id or "").encode("utf-8")).hexdigest()[:12]
+    return f"hotel-{digest}"
+
+
+def ensure_tenant_for_account(db_path: Path, account: dict) -> str:
+    """Give an account its own hotel if it has none, and return the tenant id.
+
+    Called when a customer registers, and by the backfill for accounts that predate this
+    model. Idempotent: an account that already belongs to a hotel keeps it.
+    """
+    login = (account.get("login") or "").strip()
+    account_id = (account.get("id") or "").strip()
+    if not login or not account_id:
+        raise ValueError("An account needs an id and a login to get a tenant")
+
+    existing = tenant_of_login(db_path, login)
+    if existing is not None:
+        return existing
+
+    tenant = tenant_id_for_account(account_id)
+    # The hotel's own name is the tenant's name when the account supplied one; otherwise the
+    # person's name is used, so the tenant list is never a column of ids.
+    label = (account.get("hotel") or "").strip()
+    if not label:
+        holder = (account.get("name") or login).strip()
+        label = f"{holder}（待补酒店名）"
+    with connect(db_path) as con:
+        ensure_schema(con)
+        if not con.execute("SELECT 1 FROM tenants WHERE id=?", (tenant,)).fetchone():
+            con.execute(
+                "INSERT INTO tenants(id, name, created_at) VALUES(?,?,?)",
+                (tenant, label, now()),
+            )
+    add_member(db_path, tenant_id=tenant, login=login, role="owner")
+    return tenant
+
+
 def members_of(db_path: Path, tenant_id: str) -> list[dict]:
     with connect(db_path) as con:
         ensure_schema(con)
