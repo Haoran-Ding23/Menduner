@@ -209,19 +209,6 @@ export default function VenueIndex() {
                   width: 106,
                   render: (value: string | null) => value ?? <span className="muted">—</span>,
                 },
-                {
-                  title: "坐标",
-                  dataIndex: "hasCoordinates",
-                  width: 76,
-                  render: (has: boolean) =>
-                    has ? (
-                      <Tag color="green">已核验</Tag>
-                    ) : (
-                      <Tooltip title="这个场馆没有核验坐标，它的活动不会出现在地图上">
-                        <Tag color="orange">缺坐标</Tag>
-                      </Tooltip>
-                    ),
-                },
               ]}
             />
           ) : (

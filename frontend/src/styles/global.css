@@ -1578,6 +1578,14 @@ main {
   font-size: 12px;
 }
 
+/* Tags read as labels, not as buttons: no outline, a soft fill and a small radius. The
+   bordered box made every status look like something to click. */
+.ant-tag {
+  border: none;
+  border-radius: 6px;
+  padding-inline: 8px;
+}
+
 /* Attention as stars: three yellow for 高关注, one grey for 低关注, nothing when the level is
    not yet knowable. Letter-spaced so the count is readable at a glance. */
 .impact-stars {

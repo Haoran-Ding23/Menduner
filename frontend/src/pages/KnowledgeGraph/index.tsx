@@ -368,43 +368,6 @@ export default function KnowledgeGraph() {
           )}
         </section>
       </div>
-      <section className="panel">
-        <h3>本图由 {graph.fired.length} 条规则自动生成</h3>
-        <p className="muted">
-          图谱不针对某个活动写死：每条边都来自下表中的规则，规则读的是活动自身字段、
-          场馆核验坐标和周边记录。换一个活动，规则重新跑一遍；新采集到的活动不需要改代码。
-        </p>
-        <Descriptions
-          column={1}
-          size="small"
-          items={graph.fired.map((rule) => ({
-            key: rule.id,
-            label: (
-              <span>
-                <Tag color={rule.analytical ? "gold" : "blue"}>
-                  {rule.analytical ? "规则假设" : "来源/距离"}
-                </Tag>
-                {rule.label}
-              </span>
-            ),
-            children: `${
-              Array.isArray(rule.detail) ? rule.detail.join(" ") : rule.detail
-            }（本次生成 ${rule.relations} 条关系，规则 id: ${rule.id}）`,
-            span: 1,
-          }))}
-        />
-      </section>
-      <Alert
-        className="gap-top"
-        type="info"
-        showIcon
-        message={
-          "HELD_AT：活动与场馆关联；LOCATED_IN：商圈位置背景；NEAR：核验坐标计算的近似直线距离（酒店 10 km 内）。" +
-          "餐饮与交通：场馆周边的高德 POI，按分类型半径取最近若干个（地铁 2.5 km / 公交 1 km / 火车站与长途站 12 km / 机场 30 km）。" +
-          "客群与其酒店层级偏好为规则推导，画虚线并标「规则假设」，不构成证据。" +
-          "同场馆 / 同期：由场馆引用计算得出，不是来源声明，同样画为虚线。"
-        }
-      />
       {showRelated && (
         <Alert
           className="gap-top"
