@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Alert, Button, Input, Select, Space, Table, Tag } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
 import TrustCenter from "../../components/TrustCenter";
@@ -28,16 +28,35 @@ export default function DataQuality() {
   const { dataset, repository, selected, update } = usePlatform();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
+  // Quality is reviewed per region. 吴中区 holds 356 events and 太仓 123, so one global
+  // percentage hides which part of the city is short of evidence; a region is also the unit a
+  // reviewer works in, because its events share sources and venues.
+  const [region, setRegion] = useState("");
   // A theatre programmes many events; drilling into a venue's full list is public value
   // (it is dataset browsing, not an internal operation), so it stays on this page.
   const [openVenueId, setOpenVenueId] = useState<string | null>(null);
 
   const count = (value: Status) =>
     dataset.evidence.filter((e) => effectiveStatus(e) === value).length;
+
+  // The administrative regions a reader can pick, with their own event counts.
+  const regions = useMemo(
+    () =>
+      dataset.districts
+        .filter((d) => d.kind === "district" || d.kind === "county_city")
+        .map((d) => ({
+          ...d,
+          events: dataset.events.filter((e) => e.districtId === d.id),
+        }))
+        .sort((a, b) => b.events.length - a.events.length),
+    [dataset.districts, dataset.events],
+  );
+
   const records = dataset.events.filter(
     (e) =>
       (e.name.toLowerCase().includes(search.toLowerCase()) ||
         e.id.includes(search)) &&
+      (!region || e.districtId === region) &&
       (!status || eventStatus(repository.getEvidence(e.id)) === status),
   );
   const event = repository.getEventById(selected ?? records[0]?.id ?? "");
@@ -111,6 +130,60 @@ export default function DataQuality() {
           </ul>
         }
       />
+      {/* Per-region quality, so a reviewer can see which part of the city is short of evidence
+          before scrolling a global list of 663 events. Selecting a row scopes the index below. */}
+      <section className="panel gap-bottom" aria-label="分地区数据质量">
+        <div className="panel-heading">
+          <h3 style={{ margin: 0 }}>分地区数据质量</h3>
+          <small className="muted">
+            {region
+              ? `已筛选：${regions.find((r) => r.id === region)?.name ?? ""}，点击标题回到全部地区`
+              : "点击任一行，下方索引只显示该地区的活动"}
+          </small>
+        </div>
+        <Table
+          rowKey="id"
+          size="small"
+          dataSource={regions}
+          pagination={false}
+          onRow={(r) => ({
+            onClick: () => setRegion(r.id === region ? "" : r.id),
+            style: { cursor: "pointer" },
+          })}
+          rowClassName={(r) => (r.id === region ? "table-selected" : "")}
+          columns={[
+            {
+              title: "地区",
+              render: (_, r) => <strong>{r.name}</strong>,
+            },
+            {
+              title: "活动",
+              width: 90,
+              align: "right" as const,
+              render: (_, r) => r.events.length,
+            },
+            ...(["Verified", "Needs Review", "Conflicting", "Missing"] as Status[]).map(
+              (s) => ({
+                title: statusLabels[s],
+                width: 110,
+                align: "right" as const,
+                render: (_: unknown, r: { events: Event[] }) => {
+                  const n = r.events.filter(
+                    (e) => eventStatus(repository.getEvidence(e.id)) === s,
+                  ).length;
+                  const share = r.events.length ? n / r.events.length : 0;
+                  return (
+                    <span style={{ color: n ? statusColors[s] : "#94A3B8" }}>
+                      {n}
+                      <small className="muted"> {Math.round(share * 100)}%</small>
+                    </span>
+                  );
+                },
+              }),
+            ),
+          ]}
+        />
+      </section>
       <div className="evidence-layout">
         <section className="panel">
           <div className="panel-heading">
@@ -123,6 +196,16 @@ export default function DataQuality() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               style={{ width: 230 }}
+            />
+            <Select
+              aria-label="地区"
+              value={region}
+              onChange={setRegion}
+              style={{ width: 160 }}
+              options={[
+                { label: "全部地区", value: "" },
+                ...regions.map((r) => ({ label: r.name, value: r.id })),
+              ]}
             />
             <Select
               aria-label="核验状态"
