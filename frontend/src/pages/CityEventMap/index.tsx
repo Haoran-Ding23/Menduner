@@ -139,12 +139,6 @@ export default function CityEventMap() {
         </section>
       </div>
       <VenueHotspots />
-      <Alert
-        className="gap-top"
-        type="info"
-        showIcon
-        message={`当前 ${events.filter((e) => e.demo).length} 条 DEMO 活动。${events.length - mapped.length} 条缺少核验坐标的活动仅保留在列表。上图标记按活动类别着色，图例见地图下方。`}
-      />
     </>
   );
 }

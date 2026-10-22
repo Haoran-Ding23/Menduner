@@ -276,17 +276,6 @@ export default function VenueIndex() {
           )}
         </section>
       </div>
-
-      <div className="panel gap-top">
-        <p className="muted" style={{ margin: 0, lineHeight: 1.8 }}>
-          场馆清单<strong>不受月份筛选影响</strong>
-          —— 一个场馆是跨月份排节目的，按月切会隐藏这个页面要展示的东西（例如某个音乐厅排了一百场，
-          而某个古镇只有四场）。月份筛选只作用于右侧选中场馆的活动列表，因为在那里它才是一个真问题。
-          <br />
-          场馆名与地址取自来源页面原文，不是推断的商圈。场馆有坐标不代表它排的活动都已核验 ——
-          活动各自保留自己的核验状态。
-        </p>
-      </div>
     </>
   );
 }

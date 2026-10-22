@@ -56,9 +56,7 @@ export default function VenueHotspots() {
         <Space wrap>
           <h3 style={{ margin: 0 }}>场馆热点</h3>
           <Tag color="red">{hotspots.length} 个热点（≥{HOTSPOT_MIN} 场）</Tag>
-          <small className="muted">
-            按场馆聚合当前筛选下的活动。场馆取自来源页面，不是推断的商圈。
-          </small>
+          <small className="muted">按场馆汇总当前筛选下的活动</small>
         </Space>
         <Space>
           <a onClick={() => setShowAll((v) => !v)}>

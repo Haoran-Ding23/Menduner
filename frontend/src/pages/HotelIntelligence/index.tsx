@@ -212,12 +212,6 @@ export default function HotelIntelligence() {
           </small>
         </Space>
       </section>
-      <Alert
-        className="gap-top gap-bottom"
-        type="info"
-        showIcon
-        message="邻近 ≠ 酒店需求或经济贡献。距离为 GCJ-02 坐标上的近似直线距离，不是道路距离。DEMO 活动不代表真实市场情报。"
-      />
       <div className="hotel-layout">
         <section className="panel hotel-info">
           <div className="eyebrow">当前酒店</div>
@@ -278,7 +272,7 @@ export default function HotelIntelligence() {
           )}
           <div className="metric-note">
             <strong>{unknown.length}</strong>
-            <p>条日期匹配活动缺少核验坐标，未进入距离筛选</p>
+            <p>条活动因地点未核实，未计入距离范围</p>
           </div>
         </section>
         <section className="panel hotel-map">
