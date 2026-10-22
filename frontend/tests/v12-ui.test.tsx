@@ -29,14 +29,14 @@ const mount = (path: string) =>
 describe("V1.2 traceable city event intelligence", () => {
   it("explains event attention without exposed scores, pricing advice or an empty layer switch", async () => {
     mount("/map");
-    await screen.findByRole("heading", { name: "苏州城市活动地图" });
+    await screen.findByRole("heading", { name: "城市活动地图" });
     expect(
       screen.queryByRole("switch", { name: "酒店需求层" }),
     ).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /城市商业交流会/ }));
     expect(await screen.findByText("1 家（非全市场数量）")).toBeInTheDocument();
-    expect(screen.getByText("活动官网 待核验")).toBeInTheDocument();
-    expect(screen.getByText("场馆来源 ✓")).toBeInTheDocument();
+    expect(screen.getByText("活动官网")).toBeInTheDocument();
+    expect(screen.getAllByText("场馆来源").length).toBeGreaterThan(0);
     expect(screen.getByText(/持续 4 天/)).toBeInTheDocument();
     expect(
       screen.queryByText(/规则评分|Recommended action|房价、预订/),

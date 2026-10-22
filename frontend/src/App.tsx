@@ -17,6 +17,7 @@ const Map = lazyWithReload(() => import('./pages/CityEventMap'));
 const Calendar = lazyWithReload(() => import('./pages/EventCalendar'));
 const Agenda = lazyWithReload(() => import('./pages/EventAgenda'));
 const Venues = lazyWithReload(() => import('./pages/VenueIndex'));
+const PrivateData = lazyWithReload(() => import('./pages/PrivateData'));
 const Graph = lazyWithReload(() => import('./pages/KnowledgeGraph'));
 const Hotels = lazyWithReload(() => import('./pages/HotelIntelligence'));
 const Insights = lazyWithReload(() => import('./pages/DistrictInsights'));
@@ -53,6 +54,7 @@ export default function App({ initialAccount }: { initialAccount?: AccountState 
               <Route path="/calendar" element={<Page name="活动日历"><Calendar /></Page>}/>
               <Route path="/agenda" element={<Page name="活动清单"><Agenda /></Page>}/>
               <Route path="/venues" element={<Page name="场馆活动清单"><Venues /></Page>}/>
+          <Route path="/private" element={<Page name="本店经营数据"><PrivateData /></Page>}/>
               <Route path="/graph" element={<Page name="知识图谱"><Graph /></Page>}/>
               {/* Paid workflow: public data stays free, these two unlock the hotel-centric work.
                   During the ICP filing review the reviewers must see a non-commercial information

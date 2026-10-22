@@ -16,6 +16,7 @@ import {
   ReloadOutlined,
   UnorderedListOutlined,
   ShopOutlined,
+  DatabaseOutlined,
 } from "@ant-design/icons";
 import { usePlatform } from "../../hooks/usePlatform";
 import { canReview, useIdentity } from "../../hooks/useIdentity";
@@ -54,6 +55,12 @@ export const pages: NavPage[] = [
     title: "场馆活动清单",
     label: "场馆活动清单",
     icon: <ShopOutlined />,
+  },
+  {
+    path: "/private",
+    title: "本店经营数据",
+    label: "本店经营数据",
+    icon: <DatabaseOutlined />,
   },
   {
     path: "/graph",

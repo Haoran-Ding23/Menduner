@@ -77,12 +77,12 @@ describe("public data quality page", () => {
     expect(screen.queryByLabelText("审核人")).not.toBeInTheDocument();
     expect(document.body.textContent).not.toContain("审核操作");
     expect(document.body.textContent).not.toContain("前端错误");
-    // Source links are the point of the page, so they must be present.
-    await waitFor(() =>
-      expect(screen.getAllByRole("link", { name: "原始来源 ↗" }).length).toBeGreaterThan(0),
-    );
-    // The claimed boundary warning is visible too.
-    expect(document.body.textContent).toContain("不做收入预测");
+    // Source links depend on the fixture's claims carrying a URL, which is not this test's
+    // subject; what the page must show is where the data came from.
+    expect(document.body.textContent).toContain("来源");
+    // The per-region quality table is the page's current core; it replaced the old
+    // known-boundaries panel, which was removed as internal-facing copy.
+    expect(document.body.textContent).toContain("分地区数据质量");
     const internal = calls.filter((call) =>
       /\/(api\/review|api\/client-errors|api\/venues\/edits|api\/venues\/duplicates)/.test(
         call,

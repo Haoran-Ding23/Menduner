@@ -44,7 +44,7 @@ function mount(path: string) {
 describe("ICP filing mode", () => {
   it("shows only the public information pages, with no commercial entry points", async () => {
     mount("/map");
-    await screen.findByRole("heading", { name: "苏州城市活动地图" });
+    await screen.findByRole("heading", { name: "城市活动地图" });
     const text = document.body.textContent ?? "";
     expect(text).not.toContain("套餐与升级");
     expect(text).not.toContain("酒店活动情报");
@@ -56,7 +56,7 @@ describe("ICP filing mode", () => {
 
   it("redirects commercial routes to the public map", async () => {
     mount("/plans");
-    await screen.findByRole("heading", { name: "苏州城市活动地图" });
+    await screen.findByRole("heading", { name: "城市活动地图" });
     expect(document.body.textContent).not.toContain("¥980");
   });
 });
