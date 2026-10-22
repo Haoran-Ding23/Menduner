@@ -96,6 +96,17 @@ def main():
             # callable" rather than anywhere near this line.
             if hasattr(adapter, "listing_url") and not callable(adapter.listing_url):
                 adapter.listing_url = definition.crawl_url
+            if hasattr(adapter, "extra_listing_urls"):
+                # Additional approved routes on the registered host. The host/scheme/port
+                # boundary is enforced when the registry row is validated, so a route that
+                # leaves the host cannot reach here.
+                adapter.extra_listing_urls = tuple(definition.listing_urls)
+            if hasattr(adapter, "listing_pages"):
+                adapter.listing_pages = definition.listing_pages
+            if hasattr(adapter, "route_page_pattern") and definition.route_page_pattern:
+                adapter.route_page_pattern = definition.route_page_pattern
+            if hasattr(adapter, "detail_pattern") and definition.detail_pattern:
+                adapter.detail_pattern = definition.detail_pattern
             if hasattr(adapter, "crawl_url"):
                 adapter.crawl_url = definition.crawl_url
             adapters.append(adapter)

@@ -6,6 +6,7 @@ from .cityevent import (SIPACSource, CultureTourismSource, OlympicSource,
 from .tourism import VisitszSource
 from .community.douban import DoubanSource
 from .exhibition.cnena import CnenaSource
+from .exhibition.haozhanhui import HaozhanhuiSource
 
 # Existing aliases remain valid. No social-media adapter is registered.
 SOURCES = {
@@ -26,4 +27,5 @@ SOURCES = {
     "cnena": CnenaSource,
     "visitsz": VisitszSource,
     "douban": DoubanSource,
+    "haozhanhui": HaozhanhuiSource,
 }

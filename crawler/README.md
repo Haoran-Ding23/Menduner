@@ -1,4 +1,6 @@
-**Latest 2026-10-15:** the two venue sources whose calendars are rendered in the browser — 苏州国际博览中心 (`expo`) and 苏州文化艺术中心 (`arts`) — are no longer audit-only. Both are read through the public JSON endpoint their own published JavaScript calls, and both now publish real dated events. See [V1.6.4_JS_RENDERED_VENUES.md](../docs/V1.6.4_JS_RENDERED_VENUES.md). The V1.6 priority refinement is in [V1.6_PRIORITY_SOURCE_REVIEW.md](../docs/V1.6_PRIORITY_SOURCE_REVIEW.md); the descriptions below record the original V1.6/V1.5 baseline.
+**Latest 2026-10-15 (V1.6.5):** the crawlable-source inventory was re-checked route by route. Two routes were added — the bureau's 活动信息 feed is now read as pages 1-3 instead of page 1 of 293, and the tourism portal's 活动预告 detail route (reached from its 最新资讯 column) now yields future exhibitions with explicit 时间 and 地点. Twelve further candidates were refused with their exact failing check, including two host-side blocks worth escalating. See [V1.6.5_SOURCE_EXPANSION.md](../docs/V1.6.5_SOURCE_EXPANSION.md); the reusable reconnaissance probe is `scripts/recon_event_sources.py`.
+
+**2026-10-15 (V1.6.4):** the two venue sources whose calendars are rendered in the browser — 苏州国际博览中心 (`expo`) and 苏州文化艺术中心 (`arts`) — are no longer audit-only. Both are read through the public JSON endpoint their own published JavaScript calls, and both now publish real dated events. See [V1.6.4_JS_RENDERED_VENUES.md](../docs/V1.6.4_JS_RENDERED_VENUES.md). The V1.6 priority refinement is in [V1.6_PRIORITY_SOURCE_REVIEW.md](../docs/V1.6_PRIORITY_SOURCE_REVIEW.md); the descriptions below record the original V1.6/V1.5 baseline.
 
 # Current: V1.6 CityEvent source network
 
@@ -19,6 +21,8 @@ See [CRAWLER_V1.6.md](../docs/CRAWLER_V1.6.md) for the current registry, Tier 1 
 | event_platform | 上海乐历的苏州文化艺术中心演出页 | 公开列表及同站演出详情JSON-LD，限定苏州活动 |
 | expo | 苏州国际博览中心官方展会日程 | 页面自身的 Vue 脚本调用的公开 JSON 展会日程；静态 header 里的 token 是站点自己发布的公开常量，每次运行重新读取，不保存 |
 | arts | 苏州文化艺术中心官网演出日程 | 官网是 Nuxt 空壳，改读它自己打包 JS 里公开的 `/sue/api/cinema/*` JSON；端点字符串每次运行从官网 JS 里重新发现，不写死 |
+| culture_tourism | 苏州市文广旅局 活动信息（第1-3页） | 同一频道的 `list.shtml` / `list_2.shtml` / `list_3.shtml`；该栏目自己的翻页条广告 293 页，只按注册表声明的页数读取，不追到底 |
+| visitsz | 苏州市旅游咨询中心 节庆日历 + 最新资讯 | 节庆日历列表/详情，以及最新资讯里链接的 活动预告 详情页（同一套 来源/时间/地点 结构）；最新资讯栏目的日期是发布日，永远不当活动日 |
 
 默认 `all` 运行全部已注册来源（含上面两个场馆），不再需要额外的开关。这是原型，不是完整苏州活动覆盖。
 

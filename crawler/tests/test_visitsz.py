@@ -23,13 +23,21 @@ from crawler.http import PublicClient
 from crawler.pipeline import run_pipeline
 from crawler.schema import CollectedItem
 from crawler.sources.tourism import visitsz
-from crawler.sources.tourism.visitsz import BASE_URL, LISTING_PATH, VisitszSource
+from crawler.sources.tourism.visitsz import (
+    BASE_URL,
+    LISTING_PATH,
+    NEWS_PATH,
+    PREVIEW_PATH,
+    VisitszSource,
+)
 
 TODAY = date(2026, 10, 13)  # the date the live ground truth was verified
 LISTING_URL = BASE_URL + LISTING_PATH
 DETAIL_URL = BASE_URL + '/festival-detail.aspx?id='
 ROBOTS_URL = BASE_URL + '/robots.txt'
 BAOLI_ID = '2026101009515301'
+# A real 活动预告 id observed live (visitsz.wglj.suzhou.com.cn/festival-preview.aspx?id=15131).
+PREVIEW_ID = '15131'
 HTML = {'Content-Type': 'text/html; charset=utf-8'}
 # The live host answers /robots.txt with this 404 HTML body (no rules at all).
 ROBOTS_404 = ('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '
@@ -97,6 +105,29 @@ def listing_row(item_id=BAOLI_ID, title='苏州保利大剧院：《音你而来
     return ('festival-detail.aspx?id=' + item_id, title, '活动时间：' + when)
 
 
+def news_page(*rows):
+    """The verified 最新资讯 listing shape: a ``div.date`` carrying the PUBLICATION date.
+
+    Each row is ``(href, title, published)``. The publication date is served on purpose: the
+    adapter must never read it as an event date, so a test that changes it and still sees the
+    same event date proves the preview page's own 时间 is what was used.
+    """
+    entries = ''.join(
+        '<li><a href="%s">%s</a><div class="date"><div>%s</div></div></li>'
+        % (href, title, published) for href, title, published in rows)
+    return ('<!DOCTYPE html><html><head><meta charset="utf-8">'
+            '<title>苏州市旅游咨询服务中心</title></head><body>'
+            '<div class="content-outer list"><div class="content">'
+            '<header><h2 class="chinese">最新资讯</h2></header><ul>' + entries + '</ul>'
+            '</div></div></body></html>')
+
+
+def news_row(preview_id=PREVIEW_ID,
+             title='拙政园7月22日至11月18日举办“秋鸣” 秋季鸣虫厅堂陈设组合展',
+             published='2026-10-08'):
+    return ('festival-preview.aspx?id=' + preview_id, title, published)
+
+
 def record(raw, item_id=BAOLI_ID, extractor='visitsz_detail'):
     return CollectedItem(item_key='visitsz-detail-' + item_id,
                          original_url=DETAIL_URL + item_id, source_name='visitsz',
@@ -113,8 +144,13 @@ def client_for(handler):
                         sleep=lambda seconds: None)
 
 
-def calendar_handler(pages, details, visited=None, robots=None):
-    """Serve the calendar and its detail pages; undefined listing pages are empty."""
+def calendar_handler(pages, details, visited=None, robots=None, news=None, previews=None):
+    """Serve the calendar, its detail pages and the portal's 最新资讯 column.
+
+    ``news`` maps a news page number to its served body; an unlisted page (and, by default,
+    the whole column) answers 404, which is exactly how the tests keep the news sweep out of
+    the way of a calendar-only assertion: the source records that as a warning, never an error.
+    """
     def handler(request):
         if visited is not None:
             visited.append(str(request.url))
@@ -130,15 +166,28 @@ def calendar_handler(pages, details, visited=None, robots=None):
             if body is None:
                 return httpx.Response(404, text='not found', headers=HTML)  # stale listing row
             return html_response(body)
+        if request.url.path == NEWS_PATH:
+            query = request.url.query.decode()
+            number = int(query.split('=')[1]) if query else 1
+            served = (news or {}).get(number)
+            if served is None:
+                return httpx.Response(404, text='not found', headers=HTML)
+            return html_response(served)
+        if request.url.path == PREVIEW_PATH:
+            body = (previews or {}).get(request.url.params['id'])
+            if body is None:
+                return httpx.Response(404, text='not found', headers=HTML)
+            return html_response(body)
         return httpx.Response(404, text='not found', headers=HTML)
     return handler
 
 
 def source_for(pages, details, *, max_items=3, page_cap=12, dry_page_limit=None, visited=None,
-               robots=None):
-    return VisitszSource(client=client_for(calendar_handler(pages, details, visited, robots)),
-                         max_items=max_items, page_cap=page_cap,
-                         dry_page_limit=dry_page_limit, today=TODAY)
+               robots=None, news=None, previews=None, news_page_cap=None):
+    return VisitszSource(
+        client=client_for(calendar_handler(pages, details, visited, robots, news, previews)),
+        max_items=max_items, page_cap=page_cap, dry_page_limit=dry_page_limit,
+        news_page_cap=news_page_cap, today=TODAY)
 
 
 # --------------------------------------------------------------------------------------
@@ -353,6 +402,9 @@ def test_body_time_lines_that_list_other_dates_are_flagged_not_hidden():
     LISTING_URL + '?page=2',
     LISTING_URL + '?page=662',
     DETAIL_URL + BAOLI_ID,
+    BASE_URL + NEWS_PATH,
+    BASE_URL + NEWS_PATH + '?page=2',
+    BASE_URL + PREVIEW_PATH + '?id=' + PREVIEW_ID,
 ])
 def test_approved_public_routes_are_collectable(url):
     assert VisitszSource.is_public_url(url) is True
@@ -372,10 +424,162 @@ def test_approved_public_routes_are_collectable(url):
     'https://visitsz.wglj.suzhou.com.cn/festival-detail.aspx?id=' + BAOLI_ID + '0',
     'https://visitsz.wglj.suzhou.com.cn/festival-detail.aspx?id=' + BAOLI_ID + '&x=1',
     'https://visitsz.wglj.suzhou.com.cn/festival-detail.aspx',
+    # The 活动预告 route is a detail route, not a listing: it only exists with its own id, and a
+    # 16-digit calendar id is not one of its ids.
+    'https://visitsz.wglj.suzhou.com.cn/festival-preview.aspx',
+    'https://visitsz.wglj.suzhou.com.cn/festival-preview.aspx?id=' + BAOLI_ID,
+    'https://visitsz.wglj.suzhou.com.cn/festival-preview.aspx?id=151',
+    'https://visitsz.wglj.suzhou.com.cn/festival-preview.aspx?id=15131&x=1',
+    'https://visitsz.wglj.suzhou.com.cn/news.aspx?page=0',
+    'https://visitsz.wglj.suzhou.com.cn/news-detail.aspx?id=3119',
     'https://mp.weixin.qq.com/s/87jCpIw8Ydk3LooRDLqD3A',
 ])
 def test_unapproved_or_offhost_urls_are_never_collectable(url):
     assert VisitszSource.is_public_url(url) is False
+
+
+# --------------------------------------------------------------------------------------
+# The 活动预告 route reached from the portal's own 最新资讯 column
+# --------------------------------------------------------------------------------------
+
+PREVIEW_URL = BASE_URL + PREVIEW_PATH + '?id='
+
+
+def preview_detail_page():
+    """The same verified skeleton, served by the 活动预告 route with a real future interval."""
+    return detail_page(name='拙政园：“秋鸣” 秋季鸣虫厅堂陈设组合展',
+                       credit='苏州园林旅游微信号', when='2026-09-21 - 2026-11-18',
+                       place='苏州市姑苏区东北街178号拙政园',
+                       details='展览简介 秋季鸣虫厅堂陈设组合展。 展期：2026年9月21日')
+
+
+def test_a_preview_announcement_is_published_from_the_news_column():
+    """A 活动预告 page carries a real 时间 and 地点, so it is a dated event like any other."""
+    source = source_for({1: [listing_row('2026101300000007', '苏州某剧院：演出', '2026-12-01')]},
+                        {'2026101300000007': detail_page(
+                            when='2026-12-01', name='苏州某剧院：演出',
+                            place='苏州市某路1号苏州某剧院')},
+                        max_items=2, page_cap=1,
+                        news={1: news_page(news_row(published='2026-10-08'))},
+                        previews={PREVIEW_ID: preview_detail_page()})
+    try:
+        items = source.collect()
+    finally:
+        source.client.close()
+    events = [item for item in items if item.is_event]
+    assert [item.item_key for item in events] == [
+        'visitsz-calendar-2026101300000007', 'visitsz-preview-' + PREVIEW_ID]
+    assert source.investigation['news_pages_fetched'] == 1
+    assert source.investigation['news_rows_seen'] == 1
+    assert source.investigation['candidate_preview_urls'] == 1
+    # The news column's own div.date is a PUBLICATION date and is never read as an event date.
+    event = extract(events[1], 'tourism')
+    assert event['start_date'] == '2026-09-21' and event['end_date'] == '2026-11-18'
+    assert event['location'] == '苏州市姑苏区东北街178号拙政园'
+    assert all(claim['status'] != 'Verified' for claim in event['field_evidence'].values())
+
+
+def test_the_news_columns_publication_date_never_becomes_an_event_date():
+    """Move only the publication date: the published event date must not move with it."""
+    dates = []
+    for published in ('2026-10-08', '2026-12-30'):
+        source = source_for({}, {}, max_items=1, page_cap=1, news_page_cap=1,
+                            news={1: news_page(news_row(published=published))},
+                            previews={PREVIEW_ID: preview_detail_page()})
+        try:
+            items = [item for item in source.collect() if item.is_event]
+        finally:
+            source.client.close()
+        assert len(items) == 1
+        dates.append(extract(items[0], 'tourism')['start_date'])
+    assert dates == ['2026-09-21', '2026-09-21']
+
+
+def test_preview_and_calendar_id_spaces_stay_distinct():
+    """A preview id and a calendar id are both collected, keyed by their own route."""
+    source = source_for({1: [listing_row('2026101300000007', '苏州某剧院：演出', '2026-12-01')]},
+                        {'2026101300000007': detail_page(
+                            when='2026-12-01', name='苏州某剧院：演出',
+                            place='苏州市某路1号苏州某剧院')},
+                        max_items=3, page_cap=1, news={1: news_page(news_row())},
+                        previews={PREVIEW_ID: preview_detail_page()})
+    try:
+        items = source.collect()
+    finally:
+        source.client.close()
+    assert sorted(item.item_key for item in items if item.is_event) == [
+        'visitsz-calendar-2026101300000007', 'visitsz-preview-' + PREVIEW_ID]
+
+
+def test_a_non_preview_link_on_the_news_column_is_never_requested():
+    """The column mixes notices with announcements; only an approved preview link is queued."""
+    visited = []
+    mixed = news_page(
+        ('/festival-detail.aspx?id=2026101300000009', '错位的日历详情', '2026-10-08'),
+        ('https://mp.weixin.qq.com/s/abc', '微信公告', '2026-10-08'),
+        ('/news-detail.aspx?id=3119', '闭馆通知', '2026-10-08'),
+        news_row(),
+    )
+    source = source_for({}, {}, max_items=1, page_cap=1, news_page_cap=1, visited=visited,
+                        news={1: mixed},
+                        previews={PREVIEW_ID: preview_detail_page()})
+    try:
+        items = [item for item in source.collect() if item.is_event]
+    finally:
+        source.client.close()
+    assert [item.item_key for item in items] == ['visitsz-preview-' + PREVIEW_ID]
+    assert not any('mp.weixin' in url or 'news-detail' in url or '2026101300000009' in url
+                   for url in visited), visited
+
+
+def test_an_absent_news_route_is_recorded_without_failing_the_source():
+    """The calendar is the source's contract; the news column is an additional route.
+
+    A portal that does not serve that route must not make a successful calendar run look
+    partial: the absence is recorded in the investigation counters, not in the error or
+    warning budget the run status is derived from.
+    """
+    source = source_for({1: [listing_row('2026101300000007', '苏州某剧院：演出', '2026-12-01')]},
+                        {'2026101300000007': detail_page(
+                            when='2026-12-01', name='苏州某剧院：演出',
+                            place='苏州市某路1号苏州某剧院')},
+                        max_items=1, page_cap=1)
+    try:
+        items = source.collect()
+    finally:
+        source.client.close()
+    assert source.errors == [] and source.warnings == []
+    assert source.investigation['news_column_absent'] is True
+    assert source.investigation['news_pages_fetched'] == 0
+    assert [item.item_key for item in items if item.is_event] == [
+        'visitsz-calendar-2026101300000007']
+
+
+def test_the_news_sweep_is_bounded_and_can_be_turned_off():
+    visited = []
+    source = source_for({}, {}, max_items=1, page_cap=1, news_page_cap=0, visited=visited)
+    try:
+        source.collect()
+    finally:
+        source.client.close()
+    assert not any(NEWS_PATH in url for url in visited), visited
+    assert VisitszSource(client=object(), max_items=1, news_page_cap=2).news_page_cap == 2
+    with pytest.raises(ValueError):
+        VisitszSource(client=object(), news_page_cap=-1)
+
+
+@pytest.mark.parametrize('raw', [
+    # A news skeleton that lost its verified container fails closed rather than guessing.
+    '<!DOCTYPE html><html><body><div class="content-outer"><p>最新资讯</p></div></body></html>',
+])
+def test_a_changed_news_skeleton_fails_closed(raw):
+    source = source_for({}, {}, max_items=1, page_cap=1, news_page_cap=1, news={1: raw})
+    try:
+        items = source.collect()
+    finally:
+        source.client.close()
+    assert not [item for item in items if item.is_event]
+    assert any('no longer carries the verified' in error['error'] for error in source.errors)
 
 
 # --------------------------------------------------------------------------------------
@@ -398,7 +602,7 @@ def test_calendar_is_swept_and_past_dated_rows_are_filtered_not_stopped():
         items = source.collect()
     finally:
         source.client.close()
-    assert [item.item_key for item in items if item.is_event] == ['visitsz-detail-2026101300000003']
+    assert [item.item_key for item in items if item.is_event] == ['visitsz-calendar-2026101300000003']
     assert source.investigation['past_dated_listing_rows_dropped'] == 3
     assert source.investigation['listing_pages_fetched'] == 3  # pages 1, 2 and the empty page 3
     assert LISTING_URL + '?page=2' in visited
@@ -439,7 +643,7 @@ def test_broken_listing_intervals_are_dropped_and_counted_never_repaired():
     assert source.errors == []
     assert all('20260929' not in url for url in visited)
     assert [item.item_key for item in items if item.is_event] == [
-        'visitsz-detail-2026101300000007', 'visitsz-detail-2026101300000008']
+        'visitsz-calendar-2026101300000007', 'visitsz-calendar-2026101300000008']
 
 
 def test_page_cap_bounds_listing_requests():
@@ -604,23 +808,23 @@ def test_offhost_and_wechat_row_links_are_never_requested():
     assert source.investigation['offhost_or_invalid_row_links_dropped'] == 3
     assert source.investigation['wechat_requests'] == 0
     assert all('weixin' not in url and 'evil.test' not in url for url in visited)
-    assert [item.item_key for item in items if item.is_event] == ['visitsz-detail-2026101300000007']
+    assert [item.item_key for item in items if item.is_event] == ['visitsz-calendar-2026101300000007']
 
 
 def test_robots_404_is_permissive_and_the_soft_404_opt_in_stays_off():
     visited = []
     source = source_for({1: [listing_row()]}, {BAOLI_ID: detail_page()}, max_items=1, page_cap=1,
-                        visited=visited)
+                        visited=visited, news={1: news_page()})
     try:
         items = source.collect()
     finally:
         source.client.close()
     assert VisitszSource.accept_soft_404_robots is False
     assert visited[0] == ROBOTS_URL
-    assert source.pages_collected == 2
+    assert source.pages_collected == 3  # listing + detail + the news column route
     assert [item.item_key for item in source.policy_items] == ['robots:' + BASE_URL]
     assert source.errors == []
-    assert [item.item_key for item in items if item.is_event] == ['visitsz-detail-' + BAOLI_ID]
+    assert [item.item_key for item in items if item.is_event] == ['visitsz-calendar-' + BAOLI_ID]
 
 
 def test_robots_denial_stops_the_host_before_any_calendar_request():
@@ -645,14 +849,14 @@ def test_an_empty_calendar_page_stops_paging_without_an_error():
     pages = {1: [listing_row('2026101300000007', '苏州某剧院：演出', '2026-12-01')]}
     details = {'2026101300000007': detail_page(when='2026-12-01', name='苏州某剧院：演出',
                                                place='苏州市某路1号苏州某剧院')}
-    source = source_for(pages, details, max_items=1)
+    source = source_for(pages, details, max_items=1, page_cap=2, news={1: news_page()})
     try:
         items = source.collect()
     finally:
         source.client.close()
     assert source.investigation['listing_pages_fetched'] == 2  # page 2 is the end of the calendar
     assert source.errors == [] and source.warnings == []
-    assert [item.item_key for item in items if item.is_event] == ['visitsz-detail-2026101300000007']
+    assert [item.item_key for item in items if item.is_event] == ['visitsz-calendar-2026101300000007']
 
 
 def test_listing_shape_change_fails_closed_with_an_explicit_reason():
@@ -703,8 +907,9 @@ def test_a_stale_detail_url_is_recorded_without_discarding_the_verified_rest(tmp
         assert report['eventsProcessed'] == 1 and report['eventsStored'] == 1
         assert report['attempts'][0]['status'] == 'Partial'
         assert '404' in report['attempts'][0]['error']
-        # Both detail URLs were requested; only the one that answered became an event.
-        assert report['httpRequests'] == 4  # robots + 1 listing page + 2 detail pages
+        # Both detail URLs were requested; only the one that answered became an event. The
+        # source also reads the portal's 最新资讯 column (robots + listing + 2 details + news).
+        assert report['httpRequests'] == 5
         assert report['attempts'][0]['investigation']['detail_pages_fetched'] == 1
     finally:
         source.client.close()
@@ -736,6 +941,7 @@ def test_shared_extractor_and_pipeline_publish_one_unified_never_verified_event(
         assert report['eventsProcessed'] == 1 and report['eventsCreated'] == 1
         assert report['eventsStored'] == 1 and report['itemsRejected'] == 0
         assert report['status'] == 'Success'
+        assert report['attempts'][0]['investigation']['news_column_absent'] is True
         assert report['evidenceRecordsGenerated'] == 10  # the ten contract fields
         assert report['attempts'][0]['investigation']['wechat_requests'] == 0
         assert report['attempts'][0]['investigation']['detail_pages_fetched'] == 1

@@ -51,6 +51,22 @@ BASE_URL = 'https://' + HOST
 LISTING_PATH = '/festival-activity.aspx'
 DETAIL_PATH = '/festival-detail.aspx'
 DETAIL_QUERY = re.compile(r'^id=(\d{16})$')
+# 活动预告 pages are a SECOND official detail route of the same portal, reached from its own
+# 最新资讯 listing rather than from the calendar. Verified live 2026-10-15: the route serves the
+# identical ``div.content-outer.activity div.info-panel`` skeleton with the same 来源/时间/地点
+# label rows - e.g. ``?id=15131`` -> ``拙政园：“秋鸣” 秋季鸣虫厅堂陈设组合展`` / ``时间：2026-09-21 -
+# 2026-11-18`` / ``地点：苏州市姑苏区东北街178号拙政园``. Ids here are 4-5 digits, so they are kept
+# distinct from the calendar's 16-digit ids.
+PREVIEW_PATH = '/festival-preview.aspx'
+PREVIEW_QUERY = re.compile(r'^id=(\d{4,6})$')
+# The portal's own news listing. It is a different skeleton from the calendar (no
+# ``div.content-outer.list ul``), so its rows are read through their own verified selectors and a
+# row is only queued when it links to an approved preview id.
+NEWS_PATH = '/news.aspx'
+# The 最新资讯 pager's own ``?page=N``; page 1 is the bare route.
+NEWS_PAGE_QUERY = re.compile(r'^page=([1-9]\d{0,3})$')
+NEWS_CONTAINER = 'div.content-outer.news'
+NEWS_ROW_LINK = re.compile(r'^' + re.escape(PREVIEW_PATH) + r'\?id=(\d{4,6})$')
 # The site answers ?page=0 with HTTP 500 and ?page=abc with an empty body, so only
 # real page numbers are treated as approved public routes.
 LISTING_PAGE_QUERY = re.compile(r'^page=([1-9]\d{0,3})$')
@@ -120,7 +136,7 @@ def listing_url(page_number):
 
 
 def detail_page_id(url):
-    """The 16-digit id of an approved public detail URL, else None."""
+    """The 16-digit id of an approved public calendar detail URL, else None."""
     if not public_https(url, HOST):
         return None
     parts = urlparse(url)
@@ -128,6 +144,50 @@ def detail_page_id(url):
         return None
     matched = DETAIL_QUERY.fullmatch(parts.query or '')
     return matched[1] if matched else None
+
+
+def preview_page_id(url):
+    """The 4-6 digit id of an approved public 活动预告 URL, else None."""
+    if not public_https(url, HOST):
+        return None
+    parts = urlparse(url)
+    if parts.path != PREVIEW_PATH:
+        return None
+    matched = PREVIEW_QUERY.fullmatch(parts.query or '')
+    return matched[1] if matched else None
+
+
+def news_url(page_number):
+    """One page of the portal's own 最新资讯 listing; page 1 is the bare route."""
+    return BASE_URL + NEWS_PATH + ('' if page_number == 1 else '?page=' + str(page_number))
+
+
+def news_rows(content, page_url):
+    """``活动预告`` links of one 最新资讯 page, in page order.
+
+    The listing shares the portal's ``div.content-outer.list`` skeleton but its ``div.date``
+    column carries the PUBLICATION date, so that column is deliberately not read here: a
+    preview row becomes an event only when the preview page itself publishes a 时间. A row
+    whose link is not an approved preview route is skipped, and a page that has lost the
+    verified container raises, exactly like the calendar listing.
+    """
+    container = BeautifulSoup(content, 'html.parser').select_one(LIST_CONTAINER)
+    if container is None:
+        raise ValueError(
+            'visitsz news listing no longer carries the verified ' + LIST_CONTAINER
+            + ' block; no event is published from an unverified page state')
+    rows = []
+    for node in container.select('li'):
+        anchor = node.select_one('a[href]')
+        if anchor is None:
+            continue
+        url = urljoin(page_url, anchor['href'])
+        if preview_page_id(url) is None:
+            continue
+        title = text(anchor.get_text(' ', strip=True))
+        if title:
+            rows.append({'url': url, 'title': title})
+    return rows
 
 
 def iso_date(year, month, day):
@@ -303,7 +363,7 @@ def visitsz_event(item):
     """
     if blocked_page(item.raw_content):
         raise ValueError('Login/CAPTCHA/access wall: raw retained, no event published')
-    requested = detail_page_id(item.original_url)
+    requested = detail_page_id(item.original_url) or preview_page_id(item.original_url)
     if requested is None:
         raise ValueError('visitsz event data must come from an approved public detail URL')
     if item.locator and str(item.locator) != requested:
@@ -433,9 +493,12 @@ class VisitszSource(PublicAccessSource):
     # cluster of not-yet-ended records sits on page 35, and the first run of six
     # empty pages begins at 39, so this stops at 44 without cutting live material.
     dry_page_limit = 6
+    # The 最新资讯 listing is swept for 活动预告 pages the calendar does not carry. Its own pager
+    # advertises 70 pages; the newest two are read, which is where coming events are announced.
+    news_page_cap = 2
     investigation = {}
 
-    def __init__(self, *args, page_cap=None, dry_page_limit=None, today=None, **kwargs):
+    def __init__(self, *args, page_cap=None, dry_page_limit=None, news_page_cap=None, today=None, **kwargs):
         super().__init__(*args, **kwargs)
         if page_cap is not None:
             if page_cap < 1:
@@ -445,6 +508,10 @@ class VisitszSource(PublicAccessSource):
             if dry_page_limit < 1:
                 raise ValueError('dry_page_limit must be a positive number of listing pages')
             self.dry_page_limit = dry_page_limit
+        if news_page_cap is not None:
+            if news_page_cap < 0:
+                raise ValueError('news_page_cap must be a non-negative number of news pages')
+            self.news_page_cap = news_page_cap
         if today is not None:
             if not isinstance(today, date):
                 raise ValueError('today must be a datetime.date')
@@ -454,14 +521,18 @@ class VisitszSource(PublicAccessSource):
 
     @staticmethod
     def is_public_url(url):
-        """Only the approved HTTPS listing and 16-digit detail routes are collectable."""
+        """Only the approved HTTPS listing, news and detail routes are collectable."""
         if not public_https(url, HOST):
             return False
         parts = urlparse(url)
         if parts.path == LISTING_PATH:
             return parts.query == '' or LISTING_PAGE_QUERY.fullmatch(parts.query) is not None
+        if parts.path == NEWS_PATH:
+            return parts.query == '' or NEWS_PAGE_QUERY.fullmatch(parts.query) is not None
         if parts.path == DETAIL_PATH:
             return DETAIL_QUERY.fullmatch(parts.query or '') is not None
+        if parts.path == PREVIEW_PATH:
+            return PREVIEW_QUERY.fullmatch(parts.query or '') is not None
         return False
 
     def collect(self):
@@ -479,6 +550,10 @@ class VisitszSource(PublicAccessSource):
             'past_dated_listing_rows_dropped': 0,
             'offhost_or_invalid_row_links_dropped': 0,
             'candidate_detail_urls': 0,
+            'news_pages_fetched': 0,
+            'news_rows_seen': 0,
+            'news_column_absent': False,
+            'candidate_preview_urls': 0,
             'detail_pages_fetched': 0,
             'protected_api_requests': 0,
             'wechat_requests': 0,
@@ -567,7 +642,58 @@ class VisitszSource(PublicAccessSource):
                     break
 
         self.investigation['candidate_detail_urls'] = len(candidates)
-        for row in candidates[:self.max_items]:
+
+        # The portal's own 最新资讯 listing announces coming events as 活动预告 pages, which the
+        # calendar does not carry. Those pages are the same skeleton, so they are read through the
+        # same extractor; only rows linking to an approved preview route are queued, and the news
+        # column's publication date is never read as an event date.
+        news_candidates = []
+        for page_number in range(1, self.news_page_cap + 1):
+            url = news_url(page_number)
+            try:
+                page = self.public_page(url)
+            except Exception as exc:
+                # The news column is an additional route, not part of the calendar contract. A
+                # host that does not serve its FIRST page is recorded as a warning; a later page
+                # that is absent is simply the end of the column, which is how a pager behaves,
+                # and a real policy or transport failure stays an error. The calendar is
+                # unaffected either way.
+                if page_number == 1 and ('404' in str(exc) or '410' in str(exc)):
+                    # An additional route the portal does not serve is a documented limitation,
+                    # not a partial failure of the source: it is recorded in the investigation
+                    # counters and stays out of the error/warning budget the run status reads.
+                    self.investigation['news_column_absent'] = True
+                elif page_number > 1 and ('404' in str(exc) or '410' in str(exc)):
+                    break  # end of the column, not a failure
+                else:
+                    self.errors.append({'url': url, 'error': str(exc)})
+                break
+            items.append(self.item(page, key='visitsz-news-%d' % page_number,
+                                   is_event=False, extractor='context'))
+            self.investigation['news_pages_fetched'] += 1
+            if blocked_page(page.content):
+                self.errors.append({'url': page.url,
+                                    'error': 'News access wall; no login/CAPTCHA/private API attempt'})
+                break
+            try:
+                rows = news_rows(page.content, page.url)
+            except ValueError as exc:
+                self.errors.append({'url': page.url, 'error': str(exc)})
+                break
+            self.investigation['news_rows_seen'] += len(rows)
+            # A news page that carries no 活动预告 link is the normal case for most of the column
+            # (the rest is closures and notices). It is reported in the investigation counters
+            # rather than as a warning, so a genuinely absent route stays visible.
+            for row in rows:
+                row_id = preview_page_id(row['url'])
+                if row_id in seen_ids:
+                    continue
+                seen_ids.add(row_id)
+                news_candidates.append({'id': row_id, 'url': row['url'], 'kind': 'preview'})
+        self.investigation['candidate_preview_urls'] = len(news_candidates)
+
+        queue = [{**row, 'kind': 'calendar'} for row in candidates] + news_candidates
+        for row in queue[:self.max_items]:
             try:
                 detail = self.public_page(row['url'])
             except PermissionError as exc:
@@ -577,7 +703,7 @@ class VisitszSource(PublicAccessSource):
                 # One stale/unsupported id must not discard the verified rest.
                 self.errors.append({'url': row['url'], 'error': str(exc)})
                 continue
-            items.append(self.item(detail, key='visitsz-detail-' + row['id'],
+            items.append(self.item(detail, key='visitsz-' + row['kind'] + '-' + row['id'],
                                    extractor=self.extractor, locator=row['id']))
             self.investigation['detail_pages_fetched'] += 1
             if blocked_page(detail.content):

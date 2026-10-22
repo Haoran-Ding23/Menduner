@@ -11,7 +11,7 @@ import pytest
 import yaml
 
 from crawler.http import PublicClient
-from crawler.registry import REGISTRY_PATH, load_registry
+from crawler.registry import REGISTRY_PATH, load_registry, page_url, route_channel
 
 
 def registry_document():
@@ -98,6 +98,114 @@ def test_a_successful_source_may_still_record_a_documented_limitation():
     assert olympic.crawl_status == 'SUCCESS'
     assert olympic.reason is None
     assert olympic.limitation and 'historical' in olympic.limitation
+
+
+# --- additional listing routes and bounded paging -----------------------------
+
+def test_additional_listing_routes_must_stay_on_the_registered_host_and_transport(tmp_path):
+    document = registry_document()
+    row = next(s for s in document['sources'] if s['adapter'] == 'culture_tourism')
+    for hostile in ('https://evil.test/szwhgdhlyj/hdxx/list.shtml',
+                    'http://wglj.suzhou.gov.cn/szwhgdhlyj/hdxx/list_2.shtml',
+                    'https://user:pw@wglj.suzhou.gov.cn/szwhgdhlyj/hdxx/list_2.shtml',
+                    'https://wglj.suzhou.gov.cn:8443/szwhgdhlyj/hdxx/list_2.shtml'):
+        row['listing_urls'] = [hostile]
+        with pytest.raises(ValueError):
+            load_registry(write_variant(tmp_path, document))
+    # The primary route is not repeated as an extra route, and extras are unique.
+    row['listing_urls'] = [row['crawl_url']]
+    with pytest.raises(ValueError):
+        load_registry(write_variant(tmp_path, document))
+    row['listing_urls'] = ['https://wglj.suzhou.gov.cn/a.shtml',
+                           'https://wglj.suzhou.gov.cn/a.shtml']
+    with pytest.raises(ValueError):
+        load_registry(write_variant(tmp_path, document))
+
+
+def test_a_page_template_must_describe_every_registered_route(tmp_path):
+    document = registry_document()
+    row = next(s for s in document['sources'] if s['adapter'] == 'culture_tourism')
+    # A template whose channel slot cannot reproduce the registered route is refused rather
+    # than used to fetch a page nobody registered.
+    row['route_page_pattern'] = 'https://wglj.suzhou.gov.cn/szwhgdhlyj/other/list{_n}.shtml'
+    with pytest.raises(ValueError):
+        load_registry(write_variant(tmp_path, document))
+    # A template that leaves the host, the transport or the port is refused too.
+    row['route_page_pattern'] = 'https://evil.test/szwhgdhlyj/{c}/list{_n}.shtml'
+    with pytest.raises(ValueError):
+        load_registry(write_variant(tmp_path, document))
+    row['route_page_pattern'] = 'http://wglj.suzhou.gov.cn/szwhgdhlyj/{c}/list{_n}.shtml'
+    with pytest.raises(ValueError):
+        load_registry(write_variant(tmp_path, document))
+    # Pages are bounded, and a page template without pages to read is meaningless.
+    row['route_page_pattern'] = 'https://wglj.suzhou.gov.cn/szwhgdhlyj/{c}/list{_n}.shtml'
+    row['listing_pages'] = 11
+    with pytest.raises(ValueError):
+        load_registry(write_variant(tmp_path, document))
+    row['listing_pages'] = 1
+    with pytest.raises(ValueError):
+        load_registry(write_variant(tmp_path, document))
+
+
+def test_the_registered_paging_template_expands_only_registered_pages():
+    """The template is the source's own pager grammar, so page 1 stays the registered URL.
+
+    wglj's pager writes page 1 as ``list.shtml`` and later pages as ``list_2.shtml``; a
+    template that resolved page 1 to ``list1.shtml`` would fetch a URL the site never
+    publishes. The ``{_n}`` form is what keeps the two in one grammar.
+    """
+    definitions = {d.adapter: d for d in load_registry()}
+    culture = definitions['culture_tourism']
+    assert culture.listing_pages == 3
+    channel = route_channel(culture.route_page_pattern, culture.crawl_url)
+    assert channel == 'hdxx'
+    assert [page_url(culture.route_page_pattern, channel, page) for page in (1, 2, 3)] == [
+        'https://wglj.suzhou.gov.cn/szwhgdhlyj/hdxx/list.shtml',
+        'https://wglj.suzhou.gov.cn/szwhgdhlyj/hdxx/list_2.shtml',
+        'https://wglj.suzhou.gov.cn/szwhgdhlyj/hdxx/list_3.shtml',
+    ]
+    # Every derived page is still on the registered host over the registered transport.
+    for page in range(1, culture.listing_pages + 1):
+        url = page_url(culture.route_page_pattern, channel, page)
+        parts = urlparse(url)
+        assert parts.scheme == 'https' and parts.hostname == 'wglj.suzhou.gov.cn'
+
+
+def test_the_adapter_reads_the_registered_routes_and_no_others():
+    """The CLI assignment is what decides the routes; nothing is derived from the class."""
+    from crawler.sources.cityevent import CultureTourismSource
+    definition = next(d for d in load_registry() if d.adapter == 'culture_tourism')
+    source = CultureTourismSource(client=object(), max_items=12)
+    source.listing_url = definition.crawl_url
+    source.extra_listing_urls = tuple(definition.listing_urls)
+    source.listing_pages = definition.listing_pages
+    source.route_page_pattern = definition.route_page_pattern
+    routes = source.listing_routes()
+    assert routes == [
+        'https://wglj.suzhou.gov.cn/szwhgdhlyj/hdxx/list.shtml',
+        'https://wglj.suzhou.gov.cn/szwhgdhlyj/hdxx/list_2.shtml',
+        'https://wglj.suzhou.gov.cn/szwhgdhlyj/hdxx/list_3.shtml',
+    ]
+    # The detail budget is a source-wide count, not a per-route one, and the primary route
+    # (the source's own activity feed) keeps the larger share.
+    assert source.detail_budget(len(routes)) == [6, 3, 3]
+    assert sum(source.detail_budget(len(routes))) == 12
+    # A source with one route is exactly the pre-V1.6.5 behaviour: the whole budget.
+    assert source.detail_budget(1) == [12]
+
+
+def test_routes_without_a_paging_template_stay_single_page():
+    """No template means no derived pages: a route list cannot grow on its own."""
+    from crawler.sources.cityevent import CultureTourismSource
+    source = CultureTourismSource(client=object(), max_items=6)
+    source.listing_url = 'https://wglj.suzhou.gov.cn/szwhgdhlyj/hdxx/list.shtml'
+    source.extra_listing_urls = ('https://wglj.suzhou.gov.cn/szwhgdhlyj/wlyw/list.shtml',)
+    source.listing_pages = 3
+    source.route_page_pattern = None
+    assert source.listing_routes() == [
+        'https://wglj.suzhou.gov.cn/szwhgdhlyj/hdxx/list.shtml',
+        'https://wglj.suzhou.gov.cn/szwhgdhlyj/wlyw/list.shtml',
+    ]
 
 
 # --- plain-HTTP transport boundary -------------------------------------------

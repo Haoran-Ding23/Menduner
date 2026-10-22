@@ -69,8 +69,11 @@ sources:
   tier: 1
   adapter: culture_tourism
   implementation: event_extraction
-  reason: No explicit leading event date; publication/relative dates are not substituted
-  last_checked: '2026-10-13T20:46:57.659144+00:00'
+  listing_pages: 3
+  route_page_pattern: https://wglj.suzhou.gov.cn/szwhgdhlyj/{c}/list{_n}.shtml
+  reason: No explicit leading event date; publication/relative dates are not substituted;
+    No supported single named event in announcement
+  last_checked: '2026-10-15T07:07:09.250713+00:00'
   topic: tourism
 - source_id: venue-suzhou-expo
   source_name: Suzhou International Expo Centre
@@ -250,9 +253,39 @@ sources:
     records and stops after a run of future-free pages, never following the advertised
     662 pages. Measured 2026-10-15: pages 1-35 held 213 such records, page 45 held
     none. Only max_items bounds detail requests. Records without a real 时间 date and
-    地点 value are rejected, never published.'
+    地点 value are rejected, never published. The adapter also reads the portal''s own
+    最新资讯 column and its 活动预告 detail route (festival-preview.aspx?id=NNNNN), verified
+    live 2026-10-15 to serve the same 来源/时间/地点 skeleton; that column''s own div.date
+    is a publication date and is never read as an event date. A portal that stops serving
+    最新资讯 only sets the run''s news_column_absent flag: the calendar remains the
+    source''s contract.'
   last_checked: '2026-10-15T08:07:56.992256+00:00'
   topic: tourism
+- source_id: platform-haozhanhui-suzhou
+  source_name: 好展会信息网 苏州展会计划 (haozhanhui)
+  category: event_platform
+  url: https://www.haozhanhui.com/suzhou/
+  crawl_url: https://www.haozhanhui.com/zhanlanjihua/2026__suzhou__c_1.html
+  trust_level: COMMERCIAL_PLATFORM
+  priority: 3
+  crawl_status: SUCCESS
+  tier: 2
+  require_events: true
+  adapter: haozhanhui
+  implementation: event_extraction
+  limitation: 'Commercial exhibition directory, so nothing it publishes is ever Verified.
+    It is the only registered source that lists the city''s exhibitions across venues
+    rather than one hall''s own calendar, and it is read from the served HTML only:
+    the city plan page carries every row as "YYYY-MM-DD 【industry】 <link>", and the
+    record itself (the published YYYY-MM-DD~MM-DD interval, 展会场馆, 组织单位) is read from
+    that row''s own detail page. The end day is printed without a year and belongs
+    to the start day''s year; an interval that would then be inverted is rejected,
+    never repaired. Records whose venue is not explicitly in Suzhou, and records whose
+    start day has passed, are rejected so a finished exhibition is never republished
+    as upcoming demand. The plan page is not ordered by date.'
+  last_checked: '2026-10-15T07:18:37.574887+00:00'
+  topic: exhibition
+  reason: null
 - source_id: community-douban-suzhou
   source_name: 豆瓣同城苏州
   category: event_platform
