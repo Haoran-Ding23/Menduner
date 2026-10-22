@@ -15,7 +15,9 @@ import httpx
 
 API_BASE = "https://api.deepseek.com"
 DEFAULT_MODEL = "deepseek-flash"
-ENV_FILE = Path(__file__).resolve().parent.parent / "frontend" / ".env.local"
+# crawler/ai/client.py → parents[2] is the repository root, whose frontend/.env.local
+# the server and local runs share.
+ENV_FILE = Path(__file__).resolve().parents[2] / "frontend" / ".env.local"
 
 
 class DeepSeekError(RuntimeError):

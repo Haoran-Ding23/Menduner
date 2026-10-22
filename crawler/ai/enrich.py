@@ -147,10 +147,15 @@ def _finding(entry) -> Finding:
     )
 
 
-def read_page(client: DeepSeek, *, url: str, html: str) -> Reading:
-    """Ask the model what this page states, with evidence for every field."""
+def read_page(client: DeepSeek, *, url: str, html: str, min_chars: int = 80) -> Reading:
+    """Ask the model what this page states, with evidence for every field.
+
+    ``min_chars`` is the short-body floor. The default 80 guards the evidence-page path
+    against near-empty stubs; social notes are legitimately shorter (a complete event
+    announcement fits in one sentence), so the note import passes a lower floor.
+    """
     text = readable_text(html)
-    if len(text) < 80:
+    if len(text) < min_chars:
         return Reading(url=url, is_event=False, note="页面正文过短，无可抽取内容")
     try:
         document = client.complete_json(

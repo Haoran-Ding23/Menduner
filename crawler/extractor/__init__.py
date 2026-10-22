@@ -580,6 +580,7 @@ def extract(item: CollectedItem, kind: str):
     from crawler.sources.event_platform.huodongjia import huodongjia_event
     from crawler.sources.tourism.visitsz import visitsz_event
     from crawler.sources.community.douban import douban_event
+    from crawler.sources.community.xiaohongshu import social_note_ai
     from crawler.sources.exhibition.cnena import cnena_exhibition
     from crawler.sources.exhibition.haozhanhui import haozhanhui_exhibition
     from crawler.sources.venue.expo import expo_exhibition
@@ -596,6 +597,7 @@ def extract(item: CollectedItem, kind: str):
         "huodongjia_ssr": huodongjia_event,
         "visitsz_detail": visitsz_event,
         "douban_event": douban_event,
+        "social_note_ai": social_note_ai,
         "cnena_exhibition": cnena_exhibition,
         "haozhanhui_exhibition": haozhanhui_exhibition,
         "expo_exhibition": expo_exhibition,
