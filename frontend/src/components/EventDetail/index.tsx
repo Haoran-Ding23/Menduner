@@ -10,6 +10,15 @@ import {
   effectiveStatus,
   verifiedCoords,
 } from "../../utils/data";
+/** The run as one phrase: the range, then how many days it covers. */
+function dateRangeText(start: string | null, end: string | null): string {
+  if (!start && !end) return "日期待核验";
+  if (!start) return "结束 " + end;
+  if (!end || end === start) return start;
+  const days = Math.floor((Date.parse(end) - Date.parse(start)) / 86400000) + 1;
+  return days > 0 ? `${start} 到 ${end}（${days} 天）` : `${start} 到 ${end}`;
+}
+
 export default function EventDetail() {
   const { detail, repository, closeEvent, go } = usePlatform();
   const event = detail ? repository.getEventById(detail) : undefined;
@@ -43,26 +52,42 @@ export default function EventDetail() {
           <Descriptions
             column={1}
             bordered
-            items={Object.entries({
-              "活动 ID": event.id,
-              活动类别: categories[event.category].label,
-              开始日期: event.startDate,
-              结束日期: event.endDate,
-              场馆: venue?.name,
-              商圈: district
-                ? district.name + (district.demo ? "（演示分组）" : "")
-                : null,
-              主办方: event.organizer,
-              参与人数: event.attendance,
-              赞助方: event.sponsor,
-              坐标: verifiedCoords(venue?.coordinates)
-                ? `${venue.coordinates.lng}, ${venue.coordinates.lat} · GCJ-02`
-                : "未核验，不上图",
-            }).map(([label, value]) => ({
-              key: label,
-              label,
-              children: valueText(value),
-            }))}
+            items={[
+              { label: "活动 ID", children: event.id },
+              { label: "活动类别", children: categories[event.category].label },
+              {
+                // One row instead of two, because the reader's question is "how long does this
+                // run", and two dates made them subtract in their head.
+                label: "活动日期",
+                children: dateRangeText(event.startDate, event.endDate),
+              },
+              { label: "场馆", children: venue?.name ?? "—" },
+              {
+                label: "商圈",
+                children: district
+                  ? district.name + (district.demo ? "（演示分组）" : "")
+                  : "—",
+              },
+              { label: "主办方", children: event.organizer ?? "—" },
+              { label: "参与人数", children: valueText(event.attendance) },
+              { label: "赞助方", children: event.sponsor ?? "—" },
+              {
+                label: "坐标",
+                children: verifiedCoords(venue?.coordinates) ? (
+                  // Clickable so the pin can be checked in the map everyone already uses,
+                  // instead of asking the reader to copy two decimals by hand.
+                  <a
+                    href={`https://uri.amap.com/marker?position=${venue.coordinates.lng},${venue.coordinates.lat}&name=${encodeURIComponent(venue.name)}&callnative=0`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {venue.coordinates.lng}, {venue.coordinates.lat} · 在高德地图查看 ↗
+                  </a>
+                ) : (
+                  "未核验，不上图"
+                ),
+              },
+            ]}
           />
           <Space wrap className="gap-top">
             {[

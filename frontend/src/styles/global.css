@@ -1589,3 +1589,46 @@ main {
   vertical-align: middle;
 }
 
+/* Evidence entry: one row per question - did the organiser say it, the venue, a government
+   body - with the publisher as the link and the verdict on the right. */
+.evidence-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.evidence-entry-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid #eef2f6;
+}
+.evidence-entry-label {
+  flex: 0 0 76px;
+  font-size: 13px;
+  color: #64748b;
+}
+.evidence-entry-url {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.evidence-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.evidence-contact-input {
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+  background: #f8fafc;
+}
+
