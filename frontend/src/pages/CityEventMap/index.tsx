@@ -111,7 +111,6 @@ export default function CityEventMap() {
                 onChange={setShowHotels}
               />
               <span>显示酒店（{hotelCount} 家）</span>
-              <Tag color="cyan">金鸡湖 / 独墅湖</Tag>
             </Space>
           </div>
           <EventMap events={events} demandLayer={showHotels} />
