@@ -3,15 +3,48 @@ import type { Event } from "../../types";
 import { usePlatform } from "../../hooks/usePlatform";
 import { assessDemand, impactColors } from "../../services/intelligence";
 
+/**
+ * How much attention an event deserves, as stars.
+ *
+ * The old tag printed 「关注等级：UNKNOWN」 in a box, and because the level is UNKNOWN for almost
+ * every event - it needs every date and category field settled - the list became a column of the
+ * same grey word saying nothing. A star reads at a glance: three yellow stars is worth planning
+ * around, one grey star is background, and no star means nobody can say yet, which is honest by
+ * being absent rather than by printing a word nobody can act on.
+ */
+const STARS: Record<string, number> = { HIGH: 3, MEDIUM: 2, LOW: 1 };
+const LEVEL_LABEL: Record<string, string> = {
+  HIGH: "高关注",
+  MEDIUM: "中关注",
+  LOW: "低关注",
+};
+
 export function ImpactTag({ event }: { event: Event }) {
   const { dataset } = usePlatform();
   const assessment = assessDemand(event, dataset);
+  const count = STARS[assessment.level] ?? 0;
+  // Unknown renders nothing: an empty spot reads as "no signal", which is the truth, whereas a
+  // grey UNKNOWN box invites the reader to hunt for a meaning it does not have.
+  if (!count) return null;
+  const highlight = assessment.level === "HIGH";
   return (
-    <Tooltip title={assessment.reasons.join("；")}>
-      <Tag color={impactColors[assessment.level]}>
-        关注等级：{assessment.level}
-        {event.demo ? " · DEMO" : ""}
-      </Tag>
+    <Tooltip
+      title={`${LEVEL_LABEL[assessment.level]}${event.demo ? " · DEMO" : ""}。${assessment.reasons.join("；")}`}
+    >
+      <span
+        className="impact-stars"
+        aria-label={`${LEVEL_LABEL[assessment.level]}（共 ${count} 星）`}
+      >
+        {Array.from({ length: count }, (_, i) => (
+          <span
+            key={i}
+            style={{ color: highlight ? "#FAAD14" : "#CBD5E1" }}
+            aria-hidden="true"
+          >
+            ★
+          </span>
+        ))}
+      </span>
     </Tooltip>
   );
 }

@@ -1578,3 +1578,14 @@ main {
   font-size: 12px;
 }
 
+/* Attention as stars: three yellow for 高关注, one grey for 低关注, nothing when the level is
+   not yet knowable. Letter-spaced so the count is readable at a glance. */
+.impact-stars {
+  display: inline-flex;
+  gap: 1px;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 1px;
+  vertical-align: middle;
+}
+
