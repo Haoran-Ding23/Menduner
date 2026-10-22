@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Alert, Button, Input, Select, Space, Table, Tag } from "antd";
+import { Alert, Button, Input, Select, Space, Switch, Table, Tag } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
 import TrustCenter from "../../components/TrustCenter";
 import CrawlHealth from "../../components/CrawlHealth";
@@ -32,6 +32,11 @@ export default function DataQuality() {
   // percentage hides which part of the city is short of evidence; a region is also the unit a
   // reviewer works in, because its events share sources and venues.
   const [region, setRegion] = useState("");
+  // Default hides settled events; the switch is next to the filters.
+  const [showVerified, setShowVerified] = useState(false);
+  // Verified fields are collapsed in the right-hand panel: they are done, and showing them
+  // pushed the fields that still need a decision off the screen.
+  const [showVerifiedFields, setShowVerifiedFields] = useState(false);
   // A theatre programmes many events; drilling into a venue's full list is public value
   // (it is dataset browsing, not an internal operation), so it stays on this page.
   const [openVenueId, setOpenVenueId] = useState<string | null>(null);
@@ -57,6 +62,10 @@ export default function DataQuality() {
       (e.name.toLowerCase().includes(search.toLowerCase()) ||
         e.id.includes(search)) &&
       (!region || e.districtId === region) &&
+      // The page opens on work that needs doing. Listing 663 events in their current order
+      // means the reader scrolls past settled ones to find anything actionable, so 已核验 is
+      // hidden until asked for.
+      (showVerified || eventStatus(repository.getEvidence(e.id)) !== "Verified") &&
       (!status || eventStatus(repository.getEvidence(e.id)) === status),
   );
   const event = repository.getEventById(selected ?? records[0]?.id ?? "");
@@ -70,6 +79,13 @@ export default function DataQuality() {
   }, [event, venue, repository]);
   const entityVenue =
     venue && fields.some((f) => f.entityId === venue.id) ? venue : null;
+  // Settled fields are folded below the pending ones instead of mixed in, so the reader sees
+  // what needs a decision without scanning past the fields nobody has to look at again.
+  const settledEvents = dataset.events.filter(
+    (e) => eventStatus(repository.getEvidence(e.id)) === "Verified",
+  ).length;
+  const pendingFields = fields.filter((f) => effectiveStatus(f) !== "Verified");
+  const settledFields = fields.filter((f) => effectiveStatus(f) === "Verified");
 
   return (
     <>
@@ -81,22 +97,47 @@ export default function DataQuality() {
           需要审核数据的人员请使用「审核台」。
         </p>
       </div>
-      <div className="stats-strip">
-        <div>
-          <small>全部活动</small>
-          <strong>{dataset.events.length}</strong>
+      <div className="dq-overview panel gap-bottom">
+        <div className="dq-overview-head">
+          <strong>全库 {dataset.events.length} 条活动</strong>
+          <span className="muted">按活动核验状态分布</span>
         </div>
-        <div>
-          <small>核验字段（含场馆/酒店）</small>
-          <strong>{count("Verified")}</strong>
+        {/* One segmented bar instead of four stat cards: the cards gave four independent
+            numbers and left the reader to work out the proportions, which is the only thing
+            that matters here - is the dataset mostly settled or mostly pending? */}
+        <div className="dq-bar" role="img" aria-label="活动核验状态分布">
+          {(["Verified", "Needs Review", "Conflicting", "Missing"] as Status[]).map((s) => {
+            const n = dataset.events.filter(
+              (e) => eventStatus(repository.getEvidence(e.id)) === s,
+            ).length;
+            const pct = dataset.events.length ? (n / dataset.events.length) * 100 : 0;
+            return (
+              <span
+                key={s}
+                className="dq-bar-seg"
+                style={{ width: `${pct}%`, background: statusColors[s] }}
+                title={`${statusLabels[s]} ${n} 条（${pct.toFixed(1)}%）`}
+              />
+            );
+          })}
         </div>
-        <div>
-          <small>缺失字段</small>
-          <strong>{count("Missing")}</strong>
-        </div>
-        <div>
-          <small>待复核 / 冲突</small>
-          <strong>{count("Needs Review") + count("Conflicting")}</strong>
+        <div className="dq-legend">
+          {(["Verified", "Needs Review", "Conflicting", "Missing"] as Status[]).map((s) => {
+            const n = dataset.events.filter(
+              (e) => eventStatus(repository.getEvidence(e.id)) === s,
+            ).length;
+            const pct = dataset.events.length
+              ? ((n / dataset.events.length) * 100).toFixed(0)
+              : "0";
+            return (
+              <span key={s}>
+                <i style={{ background: statusColors[s] }} />
+                {statusLabels[s]}
+                <strong>{n}</strong>
+                <small className="muted">{pct}%</small>
+              </span>
+            );
+          })}
         </div>
       </div>
       <Alert
@@ -207,6 +248,15 @@ export default function DataQuality() {
                 ...regions.map((r) => ({ label: r.name, value: r.id })),
               ]}
             />
+            <label className="muted" style={{ display: "inline-flex", gap: 6, alignItems: "center" }}>
+              <Switch
+                size="small"
+                checked={showVerified}
+                onChange={setShowVerified}
+                aria-label="显示已核验活动"
+              />
+              显示已核验（{settledEvents}）
+            </label>
             <Select
               aria-label="核验状态"
               value={status}
@@ -252,15 +302,31 @@ export default function DataQuality() {
         </section>
         <section className="panel">
           <div className="panel-heading">
-            <h3>字段证据：{event?.name ?? "未选择活动"}</h3>
+            {/* The panel is a work instruction, not a dump: what still needs a decision first,
+                with a way to act on it, and the settled fields folded away. */}
+            <h3>这一条该怎么处理：{event?.name ?? "未选择活动"}</h3>
+            {event && (
+              <Space>
+                <span className="muted">{pendingFields.length} 个字段待处理</span>
+                <Button
+                  type="primary"
+                  size="small"
+                  onClick={() => update({ event: event.id })}
+                >
+                  去审核台处理
+                </Button>
+              </Space>
+            )}
           </div>
           {fields.length ? (
-            <Table<Evidence>
-              rowKey="id"
-              dataSource={fields}
-              pagination={false}
-              scroll={{ x: 620 }}
-              columns={[
+            <>
+              <Table<Evidence>
+                rowKey="id"
+                dataSource={pendingFields}
+                pagination={false}
+                scroll={{ x: 620 }}
+                locale={{ emptyText: "没有待处理字段，这一条已处理完" }}
+                columns={[
                 {
                   title: "字段 / 实体",
                   width: 140,
@@ -329,6 +395,44 @@ export default function DataQuality() {
                 },
               ]}
             />
+            {settledFields.length > 0 && (
+              <div className="gap-top">
+                <Button
+                  type="link"
+                  size="small"
+                  style={{ padding: 0 }}
+                  onClick={() => setShowVerifiedFields((v) => !v)}
+                >
+                  {showVerifiedFields ? "收起" : "展开"}已核验的 {settledFields.length} 个字段
+                </Button>
+                {showVerifiedFields && (
+                  <Table<Evidence>
+                    rowKey="id"
+                    size="small"
+                    dataSource={settledFields}
+                    pagination={false}
+                    className="gap-top"
+                    columns={[
+                      { title: "字段", dataIndex: "field", width: 150 },
+                      {
+                        title: "值",
+                        render: (_, e) => valueText(e.value),
+                      },
+                      {
+                        title: "状态",
+                        width: 100,
+                        render: () => (
+                          <Tag color={statusColors.Verified}>
+                            {statusLabels.Verified}
+                          </Tag>
+                        ),
+                      },
+                    ]}
+                  />
+                )}
+              </div>
+            )}
+            </>
           ) : (
             <Alert
               type="info"
