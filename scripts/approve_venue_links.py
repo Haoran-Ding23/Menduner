@@ -160,6 +160,9 @@ from backend.main import reproject_event
 
 now = datetime.now(timezone.utc).isoformat()
 ok = fail = 0
+district_by_venue = {
+    vid: (payload.get("districtId") or None) for vid, payload in venues.items()
+}
 for item in approve:
     try:
         with connect(args.db) as con:
@@ -174,6 +177,18 @@ for item in approve:
                 decided_at=now,
             )
         reproject_event(args.db, item["event_id"])
+        # reproject_event rebuilds the event from its observation and does not carry the
+        # `district` column across, so rebuilding 123 events silently dropped all of them out of
+        # their region - 太仓 went from 123 events to 4 and the map emptied. The district is a
+        # projection of the venue, not of the observation, so it is re-derived from the venue
+        # the event now points at.
+        district = district_by_venue.get(item["venue_id"])
+        if district:
+            with connect(args.db) as con:
+                con.execute(
+                    "UPDATE events SET district=? WHERE id=?",
+                    (district, item["event_id"]),
+                )
         ok += 1
     except Exception as exc:
         fail += 1
