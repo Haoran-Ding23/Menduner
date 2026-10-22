@@ -11,6 +11,7 @@ from backend import bulk_review
 from backend import client_errors
 from backend import private_import
 from backend import tenants
+from backend import weekly_report
 from backend.amap import amap_place_url
 from backend import venues as venue_store
 from backend.database import connect, database_path, initialize, snapshot, snapshot_bytes
@@ -563,6 +564,37 @@ def create_app(db_path: Path | None = None):
             result['written'] = written
             result['dryRun'] = False
         return result
+
+    @app.get('/private/weekly.{fmt}')
+    def private_weekly(fmt: str, request: Request):
+        """This hotel's weekly report as an Excel file or a PDF.
+
+        Scoped to the tenant from the session, like every other private endpoint. The file is
+        streamed back rather than written to a static path: a report on disk under a guessable
+        name would be readable by anyone who found the URL, which would undo the isolation the
+        rest of this system maintains.
+        """
+        from fastapi import Response as FastResponse
+
+        if fmt not in ('xlsx', 'pdf'):
+            raise HTTPException(status_code=400, detail='格式只支持 xlsx 或 pdf')
+        with connect(path) as con:
+            tenant = _tenant_of_request(con, request)
+        try:
+            report = weekly_report.collect(path, _private_base(), tenant)
+            payload = (weekly_report.build_xlsx(report) if fmt == 'xlsx'
+                       else weekly_report.build_pdf(report))
+        except RuntimeError as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from None
+        stamp = report['period']['end']
+        filename = f"weekly-{stamp}.{fmt}"
+        media = ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                 if fmt == 'xlsx' else 'application/pdf')
+        return FastResponse(
+            content=payload,
+            media_type=media,
+            headers={'Content-Disposition': f'attachment; filename="{filename}"'},
+        )
 
     @app.post('/account/orders')
     def customer_order(body: OrderRequest, request: Request):

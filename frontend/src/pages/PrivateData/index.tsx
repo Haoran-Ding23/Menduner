@@ -223,6 +223,17 @@ export default function PrivateData() {
           上传本店的入住率、房价、间夜、渠道与房型数据。这些数据只在本店账号下可见，
           不与其他酒店共享，也不进入公开活动数据。
         </p>
+        <Space wrap className="gap-top">
+          {/* Plain links: the browser sends the session cookie and the response is an
+              attachment, so the file is downloaded without JavaScript needing to hold it. */}
+          <Button href="/api/private/weekly.xlsx" download>
+            导出周报 Excel
+          </Button>
+          <Button href="/api/private/weekly.pdf" download>
+            导出周报 PDF
+          </Button>
+          <small className="muted">内容为上一完整周（周一至周日）</small>
+        </Space>
       </div>
 
       {error && (
