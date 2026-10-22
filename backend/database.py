@@ -56,10 +56,13 @@ def initialize(path):
         # Customer accounts (invites, sessions, offline orders) live here too: they are product
         # data, created on first registration rather than by a migration step.
         from crawler import attendance, places
-        from backend import accounts
+        from backend import accounts, tenants as tenant_model
         attendance.ensure_schema(con)
         places.ensure_schema(con)
         accounts.ensure_schema(con)
+        # Who belongs to which hotel lives here, next to the accounts it refers to. Each
+        # hotel's private ledger lives in its own file; backend.tenants holds that accessor.
+        tenant_model.ensure_schema(con)
 
 def aggregate_status(statuses):
     for value in ('Conflicting', 'Needs Review', 'Unverified', 'Missing'):
