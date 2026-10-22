@@ -14,7 +14,11 @@ const env = (import.meta as { env?: Record<string, string | undefined> }).env ??
 
 export const FILING_MODE = env.VITE_FILING_MODE === "1";
 
-/** Names shown publicly; the filing name must match what the reviewers see. */
-export const SITE_TAGLINE = FILING_MODE ? "苏州城市活动信息" : "苏州城市活动情报";
+/** Names shown publicly; the filing name must match what the reviewers see.
+ *
+ * No city in the name: the product now opens on 太仓 and covers all of 苏州's districts and
+ * county-level cities, so calling it 苏州城市活动 would describe a narrower thing than it is.
+ */
+export const SITE_TAGLINE = FILING_MODE ? "城市活动信息" : "城市活动情报";
 export const SITE_SHORT = FILING_MODE ? "城市活动信息" : "城市活动情报";
 export const SITE_TITLE = FILING_MODE ? "Menduner · 城市活动信息" : "Menduner · 城市活动情报";

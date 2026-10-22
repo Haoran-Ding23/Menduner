@@ -330,7 +330,7 @@ export default function EventMap({
       {error && (
         <div className="map-state">
           <span className="map-symbol">⌖</span>
-          <h2>苏州城市活动地图</h2>
+          <h2>城市活动地图</h2>
           <Alert type="warning" message={error} />
           <p>活动列表、日历、图谱和证据仍可使用。</p>
           <Button onClick={() => setAttempt((v) => v + 1)}>重新连接</Button>
