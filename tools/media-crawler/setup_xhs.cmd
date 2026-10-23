@@ -18,6 +18,13 @@ if errorlevel 1 (
 )
 for /f "delims=" %%v in ('py -3.12 --version') do echo [0/4] %%v found.
 
+git --version >nul 2>nul
+if errorlevel 1 (
+  echo [x] git not found. Install git for Windows (git-scm.com), then re-run.
+  pause
+  exit /b 1
+)
+
 if not exist MediaCrawler\main.py (
   echo [1/4] Cloning MediaCrawler via the ghfast mirror...
   git -c http.sslBackend=schannel clone --depth 1 https://ghfast.top/https://github.com/NanmiCoder/MediaCrawler.git MediaCrawler

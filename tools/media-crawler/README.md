@@ -13,7 +13,16 @@ deliberately **not tracked**:
 
 ## Bootstrap a new machine
 
-Prerequisites: git and Python 3.12. Double-click `setup_xhs.cmd`; it
+**Environment requirements — the complete list:**
+
+| 需要 | 不需要 |
+|---|---|
+| Windows 10/11（脚本是 `.cmd`） | 谷歌浏览器 Chrome |
+| git（仅引导时克隆上游用） | Node.js（小红书签名走纯 Python 的 `xhshow` 包；只有抖音/知乎平台才要 Node） |
+| Python 3.12（`py -3.12` 可用） | Conda（项目惯例拒绝 conda 解释器） |
+| 能访问 pypi 清华镜像与 ghfast 镜像的网络 | 公网服务器/账号凭据（采集永远在本地） |
+
+装好前两项后双击 `setup_xhs.cmd`；它
 
 1. clones upstream MediaCrawler into `tools/MediaCrawler/` (ghfast mirror, since
    github.com is unreachable without one on CN networks),
