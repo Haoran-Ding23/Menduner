@@ -4,7 +4,6 @@ import { Spin } from 'antd';
 import PlatformLayout from './components/Layout';
 import EventDetail from './components/EventDetail';
 import ErrorBoundary from './components/ErrorBoundary';
-import PlanGate from './components/PlanGate';
 import { AccountProvider } from './hooks/useEntitlements';
 import { IdentityProvider } from './hooks/useIdentity';
 import type { AccountState } from './services/account';
@@ -22,7 +21,6 @@ const Graph = lazyWithReload(() => import('./pages/KnowledgeGraph'));
 const Hotels = lazyWithReload(() => import('./pages/HotelIntelligence'));
 const Insights = lazyWithReload(() => import('./pages/DistrictInsights'));
 const DataQuality = lazyWithReload(() => import('./pages/DataQuality'));
-const Plans = lazyWithReload(() => import('./pages/Plans'));
 const Login = lazyWithReload(() => import('./pages/Login'));
 const Register = lazyWithReload(() => import('./pages/Register'));
 const ReviewConsole = lazyWithReload(() => import('./pages/ReviewConsole'));
@@ -56,13 +54,15 @@ export default function App({ initialAccount }: { initialAccount?: AccountState 
               <Route path="/venues" element={<Page name="场馆活动清单"><Venues /></Page>}/>
           <Route path="/private" element={<Page name="本店经营数据"><PrivateData /></Page>}/>
               <Route path="/graph" element={<Page name="知识图谱"><Graph /></Page>}/>
-              {/* Paid workflow: public data stays free, these two unlock the hotel-centric work.
-                  During the ICP filing review the reviewers must see a non-commercial information
-                  site, so the commercial routes redirect to the public map (FILING_MODE). */}
-              <Route path="/hotels" element={FILING_MODE ? <Navigate to="/map" replace/> : <Page name="酒店活动情报"><PlanGate feature="hotel_intel"><Hotels /></PlanGate></Page>}/>
-              <Route path="/insights" element={FILING_MODE ? <Navigate to="/map" replace/> : <Page name="商圈洞察"><PlanGate feature="insights"><Insights /></PlanGate></Page>}/>
+              {/* The commercial edition is paused, so these two are ordinary pages rather than
+                  gated ones. FILING_MODE still redirects them during the ICP review, which asks
+                  for a non-commercial information site. */}
+              <Route path="/hotels" element={FILING_MODE ? <Navigate to="/map" replace/> : <Page name="酒店活动情报"><Hotels /></Page>}/>
+              <Route path="/insights" element={FILING_MODE ? <Navigate to="/map" replace/> : <Page name="商圈洞察"><Insights /></Page>}/>
               <Route path="/evidence" element={<Page name="数据质量与来源"><DataQuality /></Page>}/>
-              <Route path="/plans" element={FILING_MODE ? <Navigate to="/map" replace/> : <Page name="套餐与升级"><Plans /></Page>}/>
+              {/* The plan page is off the product while there is no paid tier; keeping the route
+                  would leave a pricing screen reachable from links nobody can see. */}
+              <Route path="/plans" element={<Navigate to="/map" replace/>}/>
               <Route path="/login" element={FILING_MODE ? <Navigate to="/map" replace/> : <Page name="登录"><Login /></Page>}/>
               <Route path="/register" element={FILING_MODE ? <Navigate to="/map" replace/> : <Page name="注册"><Register /></Page>}/>
               <Route path="/review" element={<Page name="审核台"><ReviewConsole /></Page>}/>

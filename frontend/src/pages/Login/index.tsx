@@ -33,7 +33,7 @@ export default function LoginPage() {
     setError("");
     try {
       await login(values.login, values.password);
-      navigate("/plans");
+      navigate("/map");
     } catch (loginError) {
       setError(loginError instanceof Error ? loginError.message : "登录失败");
     } finally {
@@ -82,9 +82,7 @@ export default function LoginPage() {
         <div className="signin-card">
           <h1>登录</h1>
           <p className="signin-sub">
-            {FILING_MODE
-              ? "登录后查看订阅与开通申请。"
-              : "登录后查看套餐、试用剩余时间与开通申请。"}
+            登录后使用本店经营数据、成员管理与周报导出。
           </p>
 
           {error && (
@@ -138,9 +136,7 @@ export default function LoginPage() {
           </div>
 
           <p className="signin-links">
-            还没有账号？<Link to="/register">用邀请码注册试用</Link>
-            <span className="signin-dot">·</span>
-            <Link to="/plans">查看套餐</Link>
+            还没有账号？<Link to="/register">用邀请码注册</Link>
           </p>
         </div>
       </main>

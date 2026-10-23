@@ -9,7 +9,7 @@ import {
   BarChartOutlined,
   SafetyCertificateOutlined,
   CrownOutlined,
-  LockOutlined,
+
   ToolOutlined,
   SettingOutlined,
   UploadOutlined,
@@ -21,15 +21,16 @@ import {
 import { usePlatform } from "../../hooks/usePlatform";
 import { canReview, useIdentity } from "../../hooks/useIdentity";
 import { useAccount, useEntitlements } from "../../hooks/useEntitlements";
-import { PLAN_LABELS, type PlanId } from "../../services/plans";
+
 import { FILING_MODE, SITE_SHORT, SITE_TAGLINE, SITE_TITLE } from "../../config";
 export interface NavPage {
+  /** Part of the commercial edition. No longer gated by a plan, but hidden during the ICP
+   *  filing review, which requires a non-commercial information site. */
   path: string;
   title: string;
   label: string;
   icon: React.ReactNode;
-  /** Paid workflow: the item stays visible but shows a lock until the plan reaches this tier. */
-  minPlan?: PlanId;
+  commercial?: boolean;
 }
 export const pages: NavPage[] = [
   {
@@ -73,14 +74,14 @@ export const pages: NavPage[] = [
     title: "酒店活动情报",
     label: "酒店活动情报",
     icon: <HomeOutlined />,
-    minPlan: "pro",
+    commercial: true,
   },
   {
     path: "/insights",
     title: "商圈洞察",
     label: "商圈洞察",
     icon: <BarChartOutlined />,
-    minPlan: "pro",
+    commercial: true,
   },
   {
     path: "/evidence",
@@ -116,16 +117,16 @@ export default function PlatformLayout({
   const { dataset, filters, go, importData, resetData, dataMode, reloadData } =
     usePlatform();
   const { identity } = useIdentity();
-  const { plan, canUse, label } = useEntitlements();
+
   const { state: accountState } = useAccount();
   // Filing review must see a non-commercial information site: the paid workflow, the plan page and
   // the account entry disappear (their routes also redirect, see App.tsx). Nothing is deleted.
-  const visiblePages = FILING_MODE ? pages.filter((item) => !item.minPlan) : pages;
-  // Paid workflow stays visible but locked: a customer must be able to see what exists and what
-  // an upgrade would unlock. The lock is product communication, not enforcement.
+  // No paywall on the navigation: the commercial edition is paused, so every workspace page is
+  // open to whoever is signed in. The plan fields in the database and the account plan badge are
+  // untouched, so reintroducing a paid tier later is a change here rather than a migration.
+  const visiblePages = FILING_MODE ? pages.filter((item) => !item.commercial) : pages;
   const navPages: NavPage[] = [
     ...visiblePages,
-    ...(FILING_MODE ? [] : [plansPage]),
     ...(canReview(identity) ? [consolePage] : []),
   ];
   const page = navPages.find((p) => p.path === location.pathname);
@@ -155,23 +156,18 @@ const pageTitle = page?.title ?? AUTH_PAGE_TITLES[location.pathname] ?? "";
         </div>
         <div className="nav-section">工作空间</div>
         <nav>
-          {navPages.map((p) => {
-            const locked = p.minPlan ? !canUse(p.minPlan) : false;
-            return (
-              <button
-                key={p.path}
-                className={
-                  "nav-item " + (p.path === location.pathname ? "active" : "")
-                }
-                onClick={() => go(p.path)}
-                title={locked ? `需要${PLAN_LABELS[p.minPlan as PlanId]}` : undefined}
-              >
-                {p.icon}
-                <span>{p.label}</span>
-                {locked && <LockOutlined className="nav-lock" />}
-              </button>
-            );
-          })}
+          {navPages.map((p) => (
+            <button
+              key={p.path}
+              className={
+                "nav-item " + (p.path === location.pathname ? "active" : "")
+              }
+              onClick={() => go(p.path)}
+            >
+              {p.icon}
+              <span>{p.label}</span>
+            </button>
+          ))}
         </nav>
         <div className="sidebar-foot">
           <Tag color="cyan">ENT303TC · 第 14 组</Tag>
@@ -181,9 +177,7 @@ const pageTitle = page?.title ?? AUTH_PAGE_TITLES[location.pathname] ?? "";
             {FILING_MODE ? (
               <Tag>公开活动信息展示</Tag>
             ) : accountState.authenticated ? (
-              <Tag color={plan === "free" ? "default" : "gold"}>
-                {accountState.account?.login} · {label}
-              </Tag>
+              <Tag color="cyan">{accountState.account?.login}</Tag>
             ) : (
               <Button size="small" onClick={() => go("/login")}>
                 登录 / 注册

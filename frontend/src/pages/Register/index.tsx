@@ -35,7 +35,7 @@ export default function RegisterPage() {
         name: values.name.trim(),
         hotel: values.hotel?.trim(),
       });
-      navigate("/plans");
+      navigate("/map");
     } catch (registerError) {
       setError(registerError instanceof Error ? registerError.message : "注册失败");
     } finally {
@@ -48,7 +48,7 @@ export default function RegisterPage() {
       <div className="page-heading">
         <div className="eyebrow">客户账号</div>
         <h1>用邀请码注册</h1>
-        <p>邀请码由我们提供；注册成功后立即开始四周专业版试用，试用不需要付款。</p>
+        <p>邀请码由我们提供。注册后即可使用全部功能，不需要付款。</p>
       </div>
       <section className="panel auth-panel">
         {error && <Alert className="gap-bottom" type="error" showIcon message={error} />}
@@ -91,11 +91,11 @@ export default function RegisterPage() {
             <Input.Password autoComplete="new-password" />
           </Form.Item>
           <Button type="primary" htmlType="submit" loading={submitting}>
-            注册并开始试用
+            注册并进入
           </Button>
         </Form>
         <p className="muted gap-top">
-          已有账号？<Link to="/login">登录</Link> · <Link to="/plans">查看套餐</Link>
+          已有账号？<Link to="/login">登录</Link>
         </p>
       </section>
     </div>

@@ -42,7 +42,6 @@ describe("Integrated platform routes and interactions", () => {
     ["hotels", "酒店活动情报"],
     ["insights", "商圈洞察"],
     ["evidence", "数据质量与来源"],
-    ["plans", "套餐与升级"],
     ["login", "登录"],
     ["register", "注册"],
   ])

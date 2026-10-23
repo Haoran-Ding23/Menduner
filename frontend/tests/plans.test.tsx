@@ -66,10 +66,15 @@ function mountPage(node: React.ReactNode, account: AccountState) {
   );
 }
 
-describe("plans page", () => {
+/**
+ * 商业版暂停，这两个页面已从产品下线：套餐页的路由重定向到地图，付费门禁也已移除。
+ * 这组测试记录的是付费版存在时的行为，先整体跳过而不是删除 —— 将来恢复付费层时，
+ * 这些断言就是现成的验收清单。
+ */
+describe.skip("plans page (商业版暂停)", () => {
   it("shows the tiers, prices and the free-data promise to an anonymous visitor", async () => {
     mountPage(<PlansPage />, ANONYMOUS_ACCOUNT_STATE);
-    await screen.findByRole("heading", { name: "套餐与升级" });
+    await screen.findByRole("heading", { name: /活动地图/ });
     expect(screen.getAllByText("专业版").length).toBeGreaterThan(0);
     expect(screen.getAllByText("企业版").length).toBeGreaterThan(0);
     expect(screen.getByText("¥980")).toBeInTheDocument();
@@ -81,7 +86,7 @@ describe("plans page", () => {
 
   it("shows the trial state and the pending activation request to a customer", async () => {
     mountPage(<PlansPage />, { ...TRIAL_PRO_ACCOUNT, orders: [PENDING_ORDER] });
-    await screen.findByRole("heading", { name: "套餐与升级" });
+    await screen.findByRole("heading", { name: /活动地图/ });
     expect(document.body.textContent).toContain("试用中");
     expect(document.body.textContent).toContain("待确认收款");
     expect(document.body.textContent).toContain("test-pro");
@@ -90,13 +95,13 @@ describe("plans page", () => {
 
   it("tells an expired customer the trial is over and offers activation", async () => {
     mountPage(<PlansPage />, EXPIRED_ACCOUNT);
-    await screen.findByRole("heading", { name: "套餐与升级" });
+    await screen.findByRole("heading", { name: /活动地图/ });
     expect(document.body.textContent).toContain("试用已结束");
     expect(document.body.textContent).toContain("申请开通");
   });
 });
 
-describe("paid workflow gate", () => {
+describe.skip("paid workflow gate (商业版暂停)", () => {
   it("sends an anonymous visitor to invite-code registration", async () => {
     mountApp("/hotels");
     await screen.findByText(/属于专业版/);
@@ -111,7 +116,7 @@ describe("paid workflow gate", () => {
     mountApp("/hotels", EXPIRED_ACCOUNT);
     await screen.findByText(/属于专业版/);
     fireEvent.click(screen.getByRole("button", { name: "查看套餐并申请开通" }));
-    await screen.findByRole("heading", { name: "套餐与升级" });
+    await screen.findByRole("heading", { name: /活动地图/ });
     expect(document.body.textContent).toContain("试用已结束");
   });
 
@@ -131,7 +136,7 @@ describe("paid workflow gate", () => {
 });
 
 describe("invite registration", () => {
-  it("registers with an invite code, signs in and lands on the plans page", async () => {
+  it("registers with an invite code, signs in and lands on the map", async () => {
     const calls: { url: string; body?: string }[] = [];
     vi.stubGlobal(
       "fetch",
@@ -145,7 +150,8 @@ describe("invite registration", () => {
         <AccountProvider initialState={ANONYMOUS_ACCOUNT_STATE}>
           <Routes>
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/plans" element={<PlansPage />} />
+            {/* 注册成功后进入地图：套餐页已下线 */}
+            <Route path="/map" element={<h1>城市活动地图</h1>} />
           </Routes>
         </AccountProvider>
       </MemoryRouter>,
@@ -157,11 +163,11 @@ describe("invite registration", () => {
     fireEvent.change(screen.getByLabelText("酒店(可选)"), { target: { value: "苏州洲际酒店" } });
     fireEvent.change(screen.getByLabelText("密码(至少 8 位)"), { target: { value: "secret-pass-1" } });
     fireEvent.change(screen.getByLabelText("确认密码"), { target: { value: "secret-pass-1" } });
-    fireEvent.click(screen.getByRole("button", { name: "注册并开始试用" }));
+    fireEvent.click(screen.getByRole("button", { name: /注册/ }));
     await waitFor(() => {
       expect(calls.some((call) => call.url.includes("/api/account/register"))).toBe(true);
     });
-    expect(await screen.findByRole("heading", { name: "套餐与升级" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "城市活动地图" })).toBeInTheDocument();
     const registerCall = calls.find((call) => call.url.includes("/api/account/register"));
     expect(registerCall?.body).toContain("MND-ABCD-EFGH");
     expect(registerCall?.body).toContain("hotel-a");
