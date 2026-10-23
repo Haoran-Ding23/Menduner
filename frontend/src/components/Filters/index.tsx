@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Select, Switch, Space, Button, Tooltip } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
 import { categories } from "../../utils/data";
@@ -46,6 +47,8 @@ export default function Filters({
       })),
   ];
 
+  const [showMore, setShowMore] = useState(false);
+
   return (
     <div className="filterbar">
       <Space wrap>
@@ -77,22 +80,32 @@ export default function Filters({
           ]}
           onChange={(category) => update({ category })}
         />
-        <Switch
-          aria-label="包含演示数据"
-          checked={filters.includeDemo}
-          onChange={(v) => update({ demo: v ? 1 : 0 })}
-        />
-        <span className="muted">包含 DEMO</span>
-        <Switch
-          aria-label="显示已结束活动"
-          checked={filters.includePast}
-          onChange={(v) => update({ past: v ? 1 : 0 })}
-        />
-        <Tooltip title="默认隐藏已结束 30 天以上的活动；证据仍在库中，可随时切回查看">
-          <span className="muted">
-            显示已结束{archivedCount > 0 ? `（${archivedCount}）` : ""}
+        {/* 低频开关收进「更多筛选」：演示数据与已结束活动不是每次筛选都会动，
+            常驻一行会把主筛选挤到第二行，反而让人找不到年份与类别。 */}
+        <Button size="small" type="text" onClick={() => setShowMore((v) => !v)}>
+          {showMore ? "收起更多筛选" : "更多筛选"}
+          {!showMore && (filters.includeDemo || filters.includePast) ? "（已启用）" : ""}
+        </Button>
+        {showMore && (
+          <span className="filter-more">
+            <Switch
+              aria-label="包含演示数据"
+              checked={filters.includeDemo}
+              onChange={(v) => update({ demo: v ? 1 : 0 })}
+            />
+            <span className="muted">包含 DEMO</span>
+            <Switch
+              aria-label="显示已结束活动"
+              checked={filters.includePast}
+              onChange={(v) => update({ past: v ? 1 : 0 })}
+            />
+            <Tooltip title="默认隐藏已结束 30 天以上的活动；证据仍在库中，可随时切回查看">
+              <span className="muted">
+                显示已结束{archivedCount > 0 ? `（${archivedCount}）` : ""}
+              </span>
+            </Tooltip>
           </span>
-        </Tooltip>
+        )}
       </Space>
       {months && (
         <div className="months">

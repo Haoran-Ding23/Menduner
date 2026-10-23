@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Button, Empty, Tag, Alert, Switch, Space } from "antd";
+import { Button, Empty, Tag, Alert, Switch, Space, Segmented } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
 import { filterEvents, eventCoordinates, categories, venueHotspots } from "../../utils/data";
 import { assessDemand, businessToday } from "../../services/intelligence";
@@ -61,6 +61,9 @@ export default function CityEventMap() {
     ],
   );
   // 地图按月浏览，所以把当月表达成一个统一的时间窗口，交给同一套口径计算。
+  // 移动端默认先看列表：小屏幕上地图只有 320px 高，先看列表更快找到活动。
+  const [showMap, setShowMap] = useState(false);
+
   const mapWindow: TimeWindow = useMemo(() => {
     const [start, end] = monthRange(filters.year, filters.month);
     return {
@@ -189,7 +192,18 @@ export default function CityEventMap() {
           </strong>
         </div>
       </div>
-      <div className="map-layout">
+      <div className="view-toggle">
+        <Segmented
+          block
+          value={showMap ? "map" : "list"}
+          onChange={(value) => setShowMap(value === "map")}
+          options={[
+            { label: "活动列表", value: "list" },
+            { label: "地图", value: "map" },
+          ]}
+        />
+      </div>
+      <div className={"map-layout " + (showMap ? "list-hidden" : "map-hidden")}>
         <section className="panel map-panel">
           <div className="panel-heading">
             <h3>空间分布</h3>

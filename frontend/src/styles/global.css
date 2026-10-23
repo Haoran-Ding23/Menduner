@@ -1953,3 +1953,38 @@ main {
   color: #64748b;
 }
 .dq-group-title.dq-key { color: #b45309; }
+
+/* --- 地图与列表布局：两栏共用同一高度，列表内部滚动，不再把地图区拉长 --- */
+.map-layout {
+  --map-h: 520px;
+  align-items: start;
+}
+.map-layout .map-shell {
+  height: var(--map-h);
+}
+.map-layout .event-list .list-scroll {
+  max-height: calc(var(--map-h) - 46px);
+}
+
+/* 低频筛选折叠：默认只留主筛选，演示数据与已结束开关收进「更多筛选」 */
+.filter-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.filter-more-info {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* 移动端：列表优先，地图切换成一个按钮；桌面端隐藏该切换 */
+.view-toggle { display: none; }
+@media (max-width: 900px) {
+  .map-layout { grid-template-columns: minmax(0, 1fr); }
+  .map-layout .map-shell { height: 320px; }
+  .map-layout .event-list .list-scroll { max-height: none; }
+  .map-layout.map-hidden .map-panel { display: none; }
+  .map-layout.list-hidden .event-list { display: none; }
+  .view-toggle { display: block; margin-bottom: 10px; }
+}

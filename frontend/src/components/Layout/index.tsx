@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { Button, Tag, Modal, Alert, Space, message, Descriptions } from "antd";
 import {
@@ -33,6 +33,8 @@ export interface NavPage {
   label: string;
   icon: React.ReactNode;
   commercial?: boolean;
+  /** 侧栏分组：回答同一个问题的页面放在一起，避免 9 个平级条目。 */
+  group?: string;
 }
 export const pages: NavPage[] = [
   {
@@ -40,13 +42,15 @@ export const pages: NavPage[] = [
     title: "本店工作台",
     label: "本店工作台",
     icon: <DashboardOutlined />,
-  },
+      group: "每天要用",
+},
   {
     path: "/map",
     title: "城市活动地图",
     label: "城市活动地图",
     icon: <EnvironmentOutlined />,
-  },
+      group: "活动浏览",
+},
   // 活动日历 / 场馆活动清单 used to sit here as separate entries. All three views answered the
   // same question from different angles, and the list already groups by 本周/本月, so the
   // navigation offers one entry: 活动清单.
@@ -55,46 +59,53 @@ export const pages: NavPage[] = [
     title: "活动清单",
     label: "活动清单",
     icon: <UnorderedListOutlined />,
-  },
+      group: "活动浏览",
+},
   {
     path: "/private",
     title: "本店经营数据",
     label: "本店经营数据",
     icon: <DatabaseOutlined />,
-  },
+      group: "数据与来源",
+},
   {
     path: "/graph",
     title: "知识图谱",
     label: "知识图谱",
     icon: <ApartmentOutlined />,
-  },
+      group: "酒店与商圈",
+},
   {
     path: "/find-hotels",
     title: "找酒店",
     label: "找酒店",
     icon: <BankOutlined />,
     commercial: true,
-  },
+      group: "酒店与商圈",
+},
   {
     path: "/hotels",
     title: "酒店活动情报",
     label: "酒店活动情报",
     icon: <HomeOutlined />,
     commercial: true,
-  },
+      group: "酒店与商圈",
+},
   {
     path: "/insights",
     title: "商圈洞察",
     label: "商圈洞察",
     icon: <BarChartOutlined />,
     commercial: true,
-  },
+      group: "酒店与商圈",
+},
   {
     path: "/evidence",
     title: "数据质量与来源",
     label: "数据质量与来源",
     icon: <SafetyCertificateOutlined />,
-  },
+      group: "数据与来源",
+},
 ];
 
 // The customer's upgrade entry. Visible to everyone: a customer must be able to see what a paid
@@ -136,6 +147,12 @@ export default function PlatformLayout({
     ...(canReview(identity) ? [consolePage] : []),
   ];
   const page = navPages.find((p) => p.path === location.pathname);
+  const navGroups = useMemo(() => {
+    const order = ["每天要用", "活动浏览", "酒店与商圈", "数据与来源"];
+    return order
+      .map((name) => ({ name, pages: navPages.filter((p) => (p.group ?? "活动浏览") === name) }))
+      .filter((group) => group.pages.length > 0);
+  }, [navPages]);
 // Auth and plan pages are reachable but are not workspace entries, so the breadcrumb had no
 // title for them and rendered "工作空间 / " with nothing after the slash.
 const AUTH_PAGE_TITLES: Record<string, string> = {
@@ -162,9 +179,11 @@ const pageTitle = page?.title ?? AUTH_PAGE_TITLES[location.pathname] ?? "";
             Menduner<small>{SITE_TAGLINE}</small>
           </div>
         </div>
-        <div className="nav-section">工作空间</div>
         <nav>
-          {navPages.map((p) => (
+          {navGroups.map((group) => (
+            <div key={group.name}>
+              <div className="nav-section">{group.name}</div>
+              {group.pages.map((p) => (
             <button
               key={p.path}
               className={
@@ -175,6 +194,8 @@ const pageTitle = page?.title ?? AUTH_PAGE_TITLES[location.pathname] ?? "";
               {p.icon}
               <span>{p.label}</span>
             </button>
+              ))}
+            </div>
           ))}
         </nav>
         <div className="sidebar-foot">

@@ -70,7 +70,9 @@ describe("Integrated platform routes and interactions", () => {
     expect(
       screen.getByRole("button", { name: /冬季企业交流会/ }),
     ).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("switch", { name: "包含演示数据" }));
+    // 「包含演示数据」现在收在「更多筛选」里：先展开折叠区，再切换开关。
+    fireEvent.click(screen.getByRole("button", { name: /更多筛选/ }));
+fireEvent.click(screen.getByRole("switch", { name: "包含演示数据" }));
     expect(
       await screen.findByText("所选月份或筛选下暂无活动"),
     ).toBeInTheDocument();
