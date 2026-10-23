@@ -46,6 +46,8 @@ CREATE TABLE IF NOT EXISTS event_followups (
   tenant_id  TEXT NOT NULL,
   event_key  TEXT NOT NULL,
   state      TEXT NOT NULL,
+  adopted    TEXT,
+  feedback   TEXT,
   note       TEXT,
   updated_at TEXT NOT NULL,
   updated_by TEXT,
@@ -55,6 +57,10 @@ CREATE INDEX IF NOT EXISTS event_followups_tenant_idx ON event_followups(tenant_
 """
 
 STATES = ("watching", "ignored", "todo", "done")
+
+# 是否采纳建议：unknown 是默认值，不是「未采纳」——没有反馈时不能说用户拒绝。
+ADOPTED = ("unknown", "adopted", "declined")
+ADOPTED_LABELS = {"unknown": "未知", "adopted": "已采纳", "declined": "未采纳"}
 STATE_LABELS = {
     "watching": "关注",
     "ignored": "忽略",
@@ -65,6 +71,11 @@ STATE_LABELS = {
 
 def ensure_schema(con) -> None:
     con.executescript(DDL)
+    # 采纳字段是后加的：已存在的表要补列，否则旧库上调用 set_followup 会报 no such column。
+    columns = {row[1] for row in con.execute("PRAGMA table_info(event_followups)")}
+    for name in ("adopted", "feedback"):
+        if name not in columns:
+            con.execute(f"ALTER TABLE event_followups ADD COLUMN {name} TEXT")
 
 
 def now_iso() -> str:
@@ -179,20 +190,26 @@ def changes(db_path: Path, since: str | None = None) -> dict:
 
 
 def set_followup(db_path: Path, *, tenant_id: str, event_key: str, state: str,
-                 note: str | None = None, actor: str | None = None) -> dict:
+                 note: str | None = None, actor: str | None = None,
+                 adopted: str | None = None, feedback: str | None = None) -> dict:
     if state not in STATES:
         raise ValueError(f"状态必须是 {'/'.join(STATES)} 之一")
+    if adopted is not None and adopted not in ADOPTED:
+        raise ValueError(f"采纳状态必须是 {'/'.join(ADOPTED)} 之一")
     with connect(db_path) as con:
         ensure_schema(con)
         con.execute(
-            "INSERT INTO event_followups(tenant_id,event_key,state,note,updated_at,updated_by) "
-            "VALUES(?,?,?,?,?,?) ON CONFLICT(tenant_id,event_key) DO UPDATE SET "
-            "state=excluded.state,note=excluded.note,updated_at=excluded.updated_at,"
-            "updated_by=excluded.updated_by",
-            (tenant_id, event_key, state, note, now_iso(), actor),
+            "INSERT INTO event_followups(tenant_id,event_key,state,adopted,feedback,note,"
+            "updated_at,updated_by) VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(tenant_id,event_key) "
+            "DO UPDATE SET state=excluded.state,adopted=COALESCE(excluded.adopted,adopted),"
+            "feedback=COALESCE(excluded.feedback,feedback),note=excluded.note,"
+            "updated_at=excluded.updated_at,updated_by=excluded.updated_by",
+            (tenant_id, event_key, state, adopted, feedback, note, now_iso(), actor),
         )
     return {"tenant": tenant_id, "eventKey": event_key, "state": state,
-            "stateLabel": STATE_LABELS[state], "note": note}
+            "stateLabel": STATE_LABELS[state], "note": note,
+            "adopted": adopted or "unknown",
+            "adoptedLabel": ADOPTED_LABELS[adopted or "unknown"]}
 
 
 def clear_followup(db_path: Path, *, tenant_id: str, event_key: str) -> bool:
@@ -208,9 +225,12 @@ def list_followups(db_path: Path, tenant_id: str) -> list[dict]:
     with connect(db_path) as con:
         ensure_schema(con)
         return [
-            dict(row, stateLabel=STATE_LABELS.get(row["state"], row["state"]))
+            dict(row,
+                 stateLabel=STATE_LABELS.get(row["state"], row["state"]),
+                 adopted=row["adopted"] or "unknown",
+                 adoptedLabel=ADOPTED_LABELS.get(row["adopted"] or "unknown", "未知"))
             for row in con.execute(
-                "SELECT event_key AS eventKey, state, note, updated_at AS updatedAt, "
-                "updated_by AS updatedBy FROM event_followups WHERE tenant_id=? "
-                "ORDER BY updated_at DESC", (tenant_id,))
+                "SELECT event_key AS eventKey, state, adopted, feedback, note, "
+                "updated_at AS updatedAt, updated_by AS updatedBy FROM event_followups "
+                "WHERE tenant_id=? ORDER BY updated_at DESC", (tenant_id,))
         ]

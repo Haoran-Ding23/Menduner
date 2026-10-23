@@ -737,6 +737,9 @@ def create_app(db_path: Path | None = None):
         eventKey: str = Field(min_length=1, max_length=200)
         state: str
         note: str | None = Field(default=None, max_length=500)
+        # 是否采纳建议：unknown 是默认值 —— 没有反馈不等于用户拒绝。
+        adopted: str | None = None
+        feedback: str | None = Field(default=None, max_length=500)
 
     @app.get('/workbench/changes')
     def workbench_changes(since: str | None = None):
@@ -766,7 +769,8 @@ def create_app(db_path: Path | None = None):
         try:
             return tracking.set_followup(path, tenant_id=tenant, event_key=body.eventKey,
                                          state=body.state, note=body.note,
-                                         actor=(account or {}).get('login'))
+                                         actor=(account or {}).get('login'),
+                                         adopted=body.adopted, feedback=body.feedback)
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from None
 

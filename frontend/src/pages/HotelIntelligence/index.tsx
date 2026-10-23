@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import CaliberBar from "../../components/CaliberBar";
+import type { TimeWindow } from "../../utils/caliber";
 import {
   Button,
   Select,
@@ -78,6 +80,20 @@ export default function HotelIntelligence() {
   useEffect(() => {
     if (singleHotel && hotel) setPortfolio([hotel.id]);
   }, [singleHotel, hotel]);
+  const monthWindow: TimeWindow = useMemo(() => {
+    const [start, end] = monthRange(filters.year, filters.month);
+    return { kind: "custom", start, end, label: filters.year + " 年 " + filters.month + " 月（" + start + " 至 " + end + "）" };
+  }, [filters.year, filters.month]);
+  const monthEvents = useMemo(
+    () => dataset.events.filter((e) => {
+      const start = e.startDate;
+      if (!start) return false;
+      const end = e.endDate ?? start;
+      return start <= monthWindow.end && end >= monthWindow.start;
+    }),
+    [dataset.events, monthWindow],
+  );
+
   const dated = dataset.events.filter(
     (e) =>
       (filters.includeDemo || !e.demo) &&
@@ -110,7 +126,10 @@ export default function HotelIntelligence() {
         <div className="eyebrow">酒店情报</div>
         <h1>酒店活动情报</h1>
         <p>按酒店位置与日期查看附近活动和核验来源</p>
-      </div>
+            </div>
+
+      <CaliberBar window={monthWindow} events={monthEvents} />
+
       <section className="panel hotel-toolbar">
         {/* One labelled control per row keeps the toolbar readable; a multi-select that
             renders every hotel as a tag pushed the rest of the controls off the line. */}

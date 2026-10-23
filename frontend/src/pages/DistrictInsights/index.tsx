@@ -1,11 +1,13 @@
 import OpportunityAnalysis from "../../components/OpportunityAnalysis";
+import CaliberBar from "../../components/CaliberBar";
+import { distinctByCanonical } from "../../utils/dedupe";
+import type { TimeWindow } from "../../utils/caliber";
 import ScenarioPanel from "../../components/ScenarioPanel";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Table, Button, Tag, Alert , Space} from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
 import { categories, monthRange, overlaps } from "../../utils/data";
 import Filters from "../../components/Filters";
-import { distinctByCanonical } from "../../utils/dedupe";
 import Chart from "../../components/Charts";
 import type { Event } from "../../types";
 export default function DistrictInsights() {
@@ -18,6 +20,16 @@ export default function DistrictInsights() {
       (!filters.category || e.category === filters.category) &&
       overlaps(e, `${filters.year}-01-01`, `${filters.year}-12-31`),
   );
+  // 商圈页按月浏览，把当月表达成统一窗口，口径与地图/清单一致。
+  const monthWindow: TimeWindow = useMemo(() => {
+    const [start, end] = monthRange(filters.year, filters.month);
+    return { kind: "custom", start, end, label: filters.year + " 年 " + filters.month + " 月（" + start + " 至 " + end + "）" };
+  }, [filters.year, filters.month]);
+  const monthEvents = useMemo(() =>
+    annual.filter((e) => overlaps(e, monthWindow.start, monthWindow.end)),
+    [annual, monthWindow],
+  );
+
   const current = annual.filter(
     (e) =>
       overlaps(e, ...monthRange(filters.year, filters.month)) &&
@@ -95,6 +107,7 @@ export default function DistrictInsights() {
         <p>比较商圈活动与城市资源分布</p>
       </div>
       <Filters />
+      <CaliberBar window={monthWindow} events={monthEvents} />
       <OpportunityAnalysis
         events={dataset.events.filter(
           (e) =>

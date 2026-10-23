@@ -31,12 +31,21 @@ const FOLLOW_STATES = [
   { value: "ignored", label: "忽略" },
 ] as const;
 
+const ADOPT_OPTIONS = [
+  { value: "unknown", label: "采纳：未知" },
+  { value: "adopted", label: "已采纳" },
+  { value: "declined", label: "未采纳" },
+] as const;
+
 interface Followup {
   eventKey: string;
   state: string;
   stateLabel: string;
   note: string | null;
   updatedAt: string;
+  adopted?: string;
+  adoptedLabel?: string;
+  feedback?: string | null;
 }
 
 interface Changes {
@@ -144,6 +153,28 @@ export default function Workbench() {
     void loadChanges();
     void loadFollowups();
   }, [loadChanges, loadFollowups]);
+
+  // 采纳状态单独提交：改状态时不要把已有采纳结论清空。
+  const setAdoption = async (eventKey: string, adopted: string) => {
+    setBusy(eventKey + ":adopt");
+    try {
+      const response = await fetch("/api/workbench/followups", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ eventKey, state: stateOf(eventKey) ?? "todo", adopted }),
+      });
+      if (response.status === 401 || response.status === 403) {
+        message.warning("请先登录后再保存");
+        return;
+      }
+      if (!response.ok) throw new Error("保存失败");
+      await loadFollowups();
+    } catch (error) {
+      message.error(error instanceof Error ? error.message : "保存失败");
+    } finally {
+      setBusy("");
+    }
+  };
 
   const setFollowup = async (eventKey: string, state: string) => {
     setBusy(`${eventKey}:${state}`);
@@ -369,7 +400,15 @@ export default function Workbench() {
                     {row.note ? ` · ${row.note}` : ""}
                   </small>
                 </div>
-                <Space size={4}>
+                <Space size={4} wrap>
+                  <Select
+                    size="small"
+                    style={{ width: 110 }}
+                    value={row.adopted ?? "unknown"}
+                    loading={busy === row.eventKey + ":adopt"}
+                    onChange={(value) => void setAdoption(row.eventKey, value)}
+                    options={ADOPT_OPTIONS.map((option) => ({ value: option.value, label: option.label }))}
+                  />
                   {FOLLOW_STATES.map((option) => (
                     <Button
                       key={option.value}

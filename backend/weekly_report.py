@@ -129,8 +129,8 @@ def collect(db_path: Path, base_dir: Path, tenant: str,
 
             tracking.ensure_schema(con)
             followup_rows = [dict(row) for row in con.execute(
-                "SELECT event_key, state, note, updated_at FROM event_followups "
-                "WHERE tenant_id=?", (tenant,))]
+                "SELECT event_key, state, adopted, feedback, note, updated_at "
+                "FROM event_followups WHERE tenant_id=?", (tenant,))]
         except Exception:
             followup_rows = []
 
@@ -312,16 +312,20 @@ def build_xlsx(report: dict) -> bytes:
         changes.append(["不可比较", change_summary.get("reason", "尚无快照记录"), ""])
 
     todo = book.create_sheet("待办")
-    todo.append(["活动身份", "状态", "备注", "更新时间"])
+    todo.append(["活动身份", "状态", "是否采纳", "反馈", "备注", "更新时间"])
     for cell in todo[1]:
         cell.font = head
     for row in report.get("followups") or []:
         todo.append([
-            row.get("event_key"), row.get("state"), row.get("note") or "",
+            row.get("event_key"), row.get("state"),
+            # 没有反馈时写「未知」，不写「未采纳」：这两种情况对经营判断的含义完全不同。
+            {"unknown": "未知", "adopted": "已采纳", "declined": "未采纳"}.get(
+                row.get("adopted") or "unknown", "未知"),
+            row.get("feedback") or "", row.get("note") or "",
             (row.get("updated_at") or "")[:19].replace("T", " "),
         ])
     if not (report.get("followups") or []):
-        todo.append(["尚无跟进记录", "", "", ""])
+        todo.append(["尚无跟进记录", "", "", "", "", ""])
 
     note = book.create_sheet("说明")
     note.append(["数据范围"])
