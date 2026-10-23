@@ -1,4 +1,5 @@
 import OpportunityAnalysis from "../../components/OpportunityAnalysis";
+import ScenarioPanel from "../../components/ScenarioPanel";
 import { useState } from "react";
 import { Table, Button, Tag, Alert , Space} from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
@@ -248,6 +249,13 @@ export default function DistrictInsights() {
             },
           ]}
         />
+      </section>
+      <section className="panel gap-top" aria-label="活动经济贡献情景">
+        <div className="panel-heading">
+          <h3 style={{ margin: 0 }}>经济贡献情景</h3>
+          <small className="muted">参数由你填写；缺参数时不输出金额</small>
+        </div>
+        <ScenarioPanel eventName={current[0]?.name ?? "请先选择一场活动"} />
       </section>
     </>
   );
