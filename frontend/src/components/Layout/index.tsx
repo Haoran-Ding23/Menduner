@@ -150,8 +150,10 @@ const pageTitle = page?.title ?? AUTH_PAGE_TITLES[location.pathname] ?? "";
   const input = useRef<HTMLInputElement>(null);
   const [api, holder] = message.useMessage();
   useEffect(() => {
-    document.title = SITE_TITLE;
-  }, []);
+    // Pages that name their own subject (the map, which follows month and region) override this;
+    // everything else simply states where the reader is.
+    document.title = pageTitle ? `${pageTitle} · ${SITE_SHORT}` : SITE_TITLE;
+  }, [pageTitle]);
   return (
     <div className="platform">
       {holder}

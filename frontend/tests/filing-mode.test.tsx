@@ -51,7 +51,8 @@ describe("ICP filing mode", () => {
     expect(text).not.toContain("商圈洞察");
     expect(text).not.toContain("登录 / 注册");
     expect(text).toContain("公开活动信息展示");
-    expect(document.title).toBe("Menduner · 城市活动信息");
+    // The tab title now names the current view; the site name must still be in it.
+      expect(document.title).toContain("城市活动信息");
   });
 
   it("redirects commercial routes to the public map", async () => {

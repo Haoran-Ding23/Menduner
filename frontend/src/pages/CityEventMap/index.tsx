@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Empty, Tag, Alert, Switch, Space } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
 import { filterEvents, eventCoordinates, categories, venueHotspots } from "../../utils/data";
@@ -8,6 +8,7 @@ import EventMap from "../../components/Map";
 import EventCard from "../../components/EventCard";
 import VenueHotspots from "../../components/VenueHotspots";
 import RegionNav, { DEFAULT_REGION } from "../../components/RegionNav";
+import { SITE_SHORT } from "../../config";
 export default function CityEventMap() {
   const { dataset, filters } = usePlatform();
   // Hotels are drawn on request rather than always. The map is about where the demand is;
@@ -30,6 +31,18 @@ export default function CityEventMap() {
     region === "all"
       ? "苏州全市"
       : dataset.districts.find((d) => d.id === region)?.name ?? "太仓市";
+  // The heading names what is actually on screen - month and place - instead of a fixed
+  // "…活动地图". 太仓市 → 太仓, because the heading is read as a phrase ("10月太仓活动"),
+  // while the region chips keep the full administrative name. The whole-city view is 苏州, not
+  // 苏州全, so the suffix strip is skipped when no district is chosen.
+  const shortRegion = region === "all" ? "苏州" : regionName.replace(/(市|区|县)$/, "");
+  const heading = `${filters.month}月${shortRegion}活动`;
+
+  // The browser tab names the same thing the page does; a generic title for every view makes a
+  // pinned tab or a history entry impossible to tell apart.
+  useEffect(() => {
+    document.title = `${heading} · ${SITE_SHORT}`;
+  }, [heading]);
 
   const events = useMemo(
     () =>
@@ -65,7 +78,7 @@ export default function CityEventMap() {
     <>
       <div className="page-heading">
         <div className="eyebrow">空间情报</div>
-        <h1>{regionName}活动地图</h1>
+        <h1>{heading}</h1>
         <p>城市活动空间情报 · 连接活动、场馆与周边酒店资源</p>
       </div>
       <Filters regions={false} />
