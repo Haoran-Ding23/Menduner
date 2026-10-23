@@ -129,6 +129,14 @@ export default function PlatformLayout({
     ...(canReview(identity) ? [consolePage] : []),
   ];
   const page = navPages.find((p) => p.path === location.pathname);
+// Auth and plan pages are reachable but are not workspace entries, so the breadcrumb had no
+// title for them and rendered "工作空间 / " with nothing after the slash.
+const AUTH_PAGE_TITLES: Record<string, string> = {
+  "/login": "登录",
+  "/register": "注册",
+  "/plans": "套餐与升级",
+};
+const pageTitle = page?.title ?? AUTH_PAGE_TITLES[location.pathname] ?? "";
   const [settings, setSettings] = useState(false);
   const input = useRef<HTMLInputElement>(null);
   const [api, holder] = message.useMessage();
@@ -188,7 +196,7 @@ export default function PlatformLayout({
         <header>
           <div>
             <span className="breadcrumb">工作空间 / </span>
-            <strong>{page?.title}</strong>
+            <strong>{pageTitle}</strong>
           </div>
           <Space>
             <span className="header-year">{filters.year}</span>

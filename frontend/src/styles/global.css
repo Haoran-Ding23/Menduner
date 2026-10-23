@@ -1497,6 +1497,184 @@ main {
   padding: 24px 28px;
 }
 
+/* Page headings show the title only. The eyebrow label and the explanatory sentence under it
+   were notes about the product's design rather than information a reader needs on every visit;
+   the heading itself already says which page this is. */
+.page-heading .eyebrow,
+.page-heading > p {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Sign-in: product on the left, form on the right
+   -------------------------------------------------------------------------- */
+.signin {
+  display: grid;
+  grid-template-columns: minmax(320px, 44%) minmax(0, 1fr);
+  min-height: calc(100vh - 120px);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e8eef6;
+}
+.signin-aside {
+  position: relative;
+  padding: 40px 40px 32px;
+  color: #e6eef8;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(56, 132, 255, 0.35), transparent 55%),
+    radial-gradient(circle at 85% 85%, rgba(24, 183, 168, 0.28), transparent 55%),
+    #0f1b2d;
+  display: flex;
+  flex-direction: column;
+  /* Content is centred in the panel: top-aligning it left a large empty band in the middle on a
+     tall screen, which read as a rendering bug rather than as spacing. */
+  justify-content: center;
+}
+.signin-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.signin-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, #2f7cf6, #16b8a6);
+  color: #fff;
+  font-weight: 700;
+  font-size: 20px;
+  display: grid;
+  place-items: center;
+}
+.signin-brand strong {
+  display: block;
+  font-size: 17px;
+  color: #fff;
+  letter-spacing: 0.2px;
+}
+.signin-brand small {
+  display: block;
+  font-size: 12px;
+  color: #93a7c0;
+}
+.signin-pitch {
+  margin: 48px 0 28px;
+  font-size: 26px;
+  line-height: 1.5;
+  font-weight: 600;
+  color: #fff;
+}
+.signin-points {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.signin-points li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #c3d3e6;
+}
+.signin-points .anticon {
+  margin-top: 3px;
+  color: #5ea8ff;
+}
+.signin-note {
+  position: absolute;
+  left: 40px;
+  right: 40px;
+  bottom: 28px;
+  padding-top: 0;
+  font-size: 11.5px;
+  color: #6f839c;
+}
+
+.signin-main {
+  display: grid;
+  place-items: center;
+  padding: 40px 24px;
+}
+.signin-card {
+  width: 100%;
+  max-width: 380px;
+}
+.signin-card h1 {
+  margin: 0 0 6px;
+  font-size: 26px;
+  font-weight: 650;
+  color: #0f172a;
+}
+.signin-sub {
+  margin: 0 0 26px;
+  font-size: 13px;
+  color: #64748b;
+}
+.signin-field-icon {
+  color: #94a3b8;
+}
+.signin-submit {
+  height: 44px;
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.signin-hint {
+  margin-top: 20px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #f6f9fd;
+  border: 1px solid #e6eef7;
+  font-size: 12.5px;
+  color: #5b6b7c;
+}
+.signin-hint strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 600;
+}
+.signin-hint code {
+  display: block;
+  font-family: inherit;
+  font-size: 12.5px;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+.signin-hint small {
+  color: #94a3b8;
+  font-size: 11.5px;
+}
+.signin-links {
+  margin: 22px 0 0;
+  font-size: 13px;
+  color: #64748b;
+}
+.signin-dot {
+  margin: 0 8px;
+  color: #cbd5e1;
+}
+
+@media (max-width: 900px) {
+  /* The product panel is an introduction, not the task; on a phone the form is the whole job. */
+  .signin {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+  }
+  .signin-aside {
+    display: none;
+  }
+  .signin-main {
+    padding: 20px 0 32px;
+  }
+}
+
 /* The overflow chip on a calendar day. A bare +N reads as "more here" without spending a whole
    line on the sentence it replaces. */
 .calendar-more {

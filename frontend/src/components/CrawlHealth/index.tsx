@@ -54,9 +54,7 @@ export default function CrawlHealth() {
       <div className="panel-heading">
         <Space wrap>
           <strong>采集来源状态</strong>
-          <Tag color={failing.length ? "orange" : "green"}>
-            本次异常 {failing.length} / {rows.length}
-          </Tag>
+          <span className="muted">本次异常 {failing.length} / {rows.length}</span>
           <small className="muted">
             每次采集都会记录：来源、开始与结束时间、状态、发现活动数、失败原因。
           </small>
@@ -85,19 +83,10 @@ export default function CrawlHealth() {
           {
             title: "最近状态",
             width: 120,
-            render: (_, r) => (
-              <Tag
-                color={
-                  r.last_status === "SUCCESS"
-                    ? "green"
-                    : r.last_status === "PARTIAL"
-                      ? "gold"
-                      : "red"
-                }
-              >
-                {r.last_status ?? "未知"}
-              </Tag>
-            ),
+            // Plain text rather than a coloured chip. A wall of red and gold boxes reads as
+            // alarms; the status word already says what happened, and the failure count beside
+            // it says how often.
+            render: (_, r) => <span className="muted">{r.last_status ?? "未知"}</span>,
           },
           {
             title: "连续失败",
@@ -105,7 +94,7 @@ export default function CrawlHealth() {
             render: (_, r) =>
               r.consecutive_failures ? (
                 <Tooltip title="每个来源连续失败 3 次会记一条告警">
-                  <Tag color="red">{r.consecutive_failures} 次</Tag>
+                  <span className="muted">{r.consecutive_failures} 次</span>
                 </Tooltip>
               ) : (
                 "—"

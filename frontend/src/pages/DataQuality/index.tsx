@@ -191,12 +191,11 @@ export default function DataQuality() {
                   const n = r.events.filter(
                     (e) => eventStatus(repository.getEvidence(e.id)) === s,
                   ).length;
-                  const share = r.events.length ? n / r.events.length : 0;
+                  // Counts only. The share is derivable from the row's own total, and a
+                  // column of percentages next to the counts was read as two competing
+                  // numbers rather than one number and its context.
                   return (
-                    <span style={{ color: n ? statusColors[s] : "#94A3B8" }}>
-                      {n}
-                      <small className="muted"> {Math.round(share * 100)}%</small>
-                    </span>
+                    <span style={{ color: n ? statusColors[s] : "#94A3B8" }}>{n}</span>
                   );
                 },
               }),
