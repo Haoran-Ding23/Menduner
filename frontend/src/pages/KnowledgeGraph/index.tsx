@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import GraphQueries from "../../components/GraphQueries";
 import {
   ReactFlow,
   Background,
@@ -193,7 +194,15 @@ export default function KnowledgeGraph() {
         <p>
           活动 → 场馆 → 位置语境 → 周边酒店 / 餐饮 / 交通 → 目标客群(按规则自动生成)
         </p>
-      </div>
+            </div>
+
+      <section className="panel gap-bottom" aria-label="图谱业务查询">
+        <div className="panel-heading">
+          <h3 style={{ margin: 0 }}>用问题查图谱</h3>
+          <small className="muted">结果显示来源、生成方式、假设与待补充关系</small>
+        </div>
+        <GraphQueries />
+      </section>
       <div className="panel graph-toolbar">
         <Space wrap>
           <span>选择活动</span>

@@ -13,6 +13,7 @@ from backend import private_import
 from backend import dedupe
 from backend import tenants
 from backend import tracking
+from backend import graph_query
 from backend import weekly_report
 from backend.amap import amap_place_url
 from backend import venues as venue_store
@@ -777,6 +778,21 @@ def create_app(db_path: Path | None = None):
         if not removed:
             raise HTTPException(status_code=404, detail='没有这条跟进记录')
         return {'removed': event_key}
+
+    @app.get('/graph/venue/{venue_id}')
+    def graph_venue(venue_id: str, today: str | None = None):
+        """某场馆有哪些活动（默认今天及以后）。附带来源、推断标记与缺失关系。"""
+        return graph_query.venue_events(path, venue_id, today=today)
+
+    @app.get('/graph/hotel/{hotel_id}')
+    def graph_hotel(hotel_id: str, radiusKm: float = 10.0, today: str | None = None):
+        """某酒店附近、按客群匹配的活动。客群为规则推断，结果里明确标为假设。"""
+        return graph_query.hotel_nearby_events(path, hotel_id, radius_km=radiusKm, today=today)
+
+    @app.get('/graph/district/{district_id}')
+    def graph_district(district_id: str):
+        """同一商圈的活动、场馆与酒店，以及缺失的关系。"""
+        return graph_query.district_graph(path, district_id)
 
     @app.get('/dedupe/summary')
     def dedupe_summary():
