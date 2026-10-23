@@ -729,6 +729,84 @@ def create_app(db_path: Path | None = None):
         with connect(path) as con:
             return client_errors.recent(con, limit=limit)
 
+    class ManualEventRequest(BaseModel):
+        name: str = Field(min_length=2, max_length=120)
+        category: str
+        startDate: str = Field(min_length=10, max_length=10)
+        endDate: str | None = Field(default=None, max_length=10)
+        venueName: str | None = Field(default=None, max_length=120)
+        district: str | None = Field(default=None, max_length=40)
+        note: str | None = Field(default=None, max_length=500)
+
+    _MANUAL_CATEGORIES = {
+        "government", "commerce", "culture", "education", "sport", "religion", "other",
+    }
+    _MANUAL_DISTRICTS = {
+        "suzhou", "changshu", "zhangjiagang", "kunshan", "taicang",
+        "gusu", "huqiu", "wuzhong", "xiangcheng", "wujiang",
+    }
+
+    @app.post('/admin/events')
+    def manual_event(body: ManualEventRequest,
+                     principal: str = Depends(auth.require_role(auth.ROLE_REVIEWER))):
+        """Create one event by hand, for the material that no crawlable source publishes.
+
+        A human-entered event is exactly the kind of claim that must not enter the dataset as if
+        a source stated it, so it is stored Unverified and carries the operator and a note. The
+        venue is a name, not a resolved venue id: linking it to a coordinate is a separate,
+        deliberate step rather than something this endpoint guesses.
+        """
+        if body.category not in _MANUAL_CATEGORIES:
+            raise HTTPException(
+                status_code=400,
+                detail=f"类别必须是 {'/'.join(sorted(_MANUAL_CATEGORIES))} 之一",
+            )
+        for date_field, value in (("startDate", body.startDate), ("endDate", body.endDate)):
+            if value is None:
+                continue
+            try:
+                datetime.strptime(value, "%Y-%m-%d")
+            except ValueError:
+                raise HTTPException(
+                    status_code=400, detail=f"{date_field} 必须是 YYYY-MM-DD"
+                ) from None
+        if body.district is not None and body.district not in _MANUAL_DISTRICTS:
+            raise HTTPException(
+                status_code=400, detail=f"地区必须是 {'/'.join(sorted(_MANUAL_DISTRICTS))} 之一"
+            )
+        import uuid
+
+        event_id = uuid.uuid4().hex
+        payload = {
+            "name": body.name,
+            "category": body.category,
+            "startDate": body.startDate,
+            "endDate": body.endDate,
+            "venueName": body.venueName,
+            "districtId": body.district,
+            "manual": True,
+            "enteredBy": principal,
+            "enteredAt": datetime.now(timezone.utc).isoformat(),
+            "note": body.note,
+        }
+        with connect(path) as con:
+            con.execute(
+                "INSERT INTO events VALUES(?,?,?,?,?,?,?,?,?,?)",
+                (
+                    event_id,
+                    body.name,
+                    body.category,
+                    body.startDate,
+                    body.endDate,
+                    None,          # venue id: resolved separately, not guessed here
+                    body.district,
+                    f"manual-{principal}",
+                    "Needs Review",
+                    json.dumps(payload, ensure_ascii=False),
+                ),
+            )
+        return {"id": event_id, "status": "Needs Review"}
+
     @app.post('/review/event')
     def check_whole_event(body: CheckEventRequest, principal: str = Depends(auth.require_role(auth.ROLE_REVIEWER))):
         """Settle every factual field of one event, and report what remains."""
