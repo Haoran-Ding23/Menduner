@@ -87,7 +87,9 @@ function useStateValue(initialDataset?: Dataset) {
     month: Number.isInteger(month) && month >= 1 && month <= 12 ? month : 10,
     district: params.get("district") ?? "",
     category: params.get("category") ?? "",
-    includeDemo: params.get("demo") !== "0",
+    // 演示数据默认关闭：评审要求真实数据优先，DEMO 由用户显式打开（?demo=1）。
+    // 原来写成 !== "0"，等于默认开启，任何截图里的数字都会混入演示行。
+    includeDemo: params.get("demo") === "1",
     includePast: params.get("past") === "1",
   };
   const update = (values: Record<string, string | number | null>) => {

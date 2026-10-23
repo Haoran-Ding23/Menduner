@@ -25,7 +25,7 @@ vi.mock("echarts", () => ({
 afterEach(cleanup);
 function mount(path: string) {
   return render(
-    <MemoryRouter initialEntries={[path]}>
+    <MemoryRouter initialEntries={[withDemo(path)]}>
       <PlatformProvider initialDataset={sampleDataset}>
         {/* These pages exercise the PAID workflow (hotel intelligence / district insights), so the
             active enterprise account is seeded; tests/plans.test.tsx covers the locked states. */}
@@ -34,6 +34,11 @@ function mount(path: string) {
     </MemoryRouter>,
   );
 }
+/** 演示数据默认关闭；测试用的 sampleDataset 本身是演示夹具，所以在测试里显式打开。 */
+function withDemo(path: string): string {
+  return path + (path.includes("?") ? "&" : "?") + "demo=1";
+}
+
 describe("Integrated platform routes and interactions", () => {
   for (const [route, title] of [
     ["map", "城市活动地图"],

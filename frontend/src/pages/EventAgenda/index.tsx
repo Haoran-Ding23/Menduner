@@ -6,6 +6,8 @@ import { categories, dates, statusColors, statusLabels, eventStatus } from "../.
 import { ImpactTag } from "../../components/DemandIntelligence";
 import type { Event } from "../../types";
 import Filters from "../../components/Filters";
+import CaliberBar from "../../components/CaliberBar";
+import type { TimeWindow } from "../../utils/caliber";
 
 /**
  * A time-first agenda: what is on today, this week, this month.
@@ -106,6 +108,15 @@ export default function EventAgenda() {
     () => partitionByStart(events, start, end),
     [events, start, end],
   );
+  // 清单自己的时间控件（本日/本周/本月）映射成统一的时间窗口，口径条与计算都走 caliber。
+  const agendaWindow: TimeWindow = useMemo(
+    () => ({ kind: "custom", start, end, label: `${title}（${start} 至 ${end}）` }),
+    [start, end, title],
+  );
+  const inAgendaWindow = useMemo(
+    () => events.filter((event) => overlapsRange(event, start, end)),
+    [events, start, end],
+  );
 
   // Today is the point of the page, so its numbers stay visible even while another period is
   // selected — the question "what is on today?" should never require a click.
@@ -157,6 +168,7 @@ export default function EventAgenda() {
         <p>按时间顺序看活动 · 点击任意活动跳转到地图查看位置</p>
       </div>
       <Filters />
+      <CaliberBar window={agendaWindow} events={inAgendaWindow} />
 
       <div className="panel gap-bottom">
         <div className="panel-heading">

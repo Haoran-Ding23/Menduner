@@ -8,6 +8,9 @@ import EventMap from "../../components/Map";
 import EventCard from "../../components/EventCard";
 import VenueHotspots from "../../components/VenueHotspots";
 import RegionNav, { DEFAULT_REGION } from "../../components/RegionNav";
+import CaliberBar from "../../components/CaliberBar";
+import { monthRange } from "../../utils/data";
+import type { TimeWindow } from "../../utils/caliber";
 import { SITE_SHORT } from "../../config";
 export default function CityEventMap() {
   const { dataset, allEvents, filters, update } = usePlatform();
@@ -56,6 +59,17 @@ export default function CityEventMap() {
       filters.includeDemo,
     ],
   );
+  // 地图按月浏览，所以把当月表达成一个统一的时间窗口，交给同一套口径计算。
+  const mapWindow: TimeWindow = useMemo(() => {
+    const [start, end] = monthRange(filters.year, filters.month);
+    return {
+      kind: "custom",
+      start,
+      end,
+      label: `${filters.year} 年 ${filters.month} 月（${start} 至 ${end}）`,
+    };
+  }, [filters.year, filters.month]);
+
   const mapped = events.filter((e) => eventCoordinates(e, dataset));
 
   // Historical events are archived by default so the map answers "what is coming", but a hotel
@@ -110,6 +124,7 @@ export default function CityEventMap() {
       </div>
       <Filters regions={false} />
       <RegionNav />
+      <CaliberBar window={mapWindow} events={events} />
       {historyCount > 0 && (
         <div className="history-bar">
           <span className="muted">

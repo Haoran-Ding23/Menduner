@@ -1887,3 +1887,21 @@ main {
   background: #f6f9fd;
   border: 1px solid #e6eef7;
 }
+
+/* Caliber bar: the same facts (range, demo state, activity count vs covered days) on every list
+   page, so two pages showing 19 cannot mean two different things. */
+.caliber-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 14px;
+  margin: 0 0 12px;
+  border-radius: 10px;
+  background: #f6f9fd;
+  border: 1px solid #e6eef7;
+}
+.caliber-range { font-size: 12.5px; color: #475569; }
+.caliber-counts { font-size: 12.5px; color: #475569; }
+.caliber-counts strong { color: #0f172a; font-size: 14px; }
+.caliber-phase { color: #64748b; }
+.caliber-warning { color: #b45309; }

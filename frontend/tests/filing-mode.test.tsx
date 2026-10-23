@@ -33,12 +33,17 @@ afterEach(cleanup);
 
 function mount(path: string) {
   return render(
-    <MemoryRouter initialEntries={[path]}>
+    <MemoryRouter initialEntries={[withDemo(path)]}>
       <PlatformProvider initialDataset={sampleDataset}>
         <App initialAccount={ENTERPRISE_ACCOUNT} />
       </PlatformProvider>
     </MemoryRouter>,
   );
+}
+
+/** 演示数据默认关闭；测试用的 sampleDataset 本身是演示夹具，所以在测试里显式打开。 */
+function withDemo(path: string): string {
+  return path + (path.includes("?") ? "&" : "?") + "demo=1";
 }
 
 describe("ICP filing mode", () => {

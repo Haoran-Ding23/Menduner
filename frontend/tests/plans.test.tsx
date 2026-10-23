@@ -50,7 +50,7 @@ afterEach(() => {
 
 function mountApp(path: string, account?: AccountState) {
   return render(
-    <MemoryRouter initialEntries={[path]}>
+    <MemoryRouter initialEntries={[withDemo(path)]}>
       <PlatformProvider initialDataset={sampleDataset}>
         <App initialAccount={account} />
       </PlatformProvider>
@@ -134,6 +134,11 @@ describe.skip("paid workflow gate (商业版暂停)", () => {
     expect(screen.getByText(/全选 \d+ 家/)).toBeInTheDocument();
   });
 });
+
+/** 演示数据默认关闭；测试用的 sampleDataset 本身是演示夹具，所以在测试里显式打开。 */
+function withDemo(path: string): string {
+  return path + (path.includes("?") ? "&" : "?") + "demo=1";
+}
 
 describe("invite registration", () => {
   it("registers with an invite code, signs in and lands on the map", async () => {
