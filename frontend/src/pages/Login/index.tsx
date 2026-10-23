@@ -53,7 +53,7 @@ export default function LoginPage() {
         </div>
 
         <h2 className="signin-pitch">
-          把苏州的活动，
+          把城市的活动，
           <br />
           变成酒店能执行的判断。
         </h2>

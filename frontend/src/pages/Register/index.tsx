@@ -74,7 +74,7 @@ export default function RegisterPage() {
             <Input placeholder="例如:王经理" />
           </Form.Item>
           <Form.Item label="酒店(可选)" name="hotel">
-            <Input placeholder="例如:苏州洲际酒店" />
+            <Input placeholder="例如:市中心商务酒店" />
           </Form.Item>
           <Form.Item
             label="密码(至少 8 位)"

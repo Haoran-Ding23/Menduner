@@ -318,7 +318,7 @@ export default function EventMap({
       <div
         className="amap-container"
         ref={container}
-        aria-label="苏州高德地图"
+        aria-label="活动地图"
       />
       {!ready && !error && (
         <div className="map-state">
