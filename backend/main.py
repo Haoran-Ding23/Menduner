@@ -10,6 +10,7 @@ from backend import auth
 from backend import bulk_review
 from backend import client_errors
 from backend import private_import
+from backend import dedupe
 from backend import tenants
 from backend import weekly_report
 from backend.amap import amap_place_url
@@ -729,6 +730,14 @@ def create_app(db_path: Path | None = None):
                     "SELECT * FROM review_decisions ORDER BY decided_at DESC"
                 )
             ]
+
+    @app.get('/dedupe/summary')
+    def dedupe_summary():
+        """去重结果概览：有多少记录其实是同一活动，有多少候选待人确认。
+
+        只读，且不返回原始正文 —— 候选详情里只有活动名与来源标识，够复核用。
+        """
+        return dedupe.summary(path)
 
     @app.get('/crawl/health')
     def crawl_health():

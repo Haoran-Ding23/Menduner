@@ -73,10 +73,21 @@ def aggregate_status(statuses):
 def snapshot(path):
     with connect(path) as con:
         con.execute('BEGIN')
-        events = [dict(json.loads(row['payload']), source=row['source'],
-                       venue=row['venue'], district=row['district'],
-                       verification_status=row['verification_status'])
-                  for row in con.execute('SELECT * FROM events ORDER BY id')]
+        # canonical_id 是去重派生字段（scripts/migrate_dedupe.py 回填）。列不存在时（还没迁移的
+        # 库）退化为每条记录自成一个身份，接口在任何库版本下都能工作。
+        columns = {row[1] for row in con.execute('PRAGMA table_info(events)')}
+        has_canonical = 'canonical_id' in columns
+        events = [
+            dict(
+                json.loads(row['payload']),
+                source=row['source'],
+                venue=row['venue'],
+                district=row['district'],
+                verification_status=row['verification_status'],
+                canonicalId=(row['canonical_id'] or row['id']) if has_canonical else row['id'],
+            )
+            for row in con.execute('SELECT * FROM events ORDER BY id')
+        ]
         evidence = [dict(json.loads(row['payload']), event_id=row['event_id'],
                          source_url=row['source_url'], verification_status=row['verification_status'])
                     for row in con.execute('SELECT * FROM evidence ORDER BY id')]
