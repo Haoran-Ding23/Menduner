@@ -44,6 +44,9 @@ describe("V1.2 traceable city event intelligence", () => {
   });
   it("highlights only the overlap period and displays its factual reason", async () => {
     mount("/calendar");
+    await screen.findByRole("heading", { name: "活动日历" });
+    // The calendar opens in week view; the overlap highlight is asserted against the month grid.
+    fireEvent.click(screen.getByText("月视图"));
     fireEvent.click(
       await screen.findByRole("button", { name: "2026-10-14 → 2026-10-15" }),
     );

@@ -19,7 +19,7 @@ import EventCard from "../../components/EventCard";
  */
 export default function EventCalendar() {
   const { dataset, filters, update, openEvent } = usePlatform();
-  const [mode, setMode] = useState<"week" | "month">("month");
+  const [mode, setMode] = useState<"week" | "month">("week");
   const [anchor, setAnchor] = useState(() => dayjs(businessToday()));
   const [peak, setPeak] = useState<[string, string] | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);

@@ -81,6 +81,8 @@ describe("Integrated platform routes and interactions", () => {
     expect(
       await screen.findByRole("heading", { name: "活动日历" }),
     ).toBeInTheDocument();
+    // Week view is the default; the month heading appears once switched.
+    fireEvent.click(screen.getByText("月视图"));
     expect(
       screen.getByRole("heading", { name: "2026 年 10 月" }),
     ).toBeInTheDocument();
@@ -88,8 +90,8 @@ describe("Integrated platform routes and interactions", () => {
   it("shows overlapping multi-day calendar entries and navigates months", async () => {
     mount("/calendar?year=2026&month=10");
     await screen.findByRole("heading", { name: "活动日历" });
-    // Month view covers the multi-day overlap assertions below; the rolling week view has its
-    // own toggle.
+    // The calendar opens in week view; the month grid assertions below switch to it first.
+    fireEvent.click(screen.getByText("月视图"));
     expect(
       screen.getAllByRole("button", { name: "D · 城市商业交流会" }),
     ).toHaveLength(4);
