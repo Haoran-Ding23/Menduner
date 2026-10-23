@@ -40,23 +40,14 @@ export const pages: NavPage[] = [
     label: "城市活动地图",
     icon: <EnvironmentOutlined />,
   },
-  {
-    path: "/calendar",
-    title: "活动日历",
-    label: "活动日历",
-    icon: <CalendarOutlined />,
-  },
+  // 活动日历 / 场馆活动清单 used to sit here as separate entries. All three views answered the
+  // same question from different angles, and the list already groups by 本周/本月, so the
+  // navigation offers one entry: 活动清单.
   {
     path: "/agenda",
     title: "活动清单",
     label: "活动清单",
     icon: <UnorderedListOutlined />,
-  },
-  {
-    path: "/venues",
-    title: "场馆活动清单",
-    label: "场馆活动清单",
-    icon: <ShopOutlined />,
   },
   {
     path: "/private",
