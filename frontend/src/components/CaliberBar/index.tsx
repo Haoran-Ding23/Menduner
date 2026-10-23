@@ -8,6 +8,7 @@ import {
   type TimeWindow,
 } from "../../utils/caliber";
 import { eventCoordinates } from "../../utils/data";
+import { distinctByCanonical } from "../../utils/dedupe";
 import type { Event } from "../../types";
 
 /**
@@ -25,7 +26,10 @@ export default function CaliberBar({
   events: Event[];
 }) {
   const { dataset, filters, update } = usePlatform();
-  const counts = caliberCounts(window, events, (event) => !!eventCoordinates(event, dataset));
+  // 统计按去重后的活动身份算：同一活动被两个来源收录时只算一场，否则口径条上的数字会比
+  // 后端去重结果偏高，前后端对不上。
+  const identities = distinctByCanonical(events);
+  const counts = caliberCounts(window, identities, (event) => !!eventCoordinates(event, dataset));
   // 只列与窗口有交集的活动状态。「已结束」不在其中：窗口本身已把它们排除，历史活动由
   // 「显示已结束」开关控制，放在这里会恒为 0，反而误导。
   const phaseOrder: EventPhase[] = ["upcoming", "ongoing"];

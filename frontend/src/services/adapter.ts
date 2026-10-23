@@ -120,6 +120,7 @@ export function normalizeDataset(input: unknown): Dataset {
   };
   const venues = array("venues").map((v) => ({
     id: text(v.id) ?? "",
+    canonicalId: text(v.canonicalId) ?? undefined,
     name: text(v.name) ?? "未命名场馆",
     address: text(v.address),
     districtId: text(v.districtId),

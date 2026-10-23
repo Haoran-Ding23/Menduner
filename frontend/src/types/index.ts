@@ -53,6 +53,8 @@ export interface Event {
   sponsor: string | null;
   demo: boolean;
   raw?: Record<string, unknown>;
+  /** 去重后的活动身份；与 id 不同表示这条记录是同一活动的另一来源。 */
+  canonicalId?: string;
 }
 export interface Venue {
   id: string;
