@@ -9,6 +9,7 @@ import EventCard from "../../components/EventCard";
 import VenueHotspots from "../../components/VenueHotspots";
 import RegionNav, { DEFAULT_REGION } from "../../components/RegionNav";
 import CaliberBar from "../../components/CaliberBar";
+import { distinctByCanonical } from "../../utils/dedupe";
 import { monthRange } from "../../utils/data";
 import type { TimeWindow } from "../../utils/caliber";
 import { SITE_SHORT } from "../../config";
@@ -70,7 +71,9 @@ export default function CityEventMap() {
     };
   }, [filters.year, filters.month]);
 
-  const mapped = events.filter((e) => eventCoordinates(e, dataset));
+  // 热点与统计按去重身份算：同一活动被两个来源收录不该算成两场。
+  const identities = useMemo(() => distinctByCanonical(events), [events]);
+  const mapped = identities.filter((e) => eventCoordinates(e, dataset));
 
   // Historical events are archived by default so the map answers "what is coming", but a hotel
   // comparing this year against last needs them; the button states how many are being withheld
@@ -90,20 +93,20 @@ export default function CityEventMap() {
   // Demand is clustered by VENUE: a hotel acts on "this theatre has 8 events", not on an
   // inferred business district.
   const clusters = useMemo(
-    () => venueHotspots(events, dataset.venues),
-    [events, dataset.venues],
+    () => venueHotspots(identities, dataset.venues),
+    [identities, dataset.venues],
   );
   const hotspots = clusters.filter((row) => row.isHotspot);
   // What the hotel layer would draw, so the control can say how much it is showing.
   const hotelCount = useMemo(() => {
     const ids = new Set<string>();
-    for (const event of events) {
+    for (const event of identities) {
       for (const { hotel } of assessDemand(event, dataset).nearbyHotels) {
         ids.add(hotel.id);
       }
     }
     return ids.size;
-  }, [events, dataset]);
+  }, [identities, dataset]);
   // Years that actually hold events for this region, newest first: the history of a Taicang
   // hotel spans 2021-2026, and reaching it through a month grid alone is a lot of clicking.
   const years = useMemo(() => {

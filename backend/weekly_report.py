@@ -101,18 +101,48 @@ def collect(db_path: Path, base_dir: Path, tenant: str,
         tenant_name = (row["name"] if row else tenant)
         hotel = _tenant_hotel(db_path, tenant)
 
+        # 去重：同一活动被多个来源收录时只算一场。canonical_id 由 migrate_dedupe 回填，
+        # 未迁移的库没有该列时退化为每条记录自成身份。
+        columns = {row[1] for row in con.execute("PRAGMA table_info(events)")}
+        canonical = "COALESCE(canonical_id, id)" if "canonical_id" in columns else "id"
         events = []
+        seen: set[str] = set()
         for event in con.execute(
-            "SELECT name, category, startDate, endDate, venue, source FROM events "
-            "WHERE startDate IS NOT NULL"
+            f"SELECT id, {canonical} AS event_key, name, category, startDate, endDate, venue, "
+            "source, verification_status FROM events WHERE startDate IS NOT NULL"
         ):
             starts = event["startDate"]
             ends = event["endDate"] or starts
             if starts > end.isoformat() or ends < start.isoformat():
                 continue
-            events.append(dict(event))
+            key = event["event_key"] or event["id"]
+            if key in seen:
+                continue
+            seen.add(key)
+            events.append(dict(event, eventKey=key))
+
+        # 本店的跟进状态与本周变化：周报的意义在于「我答应要做什么」和「和上周比变了什么」，
+        # 这两块以前完全没有出现在导出文件里。
+        followup_rows = []
+        try:
+            from backend import tracking
+
+            tracking.ensure_schema(con)
+            followup_rows = [dict(row) for row in con.execute(
+                "SELECT event_key, state, note, updated_at FROM event_followups "
+                "WHERE tenant_id=?", (tenant,))]
+        except Exception:
+            followup_rows = []
 
         venue_rows = {r["id"]: r["payload"] for r in con.execute("SELECT id, payload FROM venues")}
+
+    change_summary = {"comparable": False, "reason": "尚无快照记录"}
+    try:
+        from backend import tracking
+
+        change_summary = tracking.changes(db_path)
+    except Exception:
+        pass
 
     import json
 
@@ -187,6 +217,9 @@ def collect(db_path: Path, base_dir: Path, tenant: str,
         "summary": summary,
         "rows": in_week,
         "events": scoped,
+        "followups": followup_rows,
+        "changes": change_summary,
+        "todo": [row for row in followup_rows if row.get("state") == "todo"],
         "scope": {
             "nearbyKm": NEARBY_KM if hotel else None,
             "hotelKnown": hotel is not None,
@@ -252,6 +285,43 @@ def build_xlsx(report: dict) -> bytes:
             event.get("distanceKm") if event.get("distanceKm") is not None else "",
             event["source"],
         ])
+
+    changes = book.create_sheet("本周变化")
+    changes.append(["类别", "活动", "说明"])
+    for cell in changes[1]:
+        cell.font = head
+    change_summary = report.get("changes") or {}
+    if change_summary.get("comparable"):
+        for item in change_summary.get("added", []):
+            changes.append(["新增", item.get("name"), item.get("start_date") or ""])
+        for item in change_summary.get("rescheduled", []):
+            before = item.get("before") or {}
+            after = item.get("after") or {}
+            changes.append([
+                "改期", after.get("name"),
+                f"{before.get('start_date') or '?'} → {after.get('start_date') or '?'}",
+            ])
+        for item in change_summary.get("cancelled", []):
+            changes.append(["取消", item.get("name"), "快照中已不存在"])
+        for item in change_summary.get("changed", []):
+            after = item.get("after") or {}
+            changes.append(["信息变化", after.get("name"), ""])
+        if len(changes["A"]) == 1:
+            changes.append(["无变化", "", ""])
+    else:
+        changes.append(["不可比较", change_summary.get("reason", "尚无快照记录"), ""])
+
+    todo = book.create_sheet("待办")
+    todo.append(["活动身份", "状态", "备注", "更新时间"])
+    for cell in todo[1]:
+        cell.font = head
+    for row in report.get("followups") or []:
+        todo.append([
+            row.get("event_key"), row.get("state"), row.get("note") or "",
+            (row.get("updated_at") or "")[:19].replace("T", " "),
+        ])
+    if not (report.get("followups") or []):
+        todo.append(["尚无跟进记录", "", "", ""])
 
     note = book.create_sheet("说明")
     note.append(["数据范围"])
@@ -373,6 +443,38 @@ def build_pdf(report: dict) -> bytes:
                 f"另有 {len(report['events']) - 25} 个活动，见 Excel 附件。", body))
     else:
         flow.append(Paragraph("本周范围内没有可列出的公开活动。", body))
+
+    flow.append(Paragraph("三、本周变化", h2))
+    summary = report.get("changes") or {}
+    if summary.get("comparable"):
+        lines = []
+        for item in summary.get("added", []):
+            lines.append(f"新增：{item.get('name')}（{item.get('start_date') or '日期待核验'}）")
+        for item in summary.get("rescheduled", []):
+            before = item.get("before") or {}
+            after = item.get("after") or {}
+            lines.append(f"改期：{after.get('name')}（{before.get('start_date') or '?'} → "
+                         f"{after.get('start_date') or '?'}）")
+        for item in summary.get("cancelled", []):
+            lines.append(f"取消：{item.get('name')}")
+        for item in summary.get("changed", []):
+            lines.append(f"信息变化：{(item.get('after') or {}).get('name')}")
+        if not lines:
+            lines.append("两份快照之间没有变化。")
+        for line in lines[:20]:
+            flow.append(Paragraph(line, body))
+    else:
+        flow.append(Paragraph(summary.get("reason", "尚无快照记录"), body))
+
+    flow.append(Paragraph("四、待办", h2))
+    followups = report.get("followups") or []
+    if followups:
+        for row in followups[:20]:
+            flow.append(Paragraph(
+                f"{row.get('event_key')} · {row.get('state')}" +
+                (f" · {row.get('note')}" if row.get("note") else ""), body))
+    else:
+        flow.append(Paragraph("本周没有标记跟进的活动。", body))
 
     flow.append(Spacer(1, 10))
     flow.append(Paragraph("说明：" + report["disclaimer"], body))

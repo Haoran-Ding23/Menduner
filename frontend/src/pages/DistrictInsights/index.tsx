@@ -4,12 +4,13 @@ import { Table, Button, Tag, Alert , Space} from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
 import { categories, monthRange, overlaps } from "../../utils/data";
 import Filters from "../../components/Filters";
+import { distinctByCanonical } from "../../utils/dedupe";
 import Chart from "../../components/Charts";
 import type { Event } from "../../types";
 export default function DistrictInsights() {
   const { dataset, filters, update, go, openEvent } = usePlatform();
   const [venueId, setVenueId] = useState("");
-  const annual = dataset.events.filter(
+  const annual = distinctByCanonical(dataset.events).filter(
     (e) =>
       (filters.includeDemo || !e.demo) &&
       (!filters.district || e.districtId === filters.district) &&

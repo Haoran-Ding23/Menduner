@@ -8,6 +8,7 @@ import type { Event } from "../../types";
 import Filters from "../../components/Filters";
 import CaliberBar from "../../components/CaliberBar";
 import type { TimeWindow } from "../../utils/caliber";
+import { distinctByCanonical } from "../../utils/dedupe";
 
 /**
  * A time-first agenda: what is on today, this week, this month.
@@ -94,7 +95,7 @@ export default function EventAgenda() {
 
   const events = useMemo(
     () =>
-      dataset.events.filter(
+      distinctByCanonical(dataset.events).filter(
         (e) =>
           (filters.includeDemo || !e.demo) &&
           (!filters.district || e.districtId === filters.district) &&

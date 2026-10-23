@@ -12,6 +12,7 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import { usePlatform } from "../../hooks/usePlatform";
+import { distinctByCanonical } from "../../utils/dedupe";
 import { useEntitlements } from "../../hooks/useEntitlements";
 import {
   distanceKm,
@@ -86,7 +87,7 @@ export default function HotelIntelligence() {
   );
   const matches = useMemo(
     () =>
-      dated
+      distinctByCanonical(dated)
         .flatMap((event) => {
           const coordinates = eventCoordinates(event, dataset);
           if (!coordinates || !verifiedCoords(hotel?.coordinates)) return [];

@@ -68,3 +68,7 @@ tools/MediaCrawler/
 # Local screenshots for reviewing a change; never part of the project.
 shot-*.png
 
+
+# Generated weekly reports used to eyeball the export; never committed.
+shot-report.*
+
