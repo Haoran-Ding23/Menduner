@@ -146,6 +146,29 @@ export async function checkWholeEvent(input: {
   );
 }
 
+export interface ManualEventInput {
+  name: string;
+  category: string;
+  startDate: string;
+  endDate: string | null;
+  venueName: string | null;
+  district: string | null;
+  note: string | null;
+}
+
+/** Enter one event by hand for material no crawlable source publishes. */
+export async function submitManualEvent(input: ManualEventInput): Promise<{ id: string }> {
+  return jsonBody(
+    await fetch("/api/admin/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    }),
+    "录入活动",
+  );
+}
+
+
 export interface CrawlSourceHealth {
   source_id: string;
   source_name: string | null;

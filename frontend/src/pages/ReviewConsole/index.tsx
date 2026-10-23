@@ -20,6 +20,7 @@ import {
   clearReview,
   checkWholeEvent,
   loadReviewQueue,
+  submitManualEvent,
   submitReview,
   type ReviewDecision,
 } from "../../services/api";
@@ -264,6 +265,7 @@ export default function ReviewConsole() {
           <strong>{count("Needs Review") + count("Conflicting")}</strong>
         </div>
       </div>
+      <ManualEntry onDone={reloadData} />
       <Alert
         className="gap-bottom"
         showIcon
@@ -586,3 +588,131 @@ export default function ReviewConsole() {
     </>
   );
 }
+
+/** 人工录入：给「没有可爬来源」的材料一条可追溯的入口。 */
+function ManualEntry({ onDone }: { onDone: () => Promise<void> | void }) {
+  const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    category: "culture",
+    startDate: "",
+    endDate: "",
+    venueName: "",
+    district: "taicang",
+    note: "",
+  });
+  const set = (key: keyof typeof form, value: string) =>
+    setForm((prev) => ({ ...prev, [key]: value }));
+
+  const submit = async () => {
+    if (!form.name.trim() || !form.startDate) {
+      message.warning("请填写活动名称和开始日期");
+      return;
+    }
+    setBusy(true);
+    try {
+      await submitManualEvent({
+        name: form.name.trim(),
+        category: form.category,
+        startDate: form.startDate,
+        endDate: form.endDate.trim() || null,
+        venueName: form.venueName.trim() || null,
+        district: form.district || null,
+        note: form.note.trim() || null,
+      });
+      message.success(`已录入「${form.name}」，状态：待复核`);
+      setForm({ name: "", category: "culture", startDate: "", endDate: "",
+                venueName: "", district: "taicang", note: "" });
+      setOpen(false);
+      await onDone();
+    } catch (error) {
+      message.error(error instanceof Error ? error.message : "录入失败");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <section className="panel gap-bottom">
+      <div className="panel-heading">
+        <h3 style={{ margin: 0 }}>录入活动</h3>
+        <Button size="small" onClick={() => setOpen((v) => !v)}>
+          {open ? "收起" : "录入一条"}
+        </Button>
+      </div>
+      {open && (
+        <Space direction="vertical" style={{ width: "100%" }} size={8}>
+          <Input
+            placeholder="活动名称（必填）"
+            value={form.name}
+            onChange={(e) => set("name", e.target.value)}
+          />
+          <Space wrap>
+            <Select
+              style={{ width: 180 }}
+              value={form.category}
+              options={[
+                { value: "culture", label: "文化 / 娱乐" },
+                { value: "government", label: "政府 / 公共管理" },
+                { value: "commerce", label: "商业 / 经济" },
+                { value: "education", label: "教育 / 学术" },
+                { value: "sport", label: "体育" },
+                { value: "religion", label: "宗教 / 民俗" },
+                { value: "other", label: "其他" },
+              ]}
+              onChange={(v) => set("category", v)}
+            />
+            <Select
+              style={{ width: 150 }}
+              value={form.district}
+              options={[
+                { value: "taicang", label: "太仓市" },
+                { value: "gusu", label: "姑苏区" },
+                { value: "huqiu", label: "虎丘区" },
+                { value: "wuzhong", label: "吴中区" },
+                { value: "xiangcheng", label: "相城区" },
+                { value: "wujiang", label: "吴江区" },
+                { value: "kunshan", label: "昆山市" },
+                { value: "changshu", label: "常熟市" },
+                { value: "zhangjiagang", label: "张家港市" },
+                { value: "suzhou", label: "苏州市" },
+              ]}
+              onChange={(v) => set("district", v)}
+            />
+          </Space>
+          <Space wrap>
+            <Input
+              style={{ width: 150 }}
+              placeholder="开始 YYYY-MM-DD"
+              value={form.startDate}
+              onChange={(e) => set("startDate", e.target.value)}
+            />
+            <Input
+              style={{ width: 150 }}
+              placeholder="结束 YYYY-MM-DD（可空）"
+              value={form.endDate}
+              onChange={(e) => set("endDate", e.target.value)}
+            />
+            <Input
+              style={{ width: 220 }}
+              placeholder="场馆名（可空）"
+              value={form.venueName}
+              onChange={(e) => set("venueName", e.target.value)}
+            />
+          </Space>
+          <Input.TextArea
+            placeholder="备注 / 来源说明（可空）"
+            value={form.note}
+            onChange={(e) => set("note", e.target.value)}
+            rows={2}
+          />
+          <Button type="primary" loading={busy} onClick={() => void submit()}>
+            录入并进入待复核
+          </Button>
+        </Space>
+      )}
+    </section>
+  );
+}
+
