@@ -151,6 +151,9 @@ function useStateValue(initialDataset?: Dataset) {
   );
   return {
     dataset: visibleDataset,
+    // The unfiltered set, so a page can count what the archive holds for one region instead of
+    // only knowing the global archived total.
+    allEvents: dataset.events,
     archivedCount,
     includePast,
     dataMode,

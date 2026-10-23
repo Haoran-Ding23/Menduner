@@ -19,10 +19,11 @@ export default function Filters({
 }) {
   const { filters, update, dataset, archivedCount } = usePlatform();
 
+  // The dataset is one year on purpose: the archive was trimmed to 2026 so every number on the
+  // page describes the same period. Offering 2027 or a past year would just produce an empty
+  // screen and look like a missing-data bug, so the list follows what the data actually holds.
   const years = [
     ...new Set([
-      2026,
-      2027,
       filters.year,
       ...dataset.events.flatMap((e) =>
         [e.startDate, e.endDate]

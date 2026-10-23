@@ -1872,3 +1872,18 @@ main {
 .calendar-grid-week .day-label {
   font-weight: 650;
 }
+
+/* History control on the map: a hotel comparing this year against last needs the archive, but
+   showing ended events by default turns the map into a museum. The bar states how many are being
+   withheld and switches between the two views in one click. */
+.history-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 0 0 12px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: #f6f9fd;
+  border: 1px solid #e6eef7;
+}

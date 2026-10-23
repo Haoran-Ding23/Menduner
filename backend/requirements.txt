@@ -31,3 +31,6 @@ PyYAML==6.0.3
 openpyxl==3.1.5
 # PDF rendering for the weekly report; needs a CJK font on the host.
 reportlab==5.1.0
+
+# Neo4j driver for backend/graph_sync.py (the graph is a derived view of SQLite).
+neo4j>=5.20,<6

@@ -173,6 +173,64 @@ def delete_session(con, token: str | None) -> None:
     con.execute("DELETE FROM customer_sessions WHERE token_hash=?", (token_hash(token),))
 
 
+def list_sessions(con, account_id: str, current_token: str | None = None,
+                  now: datetime | None = None) -> list[dict]:
+    """Active sessions for one account, marking the one making the request.
+
+    Sessions are stored hashed, so the id shown to the client is a prefix of the hash: enough to
+    revoke a specific session, useless as a credential if it leaked.
+    """
+    stamp = iso(now or now_utc())
+    current = token_hash(current_token) if current_token else ""
+    rows = con.execute(
+        "SELECT token_hash, created_at, expires_at FROM customer_sessions "
+        "WHERE account_id=? AND expires_at > ? ORDER BY created_at DESC",
+        (account_id, stamp),
+    ).fetchall()
+    return [
+        {
+            "id": row["token_hash"][:16],
+            "created_at": row["created_at"],
+            "expires_at": row["expires_at"],
+            "current": row["token_hash"] == current,
+        }
+        for row in rows
+    ]
+
+
+def revoke_session(con, account_id: str, session_id: str) -> bool:
+    """Revoke one session of this account by its printed id (a token-hash prefix)."""
+    if len(session_id) < 8:
+        raise ValueError("会话标识无效")
+    cursor = con.execute(
+        "DELETE FROM customer_sessions WHERE account_id=? AND token_hash LIKE ?",
+        (account_id, session_id + "%"),
+    )
+    return cursor.rowcount > 0
+
+
+def change_password(con, *, account: dict, current_password: str, new_password: str,
+                    keep_token: str | None = None) -> None:
+    """Change a password, and end every session except the one asking.
+
+    Rotating a password is what a user does when they think it leaked, so leaving other sessions
+    alive would defeat the point. The caller's own session is kept so the browser stays signed in;
+    every other session must sign in again with the new password.
+    """
+    if len(new_password) < 8:
+        raise ValueError("密码至少 8 位")
+    stored = account.get("password_hash") or ""
+    if not verify_password(current_password, stored):
+        raise ValueError("当前密码不正确")
+    if verify_password(new_password, stored):
+        raise ValueError("新密码不能与当前密码相同")
+    con.execute("UPDATE customer_accounts SET password_hash=? WHERE id=?",
+                (hash_password(new_password), account["id"]))
+    keep = token_hash(keep_token) if keep_token else ""
+    con.execute("DELETE FROM customer_sessions WHERE account_id=? AND token_hash<>?",
+                (account["id"], keep))
+
+
 # --- entitlements -------------------------------------------------------------
 def entitlements(account: dict | None, now: datetime | None = None) -> dict:
     """The effective plan, derived from dates rather than trusted from a column.

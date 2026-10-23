@@ -64,3 +64,7 @@ amap_candidates.json
 # data/ holds third-party personal content, and .venv//.pw-browsers/ are machine-local
 # builds. Tracking any of that would publish someone's login and other people's posts.
 tools/MediaCrawler/
+
+# Local screenshots for reviewing a change; never part of the project.
+shot-*.png
+

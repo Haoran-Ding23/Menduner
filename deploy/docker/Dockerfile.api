@@ -1,0 +1,36 @@
+# Backend image: FastAPI + the crawler package it imports, plus a CJK font so the weekly
+# report's PDF does not render empty boxes.
+#
+# Why 3.12 and not the 3.14 the team runs locally: the image only has to be reproducible, and
+# 3.12 is the version that has prebuilt wheels for every pinned dependency. The application code
+# targets both.
+FROM python:3.12-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    MENDUNER_DB_PATH=/data/menduner.sqlite3 \
+    PIP_NO_CACHE_DIR=1
+
+# fonts-wqy-microhei: TrueType-outline CJK font. Noto CJK is CFF-flavoured and reportlab refuses
+# it ("postscript outlines are not supported"), which is why this package and not that one.
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends fonts-wqy-microhei \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY backend/requirements.txt /app/backend/requirements.txt
+RUN pip install -r /app/backend/requirements.txt
+
+COPY backend /app/backend
+COPY crawler /app/crawler
+COPY scripts /app/scripts
+
+# The database is a mounted volume, not baked into the image: a rebuild must never overwrite it.
+VOLUME ["/data"]
+EXPOSE 8000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s \
+  CMD python -c "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8000/status',timeout=4)"
+
+CMD ["python", "-m", "uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]

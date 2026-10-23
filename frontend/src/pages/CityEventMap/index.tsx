@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { Empty, Tag, Alert, Switch, Space } from "antd";
+import { Button, Empty, Tag, Alert, Switch, Space } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
 import { filterEvents, eventCoordinates, categories, venueHotspots } from "../../utils/data";
-import { assessDemand } from "../../services/intelligence";
+import { assessDemand, businessToday } from "../../services/intelligence";
 import Filters from "../../components/Filters";
 import EventMap from "../../components/Map";
 import EventCard from "../../components/EventCard";
@@ -10,7 +10,7 @@ import VenueHotspots from "../../components/VenueHotspots";
 import RegionNav, { DEFAULT_REGION } from "../../components/RegionNav";
 import { SITE_SHORT } from "../../config";
 export default function CityEventMap() {
-  const { dataset, filters } = usePlatform();
+  const { dataset, allEvents, filters, update } = usePlatform();
   // Hotels are drawn on request rather than always. The map is about where the demand is;
   // the hotel layer answers the follow-up question, and leaving it on by default buries the
   // event markers under a cluster of H pins in the same few districts.
@@ -57,6 +57,22 @@ export default function CityEventMap() {
     ],
   );
   const mapped = events.filter((e) => eventCoordinates(e, dataset));
+
+  // Historical events are archived by default so the map answers "what is coming", but a hotel
+  // comparing this year against last needs them; the button states how many are being withheld
+  // instead of leaving the reader to discover the archive switch elsewhere.
+  const today = businessToday();
+  const historyCount = useMemo(() => {
+    // Counted from the unfiltered set: the working dataset has already dropped archived rows, so
+    // counting there would report only the handful ended in the last few days.
+    const scope = allEvents.filter(
+      (e) =>
+        (filters.includeDemo || !e.demo) &&
+        (!activeDistrict || e.districtId === activeDistrict) &&
+        (!filters.category || e.category === filters.category),
+    );
+    return scope.filter((e) => (e.endDate ?? e.startDate ?? "") < today).length;
+  }, [allEvents, filters.includeDemo, filters.category, activeDistrict, today]);
   // Demand is clustered by VENUE: a hotel acts on "this theatre has 8 events", not on an
   // inferred business district.
   const clusters = useMemo(
@@ -74,6 +90,17 @@ export default function CityEventMap() {
     }
     return ids.size;
   }, [events, dataset]);
+  // Years that actually hold events for this region, newest first: the history of a Taicang
+  // hotel spans 2021-2026, and reaching it through a month grid alone is a lot of clicking.
+  const years = useMemo(() => {
+    const scope = allEvents.filter(
+      (e) => (!activeDistrict || e.districtId === activeDistrict),
+    );
+    return [...new Set(scope.map((e) => (e.startDate ?? "").slice(0, 4)).filter(Boolean))]
+      .sort()
+      .reverse();
+  }, [allEvents, activeDistrict]);
+
   return (
     <>
       <div className="page-heading">
@@ -83,6 +110,37 @@ export default function CityEventMap() {
       </div>
       <Filters regions={false} />
       <RegionNav />
+      {historyCount > 0 && (
+        <div className="history-bar">
+          <span className="muted">
+            {filters.includePast
+              ? `已显示历史活动，共 ${historyCount} 条已结束`
+              : `另有 ${historyCount} 条已结束的历史活动未显示`}
+          </span>
+          <Button
+            size="small"
+            type={filters.includePast ? "default" : "primary"}
+            onClick={() => update({ past: filters.includePast ? null : 1 })}
+          >
+            {filters.includePast ? "只看未结束" : `查看历史活动（${historyCount} 条）`}
+          </Button>
+          <Space size={4} wrap>
+            <span className="muted" style={{ fontSize: 12 }}>
+              跳到年份
+            </span>
+            {years.map((year) => (
+              <Button
+                key={year}
+                size="small"
+                type={String(filters.year) === year ? "primary" : "default"}
+                onClick={() => update({ year, past: 1 })}
+              >
+                {year}
+              </Button>
+            ))}
+          </Space>
+        </div>
+      )}
       <div className="stats-strip">
         <div>
           <small>当前筛选活动</small>

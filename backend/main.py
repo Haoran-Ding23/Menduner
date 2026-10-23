@@ -401,6 +401,56 @@ def create_app(db_path: Path | None = None):
         with connect(path) as con:
             return _account_state(con, request)
 
+    # --- account security -----------------------------------------------------------------
+    # Password rotation and session revocation: what an account holder needs when they suspect a
+    # password leaked. Both are scoped to the session's own account, never to an id in the body.
+
+    class PasswordChangeRequest(BaseModel):
+        current_password: str = Field(min_length=1, max_length=200)
+        new_password: str = Field(min_length=8, max_length=200)
+
+    @app.post('/account/password')
+    def customer_change_password(body: PasswordChangeRequest, request: Request):
+        token = _session_token(request)
+        with connect(path) as con:
+            account = accounts.session_account(con, token)
+            if account is None:
+                raise HTTPException(status_code=401, detail='请先登录')
+            try:
+                accounts.change_password(
+                    con, account=account,
+                    current_password=body.current_password,
+                    new_password=body.new_password,
+                    keep_token=token,
+                )
+            except ValueError as exc:
+                raise HTTPException(status_code=400, detail=str(exc)) from None
+        return {'ok': True, 'otherSessionsEnded': True}
+
+    @app.get('/account/sessions')
+    def customer_sessions(request: Request):
+        token = _session_token(request)
+        with connect(path) as con:
+            account = accounts.session_account(con, token)
+            if account is None:
+                raise HTTPException(status_code=401, detail='请先登录')
+            return {'sessions': accounts.list_sessions(con, account['id'], token)}
+
+    @app.delete('/account/sessions/{session_id}')
+    def customer_revoke_session(session_id: str, request: Request):
+        token = _session_token(request)
+        with connect(path) as con:
+            account = accounts.session_account(con, token)
+            if account is None:
+                raise HTTPException(status_code=401, detail='请先登录')
+            try:
+                removed = accounts.revoke_session(con, account['id'], session_id)
+            except ValueError as exc:
+                raise HTTPException(status_code=400, detail=str(exc)) from None
+            if not removed:
+                raise HTTPException(status_code=404, detail='没有这条会话')
+        return {'removed': session_id}
+
     # --- a hotel's own private ledger ------------------------------------------------------
     # The tenant is resolved from the session and never from the request. Accepting a
     # tenant_id parameter here would let any signed-in customer read another hotel's numbers
