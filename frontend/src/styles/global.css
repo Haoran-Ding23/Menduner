@@ -1988,3 +1988,8 @@ main {
   .map-layout.list-hidden .event-list { display: none; }
   .view-toggle { display: block; margin-bottom: 10px; }
 }
+
+/* 推荐理由与维度分数：各自一行，权重不同的证据不挤在一起比较。 */
+.rank-reasons { display: block; color: #334155; font-size: 12.5px; }
+.rank-dims { display: block; color: #64748b; font-size: 12px; font-variant-numeric: tabular-nums; }
+.rank-unknown { display: block; color: #b45309; font-size: 12px; }

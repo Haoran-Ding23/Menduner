@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, Button, Empty, Select, Space, Tag, Tooltip, message } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
 import { useAccount } from "../../hooks/useEntitlements";
-import { assessDemand } from "../../services/intelligence";
-import { categories, distanceKm, eventCoordinates, verifiedCoords } from "../../utils/data";
+import { rankEvents } from "../../services/ranking";
+import { categories } from "../../utils/data";
 import { beijingToday, shiftDate, type TimeWindow } from "../../utils/caliber";
 import { canonicalIdOf, distinctByCanonical } from "../../utils/dedupe";
 import CaliberBar from "../../components/CaliberBar";
@@ -50,6 +50,11 @@ interface Changes {
   changed: { before: { name: string }; after: { name: string } }[];
 }
 
+/** 维度分数展示：缺失维度显示「未知」，不补 0，避免看起来像算过了但很低。 */
+function fmtDim(value: number | null): string {
+  return value === null ? "未知" : value.toFixed(2);
+}
+
 export default function Workbench() {
   const { dataset, filters, update } = usePlatform();
   const { state: accountState } = useAccount();
@@ -92,30 +97,19 @@ export default function Workbench() {
   );
 
   // 未来七天、且与这家酒店有距离关系的活动；按关注等级→距离排序，理由写在卡片上。
+  // 排序交给 services/ranking：规则与权重集中配置，这里只负责取窗口内的活动。
   const worthWatching = useMemo(() => {
     if (!hotel) return [];
-    const inWindow = dataset.events.filter((event) => {
-      const start = event.startDate;
-      if (!start) return false;
-      const end = event.endDate ?? start;
-      return start <= weekWindow.end && end >= weekWindow.start;
-    });
-    const scored = distinctByCanonical(inWindow).map((event) => {
-      const point = eventCoordinates(event, dataset);
-      const distance =
-        point && verifiedCoords(hotel.coordinates) ? distanceKm(hotel.coordinates, point) : null;
-      const level = assessDemand(event, dataset).level;
-      return { event, distance, level };
-    });
-    const weight: Record<string, number> = { HIGH: 0, MEDIUM: 1, LOW: 2, UNKNOWN: 3 };
-    return scored
-      .sort(
-        (a, b) =>
-          (weight[a.level] ?? 3) - (weight[b.level] ?? 3) ||
-          (a.distance ?? 999) - (b.distance ?? 999),
-      )
-      .slice(0, 8);
-  }, [dataset, hotel, weekWindow]);
+    const inWindow = distinctByCanonical(
+      dataset.events.filter((event) => {
+        const start = event.startDate;
+        if (!start) return false;
+        const end = event.endDate ?? start;
+        return start <= weekWindow.end && end >= weekWindow.start;
+      }),
+    );
+    return rankEvents(inWindow, { hotel, dataset, today }).slice(0, 8);
+  }, [dataset, hotel, weekWindow, today]);
 
   const loadChanges = useCallback(async () => {
     try {
@@ -251,13 +245,13 @@ export default function Workbench() {
       <section className="panel gap-bottom">
         <div className="panel-heading">
           <h3 style={{ margin: 0 }}>未来七天值得关注</h3>
-          <small className="muted">按关注等级与距离排序；未知项标为未知，不作推测</small>
+          <small className="muted">按业务相关性、距离、数据可信度与紧迫度排序；缺数据的维度标为未知，不作推测</small>
         </div>
         {worthWatching.length === 0 ? (
           <Empty description="未来七天没有与这家酒店相关的活动" />
         ) : (
           <div className="workbench-list">
-            {worthWatching.map(({ event, distance, level }) => (
+            {worthWatching.map(({ event, reasons, unknown, byDimension }) => (
               <article className="workbench-row" key={canonicalIdOf(event)}>
                 <div className="workbench-main">
                   <div className="workbench-title">
@@ -265,12 +259,19 @@ export default function Workbench() {
                       {event.name}
                     </button>
                     <Tag color={categories[event.category]?.color}>{categories[event.category]?.label}</Tag>
-                    <Tag>{level === "UNKNOWN" ? "关注等级未知" : `关注等级 ${level}`}</Tag>
                   </div>
                   <small className="muted">
                     {event.startDate ?? "日期待核验"} → {event.endDate ?? "结束待核验"}
-                    {distance !== null ? ` · 距本店 ${distance.toFixed(1)} km` : " · 距离未知（坐标未核验）"}
                   </small>
+                  {/* 推荐理由与维度分数分开显示：距离近不等于值得投入，用户要能看到两件事。 */}
+                  <small className="rank-reasons">{reasons.join(" · ")}</small>
+                  <small className="rank-dims">
+                    相关性 {fmtDim(byDimension.relevance)} · 距离 {fmtDim(byDimension.distance)} ·
+                    可信度 {fmtDim(byDimension.credibility)} · 紧迫度 {fmtDim(byDimension.timing)}
+                  </small>
+                  {unknown.length > 0 && (
+                    <small className="rank-unknown">未知：{unknown.join("；")}</small>
+                  )}
                 </div>
                 <Space size={4} wrap>
                   {FOLLOW_STATES.map((option) => (
