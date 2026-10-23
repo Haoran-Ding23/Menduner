@@ -1,11 +1,14 @@
-# 一键安装 WSL2 + Docker Desktop（需要一次管理员授权）
+# One-shot installer for WSL2 + Docker Desktop.
 #
-# 双击本文件即可：脚本会自己请求管理员权限（UAC 弹窗点「是」），然后依次：
-#   1. 启用 WSL2（含虚拟机平台组件）
-#   2. 安装 Docker Desktop
-#   3. 报告是否需要重启
+# Double-click this file (or run install-docker.cmd). It re-launches itself elevated, which costs
+# one UAC approval, then installs WSL2 and Docker Desktop and reports whether a reboot is needed.
 #
-# 为什么不能由 AI 代做：UAC 授权框必须由人点击，普通权限进程无法自我提权。
+# Why the AI could not do this: raising the consent prompt requires an interactive user; a
+# non-elevated process cannot approve UAC for itself.
+#
+# The file is intentionally ASCII-only. Windows PowerShell 5.1 reads a .ps1 without a BOM using
+# the system ANSI code page, so Chinese text in this file would be garbled and could break the
+# parser - which is exactly what happened on the first attempt.
 
 $ErrorActionPreference = 'Stop'
 
@@ -16,7 +19,7 @@ function Test-Admin {
 }
 
 if (-not (Test-Admin)) {
-    Write-Host '需要管理员权限，正在请求授权（请在弹窗中点「是」）...' -ForegroundColor Yellow
+    Write-Host 'Requesting administrator permission - click "Yes" on the UAC prompt.' -ForegroundColor Yellow
     $arguments = @(
         '-NoProfile',
         '-ExecutionPolicy', 'Bypass',
@@ -26,44 +29,49 @@ if (-not (Test-Admin)) {
     exit
 }
 
-Write-Host '=== 已获得管理员权限 ===' -ForegroundColor Green
+Write-Host '=== Administrator permission granted ===' -ForegroundColor Green
 
 # ---------------------------------------------------------------- WSL2
-Write-Host "`n[1/3] 安装 WSL2 ..." -ForegroundColor Cyan
-$wsl = Get-Command wsl -ErrorAction SilentlyContinue
-if ($wsl) {
-    $status = & wsl --status 2>&1 | Out-String
-    if ($status -match '默认版本|Default Version') {
-        Write-Host '  WSL 已安装，跳过。' -ForegroundColor Green
-    } else {
-        & wsl --install --no-distribution
-    }
+Write-Host ''
+Write-Host '[1/3] Installing WSL2 ...' -ForegroundColor Cyan
+$wslCommand = Get-Command wsl -ErrorAction SilentlyContinue
+$wslReady = $false
+if ($wslCommand) {
+    $statusText = ''
+    try { $statusText = (& wsl --status 2>&1 | Out-String) } catch { $statusText = '' }
+    if ($statusText -match '2') { $wslReady = $true }
+}
+if ($wslReady) {
+    Write-Host '  WSL already present, skipping.' -ForegroundColor Green
 } else {
     & wsl --install --no-distribution
+    Write-Host '  WSL install command finished. A reboot is usually required.'
 }
-Write-Host "  WSL 组件处理完成（若提示需要重启，重启后继续第 2 步）。"
 
 # ---------------------------------------------------------------- Docker Desktop
-Write-Host "`n[2/3] 安装 Docker Desktop ..." -ForegroundColor Cyan
-$docker = Get-Command docker -ErrorAction SilentlyContinue
-if ($docker) {
-    Write-Host '  已检测到 docker 命令，跳过安装。' -ForegroundColor Green
+Write-Host ''
+Write-Host '[2/3] Installing Docker Desktop ...' -ForegroundColor Cyan
+$dockerCommand = Get-Command docker -ErrorAction SilentlyContinue
+if ($dockerCommand) {
+    Write-Host '  docker already on PATH, skipping.' -ForegroundColor Green
 } else {
     & winget install -e --id Docker.DockerDesktop --accept-package-agreements --accept-source-agreements
 }
 
-# ---------------------------------------------------------------- 验证
-Write-Host "`n[3/3] 验证 ..." -ForegroundColor Cyan
-$dockerCmd = Get-Command docker -ErrorAction SilentlyContinue
-if ($dockerCmd) {
+# ---------------------------------------------------------------- verify
+Write-Host ''
+Write-Host '[3/3] Verifying ...' -ForegroundColor Cyan
+$dockerCommand = Get-Command docker -ErrorAction SilentlyContinue
+if ($dockerCommand) {
     & docker --version
-    Write-Host '  Docker CLI 可用。启动 Docker Desktop 后，用 docker compose version 复核。' -ForegroundColor Green
+    Write-Host '  Docker CLI found. Start Docker Desktop, then run: docker compose version' -ForegroundColor Green
 } else {
-    Write-Host '  未检测到 docker：可能需要重启一次再运行本脚本的第二阶段。' -ForegroundColor Yellow
+    Write-Host '  docker not found yet - reboot and run this script once more.' -ForegroundColor Yellow
 }
 
-Write-Host "`n完成。若刚安装了 WSL，请重启电脑，然后启动 Docker Desktop。" -ForegroundColor Green
-Write-Host '重启后在本项目目录运行：' -ForegroundColor Gray
+Write-Host ''
+Write-Host 'Done. If WSL was just installed, reboot, then start Docker Desktop.' -ForegroundColor Green
+Write-Host 'After reboot, from the project folder:' -ForegroundColor Gray
 Write-Host '  docker compose -f deploy/docker-compose.yml up --build' -ForegroundColor Gray
-Write-Host '  # 打开 http://localhost:8080' -ForegroundColor Gray
-Read-Host "`n按回车关闭"
+Write-Host '  then open http://localhost:8080' -ForegroundColor Gray
+Read-Host 'Press Enter to close'
