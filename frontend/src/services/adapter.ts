@@ -41,6 +41,11 @@ export function normalizeEvent(
   const attendance = first(raw, "attendance", "Attendance", "参与人数");
   return {
     id: text(first(raw, "id", "event_id", "Event ID")) ?? `import-${index + 1}`,
+    // 去重身份：后端在 /api/dataset 里给出 canonicalId（同一活动的多条来源记录指向同一条规范
+    // 记录）。这里必须原样带过来 —— 少了这一个字段，前面所有按身份统计的逻辑都会退化成
+    // 「按记录数统计」，同一场活动就会在两个地方出现两次。
+    canonicalId:
+      text(first(raw, "canonicalId", "canonical_id")) ?? undefined,
     name:
       text(first(raw, "name", "event_name", "Event Name", "活动名称")) ??
       "未命名活动",

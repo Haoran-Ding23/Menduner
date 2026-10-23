@@ -24,7 +24,11 @@ import type { Event, Evidence, Status } from "../../types";
  * Everything here comes from public read endpoints — no login, no write, no internal queue.
  */
 export default function DataQuality() {
-  const { dataset, repository, selected, update } = usePlatform();
+  // 证据页必须逐条可见：使用未去重的原始集合，否则「同一活动的另一条来源记录」在合并后
+  // 就查不到字段冲突与来源了。
+  const platform = usePlatform();
+  const { repository, selected, update } = platform;
+  const dataset = platform.rawDataset ?? platform.dataset;
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   // Quality is reviewed per region. 吴中区 holds 356 events and 太仓 123, so one global

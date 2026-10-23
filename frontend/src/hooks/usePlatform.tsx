@@ -13,6 +13,7 @@ import type { Dataset, Filters } from "../types";
 import { createRepository, sampleDataset } from "../services/repository";
 import { loadApiDataset, type PipelineStatus } from "../services/api";
 import { normalizeDataset } from "../services/adapter";
+import { distinctByCanonical } from "../utils/dedupe";
 const Context = createContext<ReturnType<typeof useStateValue> | null>(null);
 function useStateValue(initialDataset?: Dataset) {
   const [dataset, setDataset] = useState<Dataset>(
@@ -143,6 +144,7 @@ function useStateValue(initialDataset?: Dataset) {
     });
   }, [dataset.events, includePast]);
   const archivedCount = dataset.events.length - visibleEvents.length;
+
   const visibleDataset = useMemo(
     () => (visibleEvents === dataset.events ? dataset : { ...dataset, events: visibleEvents }),
     [dataset, visibleEvents],
@@ -151,8 +153,33 @@ function useStateValue(initialDataset?: Dataset) {
     () => (visibleEvents === dataset.events ? repository : createRepository(visibleDataset)),
     [dataset.events, repository, visibleDataset, visibleEvents],
   );
+  /**
+   * 统一身份层（审核 F04）：同一活动在不同来源下的多条记录只保留一条代表。
+   *
+   * 放在这里而不是各页面各写一遍，是因为「统计、推荐、图谱、周报用同一套身份」是审核的明确
+   * 要求；分散实现会让某个页面漏掉去重，而漏掉的那一页正是用户会看到两个同名活动的地方。
+   * 原始记录仍保留在 dataset.events 里，证据页需要逐条记录时照旧可用。
+   */
+  const identifiedEvents = useMemo(() => distinctByCanonical(visibleEvents), [visibleEvents]);
+  const identifiedDataset = useMemo(
+    () =>
+      identifiedEvents.length === visibleEvents.length
+        ? visibleDataset
+        : { ...visibleDataset, events: identifiedEvents },
+    [identifiedEvents, visibleDataset, visibleEvents],
+  );
+  const identifiedRepository = useMemo(
+    () =>
+      identifiedEvents.length === visibleEvents.length
+        ? visibleRepository
+        : createRepository(identifiedDataset),
+    [identifiedDataset, identifiedEvents, visibleEvents.length, visibleRepository],
+  );
   return {
-    dataset: visibleDataset,
+    // 默认数据集走身份层：统计、推荐、图谱、地图与周报看到的是同一批活动。
+    dataset: identifiedDataset,
+    // 未经去重的原始集合，供证据页逐条核对来源与字段冲突（合并后仍要能看到每条原始记录）。
+    rawDataset: visibleDataset,
     // The unfiltered set, so a page can count what the archive holds for one region instead of
     // only knowing the global archived total.
     allEvents: dataset.events,
@@ -162,7 +189,7 @@ function useStateValue(initialDataset?: Dataset) {
     pipelineStatus,
     dataError,
     reloadData,
-    repository: visibleRepository,
+    repository: identifiedRepository,
     filters,
     params,
     update,
