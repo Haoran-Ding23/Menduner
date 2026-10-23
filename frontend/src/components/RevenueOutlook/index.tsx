@@ -4,7 +4,7 @@ import { usePlatform } from "../../hooks/usePlatform";
 import {
   businessToday,
   importantEventPeriods,
-  upcomingHighEvents,
+  upcomingEvents,
   shiftDate,
 } from "../../services/intelligence";
 import { ImpactTag } from "../DemandIntelligence";
@@ -18,7 +18,7 @@ export default function RevenueOutlook({
   const { dataset, filters, openEvent } = usePlatform();
   const today = businessToday();
   const periods = importantEventPeriods(events, filters.year, filters.month);
-  const upcoming = upcomingHighEvents(events, dataset, today);
+  const upcoming = upcomingEvents(events, today);
   return (
     <div className="outlook-grid gap-bottom">
       <section className="panel">
@@ -58,7 +58,7 @@ export default function RevenueOutlook({
       <section className="panel">
         <div className="panel-heading">
           <h3>未来 30 天活动</h3>
-          <Tag color="red">{upcoming.length} 个高关注项</Tag>
+          <Tag>{upcoming.length} 个活动</Tag>
         </div>
         <div className="outlook-content">
           <small className="muted">
@@ -76,7 +76,7 @@ export default function RevenueOutlook({
             </div>
           ))}
           {!upcoming.length && (
-            <Empty description="未来 30 天没有高关注活动" />
+            <Empty description="未来 30 天没有记录在案的活动" />
           )}
         </div>
       </section>

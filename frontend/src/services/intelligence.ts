@@ -209,6 +209,19 @@ export function importantEventPeriods(
   }
   return periods;
 }
+export function upcomingEvents(
+  events: Event[],
+  today = businessToday(),
+) {
+  // Exactly 30 calendar dates, including today; ongoing events are included. Every event is
+  // listed rather than only the high-attention ones: an empty 高关注项 column read as "nothing is
+  // happening" when in fact the period held events the scoring simply did not rank high.
+  const end = shiftDate(today, 29);
+  return events
+    .filter((e) => overlaps(e, today, end))
+    .sort((a, b) => (a.startDate ?? "").localeCompare(b.startDate ?? ""));
+}
+
 export function upcomingHighEvents(
   events: Event[],
   data: Dataset,
