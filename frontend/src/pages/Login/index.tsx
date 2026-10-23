@@ -128,12 +128,13 @@ export default function LoginPage() {
             </Button>
           </Form>
 
-          {/* Format example, not a working account: showing invented credentials would send
-              people to type something that cannot sign in. */}
+          {/* A real, working demo account. It owns its own tenant holding synthetic figures, so
+              anyone can try the product end to end without touching public data or another
+              hotel's ledger. */}
           <div className="signin-hint">
-            <strong>填写示例</strong>
+            <strong>演示账号</strong>
             <code>登录名 manager01　密码 hotel2026</code>
-            <small>这是格式示例；正式的登录名与密码由我们开通时提供。</small>
+            <small>可直接登录。里面是示例数据，不含任何真实酒店信息。</small>
           </div>
 
           <p className="signin-links">
