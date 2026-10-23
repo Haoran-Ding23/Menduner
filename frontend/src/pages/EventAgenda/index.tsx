@@ -7,7 +7,7 @@ import { ImpactTag } from "../../components/DemandIntelligence";
 import type { Event } from "../../types";
 import Filters from "../../components/Filters";
 import CaliberBar from "../../components/CaliberBar";
-import type { TimeWindow } from "../../utils/caliber";
+import { beijingToday, type TimeWindow } from "../../utils/caliber";
 import { distinctByCanonical } from "../../utils/dedupe";
 
 /**
@@ -32,13 +32,19 @@ type RangeKey = (typeof RANGES)[number]["key"];
 
 export const AGENDA_RANGES = RANGES;
 
-/** Local date. `toISOString()` would return UTC and shift the day either side of midnight. */
+/**
+ * 业务日期一律按北京时间（Asia/Shanghai）。
+ *
+ * 原来用 `dayjs()` 取设备本地日期：在纽约时区的浏览器里，UTC 22:03 时本地还是 10-23，而北京
+ * 已经是 10-24，于是活动清单的「今天」比工作台早一天 —— 同一屏出现两个日期。业务日期只跟
+ * 城市有关，与读者所在时区无关。
+ */
 export function todayKey(): string {
-  return dayjs().format("YYYY-MM-DD");
+  return beijingToday();
 }
 
 export function rangeFor(key: RangeKey): { start: string; end: string; title: string } {
-  const now = dayjs();
+  const now = dayjs(todayKey());
   if (key === "day") {
     return { start: now.format("YYYY-MM-DD"), end: now.format("YYYY-MM-DD"), title: "今天" };
   }
