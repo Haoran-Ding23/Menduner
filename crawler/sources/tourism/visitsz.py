@@ -692,7 +692,10 @@ class VisitszSource(PublicAccessSource):
                 news_candidates.append({'id': row_id, 'url': row['url'], 'kind': 'preview'})
         self.investigation['candidate_preview_urls'] = len(news_candidates)
 
-        queue = [{**row, 'kind': 'calendar'} for row in candidates] + news_candidates
+        # Calendar rows keep the mainline key form ``visitsz-detail-<id>``; only the news
+        # column's preview fetches carry their own kind, so the observation identity of a
+        # calendar row is unchanged whether or not the news route runs.
+        queue = list(candidates) + news_candidates
         for row in queue[:self.max_items]:
             try:
                 detail = self.public_page(row['url'])
@@ -703,7 +706,7 @@ class VisitszSource(PublicAccessSource):
                 # One stale/unsupported id must not discard the verified rest.
                 self.errors.append({'url': row['url'], 'error': str(exc)})
                 continue
-            items.append(self.item(detail, key='visitsz-' + row['kind'] + '-' + row['id'],
+            items.append(self.item(detail, key='visitsz-' + row.get('kind', 'detail') + '-' + row['id'],
                                    extractor=self.extractor, locator=row['id']))
             self.investigation['detail_pages_fetched'] += 1
             if blocked_page(detail.content):

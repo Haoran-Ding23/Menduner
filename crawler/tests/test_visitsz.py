@@ -468,7 +468,7 @@ def test_a_preview_announcement_is_published_from_the_news_column():
         source.client.close()
     events = [item for item in items if item.is_event]
     assert [item.item_key for item in events] == [
-        'visitsz-calendar-2026101300000007', 'visitsz-preview-' + PREVIEW_ID]
+        'visitsz-detail-2026101300000007', 'visitsz-preview-' + PREVIEW_ID]
     assert source.investigation['news_pages_fetched'] == 1
     assert source.investigation['news_rows_seen'] == 1
     assert source.investigation['candidate_preview_urls'] == 1
@@ -508,7 +508,7 @@ def test_preview_and_calendar_id_spaces_stay_distinct():
     finally:
         source.client.close()
     assert sorted(item.item_key for item in items if item.is_event) == [
-        'visitsz-calendar-2026101300000007', 'visitsz-preview-' + PREVIEW_ID]
+        'visitsz-detail-2026101300000007', 'visitsz-preview-' + PREVIEW_ID]
 
 
 def test_a_non_preview_link_on_the_news_column_is_never_requested():
@@ -552,7 +552,7 @@ def test_an_absent_news_route_is_recorded_without_failing_the_source():
     assert source.investigation['news_column_absent'] is True
     assert source.investigation['news_pages_fetched'] == 0
     assert [item.item_key for item in items if item.is_event] == [
-        'visitsz-calendar-2026101300000007']
+        'visitsz-detail-2026101300000007']
 
 
 def test_the_news_sweep_is_bounded_and_can_be_turned_off():
@@ -602,7 +602,7 @@ def test_calendar_is_swept_and_past_dated_rows_are_filtered_not_stopped():
         items = source.collect()
     finally:
         source.client.close()
-    assert [item.item_key for item in items if item.is_event] == ['visitsz-calendar-2026101300000003']
+    assert [item.item_key for item in items if item.is_event] == ['visitsz-detail-2026101300000003']
     assert source.investigation['past_dated_listing_rows_dropped'] == 3
     assert source.investigation['listing_pages_fetched'] == 3  # pages 1, 2 and the empty page 3
     assert LISTING_URL + '?page=2' in visited
@@ -643,7 +643,7 @@ def test_broken_listing_intervals_are_dropped_and_counted_never_repaired():
     assert source.errors == []
     assert all('20260929' not in url for url in visited)
     assert [item.item_key for item in items if item.is_event] == [
-        'visitsz-calendar-2026101300000007', 'visitsz-calendar-2026101300000008']
+        'visitsz-detail-2026101300000007', 'visitsz-detail-2026101300000008']
 
 
 def test_page_cap_bounds_listing_requests():
@@ -808,7 +808,7 @@ def test_offhost_and_wechat_row_links_are_never_requested():
     assert source.investigation['offhost_or_invalid_row_links_dropped'] == 3
     assert source.investigation['wechat_requests'] == 0
     assert all('weixin' not in url and 'evil.test' not in url for url in visited)
-    assert [item.item_key for item in items if item.is_event] == ['visitsz-calendar-2026101300000007']
+    assert [item.item_key for item in items if item.is_event] == ['visitsz-detail-2026101300000007']
 
 
 def test_robots_404_is_permissive_and_the_soft_404_opt_in_stays_off():
@@ -824,7 +824,7 @@ def test_robots_404_is_permissive_and_the_soft_404_opt_in_stays_off():
     assert source.pages_collected == 3  # listing + detail + the news column route
     assert [item.item_key for item in source.policy_items] == ['robots:' + BASE_URL]
     assert source.errors == []
-    assert [item.item_key for item in items if item.is_event] == ['visitsz-calendar-' + BAOLI_ID]
+    assert [item.item_key for item in items if item.is_event] == ['visitsz-detail-' + BAOLI_ID]
 
 
 def test_robots_denial_stops_the_host_before_any_calendar_request():
@@ -856,7 +856,7 @@ def test_an_empty_calendar_page_stops_paging_without_an_error():
         source.client.close()
     assert source.investigation['listing_pages_fetched'] == 2  # page 2 is the end of the calendar
     assert source.errors == [] and source.warnings == []
-    assert [item.item_key for item in items if item.is_event] == ['visitsz-calendar-2026101300000007']
+    assert [item.item_key for item in items if item.is_event] == ['visitsz-detail-2026101300000007']
 
 
 def test_listing_shape_change_fails_closed_with_an_explicit_reason():
