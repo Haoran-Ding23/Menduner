@@ -12,6 +12,7 @@ import { lazyWithReload } from './utils/lazyWithReload';
 // lazyWithReload, not lazy: a tab left open across a deploy holds an index.html naming the
 // previous chunk hashes, and importing a missing chunk killed the page. It reloads once to
 // pick up the new build instead of showing an error the user cannot act on.
+const Workbench = lazyWithReload(() => import('./pages/Workbench'));
 const Map = lazyWithReload(() => import('./pages/CityEventMap'));
 const Calendar = lazyWithReload(() => import('./pages/EventCalendar'));
 const Agenda = lazyWithReload(() => import('./pages/EventAgenda'));
@@ -49,6 +50,7 @@ export default function App({ initialAccount }: { initialAccount?: AccountState 
         <PlatformLayout>
           <Suspense fallback={<div className="loading-page"><Spin size="large"/></div>}>
             <Routes>
+              <Route path="/workbench" element={<Page name="本店工作台"><Workbench /></Page>}/>
               <Route path="/map" element={<Page name="城市活动地图"><Map /></Page>}/>
               <Route path="/calendar" element={<Page name="活动日历"><Calendar /></Page>}/>
               <Route path="/agenda" element={<Page name="活动清单"><Agenda /></Page>}/>

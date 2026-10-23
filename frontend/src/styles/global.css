@@ -1905,3 +1905,43 @@ main {
 .caliber-counts strong { color: #0f172a; font-size: 14px; }
 .caliber-phase { color: #64748b; }
 .caliber-warning { color: #b45309; }
+
+/* Workbench rows: hotel-scoped activity list with inline follow-up actions. */
+.workbench-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  background: #f6f9fd;
+  border: 1px solid #e6eef7;
+}
+.workbench-list { display: flex; flex-direction: column; gap: 8px; }
+.workbench-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  border: 1px solid #eef2f7;
+  border-radius: 10px;
+}
+.workbench-main { display: flex; flex-direction: column; gap: 4px; min-width: 240px; }
+.workbench-title { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.link-button {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: #0f172a;
+  cursor: pointer;
+  text-align: left;
+}
+.link-button:hover { color: #1d4ed8; text-decoration: underline; }
+@media (max-width: 720px) {
+  /* 移动端：操作按钮换行到标题下方，避免挤成一列窄字 */
+  .workbench-row { flex-direction: column; align-items: stretch; }
+}

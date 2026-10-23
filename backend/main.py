@@ -12,6 +12,7 @@ from backend import client_errors
 from backend import private_import
 from backend import dedupe
 from backend import tenants
+from backend import tracking
 from backend import weekly_report
 from backend.amap import amap_place_url
 from backend import venues as venue_store
@@ -730,6 +731,52 @@ def create_app(db_path: Path | None = None):
                     "SELECT * FROM review_decisions ORDER BY decided_at DESC"
                 )
             ]
+
+    class FollowupRequest(BaseModel):
+        eventKey: str = Field(min_length=1, max_length=200)
+        state: str
+        note: str | None = Field(default=None, max_length=500)
+
+    @app.get('/workbench/changes')
+    def workbench_changes(since: str | None = None):
+        """与上次快照相比，哪些活动新增、取消、改期、信息变化。
+
+        只读的公开数据；只有一份快照时返回 comparable=False，界面据此显示「尚无可比较记录」。
+        """
+        return tracking.changes(path, since)
+
+    @app.post('/admin/snapshot')
+    def capture_snapshot(principal: str = Depends(auth.require_role(auth.ROLE_REVIEWER))):
+        """记录当天快照。由运维在每日采集后触发，重复执行同一天会被覆盖。"""
+        return tracking.capture(path)
+
+    @app.get('/workbench/followups')
+    def list_followups(request: Request):
+        with connect(path) as con:
+            tenant = _tenant_of_request(con, request)
+        return {'tenant': tenant, 'items': tracking.list_followups(path, tenant),
+                'states': [{'value': s, 'label': tracking.STATE_LABELS[s]} for s in tracking.STATES]}
+
+    @app.post('/workbench/followups')
+    def set_followup(body: FollowupRequest, request: Request):
+        with connect(path) as con:
+            tenant = _tenant_of_request(con, request)
+            account = accounts.session_account(con, _session_token(request))
+        try:
+            return tracking.set_followup(path, tenant_id=tenant, event_key=body.eventKey,
+                                         state=body.state, note=body.note,
+                                         actor=(account or {}).get('login'))
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from None
+
+    @app.delete('/workbench/followups/{event_key}')
+    def clear_followup(event_key: str, request: Request):
+        with connect(path) as con:
+            tenant = _tenant_of_request(con, request)
+        removed = tracking.clear_followup(path, tenant_id=tenant, event_key=event_key)
+        if not removed:
+            raise HTTPException(status_code=404, detail='没有这条跟进记录')
+        return {'removed': event_key}
 
     @app.get('/dedupe/summary')
     def dedupe_summary():

@@ -1,0 +1,401 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Alert, Button, Empty, Select, Space, Tag, Tooltip, message } from "antd";
+import { usePlatform } from "../../hooks/usePlatform";
+import { useAccount } from "../../hooks/useEntitlements";
+import { assessDemand } from "../../services/intelligence";
+import { categories, distanceKm, eventCoordinates, verifiedCoords } from "../../utils/data";
+import { beijingToday, shiftDate, type TimeWindow } from "../../utils/caliber";
+import { canonicalIdOf, distinctByCanonical } from "../../utils/dedupe";
+import CaliberBar from "../../components/CaliberBar";
+import type { Event, Hotel } from "../../types";
+
+/**
+ * 本店工作台：一天开始时要看的一页。
+ *
+ * 四块内容分别回答四个问题：接下来七天有哪些值得关注、和上次相比什么变了、我答应了要跟进
+ * 什么、接下来去地图还是出周报。
+ *
+ * 三个刻意的取舍：
+ *   * 酒店选择存在浏览器里，不存服务器 —— 它只是「我关心哪一家」，属于个人偏好，不是账号数据；
+ *   * 「本周变化」在没有两份快照时显示「尚无可比较记录」，而不是「没有变化」——后者会让人以为
+ *     数据是稳的，前者才说明系统还没积累出比较能力；
+ *   * 跟进状态必须登录且按酒店隔离，未登录时按钮提示登录而不是假装保存成功。
+ */
+
+const HOTEL_KEY = "menduner.workbench.hotel";
+
+const FOLLOW_STATES = [
+  { value: "watching", label: "关注" },
+  { value: "todo", label: "待跟进" },
+  { value: "done", label: "已跟进" },
+  { value: "ignored", label: "忽略" },
+] as const;
+
+interface Followup {
+  eventKey: string;
+  state: string;
+  stateLabel: string;
+  note: string | null;
+  updatedAt: string;
+}
+
+interface Changes {
+  comparable: boolean;
+  reason?: string;
+  from?: string;
+  to?: string;
+  added: { event_key: string; name: string; start_date: string | null }[];
+  cancelled: { event_key: string; name: string; start_date: string | null }[];
+  rescheduled: { before: { name: string; start_date: string | null }; after: { name: string; start_date: string | null } }[];
+  changed: { before: { name: string }; after: { name: string } }[];
+}
+
+export default function Workbench() {
+  const { dataset, filters, update } = usePlatform();
+  const { state: accountState } = useAccount();
+  const [hotelId, setHotelId] = useState<string>(() => {
+    try {
+      return window.localStorage.getItem(HOTEL_KEY) ?? "";
+    } catch {
+      return "";
+    }
+  });
+  const [changes, setChanges] = useState<Changes | null>(null);
+  const [followups, setFollowups] = useState<Followup[]>([]);
+  const [followupError, setFollowupError] = useState("");
+  const [busy, setBusy] = useState("");
+
+  const hotels = dataset.hotels;
+  const hotel: Hotel | undefined = hotels.find((h) => h.id === hotelId) ?? hotels[0];
+
+  // Remember the choice. localStorage is unavailable in private mode, and this is a preference,
+  // so failing to store it must not break the page.
+  useEffect(() => {
+    if (!hotel) return;
+    if (hotel.id !== hotelId) setHotelId(hotel.id);
+    try {
+      window.localStorage.setItem(HOTEL_KEY, hotel.id);
+    } catch {
+      /* preference only */
+    }
+  }, [hotel, hotelId]);
+
+  const today = beijingToday();
+  const weekWindow: TimeWindow = useMemo(
+    () => ({
+      kind: "next7",
+      start: today,
+      end: shiftDate(today, 6),
+      label: `未来 7 天（${today} 至 ${shiftDate(today, 6)}）`,
+    }),
+    [today],
+  );
+
+  // 未来七天、且与这家酒店有距离关系的活动；按关注等级→距离排序，理由写在卡片上。
+  const worthWatching = useMemo(() => {
+    if (!hotel) return [];
+    const inWindow = dataset.events.filter((event) => {
+      const start = event.startDate;
+      if (!start) return false;
+      const end = event.endDate ?? start;
+      return start <= weekWindow.end && end >= weekWindow.start;
+    });
+    const scored = distinctByCanonical(inWindow).map((event) => {
+      const point = eventCoordinates(event, dataset);
+      const distance =
+        point && verifiedCoords(hotel.coordinates) ? distanceKm(hotel.coordinates, point) : null;
+      const level = assessDemand(event, dataset).level;
+      return { event, distance, level };
+    });
+    const weight: Record<string, number> = { HIGH: 0, MEDIUM: 1, LOW: 2, UNKNOWN: 3 };
+    return scored
+      .sort(
+        (a, b) =>
+          (weight[a.level] ?? 3) - (weight[b.level] ?? 3) ||
+          (a.distance ?? 999) - (b.distance ?? 999),
+      )
+      .slice(0, 8);
+  }, [dataset, hotel, weekWindow]);
+
+  const loadChanges = useCallback(async () => {
+    try {
+      const response = await fetch("/api/workbench/changes", { cache: "no-store" });
+      if (!response.ok) return;
+      setChanges((await response.json()) as Changes);
+    } catch {
+      /* 变化是加分项，取不到时页面其余部分照常 */
+    }
+  }, []);
+
+  const loadFollowups = useCallback(async () => {
+    if (!accountState.authenticated) {
+      setFollowups([]);
+      return;
+    }
+    try {
+      const response = await fetch("/api/workbench/followups", { cache: "no-store" });
+      if (response.status === 401 || response.status === 403) {
+        setFollowupError("登录后才能保存跟进状态");
+        return;
+      }
+      const body = await response.json();
+      setFollowups((body.items ?? []) as Followup[]);
+      setFollowupError("");
+    } catch {
+      setFollowupError("跟进状态读取失败");
+    }
+  }, [accountState.authenticated]);
+
+  useEffect(() => {
+    void loadChanges();
+    void loadFollowups();
+  }, [loadChanges, loadFollowups]);
+
+  const setFollowup = async (eventKey: string, state: string) => {
+    setBusy(`${eventKey}:${state}`);
+    try {
+      const response = await fetch("/api/workbench/followups", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ eventKey, state }),
+      });
+      if (response.status === 401 || response.status === 403) {
+        message.warning("请先登录后再保存跟进状态");
+        return;
+      }
+      if (!response.ok) throw new Error("保存失败");
+      message.success(`已标记为${FOLLOW_STATES.find((s) => s.value === state)?.label}`);
+      await loadFollowups();
+    } catch (error) {
+      message.error(error instanceof Error ? error.message : "保存失败");
+    } finally {
+      setBusy("");
+    }
+  };
+
+  const stateOf = (eventKey: string) =>
+    followups.find((row) => row.eventKey === eventKey)?.state;
+
+  const openOnMap = (event: Event) => {
+    const params = new URLSearchParams();
+    if (event.districtId) params.set("district", event.districtId);
+    if (event.startDate) {
+      params.set("year", event.startDate.slice(0, 4));
+      params.set("month", String(Number(event.startDate.slice(5, 7))));
+    }
+    update({
+      district: event.districtId ?? null,
+      year: Number((event.startDate ?? today).slice(0, 4)),
+      month: Number((event.startDate ?? today).slice(5, 7)),
+    });
+    window.location.assign(`/map?${params.toString()}`);
+  };
+
+  if (!hotel) {
+    return (
+      <Alert
+        type="warning"
+        showIcon
+        message="还没有可选的酒店"
+        description="酒店库为空，无法生成工作台。请先在「找酒店」中确认酒店数据已导入。"
+      />
+    );
+  }
+
+  return (
+    <>
+      <div className="page-heading">
+        <h1>本店工作台</h1>
+      </div>
+
+      <div className="workbench-head">
+        <Space wrap size={12}>
+          <span className="muted">当前酒店</span>
+          <Select
+            style={{ minWidth: 260 }}
+            aria-label="选择酒店"
+            value={hotel.id}
+            onChange={(value) => setHotelId(value)}
+            options={hotels.map((item) => ({
+              value: item.id,
+              label: item.tierLabel ? `${item.name}（${item.tierLabel}）` : item.name,
+            }))}
+          />
+          <Button onClick={() => window.location.assign("/find-hotels")}>换一家酒店</Button>
+          <Button type="primary" onClick={() => openOnMap(worthWatching[0]?.event ?? { ...({} as Event) })}>
+            在地图上看
+          </Button>
+          <Tooltip title="导出包含重点活动、推荐理由、本周变化与待办的周报">
+            <Space size={4}>
+              <Button href="/api/private/weekly.xlsx" download>
+                周报 Excel
+              </Button>
+              <Button href="/api/private/weekly.pdf" download>
+                周报 PDF
+              </Button>
+            </Space>
+          </Tooltip>
+        </Space>
+        <small className="muted">
+          地址：{hotel.address ?? "未记录"} · 坐标：{hotel.coordinates ? "已核验" : "未核验（距离无法计算）"}
+        </small>
+      </div>
+
+      <CaliberBar window={weekWindow} events={dataset.events.filter((e) => {
+        const start = e.startDate;
+        if (!start) return false;
+        const end = e.endDate ?? start;
+        return start <= weekWindow.end && end >= weekWindow.start;
+      })} />
+
+      <section className="panel gap-bottom">
+        <div className="panel-heading">
+          <h3 style={{ margin: 0 }}>未来七天值得关注</h3>
+          <small className="muted">按关注等级与距离排序；未知项标为未知，不作推测</small>
+        </div>
+        {worthWatching.length === 0 ? (
+          <Empty description="未来七天没有与这家酒店相关的活动" />
+        ) : (
+          <div className="workbench-list">
+            {worthWatching.map(({ event, distance, level }) => (
+              <article className="workbench-row" key={canonicalIdOf(event)}>
+                <div className="workbench-main">
+                  <div className="workbench-title">
+                    <button className="link-button" onClick={() => openOnMap(event)}>
+                      {event.name}
+                    </button>
+                    <Tag color={categories[event.category]?.color}>{categories[event.category]?.label}</Tag>
+                    <Tag>{level === "UNKNOWN" ? "关注等级未知" : `关注等级 ${level}`}</Tag>
+                  </div>
+                  <small className="muted">
+                    {event.startDate ?? "日期待核验"} → {event.endDate ?? "结束待核验"}
+                    {distance !== null ? ` · 距本店 ${distance.toFixed(1)} km` : " · 距离未知（坐标未核验）"}
+                  </small>
+                </div>
+                <Space size={4} wrap>
+                  {FOLLOW_STATES.map((option) => (
+                    <Button
+                      key={option.value}
+                      size="small"
+                      type={stateOf(canonicalIdOf(event)) === option.value ? "primary" : "default"}
+                      loading={busy === `${canonicalIdOf(event)}:${option.value}`}
+                      onClick={() => void setFollowup(canonicalIdOf(event), option.value)}
+                    >
+                      {option.label}
+                    </Button>
+                  ))}
+                </Space>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="panel gap-bottom">
+        <div className="panel-heading">
+          <h3 style={{ margin: 0 }}>本周变化</h3>
+          {changes?.comparable && (
+            <small className="muted">
+              比较 {changes.from} 与 {changes.to}
+            </small>
+          )}
+        </div>
+        {!changes || !changes.comparable ? (
+          <Empty
+            description={
+              changes?.reason ??
+              "尚无可比较记录 —— 快照每天记录一次，积累两份之后这里会显示新增、取消与改期"
+            }
+          />
+        ) : (
+          <Space direction="vertical" style={{ width: "100%" }} size={6}>
+            {changes.added.length > 0 && (
+              <div>
+                <Tag color="green">新增 {changes.added.length}</Tag>
+                <small className="muted">
+                  {changes.added.slice(0, 6).map((item) => item.name).join("、")}
+                </small>
+              </div>
+            )}
+            {changes.rescheduled.length > 0 && (
+              <div>
+                <Tag color="gold">改期 {changes.rescheduled.length}</Tag>
+                <small className="muted">
+                  {changes.rescheduled.slice(0, 6).map(
+                    (item) => `${item.after.name}：${item.before.start_date ?? "?"} → ${item.after.start_date ?? "?"}`,
+                  ).join("；")}
+                </small>
+              </div>
+            )}
+            {changes.cancelled.length > 0 && (
+              <div>
+                <Tag color="red">取消 {changes.cancelled.length}</Tag>
+                <small className="muted">
+                  {changes.cancelled.slice(0, 6).map((item) => item.name).join("、")}
+                </small>
+              </div>
+            )}
+            {changes.changed.length > 0 && (
+              <div>
+                <Tag>信息变化 {changes.changed.length}</Tag>
+                <small className="muted">
+                  {changes.changed.slice(0, 6).map((item) => item.after.name).join("、")}
+                </small>
+              </div>
+            )}
+            {changes.added.length + changes.rescheduled.length + changes.cancelled.length +
+              changes.changed.length === 0 && <Empty description="两份快照之间没有变化" />}
+          </Space>
+        )}
+      </section>
+
+      <section className="panel">
+        <div className="panel-heading">
+          <h3 style={{ margin: 0 }}>我的跟进</h3>
+          <small className="muted">状态保存在本店账号下，成员共享</small>
+        </div>
+        {followupError && <Alert type="info" showIcon message={followupError} />}
+        {followups.length === 0 ? (
+          <Empty description="还没有标记任何活动。在上面的列表里点「关注」或「待跟进」即可。" />
+        ) : (
+          <div className="workbench-list">
+            {followups.map((row) => (
+              <article className="workbench-row" key={row.eventKey}>
+                <div className="workbench-main">
+                  <strong>{row.eventKey}</strong>
+                  <small className="muted">
+                    {row.stateLabel} · 更新于 {row.updatedAt.slice(0, 16).replace("T", " ")}
+                    {row.note ? ` · ${row.note}` : ""}
+                  </small>
+                </div>
+                <Space size={4}>
+                  {FOLLOW_STATES.map((option) => (
+                    <Button
+                      key={option.value}
+                      size="small"
+                      type={row.state === option.value ? "primary" : "default"}
+                      loading={busy === `${row.eventKey}:${option.value}`}
+                      onClick={() => void setFollowup(row.eventKey, option.value)}
+                    >
+                      {option.label}
+                    </Button>
+                  ))}
+                </Space>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {!accountState.authenticated && (
+        <Alert
+          className="gap-top"
+          type="info"
+          showIcon
+          message="当前未登录"
+          description="「未来七天值得关注」和「本周变化」可以直接看；保存关注/跟进状态需要登录本店账号。"
+        />
+      )}
+    </>
+  );
+}

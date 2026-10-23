@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { Button, Tag, Modal, Alert, Space, message, Descriptions } from "antd";
 import {
   EnvironmentOutlined,
+  DashboardOutlined,
   CalendarOutlined,
   ApartmentOutlined,
   HomeOutlined,
@@ -34,6 +35,12 @@ export interface NavPage {
   commercial?: boolean;
 }
 export const pages: NavPage[] = [
+  {
+    path: "/workbench",
+    title: "本店工作台",
+    label: "本店工作台",
+    icon: <DashboardOutlined />,
+  },
   {
     path: "/map",
     title: "城市活动地图",
