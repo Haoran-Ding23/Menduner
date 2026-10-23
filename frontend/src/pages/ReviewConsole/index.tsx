@@ -26,6 +26,7 @@ import {
 } from "../../services/api";
 import VenueMaintenance from "../../components/VenueMaintenance";
 import ClientErrors from "../../components/ClientErrors";
+import CrawlHealth from "../../components/CrawlHealth";
 import VenueEvents from "../../components/VenueEvents";
 import {
   effectiveStatus,
@@ -266,6 +267,10 @@ export default function ReviewConsole() {
         </div>
       </div>
       <ManualEntry onDone={reloadData} />
+      {/* 采集状态属于运维信息：客户页只回答数据能不能用，失败次数与失败原因在这里看。 */}
+      <section className="panel gap-bottom" aria-label="采集来源状态">
+        <CrawlHealth />
+      </section>
       <Alert
         className="gap-bottom"
         showIcon

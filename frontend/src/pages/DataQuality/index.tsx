@@ -1,9 +1,8 @@
 import { useMemo, useState } from "react";
 import { Alert, Button, Input, Select, Space, Switch, Table, Tag } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
-import TrustCenter from "../../components/TrustCenter";
-import CrawlHealth from "../../components/CrawlHealth";
 import VenueEvents from "../../components/VenueEvents";
+import TrustCenter from "../../components/TrustCenter";
 import {
   effectiveStatus,
   eventStatus,
@@ -84,8 +83,16 @@ export default function DataQuality() {
   const settledEvents = dataset.events.filter(
     (e) => eventStatus(repository.getEvidence(e.id)) === "Verified",
   ).length;
+  // 示例说明只在整库都是演示数据时出现（测试夹具）；真实数据下客户页不展示合成样例。
+  const demoDataset = dataset.events.length > 0 && dataset.events.every((e) => e.demo);
   const pendingFields = fields.filter((f) => effectiveStatus(f) !== "Verified");
   const settledFields = fields.filter((f) => effectiveStatus(f) === "Verified");
+  // 关键字段决定这条活动能不能用；其余（赞助商、规模等）只是信息不全。
+  const KEY_FIELD_NAMES = new Set([
+    "startDate", "endDate", "name", "venueId", "venueName", "location", "city", "address",
+  ]);
+  const keyPending = pendingFields.filter((f) => KEY_FIELD_NAMES.has(f.field));
+  const auxPending = pendingFields.filter((f) => !KEY_FIELD_NAMES.has(f.field));
 
   return (
     <>
@@ -144,12 +151,11 @@ export default function DataQuality() {
         className="gap-bottom"
         showIcon
         type="info"
-        message={`最后更新：${dataset.updatedAt} · 自动核验规则：官方政府/场馆来源 + 确定性提取才标记「已核验」；聚合站与规则推测的值一律进入人工审核。缺少来源 URL 的已核验字段自动降为待复核。`}
+        message={`最后更新：${(dataset.updatedAt || "").slice(0, 16).replace("T", " ")}`}
+        description="「字段已核验」和「整条活动已核验」是两件事：前者说明某一个字段（例如开始日期）有来源支撑；后者要求时间、地点、名称等关键字段全部有来源支撑。因此你会看到很多活动「字段已核验 60%，整条仍未核验」——这代表证据在积累，而不是数据有问题。日期或地点不确定会明确标为待核对；赞助商、规模这类辅助信息缺失是单独的一种状态，不影响活动本身可用。"
       />
-      <TrustCenter />
-      <section className="panel gap-bottom" aria-label="采集来源状态">
-        <CrawlHealth />
-      </section>
+      {demoDataset && <TrustCenter />}
+      {/* 采集状态、失败次数是运维信息，已移到审核台；客户页只回答「这条数据能不能用、来源在哪」。 */}
       {/* Per-region quality, so a reviewer can see which part of the city is short of evidence
           before scrolling a global list of 663 events. Selecting a row scopes the index below. */}
       <section className="panel gap-bottom" aria-label="分地区数据质量">
@@ -286,6 +292,11 @@ export default function DataQuality() {
             {event && (
               <Space>
                 <span className="muted">{pendingFields.length} 个字段待处理</span>
+                {entityVenue && (
+                  <Button size="small" onClick={() => setOpenVenueId(entityVenue.id)}>
+                    查看该场馆全部活动
+                  </Button>
+                )}
                 <Button
                   type="primary"
                   size="small"
@@ -298,6 +309,13 @@ export default function DataQuality() {
           </div>
           {fields.length ? (
             <>
+              {/* 一张表 + 「分组」列，而不是拆成两张表：拆分会让同一批字段的渲染逻辑重复两份，
+                  而读者真正需要的是「这一行缺失到底要不要紧」。关键字段影响活动能不能用；
+                  辅助信息（赞助商、规模）缺失只是信息不全。 */}
+              <p className="dq-group-title">
+                关键字段待核对 {keyPending.length} 个（影响活动是否可用） · 辅助信息缺失{" "}
+                {auxPending.length} 个（不影响可用）
+              </p>
               <Table<Evidence>
                 rowKey="id"
                 dataSource={pendingFields}
@@ -305,6 +323,16 @@ export default function DataQuality() {
                 scroll={{ x: 620 }}
                 locale={{ emptyText: "没有待处理字段，这一条已处理完" }}
                 columns={[
+                {
+                  title: "分组",
+                  width: 90,
+                  render: (_, e) =>
+                    KEY_FIELD_NAMES.has(e.field) ? (
+                      <Tag color="orange">关键</Tag>
+                    ) : (
+                      <Tag>辅助</Tag>
+                    ),
+                },
                 {
                   title: "字段 / 实体",
                   width: 140,

@@ -1945,3 +1945,11 @@ main {
   /* 移动端：操作按钮换行到标题下方，避免挤成一列窄字 */
   .workbench-row { flex-direction: column; align-items: stretch; }
 }
+
+/* 关键字段 / 辅助信息分组标题：让「日期不确定」和「缺赞助商」在同一页里不会混为一谈。 */
+.dq-group-title {
+  margin: 14px 0 6px;
+  font-size: 13px;
+  color: #64748b;
+}
+.dq-group-title.dq-key { color: #b45309; }
