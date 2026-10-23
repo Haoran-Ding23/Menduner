@@ -16,8 +16,12 @@ import {
 type SDK = any;
 declare global {
   interface Window {
+    // AMap accepts either a proxy host for its REST calls or the console-issued security code.
+    // Production uses the proxy so the code stays server-side; a local build with no proxy can
+    // fall back to the code.
     _AMapSecurityConfig?: {
-      serviceHost: string;
+      serviceHost?: string;
+      securityJsCode?: string;
     };
   }
 }
@@ -54,6 +58,11 @@ export function amapServiceHost(
 }
 function loadSDK() {
   const key = import.meta.env.VITE_AMAP_KEY;
+  // AMap JS API v2 refuses to render without either a proxy host (production) or the security
+  // code (a local build where no proxy exists). Only the code path is offered as a fallback, and
+  // it is read from an optional env var that is not present in the production build, so the
+  // secret never ships there.
+  const securityCode = import.meta.env.VITE_AMAP_SECURITY_CODE;
   const host = amapServiceHost(import.meta.env.VITE_AMAP_SERVICE_HOST, {
     dev: import.meta.env.DEV,
     origin: window.location.origin,
@@ -61,6 +70,7 @@ function loadSDK() {
   if (!key) return Promise.reject(new Error("configuration"));
   if (!loading) {
     if (host) window._AMapSecurityConfig = { serviceHost: host };
+    else if (securityCode) window._AMapSecurityConfig = { securityJsCode: securityCode };
     loading = AMapLoader.load({
       key,
       version: "2.0",
