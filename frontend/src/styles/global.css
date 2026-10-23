@@ -1818,3 +1818,47 @@ main {
   background: #f8fafc;
 }
 
+
+/* Star distribution: bars rather than a chart library, because five numbers do not justify
+   pulling a plotting bundle into this page. The whole bar is a button. */
+.star-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+  height: 150px;
+  padding: 8px 4px 0;
+}
+.star-bar {
+  flex: 1;
+  height: 100%;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  border-radius: 8px;
+  transition: background 120ms ease;
+}
+.star-bar:hover,
+.star-bar.active {
+  background: #f1f5fb;
+}
+.star-bar-count {
+  font-size: 15px;
+  font-weight: 650;
+  color: #0f172a;
+}
+.star-bar-fill {
+  width: 46px;
+  max-height: 88px;
+  border-radius: 6px 6px 3px 3px;
+  min-height: 6px;
+}
+.star-bar-label {
+  font-size: 12px;
+  color: #64748b;
+}
