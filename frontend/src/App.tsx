@@ -19,6 +19,7 @@ const Venues = lazyWithReload(() => import('./pages/VenueIndex'));
 const PrivateData = lazyWithReload(() => import('./pages/PrivateData'));
 const Graph = lazyWithReload(() => import('./pages/KnowledgeGraph'));
 const Hotels = lazyWithReload(() => import('./pages/HotelIntelligence'));
+const HotelFinder = lazyWithReload(() => import('./pages/HotelFinder'));
 const Insights = lazyWithReload(() => import('./pages/DistrictInsights'));
 const DataQuality = lazyWithReload(() => import('./pages/DataQuality'));
 const Login = lazyWithReload(() => import('./pages/Login'));
@@ -58,6 +59,7 @@ export default function App({ initialAccount }: { initialAccount?: AccountState 
                   gated ones. FILING_MODE still redirects them during the ICP review, which asks
                   for a non-commercial information site. */}
               <Route path="/hotels" element={FILING_MODE ? <Navigate to="/map" replace/> : <Page name="酒店活动情报"><Hotels /></Page>}/>
+              <Route path="/find-hotels" element={FILING_MODE ? <Navigate to="/map" replace/> : <Page name="找酒店"><HotelFinder /></Page>}/>
               <Route path="/insights" element={FILING_MODE ? <Navigate to="/map" replace/> : <Page name="商圈洞察"><Insights /></Page>}/>
               <Route path="/evidence" element={<Page name="数据质量与来源"><DataQuality /></Page>}/>
               {/* The plan page is off the product while there is no paid tier; keeping the route

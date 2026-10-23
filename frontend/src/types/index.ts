@@ -74,6 +74,24 @@ export interface Hotel {
   tierLabel?: string | null;
   tierSource?: string | null;
   tierEvidence?: string | null;
+  /**
+   * Star grade as the source labelled it. Separate from tier on purpose: a brand can be
+   * high-end and still carry no star rating, and inventing one from the brand is the kind of
+   * guess this dataset refuses to make.
+   */
+  star?: HotelStar;
+}
+export interface HotelStar {
+  /** 5..1 for 五星级..一星级, null when only 经济型 was stated or nothing was. */
+  level: number | null;
+  label: string;
+  claimedStar: boolean;
+  status: "Verified" | "Unstated";
+  category: string | null;
+  source: string;
+  sourceUrl: string | null;
+  evidence: string | null;
+  rule?: string;
 }
 export interface District {
   id: string;

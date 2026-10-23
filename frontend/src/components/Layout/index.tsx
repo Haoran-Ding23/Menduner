@@ -6,6 +6,7 @@ import {
   CalendarOutlined,
   ApartmentOutlined,
   HomeOutlined,
+  BankOutlined,
   BarChartOutlined,
   SafetyCertificateOutlined,
   CrownOutlined,
@@ -68,6 +69,13 @@ export const pages: NavPage[] = [
     title: "知识图谱",
     label: "知识图谱",
     icon: <ApartmentOutlined />,
+  },
+  {
+    path: "/find-hotels",
+    title: "找酒店",
+    label: "找酒店",
+    icon: <BankOutlined />,
+    commercial: true,
   },
   {
     path: "/hotels",

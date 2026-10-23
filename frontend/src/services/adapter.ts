@@ -7,6 +7,7 @@ import type {
   Status,
   Coordinates,
   District,
+  HotelStar,
 } from "../types";
 import { categories, validDate, safeUrl, effectiveStatus } from "../utils/data";
 const text = (v: unknown): string | null =>
@@ -125,7 +126,29 @@ export function normalizeDataset(input: unknown): Dataset {
     districtDemo: v.districtDemo !== false,
     coordinates: coordinate(v.coordinates),
   }));
-  const hotels = array("hotels").map((v) => ({
+  const STAR_STATUSES = new Set(["Verified", "Unstated"]);
+
+/** Star grade as recorded by the backend; anything malformed is dropped rather than shown. */
+function starRecord(value: unknown): HotelStar | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  const raw = value as Record<string, unknown>;
+  const label = text(raw.label);
+  const status = text(raw.status);
+  if (!label || !status || !STAR_STATUSES.has(status)) return undefined;
+  return {
+    level: typeof raw.level === "number" ? raw.level : null,
+    label,
+    claimedStar: raw.claimedStar === true,
+    status: status as HotelStar["status"],
+    category: text(raw.category),
+    source: text(raw.source) ?? "高德分类标注",
+    sourceUrl: text(raw.sourceUrl),
+    evidence: text(raw.evidence),
+    rule: text(raw.rule) ?? undefined,
+  };
+}
+
+const hotels = array("hotels").map((v) => ({
     id: text(v.id) ?? "",
     name: text(v.name) ?? "未命名酒店",
     address: text(v.address),
@@ -136,6 +159,7 @@ export function normalizeDataset(input: unknown): Dataset {
     tierLabel: text(v.tierLabel),
     tierSource: text(v.tierSource),
     tierEvidence: text(v.tierEvidence),
+    star: starRecord(v.star),
   }));
   const districts = array("districts").map((d) => {
     // Administrative divisions carry a kind (市辖区 / 代管县级市); older rows carry a
