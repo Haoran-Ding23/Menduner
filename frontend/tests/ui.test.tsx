@@ -88,6 +88,8 @@ describe("Integrated platform routes and interactions", () => {
   it("shows overlapping multi-day calendar entries and navigates months", async () => {
     mount("/calendar?year=2026&month=10");
     await screen.findByRole("heading", { name: "活动日历" });
+    // Month view covers the multi-day overlap assertions below; the rolling week view has its
+    // own toggle.
     expect(
       screen.getAllByRole("button", { name: "D · 城市商业交流会" }),
     ).toHaveLength(4);

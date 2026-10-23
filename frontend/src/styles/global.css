@@ -1862,3 +1862,13 @@ main {
   font-size: 12px;
   color: #64748b;
 }
+
+/* Week view: seven tall columns rather than a month grid, because the question it answers is
+   which day this week is busy, and a short cell hides the second and third event of a day. */
+.calendar-grid-week .calendar-day {
+  min-height: 260px;
+  align-content: start;
+}
+.calendar-grid-week .day-label {
+  font-weight: 650;
+}
