@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
-import { Button, Tag, Modal, Alert, Space, message, Descriptions } from "antd";
+import { Button, Tag, Modal, Alert, Space, message, Descriptions, Drawer } from "antd";
 import {
   EnvironmentOutlined,
   DashboardOutlined,
@@ -19,6 +19,7 @@ import {
   UnorderedListOutlined,
   ShopOutlined,
   DatabaseOutlined,
+  AppstoreOutlined,
 } from "@ant-design/icons";
 import { usePlatform } from "../../hooks/usePlatform";
 import { canReview, useIdentity } from "../../hooks/useIdentity";
@@ -131,6 +132,7 @@ export default function PlatformLayout({
   children: React.ReactNode;
 }) {
   const location = useLocation();
+  const [moreOpen, setMoreOpen] = useState(false);
   const { dataset, filters, go, importData, resetData, dataMode, reloadData } =
     usePlatform();
   const { identity } = useIdentity();
@@ -181,7 +183,7 @@ const pageTitle = page?.title ?? AUTH_PAGE_TITLES[location.pathname] ?? "";
         </div>
         <nav>
           {navGroups.map((group) => (
-            <div key={group.name}>
+            <div key={group.name} className="nav-group">
               <div className="nav-section">{group.name}</div>
               {group.pages.map((p) => (
             <button
@@ -197,7 +199,38 @@ const pageTitle = page?.title ?? AUTH_PAGE_TITLES[location.pathname] ?? "";
               ))}
             </div>
           ))}
+          {/* 移动端底部只保留前几个主入口，其余收进「更多」：九个入口排成多行会占掉四分之一屏。 */}
+          <button className="nav-item nav-more" onClick={() => setMoreOpen(true)}>
+            <AppstoreOutlined />
+            <span>更多</span>
+          </button>
         </nav>
+        <Drawer
+          placement="bottom"
+          height="62vh"
+          open={moreOpen}
+          onClose={() => setMoreOpen(false)}
+          title="全部功能"
+        >
+          {navGroups.map((group) => (
+            <div key={group.name} className="drawer-group">
+              <div className="nav-section">{group.name}</div>
+              {group.pages.map((page) => (
+                <button
+                  key={page.path}
+                  className={"drawer-item " + (page.path === location.pathname ? "active" : "")}
+                  onClick={() => {
+                    setMoreOpen(false);
+                    go(page.path);
+                  }}
+                >
+                  {page.icon}
+                  <span>{page.label}</span>
+                </button>
+              ))}
+            </div>
+          ))}
+        </Drawer>
         <div className="sidebar-foot">
           <Tag color="cyan">ENT303TC · 第 14 组</Tag>
           <p>城市活动知识图谱</p>

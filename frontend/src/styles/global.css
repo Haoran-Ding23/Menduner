@@ -2007,3 +2007,42 @@ main {
 
 /* 图谱查询结果：假设与待补充各占一组，颜色区分，避免读者把推断当事实。 */
 .graph-queries { display: flex; flex-direction: column; gap: 4px; }
+
+/* --------------------------------------------------------------------------
+ F07 移动端导航：底栏只保留前两组主入口 +「更多」抽屉
+ 审核实测 390×844 下九个入口排成多行，占掉四分之一屏，首屏几乎看不到活动。
+ -------------------------------------------------------------------------- */
+.nav-more { display: none; }
+.drawer-group { margin-bottom: 10px; }
+.drawer-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  font: inherit;
+  color: #0f172a;
+  text-align: left;
+  cursor: pointer;
+}
+.drawer-item.active { background: #e8f0fe; color: #1d4ed8; font-weight: 600; }
+.drawer-item:active { background: #eef2f7; }
+
+@media (max-width: 760px) {
+  /* 只保留前两组（每天要用 / 活动浏览），其余进抽屉 */
+  .sidebar .nav-group:nth-child(n+3) { display: none; }
+  .sidebar .nav-more { display: flex; }
+  /* 抽屉把手与安全区：让「更多」始终点得到，不被 home indicator 挡住 */
+  .sidebar { padding-bottom: calc(14px + env(safe-area-inset-bottom)); }
+}
+
+/* F09 数据范围说明：把样本、窗口、半径与推荐集分开写，避免一个数字被当成三种含义。 */
+.workbench-scope {
+  margin: 0 0 12px;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: #64748b;
+}

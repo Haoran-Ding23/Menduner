@@ -273,6 +273,14 @@ export default function Workbench() {
         return start <= weekWindow.end && end >= weekWindow.start;
       })} />
 
+      {/* F09：把四个范围分开写，避免一个数字被当成三种含义（审核实测工作台 147 与酒店页 241
+          被读成矛盾，其实一个是全市窗口样本、一个是半径内匹配集）。 */}
+      <p className="workbench-scope">
+        样本：全市 {dataset.events.length} 个活动身份（已按来源去重）；窗口：未来 7 天{" "}
+        {weekWindow.start} 至 {weekWindow.end}（北京时间）；本店半径：15 km，距离按已核验坐标计算；
+        推荐集：以上条件下按规则排序取前 {worthWatching.length} 条
+      </p>
+
       <section className="panel gap-bottom">
         <div className="panel-heading">
           <h3 style={{ margin: 0 }}>未来七天值得关注</h3>
