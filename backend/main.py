@@ -15,6 +15,7 @@ from backend import dedupe
 from backend import tenants
 from backend import tracking
 from backend import graph_query
+from backend import market_area
 from backend import geo
 from backend import city_report
 from backend import weekly_report
@@ -154,6 +155,13 @@ def _is_https(request: Request) -> bool:
     """
     forwarded = (request.headers.get('x-forwarded-proto') or '').split(',')[0].strip()
     return forwarded == 'https'
+
+
+def _radius(value: int | None) -> int:
+    """半径只接受合理区间，避免一次请求扫全城或传负数。"""
+    if value is None:
+        return market_area.DEFAULT_RADIUS
+    return max(200, min(int(value), 5000))
 
 
 def _session_token(request: Request) -> str | None:
@@ -813,6 +821,26 @@ def create_app(db_path: Path | None = None):
             media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             headers={'Content-Disposition': 'attachment; filename*=UTF-8\'\'' + urllib.parse.quote(filename)},
         )
+
+    @app.get('/market/coverage')
+    def market_coverage(radius: int | None = None):
+        """商圈数据能力：有多少商圈有中心点、多少活动能匹配上、多少保留歧义。
+
+        商圈没有正式边界，这里的数字是「中心点周边估算范围」，接口里带 note 字段说明。
+        """
+        return market_area.coverage(path, _radius(radius))
+
+    @app.get('/market/areas')
+    def market_areas(radius: int | None = None):
+        return {'areas': market_area.ranking(path, _radius(radius))}
+
+    @app.get('/market/area/{area_id}')
+    def market_area_profile(area_id: str, radius: int | None = None,
+                            start: str | None = None, end: str | None = None):
+        try:
+            return market_area.profile(path, area_id, _radius(radius), start, end)
+        except KeyError:
+            raise HTTPException(status_code=404, detail='商圈不存在') from None
 
     @app.get('/geo/tree')
     def geo_tree():

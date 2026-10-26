@@ -2096,3 +2096,16 @@ main {
 
 /* F06 默认样例说明：把选择依据写在页面上，便于复核。 */
 .graph-sample-note { color: #475569; font-size: 12.5px; margin: 2px 0 4px; }
+
+/* 商圈洞察：横向统计行与条形对比 */
+.stat-row { display: flex; flex-wrap: wrap; gap: 26px; margin: 10px 0 4px; }
+.stat-row > div { display: flex; flex-direction: column; }
+.stat-row strong { font-size: 22px; color: #1f2937; }
+.stat-row small { color: #6b7280; font-size: 12px; }
+.bar-row { display: grid; grid-template-columns: 120px 1fr 48px; align-items: center; gap: 10px; padding: 3px 0; font-size: 13px; }
+.bar-track { background: #eef2f7; height: 8px; border-radius: 4px; overflow: hidden; }
+.bar-fill { background: #1d4ed8; height: 100%; }
+.bar-row strong { color: #334155; font-weight: 600; }
+.two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.plain-list { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.9; }
+@media (max-width: 900px) { .two-column { grid-template-columns: 1fr; } .bar-row { grid-template-columns: 88px 1fr 40px; } }
