@@ -2046,3 +2046,18 @@ main {
   line-height: 1.7;
   color: #64748b;
 }
+
+/* F12 数据来源条：更新时间 / 批次 / 口径版本，缺失显示未知，过期给出提示。 */
+.data-provenance {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  margin-top: 18px;
+  padding: 10px 2px 4px;
+  border-top: 1px solid #eef2f7;
+  font-size: 12px;
+  color: #94a3b8;
+}
+.data-provenance strong { color: #475569; font-weight: 600; }
+.data-provenance-warn { color: #b45309; }

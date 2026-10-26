@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, useRef } from "react";
+import DataProvenance from "../DataProvenance";
 import { useLocation } from "react-router-dom";
 import { Button, Tag, Modal, Alert, Space, message, Descriptions, Drawer } from "antd";
 import {
@@ -292,6 +293,7 @@ const pageTitle = page?.title ?? AUTH_PAGE_TITLES[location.pathname] ?? "";
         </header>
         <main>
           {children}
+          <DataProvenance />
         </main>
       </div>
       <Modal
