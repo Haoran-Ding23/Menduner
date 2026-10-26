@@ -30,6 +30,7 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 
 from backend import geo
+from backend.version import CALIBER_VERSION
 from backend.database import connect
 
 # 单次导出上限：既是防滥用，也让"生成失败要给明确错误"有确定边界。
@@ -235,6 +236,7 @@ def collect(db_path: Path, district_id: str, start: str | None = None,
             "generatedAt": datetime.now(timezone.utc).isoformat(),
             "dataThrough": max((event["startDate"] or "" for event in in_window), default="") or None,
             "batch": "公开活动快照（按去重身份计数，只读）",
+            "caliberVersion": CALIBER_VERSION,
             "scopeSize": len(scope),
         },
         "detail": detail,
@@ -334,6 +336,7 @@ def build_xlsx(report: dict) -> bytes:
         ("来源数", meta["sourceCount"]),
         ("统计范围（含子级地区数）", meta["scopeSize"]),
         ("数据批次", meta["batch"]),
+        ("口径版本", meta.get("caliberVersion")),
         ("数据截至", meta["dataThrough"] or "未知"),
         ("生成时间（UTC）", meta["generatedAt"][:19].replace("T", " ")),
         ("时间口径", "北京时间；日期区间相交即纳入，跨年活动在各自区间各出现一次"),

@@ -9,6 +9,8 @@ export interface PipelineStatus {
   verificationCounts: Record<Status, number>;
   lastUpdated: string | null;
   revision: number;
+  /** 后端口径版本（GPT Round 6 要求由后端提供，前端不维护副本）。 */
+  caliberVersion?: string | null;
   sources: {
     id: string;
     name: string;

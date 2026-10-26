@@ -10,8 +10,6 @@
  *   3. 时间按北京时间展示，且旧批次/过期数据要有提示。
  */
 
-export const CALIBER_VERSION = "caliber-2026.10 / geo-v1 / dedupe-v1";
-
 export interface ProvenanceInput {
   /** 后端返回的更新时间（ISO 字符串，可能缺失）。 */
   updatedAt?: string | null;
@@ -19,6 +17,8 @@ export interface ProvenanceInput {
   today: string;
   /** 超过多少天算旧数据。 */
   staleDays?: number;
+  /** 后端 /status 返回的口径版本；前端不维护副本。 */
+  caliberVersion?: string | null;
 }
 
 export interface Provenance {
@@ -26,7 +26,7 @@ export interface Provenance {
   updatedLabel: string;
   /** 批次标识：由更新时间派生；缺失为「未知」。 */
   batchId: string;
-  /** 口径版本。 */
+  /** 口径版本：来自后端 /status，缺失为「未知」。 */
   caliberVersion: string;
   /** 数据是否过期（无更新时间时视为未知，不算过期）。 */
   stale: boolean;
@@ -85,7 +85,7 @@ export function provenanceOf(input: ProvenanceInput): Provenance {
   return {
     updatedLabel: beijingTimestamp(input.updatedAt),
     batchId: batchOf(input.updatedAt),
-    caliberVersion: CALIBER_VERSION,
+    caliberVersion: input.caliberVersion?.trim() || "未知",
     stale,
     note,
   };

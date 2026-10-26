@@ -24,6 +24,23 @@ import type { Event, Evidence, Status } from "../../types";
  *
  * Everything here comes from public read endpoints — no login, no write, no internal queue.
  */
+/** F10：公开页把内部字段名映射成业务名称；映射集中一处，避免各处写法不一致。 */
+const FIELD_LABELS: Record<string, string> = {
+  name: "活动名称",
+  startDate: "开始日期",
+  endDate: "结束日期",
+  venueId: "举办场馆",
+  districtId: "所属地区",
+  category: "活动类别",
+  organizer: "主办方",
+  sponsor: "赞助方",
+  attendance: "参与人数",
+  location: "活动地点",
+  city: "城市",
+  coordinates: "场馆坐标",
+  sourceUrl: "来源链接",
+};
+
 export default function DataQuality() {
   // 证据页必须逐条可见：使用未去重的原始集合，否则「同一活动的另一条来源记录」在合并后
   // 就查不到字段冲突与来源了。
@@ -348,7 +365,7 @@ export default function DataQuality() {
                   width: 140,
                   render: (_, e) => (
                     <>
-                      <strong>{e.field}</strong>
+                      <strong>{FIELD_LABELS[e.field] ?? e.field}</strong>
                       {reviewer && <small className="block muted">{e.entityId}</small>}
                       {entityVenue && e.entityId === entityVenue.id && (
                         <Button

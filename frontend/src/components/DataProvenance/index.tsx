@@ -10,8 +10,12 @@ import { provenanceOf } from "../../utils/provenance";
  * 因为一个三天前的数字看起来和刚抓的数字一模一样，这是最容易误导人的地方。
  */
 export default function DataProvenance() {
-  const { dataset } = usePlatform();
-  const provenance = provenanceOf({ updatedAt: dataset.updatedAt, today: beijingToday() });
+  const { dataset, pipelineStatus } = usePlatform();
+  const provenance = provenanceOf({
+    updatedAt: dataset.updatedAt,
+    today: beijingToday(),
+    caliberVersion: pipelineStatus?.caliberVersion,
+  });
 
   return (
     <footer className="data-provenance" aria-label="数据来源与版本">

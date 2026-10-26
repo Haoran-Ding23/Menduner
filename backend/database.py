@@ -1,4 +1,5 @@
 """Small SQLite store; each request uses its own connection and read snapshot."""
+from backend.version import CALIBER_VERSION
 import json
 import os
 import sqlite3
@@ -100,7 +101,8 @@ def snapshot(path):
         status = {'sourceCount': len(sources), 'mockSourceCount': sum(s['mock'] for s in sources),
                   'eventCount': len(events), 'demoEventCount': sum(e['demo'] for e in events),
                   'verificationCounts': counts, 'lastUpdated': last['updated_at'] if last else None,
-                  'revision': last['id'] if last else 0, 'sources': sources}
+                  'revision': last['id'] if last else 0, 'sources': sources,
+                  'caliberVersion': CALIBER_VERSION}
         return dict(events=events, evidence=evidence, **resources, updatedAt=status['lastUpdated'], status=status)
 
 

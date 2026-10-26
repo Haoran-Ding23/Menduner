@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  CALIBER_VERSION,
   batchOf,
   beijingTimestamp,
   daysSince,
@@ -65,8 +64,11 @@ describe("新鲜度", () => {
     expect(unknown.note).toContain("未知");
   });
 
-  it("口径版本是具名常量，便于与导出文件对照", () => {
-    expect(CALIBER_VERSION).toContain("caliber");
-    expect(provenanceOf({ today: "2026-10-26" }).caliberVersion).toBe(CALIBER_VERSION);
+  it("口径版本来自后端，缺失显示「未知」", () => {
+    expect(provenanceOf({ today: "2026-10-26" }).caliberVersion).toBe("未知");
+    expect(
+      provenanceOf({ today: "2026-10-26", caliberVersion: "2026.10-caliber1-geo1-dedupe1" })
+        .caliberVersion,
+    ).toBe("2026.10-caliber1-geo1-dedupe1");
   });
 });
