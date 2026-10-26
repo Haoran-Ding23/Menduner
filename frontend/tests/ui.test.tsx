@@ -114,12 +114,17 @@ fireEvent.click(screen.getByRole("switch", { name: "包含演示数据" }));
       screen.getAllByRole("button", { name: "D · 民俗故事分享会" }),
     ).toHaveLength(6);
   });
-  it("renders the knowledge graph with its default sample", async () => {
+  it("opens the inspector for the default sample's own venue", async () => {
     mount("/graph");
     await screen.findByRole("heading", { name: "知识图谱" });
-    // F06 把默认样例改为按「关系完整度」选择后，原测试依赖的固定场馆节点不再保证出现。
-    // 这里退回渲染级断言；节点详情交互的测试待下一轮随样例说明一起补回。
-    expect(screen.getByText("用问题查图谱")).toBeInTheDocument();
+    // F06 要求恢复「节点详情」交互测试：默认样例改为规则选择后，不能再点写死的场馆名。
+    // 这里从页面上的「选择依据：场馆已关联（XXX）」里取出该样例自己的场馆名，再点它。
+    const note = await screen.findByText(/选择依据：/);
+    const match = /场馆已关联（(.+?)）/.exec(note.textContent ?? "");
+    expect(match).not.toBeNull();
+    const venueName = match![1];
+    fireEvent.click(screen.getAllByText(venueName)[0]);
+    expect(await screen.findByText(/节点详情/)).toBeInTheDocument();
   });
   it("shows computed hotel distances without missing-coordinate events", async () => {
     mount("/hotels");

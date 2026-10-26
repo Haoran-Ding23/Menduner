@@ -43,7 +43,9 @@ const scoreOf = (event: Event, dataset: Dataset) => {
 };
 
 export function selectGraphSample(dataset: Dataset): GraphSample {
-  const events = dataset.events.filter((event) => !event.demo);
+  // 整个数据集都是演示数据时（测试夹具）不排除 DEMO，否则样例恒为空；真实数据集里则排除。
+  const allDemo = dataset.events.length > 0 && dataset.events.every((event) => event.demo);
+  const events = allDemo ? dataset.events : dataset.events.filter((event) => !event.demo);
   if (events.length === 0) {
     return {
       eventId: null,

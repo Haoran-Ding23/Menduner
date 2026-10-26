@@ -1,8 +1,10 @@
 /**
- * F08 移动端补测：390×844 下切到「地图」视图，确认地图渲染、再切回列表不丢筛选。
+ * F08 移动端交互补测（GPT Round 9 要求）。
  *
- * 单独成文件，避免和桌面测量脚本互相牵连（那次把模板字符串写进 node 脚本，
- * 被 ${} 插值吃掉，脚本直接跑不起来）。
+ * 390×844 下要证明的不只是「地图有高度」，而是：
+ *   1. 列表优先视图里能看到「地图」切换入口；
+ *   2. 切换后地图真的渲染出标记（数量 > 0），且能点开一个标记；
+ *   3. 切回列表后，原有筛选（类别下拉）保持不变，不因切换被重置。
  *
  * 用法：node scripts/cdp-mobile-check.mjs https://entgroup14.com
  */
@@ -10,37 +12,40 @@ const BASE = process.argv[2] ?? "https://entgroup14.com";
 const DEBUG = process.argv[3] ?? "http://127.0.0.1:9345";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-const WATCHDOG = setTimeout(() => { console.error("看门狗：超时"); process.exit(2); }, 90000);
+const WATCHDOG = setTimeout(() => { console.error("看门狗：超时"); process.exit(2); }, 120000);
 
 const PROBE = [
-  '(function () {',
-  '  var all = Array.prototype.slice.call(document.querySelectorAll("button, [role=\\"radio\\"], label, div"));',
-  '  function byText(t) {',
-  '    for (var i = all.length - 1; i >= 0; i--) { if ((all[i].innerText || "").trim() === t) return all[i]; }',
-  '    return null;',
+  '(async function () {',
+  '  var all = function () { return Array.prototype.slice.call(document.querySelectorAll("button, [role=\\"radio\\"], label, div")); };',
+  '  function byText(t) { var list = all(); for (var i = list.length - 1; i >= 0; i--) { if ((list[i].innerText || "").trim() === t) return list[i]; } return null; }',
+  '  function markerCount() { return document.querySelectorAll(".map-marker, .map-marker-hotspot").length; }',
+  '  function filterValue() {',
+  '    var sel = document.querySelector(".filterbar .ant-select-selection-item");',
+  '    return sel ? (sel.getAttribute("title") || sel.innerText || "").trim() : null;',
   '  }',
   '  var entry = byText("地图");',
-  '  var listOnly = !!document.querySelector(".event-list");',
-  '  var mapHidden = !document.querySelector(".map-shell");',
-  '  if (!entry) return Promise.resolve({ entryVisible: false, listOnly: listOnly, mapHidden: mapHidden });',
+  '  var beforeFilter = filterValue();',
+  '  if (!entry) return { entryVisible: false, beforeFilter: beforeFilter };',
   '  entry.click();',
-  '  return new Promise(function (resolve) {',
-  '    setTimeout(function () {',
-  '      var el = document.querySelector(".map-shell");',
-  '      var rect = el ? el.getBoundingClientRect() : null;',
-  '      var back = byText("活动列表");',
-  '      if (back) back.click();',
-  '      setTimeout(function () {',
-  '        resolve({',
-  '          entryVisible: true,',
-  '          mapHeight: rect ? Math.round(rect.height) : 0,',
-  '          mapHasSize: rect ? rect.height > 100 : false,',
-  '          listBack: !!document.querySelector(".event-list"),',
-  '          monthsCollapsed: !document.querySelector(".months"),',
-  '        });',
-  '      }, 900);',
-  '    }, 1800);',
-  '  });',
+  '  await new Promise(function (r) { setTimeout(r, 2000); });',
+  '  var markers = markerCount();',
+  '  var markerEl = document.querySelector(".map-marker, .map-marker-hotspot");',
+  '  var clicked = false;',
+  '  if (markerEl) { markerEl.click(); clicked = true; await new Promise(function (r) { setTimeout(r, 1200); }); }',
+  '  var detailText = (document.body.innerText || "").slice(0, 4000);',
+  '  var back = byText("活动列表");',
+  '  if (back) back.click();',
+  '  await new Promise(function (r) { setTimeout(r, 1000); });',
+  '  return {',
+  '    entryVisible: true,',
+  '    markers: markers,',
+  '    markerClicked: clicked,',
+  '    detailOpened: /活动详情|查看详情|场馆|来源/.test(detailText),',
+  '    listBack: !!document.querySelector(".event-list"),',
+  '    beforeFilter: beforeFilter,',
+  '    afterFilter: filterValue(),',
+  '    filterPreserved: beforeFilter === filterValue(),',
+  '  };',
   '})()',
 ].join("\n");
 
@@ -69,7 +74,7 @@ async function main() {
   const send = (method, params = {}) =>
     new Promise((resolve, reject) => {
       const mid = ++id;
-      const t = setTimeout(() => { pending.delete(mid); reject(new Error("超时:" + method)); }, 20000);
+      const t = setTimeout(() => { pending.delete(mid); reject(new Error("超时:" + method)); }, 25000);
       pending.set(mid, {
         resolve: (v) => { clearTimeout(t); resolve(v); },
         reject: (e) => { clearTimeout(t); reject(e); },
@@ -81,12 +86,19 @@ async function main() {
   await send("Runtime.enable");
   await send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
   await send("Page.navigate", { url: BASE + "/map" });
-  await sleep(4500);
+  await sleep(5000);
   const result = await send("Runtime.evaluate", { expression: PROBE, returnByValue: true, awaitPromise: true });
   const value = result.result ? result.result.value : null;
-  console.log("  移动端补测结果:", JSON.stringify(value));
-  const ok = value && value.entryVisible && value.mapHasSize && value.listBack;
-  console.log(ok ? "[PASS] 切换入口可见、地图渲染有高度、切回列表正常" : "[FAIL] 见上");
+  console.log("  移动端交互补测:", JSON.stringify(value));
+
+  const ok =
+    value &&
+    value.entryVisible &&
+    value.markers > 0 &&
+    value.markerClicked &&
+    value.listBack &&
+    value.filterPreserved !== false;
+  console.log(ok ? "[PASS] 切换入口可见、标记可点、切回列表筛选保持" : "[FAIL] 见上");
   await send("Emulation.clearDeviceMetricsOverride");
   socket.close();
   clearTimeout(WATCHDOG);

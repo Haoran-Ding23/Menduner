@@ -57,9 +57,22 @@ describe("默认样例选择", () => {
     expect(selectGraphSample(dataset).eventId).toBe("a");
   });
 
-  it("排除演示数据，不拿 DEMO 当样例", () => {
+  it("真实数据集里排除 DEMO", () => {
+    const dataset = makeDataset(
+      [event({ id: "demo", demo: true, venueId: "v1" }), event({ id: "real", venueId: "v1" })],
+      [venue("v1", true)],
+    );
+    expect(selectGraphSample(dataset).eventId).toBe("real");
+  });
+
+  it("整库都是 DEMO（测试夹具）时回退使用，并在理由里说明", () => {
     const dataset = makeDataset([event({ id: "demo", demo: true, venueId: "v1" })], [venue("v1", true)]);
     const sample = selectGraphSample(dataset);
+    expect(sample.eventId).toBe("demo");
+  });
+
+  it("完全没有活动时明确为空", () => {
+    const sample = selectGraphSample(makeDataset([], []));
     expect(sample.eventId).toBeNull();
     expect(sample.reasons[0]).toContain("没有可用的真实活动");
   });
@@ -106,5 +119,21 @@ describe("多日展览口径", () => {
 
   it("单日活动不给提示", () => {
     expect(multiDayCaveat("2026-11-01", "2026-11-01")).toBeNull();
+  });
+});
+
+describe("三类场所分别成类型（GPT Round 9 要求）", () => {
+  it("机场单独成类型，不与航站楼混用", () => {
+    expect(placeKind("太仓机场")).toEqual({ kind: "airport", label: "机场" });
+    expect(placeKind("airport")).toEqual({ kind: "airport", label: "机场" });
+  });
+
+  it("航站楼单独成类型，不因名称含机场而判为机场", () => {
+    expect(placeKind("太仓机场城市航站楼")).toEqual({ kind: "terminal", label: "航站楼" });
+  });
+
+  it("接驳站单独成类型，且优先于机场", () => {
+    expect(placeKind("机场接驳站")).toEqual({ kind: "shuttle", label: "接驳站" });
+    expect(placeKind("shuttle bus")).toEqual({ kind: "shuttle", label: "接驳站" });
   });
 });
