@@ -119,7 +119,10 @@ describe("V1.2 traceable city event intelligence", () => {
   });
   it("compares city resources without forecast or opportunity score panels", async () => {
     mount("/insights");
-    await screen.findByRole("heading", { name: "商圈资源比较" });
+    await screen.findByRole("heading", { name: "地区资源比较" });
+    // F05：行政区与商业商圈必须分表，避免「按区」和「按商圈」被读成同一口径。
+    expect(await screen.findByRole("heading", { name: /行政区/ })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /商业商圈/ })).toBeInTheDocument();
     expect(
       screen.getAllByText("活动场馆集中度").length,
     ).toBeGreaterThan(0);

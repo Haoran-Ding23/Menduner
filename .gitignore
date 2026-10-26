@@ -72,3 +72,7 @@ shot-*.png
 # Generated weekly reports used to eyeball the export; never committed.
 shot-report.*
 
+
+# Local database copies and backups; never committed (the production DB lives on the server).
+data/
+

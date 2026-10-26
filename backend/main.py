@@ -14,6 +14,7 @@ from backend import dedupe
 from backend import tenants
 from backend import tracking
 from backend import graph_query
+from backend import geo
 from backend import weekly_report
 from backend.amap import amap_place_url
 from backend import venues as venue_store
@@ -782,6 +783,19 @@ def create_app(db_path: Path | None = None):
         if not removed:
             raise HTTPException(status_code=404, detail='没有这条跟进记录')
         return {'removed': event_key}
+
+    @app.get('/geo/tree')
+    def geo_tree():
+        """地理层级树：行政区（市/县级市/区/街道）与商业商圈分开，父级未知的进未归属。
+
+        只读。行政编码与商圈自身 id 是不同字段，功能区单列（审核 F05 要求）。
+        """
+        return geo.build_tree(path)
+
+    @app.get('/geo/coverage')
+    def geo_coverage():
+        """按层级统计实体挂载数量与未解决父级的清单，便于解释「按区」和「按商圈」两种口径。"""
+        return geo.coverage(path)
 
     @app.get('/graph/venue/{venue_id}')
     def graph_venue(venue_id: str, today: str | None = None):
