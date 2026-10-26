@@ -76,3 +76,10 @@ shot-report.*
 # Local database copies and backups; never committed (the production DB lives on the server).
 data/
 
+
+# 生成物的预览图与中转 PDF（成品 pptx/docx 保留）
+deliverables/preview-*/
+deliverables/pdf-*/
+deliverables/*.pdf
+deliverables/.check-*.json
+deliverables/.final-*.json
