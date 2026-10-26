@@ -25,6 +25,23 @@ import type { Event, Evidence, Status } from "../../types";
  * Everything here comes from public read endpoints — no login, no write, no internal queue.
  */
 /** F10：公开页把内部字段名映射成业务名称；映射集中一处，避免各处写法不一致。 */
+/** F10：把证据值里的内部 ID 换成可读名称，避免普通用户看到 venue-xxx / district-xxx。 */
+function readableValue(
+  field: string,
+  value: unknown,
+  venueNames: Map<string, string>,
+  districtNames: Map<string, string>,
+): unknown {
+  if (typeof value !== "string") return value;
+  if (field === "venueId") {
+    return venueNames.get(value) ?? "场馆名称待补充";
+  }
+  if (field === "districtId") {
+    return districtNames.get(value) ?? "地区待补充";
+  }
+  return value;
+}
+
 const FIELD_LABELS: Record<string, string> = {
   name: "活动名称",
   startDate: "开始日期",
@@ -50,6 +67,8 @@ export default function DataQuality() {
   const reviewer = canReview(identity);
   const { repository, selected, update } = platform;
   const dataset = platform.rawDataset ?? platform.dataset;
+  const VENUE_NAMES = new Map(dataset.venues.map((v) => [v.id, v.name]));
+  const DISTRICT_NAMES = new Map(dataset.districts.map((d) => [d.id, d.name]));
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   // Quality is reviewed per region. 吴中区 holds 356 events and 太仓 123, so one global

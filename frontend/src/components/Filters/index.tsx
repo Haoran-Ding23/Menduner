@@ -48,6 +48,8 @@ export default function Filters({
   ];
 
   const [showMore, setShowMore] = useState(false);
+  // F08：月份是低频控制，默认折叠；折叠时按钮显示当前选择，展开/收起不改变筛选。
+  const [showMonths, setShowMonths] = useState(false);
 
   return (
     <div className="filterbar">
@@ -108,6 +110,13 @@ export default function Filters({
         )}
       </Space>
       {months && (
+        <div className="months-toggle">
+          <Button size="small" type="text" onClick={() => setShowMonths((v) => !v)}>
+            {showMonths ? "收起月份" : `月份：${filters.month} 月`}
+          </Button>
+        </div>
+      )}
+      {months && showMonths && (
         <div className="months">
           {Array.from({ length: 12 }, (_, i) => (
             <Button

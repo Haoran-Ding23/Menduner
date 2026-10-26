@@ -2061,3 +2061,35 @@ main {
 }
 .data-provenance strong { color: #475569; font-weight: 600; }
 .data-provenance-warn { color: #b45309; }
+
+/* --------------------------------------------------------------------------
+ F08 首屏密度：把统计卡压成一行、收紧标题与筛选区间距，让地图进入首屏。
+ 只改布局与字号，不改任何查询与口径。
+ -------------------------------------------------------------------------- */
+.page-heading { margin-bottom: 10px; }
+.page-heading h1 { margin: 4px 0 2px; }
+.filterbar { gap: 8px; padding: 10px 12px; }
+.caliber-bar { padding: 8px 12px; margin-bottom: 8px; }
+.months-toggle { display: flex; }
+.stats-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  padding: 8px 14px;
+  margin-bottom: 8px;
+}
+.stats-strip > div { padding: 0; }
+.stats-strip small { display: inline; margin-right: 4px; }
+.stats-strip strong { font-size: 17px; }
+.map-layout { --map-h: 560px; }
+@media (max-width: 1280px) {
+  .map-layout { --map-h: 520px; }
+}
+
+/* F08 第二轮：窄桌面收起重复统计条与历史条（口径条已给出同样的数字），把首屏让给地图。 */
+@media (max-width: 1520px) {
+  .stats-strip, .history-bar { display: none; }
+}
+.page-heading h1 { font-size: 26px; margin: 2px 0 0; }
+.page-heading { margin-bottom: 8px; }
+.filterbar { padding: 8px 12px; }
