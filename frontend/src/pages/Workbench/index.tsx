@@ -75,7 +75,10 @@ export default function Workbench() {
     }
   });
   const [changes, setChanges] = useState<Changes | null>(null);
-  const [followups, setFollowups] = useState<Followup[]>([]);
+    // 跟进列表必须显示活动名，不能给客户看 evt-xxx 这种内部 ID
+  const eventNameOf = (key: string) =>
+    dataset.events.find((event) => event.id === key || event.canonicalId === key)?.name ?? '活动名称待补充';
+const [followups, setFollowups] = useState<Followup[]>([]);
   const [followupError, setFollowupError] = useState("");
   const [busy, setBusy] = useState("");
 
@@ -402,7 +405,7 @@ export default function Workbench() {
             {followups.map((row) => (
               <article className="workbench-row" key={row.eventKey}>
                 <div className="workbench-main">
-                  <strong>{row.eventKey}</strong>
+                  <strong>{eventNameOf(row.eventKey)}</strong>
                   <small className="muted">
                     {row.stateLabel} · 更新于 {row.updatedAt.slice(0, 16).replace("T", " ")}
                     {row.note ? ` · ${row.note}` : ""}
