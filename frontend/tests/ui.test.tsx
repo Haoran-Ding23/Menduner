@@ -63,6 +63,8 @@ describe("Integrated platform routes and interactions", () => {
     expect(
       screen.getByRole("button", { name: /城市商业交流会/ }),
     ).toBeInTheDocument();
+    // F08：月份行改为折叠控件，先展开再选月份。
+    fireEvent.click(screen.getByRole("button", { name: /月份：/ }));
     fireEvent.click(screen.getByRole("button", { name: "11月" }));
     expect(
       screen.queryByRole("button", { name: /城市商业交流会/ }),
