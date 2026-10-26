@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { multiDayCaveat, selectGraphSample } from "../../utils/graphSample";
 import GraphQueries from "../../components/GraphQueries";
 import {
   ReactFlow,
@@ -69,7 +70,10 @@ function relatedPosition(index: number) {
 export default function KnowledgeGraph() {
   const { repository, dataset, selected, update, openEvent, go, params } =
     usePlatform();
-  const id = selected ?? dataset.events[0]?.id ?? "";
+  // F06：默认样例由 selectGraphSample 按「关系完整度」选出，规则可复核、结果可复现，
+  // 不再固定取 dataset.events[0]（那可能是一条没有场馆的孤立记录）。
+  const sample = selectGraphSample(dataset);
+  const id = selected ?? sample.eventId ?? "";
   // The MiniMap is a 200x150 overlay that would cover a third of a phone screen, and React
   // Flow measures it for the fit calculation. It is not rendered below the 760px breakpoint.
   const small = useIsSmallScreen();
