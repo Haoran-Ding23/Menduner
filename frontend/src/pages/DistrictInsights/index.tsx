@@ -26,12 +26,13 @@ import {
  *   2. 行政区口径：活动本来就挂在行政区上，这是原始归属；两个口径不能相加，也不能互相冒充。
  */
 const RADII = [800, 1200, 1500];
+const DEFAULT_RADIUS = 800;
 
 export default function DistrictInsights() {
   const { dataset, filters } = usePlatform();
   const { state: accountState } = useAccount();
 
-  const [radius, setRadius] = useState(1200);
+  const [radius, setRadius] = useState(DEFAULT_RADIUS);
   const [coverage, setCoverage] = useState<MarketCoverage | null>(null);
   const [areas, setAreas] = useState<MarketAreaRow[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
@@ -121,7 +122,7 @@ export default function DistrictInsights() {
         type="info"
         showIcon
         className="gap-bottom"
-        message="商圈没有官方边界，这里的数字是「中心点周边活动（估算范围）」"
+        message="商圈没有官方边界，这里是「中心点近邻分析范围」内的活动，不是商圈内活动总量"
         description={
           coverage
             ? coverage.areaCount +
@@ -181,6 +182,29 @@ export default function DistrictInsights() {
             </div>
           </div>
         )}
+        {coverage?.comparisons?.length ? (
+          <table className="compare-table">
+            <thead>
+              <tr>
+                <th>近邻半径</th>
+                <th>唯一近邻</th>
+                <th>保留歧义</th>
+                <th>未匹配</th>
+              </tr>
+            </thead>
+            <tbody>
+              {coverage.comparisons.map((row) => (
+                <tr key={row.radiusMeters} className={row.radiusMeters === radius ? "active" : ""}>
+                  <td>{row.radiusMeters} 米</td>
+                  <td>{row.uniqueNear}</td>
+                  <td>{row.ambiguous}</td>
+                  <td>{row.unmatched}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : null}
+
         <p className="muted" style={{ marginTop: 10 }}>
           分母：去重后共 {coverage?.eventsTotal ?? "—"} 个活动身份，
           {coverage?.eventsUnmatched ?? "—"} 个因缺少已核验坐标或不在任何商圈半径内而无法归属。
@@ -242,6 +266,39 @@ export default function DistrictInsights() {
               {profile.area.center.system ?? "—"}｜来源 {profile.area.center.source ?? "—"}｜匹配级别{" "}
               {profile.area.center.matchLevel ?? "—"}｜半径 {profile.area.radiusMeters} 米
             </p>
+
+            {profile.supplyProfile && (
+              <>
+                <h4 style={{ marginTop: 4 }}>周边活动供给画像</h4>
+                <div className="stat-row">
+                  <div>
+                    <strong>{profile.supplyProfile.uniqueActivities}</strong>
+                    <small>唯一活动数</small>
+                  </div>
+                  <div>
+                    <strong>{profile.supplyProfile.coveredDays}</strong>
+                    <small>活动覆盖天数</small>
+                  </div>
+                  <div>
+                    <strong>{profile.supplyProfile.venues}</strong>
+                    <small>关联场馆</small>
+                  </div>
+                  <div>
+                    <strong>{Math.round(profile.supplyProfile.sourceCoverageRate * 100)}%</strong>
+                    <small>来源覆盖率</small>
+                  </div>
+                  <div>
+                    <strong>{Math.round(profile.supplyProfile.spatialMatchRate * 100)}%</strong>
+                    <small>空间匹配率</small>
+                  </div>
+                  <div>
+                    <strong>{Math.round(profile.supplyProfile.ambiguityRate * 100)}%</strong>
+                    <small>歧义率</small>
+                  </div>
+                </div>
+                <p className="muted">{profile.supplyProfile.note}</p>
+              </>
+            )}
 
             <div className="two-column">
               <div>

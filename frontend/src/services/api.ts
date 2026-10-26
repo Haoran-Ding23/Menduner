@@ -408,8 +408,29 @@ export async function loadApiDataset(
 }
 
 // ---- 商圈（business area）聚合：数据来自后端 /market/*，前端不做距离计算 ----
+export interface MarketRadiusRow {
+  radiusMeters: number;
+  uniqueNear: number;
+  ambiguous: number;
+  unmatched: number;
+}
+
+export interface MarketSupplyProfile {
+  uniqueActivities: number;
+  coveredDays: number;
+  venues: number;
+  sourceCoverageRate: number;
+  spatialMatchRate: number;
+  ambiguityRate: number;
+  note: string;
+}
+
 export interface MarketCoverage {
   radiusMeters: number;
+  radiusLabel: string;
+  identitiesTotal: number;
+  coordsUsable: number;
+  comparisons: MarketRadiusRow[];
   areaCount: number;
   areaWithCenter: number;
   areaVerified: number;
@@ -481,6 +502,7 @@ export interface MarketAreaProfile {
     venuesWithVerifiedCoords: number;
     venuesTotal: number;
   };
+  supplyProfile: MarketSupplyProfile;
   categories: [string, number][];
   months: [string, number][];
   hotels: { name: string; distanceMeters: number; starLabel: string | null }[];

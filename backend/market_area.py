@@ -17,7 +17,8 @@ from datetime import date
 
 from backend.database import connect
 
-DEFAULT_RADIUS = 1200
+DEFAULT_RADIUS = 800
+COMPARISON_RADII = (800, 1200, 1500)
 WEAK_POI_HINTS = ("地铁站", "村", "市", "路(", "(站)")
 
 
@@ -41,7 +42,7 @@ def load(db_path) -> dict:
         canonical = "COALESCE(canonical_id, id)" if "canonical_id" in columns else "id"
         events = [dict(row) for row in con.execute(
             f"SELECT id, {canonical} AS identity, name, category, startDate, endDate, venue, "
-            "district FROM events")]
+            "district, source FROM events")]
     return {"districts": districts, "venues": venues, "hotels": hotels, "events": events}
 
 
@@ -137,9 +138,21 @@ def assign(data: dict, radius: int = DEFAULT_RADIUS) -> dict:
                 "identity": event["identity"], "name": event["name"], "category": event["category"],
                 "startDate": event["startDate"], "endDate": event["endDate"],
                 "district": event["district"], "distanceMeters": hit["distanceMeters"],
+                "venue": event["venue"], "source": event["source"],
             })
     return {"areas": areas, "decisions": decisions, "counts": counts, "perArea": per_area,
             "parents": parents}
+
+
+def usable_coord_identities(data: dict) -> int:
+    """有多少去重身份的活动拿到了可用场馆坐标（Verified + GCJ-02）。"""
+    venues = {v["id"]: v for v in data["venues"]}
+    seen = set()
+    for event in data["events"]:
+        venue = venues.get(event.get("venue") or "")
+        if venue and _coords(venue):
+            seen.add(event["identity"])
+    return len(seen)
 
 
 def coverage(db_path, radius: int = DEFAULT_RADIUS) -> dict:
@@ -147,8 +160,21 @@ def coverage(db_path, radius: int = DEFAULT_RADIUS) -> dict:
     result = assign(data, radius)
     venues_with_coords = sum(1 for v in data["venues"] if _coords(v))
     total_identities = len({e["identity"] for e in data["events"]})
+    comparisons = []
+    for value in COMPARISON_RADII:
+        other = result if value == radius else assign(data, value)
+        comparisons.append({
+            "radiusMeters": value,
+            "uniqueNear": other["counts"]["nearby"],
+            "ambiguous": other["counts"]["ambiguous"],
+            "unmatched": other["counts"]["none"],
+        })
     return {
         "radiusMeters": radius,
+        "radiusLabel": "近邻分析范围（未经验证的商圈边界）",
+        "identitiesTotal": total_identities,
+        "coordsUsable": usable_coord_identities(data),
+        "comparisons": comparisons,
         "areaCount": len(result["areas"]),
         "areaWithCenter": len(result["areas"]),
         "areaVerified": sum(1 for a in result["areas"] if a["quality"] == "verified"),
@@ -231,6 +257,33 @@ def profile(db_path, area_id: str, radius: int = DEFAULT_RADIUS,
     hotels.sort(key=lambda item: item["distanceMeters"])
 
     parent_events = sum(1 for e in data["events"] if e["district"] == area["parentId"])
+
+    # 供给画像：只描述「我们观测到的活动供给」，不叫消费、不叫经济贡献
+    covered_days = 0
+    for item in nearby:
+        begin = item.get("startDate")
+        if not begin:
+            continue
+        finish = item.get("endDate") or begin
+        if finish < begin:
+            finish = begin
+        if start and begin < start:
+            begin = start
+        if end and finish > end:
+            finish = end
+        try:
+            covered_days += max(0, (date.fromisoformat(finish) - date.fromisoformat(begin)).days + 1)
+        except ValueError:
+            continue
+    venue_ids = {item.get("venue") for item in nearby if item.get("venue")}
+    with_source_url = 0
+    if nearby:
+        with connect(db_path) as con:
+            source_rows = {row[0]: row[1] for row in con.execute("SELECT id, source_url FROM sources")}
+        for item in nearby:
+            if source_rows.get(item.get("source")):
+                with_source_url += 1
+
     return {
         "area": {
             "id": area_id, "name": area["name"],
@@ -258,6 +311,16 @@ def profile(db_path, area_id: str, radius: int = DEFAULT_RADIUS,
             "unmatchedInParent": max(0, parent_events - len(bucket["nearby"]) - len(bucket["ambiguous"])),
             "venuesWithVerifiedCoords": sum(1 for v in data["venues"] if _coords(v)),
             "venuesTotal": len(data["venues"]),
+        },
+        "supplyProfile": {
+            "uniqueActivities": len(nearby),
+            "coveredDays": covered_days,
+            "venues": len(venue_ids),
+            "sourceCoverageRate": round(with_source_url / len(nearby), 3) if nearby else 0.0,
+            "spatialMatchRate": round(len(nearby) / parent_events, 3) if parent_events else 0.0,
+            "ambiguityRate": round(len(ambiguous) / (len(nearby) + len(ambiguous)), 3)
+            if (nearby or ambiguous) else 0.0,
+            "note": "供给画像只描述我们观测到的活动供给，不代表消费额、客流或经济贡献。",
         },
         "categories": sorted(categories.items(), key=lambda kv: -kv[1]),
         "months": sorted(months.items()),

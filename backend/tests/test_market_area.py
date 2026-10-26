@@ -170,3 +170,30 @@ def test_ranking_sorted_by_nearby_then_name(db):
     assert rows[0]["id"] == "area-a"
     assert rows[0]["nearbyEvents"] == 2
     assert rows[0]["parentName"] == "姑苏区"
+
+def test_supply_profile_is_not_consumption(db):
+    """GPT Round 15：替代指标是「供给画像」，不能出现消费额/客流字样。"""
+    with connect(db) as con:
+        add_event(con, "e-a", "v-a", start="2026-11-10", end="2026-11-12")
+    profile = market_area.profile(db, "area-a", 800)
+    supply = profile["supplyProfile"]
+    assert supply["uniqueActivities"] == 1
+    assert supply["coveredDays"] == 3
+    assert supply["venues"] == 1
+    assert 0 <= supply["sourceCoverageRate"] <= 1
+    assert 0 <= supply["ambiguityRate"] <= 1
+    assert "消费" in supply["note"] and "经济贡献" in supply["note"]
+    assert "消费额" not in str(profile["categories"])
+
+
+def test_coverage_reports_comparisons_and_usable_coords(db):
+    with connect(db) as con:
+        add_event(con, "e-a", "v-a")
+    coverage = market_area.coverage(db, 800)
+    assert coverage["radiusLabel"].startswith("近邻分析范围")
+    assert coverage["identitiesTotal"] >= 1
+    assert coverage["coordsUsable"] >= 1
+    radii = [row["radiusMeters"] for row in coverage["comparisons"]]
+    assert radii == [800, 1200, 1500]
+    for row in coverage["comparisons"]:
+        assert set(row) >= {"uniqueNear", "ambiguous", "unmatched"}

@@ -2109,3 +2109,9 @@ main {
 .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 .plain-list { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.9; }
 @media (max-width: 900px) { .two-column { grid-template-columns: 1fr; } .bar-row { grid-template-columns: 88px 1fr 40px; } }
+
+/* 商圈半径对照表 */
+.compare-table { width: 100%; max-width: 520px; border-collapse: collapse; margin: 8px 0 4px; font-size: 13px; }
+.compare-table th { text-align: left; color: #6b7280; font-weight: 500; padding: 4px 8px; border-bottom: 1px solid #e5e7eb; }
+.compare-table td { padding: 4px 8px; border-bottom: 1px solid #f1f5f9; }
+.compare-table tr.active td { color: #1d4ed8; font-weight: 600; }
