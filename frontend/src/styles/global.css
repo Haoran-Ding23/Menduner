@@ -2115,3 +2115,7 @@ main {
 .compare-table th { text-align: left; color: #6b7280; font-weight: 500; padding: 4px 8px; border-bottom: 1px solid #e5e7eb; }
 .compare-table td { padding: 4px 8px; border-bottom: 1px solid #f1f5f9; }
 .compare-table tr.active td { color: #1d4ed8; font-weight: 600; }
+
+/* B：酒店周边活动日历 */
+.calendar-block { margin: 10px 0 16px; }
+.calendar-block .bar-row { grid-template-columns: 110px 1fr 40px; }

@@ -507,6 +507,27 @@ export interface MarketAreaProfile {
     venuesTotal: number;
   };
   supplyProfile: MarketSupplyProfile;
+  hotelDistribution: {
+    count: number;
+    bands: { label: string; count: number }[];
+    note: string;
+  };
+  hotelCalendar: {
+    name: string;
+    distanceMeters: number;
+    nearbyActivities: number;
+    coveredDays: number;
+    weeks: [string, number][];
+    topActivities: { name: string; startDate: string; endDate: string | null; source: string | null }[];
+  }[];
+  concentration: {
+    top1Share: number;
+    top5Share: number;
+    totalMatched: number;
+    topVenueShare: number;
+    topVenue: string;
+    note: string;
+  };
   categories: [string, number][];
   months: [string, number][];
   hotels: { name: string; distanceMeters: number; starLabel: string | null }[];
