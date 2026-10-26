@@ -161,6 +161,14 @@ export default function DistrictInsights() {
               <small>有中心点商圈</small>
             </div>
             <div>
+              <strong>{coverage.officialCount}</strong>
+              <small>官方商圈</small>
+            </div>
+            <div>
+              <strong>{coverage.candidateCount}</strong>
+              <small>候选集聚点</small>
+            </div>
+            <div>
               <strong>{coverage.areaVerified}</strong>
               <small>行政区一致</small>
             </div>
@@ -225,9 +233,13 @@ export default function DistrictInsights() {
               placeholder="选择商圈"
               options={areas.map((area) => ({
                 value: area.id,
-                label: area.name + "（" + (area.parentName ?? "父级未知") + "）",
+                label:
+                  (area.status === "candidate" ? "[候选] " : "") +
+                  area.name +
+                  "（" + (area.parentName ?? "父级未知") + "）",
               }))}
             />
+            {profile?.area.status === "candidate" && <Tag>候选商业集聚点</Tag>}
             {profile && profile.area.quality !== "verified" && (
               <Tag>中心点 POI：{profile.area.center.matchedName ?? "未知"}</Tag>
             )}

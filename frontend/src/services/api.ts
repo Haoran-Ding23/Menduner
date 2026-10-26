@@ -434,6 +434,8 @@ export interface MarketCoverage {
   areaCount: number;
   areaWithCenter: number;
   areaVerified: number;
+  officialCount: number;
+  candidateCount: number;
   areaLowQuality: number;
   venuesTotal: number;
   venuesWithVerifiedCoords: number;
@@ -447,6 +449,7 @@ export interface MarketCoverage {
 export interface MarketAreaRow {
   id: string;
   name: string;
+  status: "official" | "candidate";
   parentName: string | null;
   quality: string;
   centerSource: string | null;
@@ -460,6 +463,7 @@ export interface MarketAreaProfile {
   area: {
     id: string;
     name: string;
+    status: "official" | "candidate";
     parentName: string | null;
     quality: string;
     radiusMeters: number;

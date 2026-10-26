@@ -76,9 +76,14 @@ def areas_with_center(data: dict, radius: int = DEFAULT_RADIUS) -> list[dict]:
             continue
         center = dict(center)
         center["areaName"] = district.get("name")
+        # official = 政府/地图方确认的名称；candidate = 我们用 POI 聚类得到的候选点
+        status = district.get("status") or (
+            "official" if center.get("matchLevel") in ("verified", "unverified") else "candidate"
+        )
         result.append({
             "id": district["id"],
             "name": district.get("name"),
+            "status": status,
             "parentId": district.get("parentId"),
             "adminCode": district.get("adminCode"),
             "center": center,
@@ -178,6 +183,8 @@ def coverage(db_path, radius: int = DEFAULT_RADIUS) -> dict:
         "areaCount": len(result["areas"]),
         "areaWithCenter": len(result["areas"]),
         "areaVerified": sum(1 for a in result["areas"] if a["quality"] == "verified"),
+        "officialCount": sum(1 for a in result["areas"] if a["status"] == "official"),
+        "candidateCount": sum(1 for a in result["areas"] if a["status"] == "candidate"),
         "areaLowQuality": sum(1 for a in result["areas"] if a["quality"] == "low"),
         "venuesTotal": len(data["venues"]),
         "venuesWithVerifiedCoords": venues_with_coords,
@@ -199,6 +206,7 @@ def ranking(db_path, radius: int = DEFAULT_RADIUS) -> list[dict]:
         rows.append({
             "id": area_id,
             "name": area["name"],
+            "status": area["status"],
             "parentName": result["parents"].get(area["parentId"]),
             "quality": area["quality"],
             "centerSource": area["center"].get("source"),
@@ -286,7 +294,7 @@ def profile(db_path, area_id: str, radius: int = DEFAULT_RADIUS,
 
     return {
         "area": {
-            "id": area_id, "name": area["name"],
+            "id": area_id, "name": area["name"], "status": area["status"],
             "parentName": result["parents"].get(area["parentId"]),
             "quality": area["quality"], "radiusMeters": area["radiusMeters"],
             "center": {
