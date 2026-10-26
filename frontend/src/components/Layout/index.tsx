@@ -233,9 +233,6 @@ const pageTitle = page?.title ?? AUTH_PAGE_TITLES[location.pathname] ?? "";
           ))}
         </Drawer>
         <div className="sidebar-foot">
-          <Tag color="cyan">ENT303TC · 第 14 组</Tag>
-          <p>城市活动知识图谱</p>
-          <small>V1.3 / 采集管线原型</small>
           <div className="gap-top">
             {FILING_MODE ? (
               <Tag>公开活动信息展示</Tag>
