@@ -119,6 +119,8 @@ describe("V1.2 traceable city event intelligence", () => {
   });
   it("compares city resources without forecast or opportunity score panels", async () => {
     mount("/insights");
+    // Round 17 重排：地区资源比较移到「更多分析」折叠区里，先展开再断言。
+    fireEvent.click(await screen.findByText(/更多分析/));
     await screen.findByRole("heading", { name: "地区资源比较" });
     // F05：行政区与商业商圈必须分表，避免「按区」和「按商圈」被读成同一口径。
     expect(await screen.findByRole("heading", { name: /行政区/ })).toBeInTheDocument();

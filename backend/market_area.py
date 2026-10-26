@@ -369,6 +369,27 @@ def profile(db_path, area_id: str, radius: int = DEFAULT_RADIUS,
             covered_days += max(0, (date.fromisoformat(finish) - date.fromisoformat(begin)).days + 1)
         except ValueError:
             continue
+    # 周度序列：按「与该周相交的规范化活动身份」去重，跨周重复出现是允许的，
+    # 但各周数值不能相加当作月度去重总量（GPT Round 17）。
+    week_sets: dict[str, set] = {}
+    for item in nearby:
+        begin = item.get("startDate")
+        if not begin:
+            continue
+        finish = item.get("endDate") or begin
+        if finish < begin:
+            finish = begin
+        low = max(begin, start) if start else begin
+        high = min(finish, end) if end else finish
+        if low > high:
+            continue
+        cursor = date.fromisoformat(low) - timedelta(days=date.fromisoformat(low).weekday())
+        last = date.fromisoformat(high)
+        while cursor <= last:
+            week_sets.setdefault(cursor.isoformat(), set()).add(item["identity"])
+            cursor = date.fromordinal(cursor.toordinal() + 7)
+    weekly = [{"weekStart": key, "count": len(value)} for key, value in sorted(week_sets.items())]
+
     venue_ids = {item.get("venue") for item in nearby if item.get("venue")}
     with_source_url = 0
     if nearby:
@@ -425,6 +446,7 @@ def profile(db_path, area_id: str, radius: int = DEFAULT_RADIUS,
             "note": "仅统计平台已收录且有可信坐标的酒店，不等于该商圈全部酒店；也不构成竞争强弱排名。",
         },
         "hotelCalendar": calendar,
+        "weekly": weekly,
         "concentration": {
             "top1Share": top1,
             "top5Share": top5,

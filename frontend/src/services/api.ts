@@ -506,6 +506,7 @@ export interface MarketAreaProfile {
     venuesWithVerifiedCoords: number;
     venuesTotal: number;
   };
+  weekly: { weekStart: string; count: number }[];
   supplyProfile: MarketSupplyProfile;
   hotelDistribution: {
     count: number;

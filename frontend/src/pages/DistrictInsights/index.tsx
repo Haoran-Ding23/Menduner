@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { Alert, Button, Select, Space, Table, Tag } from "antd";
+import { Button, Collapse, Select, Space, Table, Tag } from "antd";
+import type { EChartsOption } from "echarts";
+import Chart from "../../components/Charts";
 import CaliberBar from "../../components/CaliberBar";
 import OpportunityAnalysis from "../../components/OpportunityAnalysis";
 import ScenarioPanel from "../../components/ScenarioPanel";
@@ -17,16 +19,22 @@ import {
 } from "../../services/api";
 
 /**
- * 商圈洞察。
+ * 商圈洞察（GPT Round 17 重构版）。
  *
- * 这个页面以前叫「商圈洞察」，但内容其实是按行政区统计的 —— 属于产品定位问题（GPT Round 14）。
- * 现在拆成两个口径，并在页面上写清楚：
- *   1. 商圈口径：商圈没有官方边界，只有「中心点 + 半径」，所以一律显示为
- *      **商圈中心点周边活动（估算范围）**；落在多个商圈里的活动保留歧义，不强行归属。
- *   2. 行政区口径：活动本来就挂在行政区上，这是原始归属；两个口径不能相加，也不能互相冒充。
+ * 视觉层级：先图、后数、再说明。
+ *   首屏：KPI + 归属构成 100% 堆叠条 ｜ Top10 中心排行 ｜ 半径敏感性 ｜ 选中中心周度预览
+ *   画像：类别构成、周度活动分布、酒店距离结构 三个真实 ECharts 图
+ *   底层：明细表与「更多分析」折叠区
+ *
+ * 口径（不删，但不占首屏）：800m 中心点近邻，不是正式商圈边界；落在多个中心里的活动保留歧义；
+ * 未匹配不等于该商圈没有活动。完整说明放在底部折叠区。
  */
 const RADII = [800, 1200, 1500];
 const DEFAULT_RADIUS = 800;
+const BLUE = "#2563EB";
+const TEAL = "#0F766E";
+const ORANGE = "#D97706";
+const GREY = "#CBD5E1";
 
 export default function DistrictInsights() {
   const { dataset, filters } = usePlatform();
@@ -53,9 +61,7 @@ export default function DistrictInsights() {
         setAreas(nextAreas);
         setSelected((current) => current ?? nextAreas[0]?.id ?? null);
       })
-      .catch((reason: Error) => {
-        if (alive) setError(reason.message);
-      });
+      .catch((reason: Error) => alive && setError(reason.message));
     return () => {
       alive = false;
     };
@@ -65,19 +71,17 @@ export default function DistrictInsights() {
     if (!selected) return undefined;
     let alive = true;
     loadMarketAreaProfile(selected, { radius, start: monthWindow.start, end: monthWindow.end })
-      .then((next) => {
-        if (alive) setProfile(next);
-      })
-      .catch((reason: Error) => {
-        if (alive) setError(reason.message);
-      });
+      .then((next) => alive && setProfile(next))
+      .catch((reason: Error) => alive && setError(reason.message));
     return () => {
       alive = false;
     };
   }, [selected, radius, monthWindow.start, monthWindow.end]);
 
   const adminEvents = useMemo(() => {
-    const inWindow = dataset.events.filter((event) => overlaps(event, monthWindow.start, monthWindow.end));
+    const inWindow = dataset.events.filter((event) =>
+      overlaps(event, monthWindow.start, monthWindow.end),
+    );
     const distinct = distinctByCanonical(inWindow);
     const byDistrict = new Map<string, number>();
     distinct.forEach((event) => {
@@ -88,62 +92,228 @@ export default function DistrictInsights() {
   }, [dataset.events, monthWindow.start, monthWindow.end]);
 
   const caliberWindow = {
-    kind: "custom" as const, start: monthWindow.start, end: monthWindow.end,
+    kind: "custom" as const,
+    start: monthWindow.start,
+    end: monthWindow.end,
     label: monthWindow.start + " 至 " + monthWindow.end,
   };
+
   const districtName = (id: string) =>
     dataset.districts.find((district) => district.id === id)?.name ??
     (id === "未归属" ? "未归属" : id);
-
   const adminRows = [...adminEvents.byDistrict.entries()]
     .sort((a, b) => b[1] - a[1])
     .slice(0, 8)
     .map(([id, count]) => ({ id, name: districtName(id), count }));
-  const maxAdmin = adminRows[0]?.count ?? 1;
 
-  const categoryRows = (Object.keys(categories) as (keyof typeof categories)[])
-    .map((category) => ({
-      category,
-      count: adminEvents.distinct.filter((event) => event.category === category).length,
-    }))
-    .filter((row) => row.count > 0)
-    .sort((a, b) => b.count - a.count);
-  const maxCategory = categoryRows[0]?.count ?? 1;
+  // ---------- 图 1：归属构成（100% 堆叠） ----------
+  const compositionOption = useMemo<EChartsOption>(() => {
+    if (!coverage) return {};
+    const total = Math.max(
+      1,
+      coverage.eventsNearby + coverage.eventsAmbiguous + coverage.eventsUnmatched,
+    );
+    return {
+      grid: { left: 8, right: 8, top: 28, bottom: 8, containLabel: true },
+      tooltip: { trigger: "axis", axisPointer: { type: "shadow" } },
+      legend: { top: 0, left: 0, itemWidth: 10, itemHeight: 10, textStyle: { fontSize: 11 } },
+      xAxis: { type: "value", max: total, show: false },
+      yAxis: { type: "category", data: ["活动归属"], show: false },
+      series: [
+        {
+          name: "唯一近邻",
+          type: "bar",
+          stack: "total",
+          barWidth: 38,
+          itemStyle: { color: BLUE },
+          label: { show: true, color: "#fff", fontSize: 11 },
+          data: [coverage.eventsNearby],
+        },
+        {
+          name: "保留歧义",
+          type: "bar",
+          stack: "total",
+          itemStyle: { color: ORANGE },
+          label: { show: true, color: "#fff", fontSize: 11 },
+          data: [coverage.eventsAmbiguous],
+        },
+        {
+          name: "未匹配",
+          type: "bar",
+          stack: "total",
+          itemStyle: { color: GREY },
+          label: { show: true, color: "#334155", fontSize: 11 },
+          data: [coverage.eventsUnmatched],
+        },
+      ],
+    };
+  }, [coverage]);
+
+  // ---------- 图 2：Top10 中心排行 ----------
+  const topAreas = useMemo(
+    () => [...areas].sort((a, b) => b.nearbyEvents - a.nearbyEvents).slice(0, 10).reverse(),
+    [areas],
+  );
+  const rankingOption = useMemo<EChartsOption>(
+    () => ({
+      grid: { left: 8, right: 24, top: 8, bottom: 8, containLabel: true },
+      tooltip: { trigger: "axis", axisPointer: { type: "shadow" } },
+      xAxis: { type: "value", splitLine: { lineStyle: { color: "#F1F5F9" } } },
+      yAxis: {
+        type: "category",
+        data: topAreas.map((area) => (area.status === "candidate" ? "·" + area.name : area.name)),
+        axisLine: { show: false },
+        axisTick: { show: false },
+        axisLabel: { fontSize: 11 },
+      },
+      series: [
+        {
+          type: "bar",
+          barWidth: 12,
+          itemStyle: {
+            color: (params: { dataIndex: number }) =>
+              topAreas[params.dataIndex]?.status === "candidate" ? TEAL : BLUE,
+            borderRadius: [0, 3, 3, 0],
+          },
+          label: { show: true, position: "right", fontSize: 11, color: "#475569" },
+          data: topAreas.map((area) => area.nearbyEvents),
+        },
+      ],
+    }),
+    [topAreas],
+  );
+
+  // ---------- 图 3：半径敏感性 ----------
+  const sensitivityOption = useMemo<EChartsOption>(() => {
+    const rows = coverage?.comparisons ?? [];
+    return {
+      grid: { left: 8, right: 24, top: 28, bottom: 8, containLabel: true },
+      tooltip: { trigger: "axis", axisPointer: { type: "shadow" } },
+      legend: { top: 0, left: 0, itemWidth: 10, itemHeight: 10, textStyle: { fontSize: 11 } },
+      xAxis: { type: "value", splitLine: { lineStyle: { color: "#F1F5F9" } } },
+      yAxis: {
+        type: "category",
+        data: rows.map((row) => row.radiusMeters + "m"),
+        axisLine: { show: false },
+        axisTick: { show: false },
+        axisLabel: { fontSize: 11 },
+      },
+      series: [
+        {
+          name: "唯一近邻",
+          type: "bar",
+          stack: "r",
+          itemStyle: { color: BLUE },
+          data: rows.map((row) => row.uniqueNear),
+        },
+        {
+          name: "保留歧义",
+          type: "bar",
+          stack: "r",
+          itemStyle: { color: ORANGE },
+          data: rows.map((row) => row.ambiguous),
+        },
+        {
+          name: "未匹配",
+          type: "bar",
+          stack: "r",
+          itemStyle: { color: GREY },
+          data: rows.map((row) => row.unmatched),
+        },
+      ],
+    };
+  }, [coverage]);
+
+  // ---------- 图 4：选中中心周度预览 ----------
+  const weeklyOption = useMemo<EChartsOption>(() => {
+    const weekly = profile?.weekly ?? [];
+    return {
+      grid: { left: 8, right: 12, top: 12, bottom: 8, containLabel: true },
+      tooltip: { trigger: "axis" },
+      xAxis: {
+        type: "category",
+        data: weekly.map((row) => row.weekStart.slice(5)),
+        axisLabel: { fontSize: 10, interval: 0, rotate: 0, margin: 10 },
+        axisTick: { show: false },
+        axisLine: { lineStyle: { color: "#E2E8F0" } },
+      },
+      yAxis: { type: "value", splitLine: { lineStyle: { color: "#F1F5F9" } }, axisLabel: { fontSize: 10 } },
+      series: [
+        {
+          type: "bar",
+          barWidth: 14,
+          itemStyle: { color: BLUE, borderRadius: [3, 3, 0, 0] },
+          data: weekly.map((row) => row.count),
+        },
+      ],
+    };
+  }, [profile]);
+
+  // ---------- 画像图：类别 / 酒店距离结构 ----------
+  const categoryOption = useMemo<EChartsOption>(() => {
+    const rows = [...(profile?.categories ?? [])].slice(0, 8).reverse();
+    return {
+      grid: { left: 8, right: 24, top: 8, bottom: 8, containLabel: true },
+      tooltip: { trigger: "axis", axisPointer: { type: "shadow" } },
+      xAxis: { type: "value", splitLine: { lineStyle: { color: "#F1F5F9" } } },
+      yAxis: {
+        type: "category",
+        data: rows.map(([name]) => (categories as Record<string, { label: string }>)[name]?.label ?? name),
+        axisLine: { show: false },
+        axisTick: { show: false },
+        axisLabel: { fontSize: 11 },
+      },
+      series: [
+        {
+          type: "bar",
+          barWidth: 12,
+          itemStyle: { color: TEAL, borderRadius: [0, 3, 3, 0] },
+          label: { show: true, position: "right", fontSize: 11, color: "#475569" },
+          data: rows.map(([, count]) => count),
+        },
+      ],
+    };
+  }, [profile]);
+
+  const hotelBandOption = useMemo<EChartsOption>(() => {
+    const bands = profile?.hotelDistribution.bands ?? [];
+    return {
+      grid: { left: 8, right: 12, top: 12, bottom: 8, containLabel: true },
+      tooltip: { trigger: "axis" },
+      xAxis: {
+        type: "category",
+        data: bands.map((band) => band.label),
+        axisTick: { show: false },
+        axisLine: { lineStyle: { color: "#E2E8F0" } },
+        axisLabel: { fontSize: 10 },
+      },
+      yAxis: { type: "value", splitLine: { lineStyle: { color: "#F1F5F9" } }, axisLabel: { fontSize: 10 } },
+      series: [
+        {
+          type: "bar",
+          barWidth: 38,
+          itemStyle: { color: TEAL, borderRadius: [3, 3, 0, 0] },
+          data: bands.map((band) => band.count),
+        },
+      ],
+    };
+  }, [profile]);
+
+  const kpi = [
+    { label: "分析中心", value: coverage?.areaCount ?? "—" },
+    { label: "唯一近邻", value: coverage?.eventsNearby ?? "—" },
+    { label: "歧义", value: coverage?.eventsAmbiguous ?? "—" },
+    { label: "未匹配", value: coverage?.eventsUnmatched ?? "—" },
+  ];
 
   return (
     <>
       <div className="page-heading">
         <div className="eyebrow">商圈与地区</div>
         <h1>商圈洞察</h1>
-        <p>先看商圈中心点周边活动（估算范围），再看行政区归属。两个口径分开统计，不能相加。</p>
-      </div>
-
-      <Alert
-        type="info"
-        showIcon
-        className="gap-bottom"
-        message="商圈没有官方边界，这里是「中心点近邻分析范围」内的活动，不是商圈内活动总量"
-        description={
-          coverage
-            ? coverage.areaCount +
-              " 个商圈已补齐中心点（高德 POI 反查，" +
-              coverage.areaVerified +
-              " 个行政区一致、" +
-              coverage.areaLowQuality +
-              " 个 POI 名偏弱）；匹配口径为「场馆已核验坐标到商圈中心点的球面距离 ≤ " +
-              coverage.radiusMeters +
-              " 米」；落在两个以上商圈里的活动保留歧义、不强行归属；未匹配不等于该商圈没有活动。"
-            : "正在读取商圈覆盖情况…"
-        }
-      />
-
-      <CaliberBar window={caliberWindow} events={adminEvents.distinct} />
-
-      <section className="panel gap-bottom" aria-label="商圈覆盖与半径">
-        <div className="panel-heading">
-          <h3 style={{ margin: 0 }}>商圈数据能力</h3>
-          <Space>
-            <span className="muted">匹配半径</span>
+        <p className="insight-sub">
+          {radius}m 中心点近邻 · 非正式商圈边界
+          <Space size={6} style={{ marginLeft: 8 }}>
             <Select
               size="small"
               value={radius}
@@ -152,356 +322,307 @@ export default function DistrictInsights() {
               options={RADII.map((value) => ({ value, label: value + " 米" }))}
             />
           </Space>
-        </div>
-        {error && <Alert type="warning" showIcon message={error} />}
-        {coverage && (
-          <div className="stat-row">
-            <div>
-              <strong>{coverage.areaCount}</strong>
-              <small>有中心点商圈</small>
-            </div>
-            <div>
-              <strong>{coverage.officialCount}</strong>
-              <small>官方商圈</small>
-            </div>
-            <div>
-              <strong>{coverage.candidateCount}</strong>
-              <small>候选集聚点</small>
-            </div>
-            <div>
-              <strong>{coverage.areaVerified}</strong>
-              <small>行政区一致</small>
-            </div>
-            <div>
-              <strong>{coverage.venuesWithVerifiedCoords}</strong>
-              <small>已核验坐标场馆</small>
-            </div>
-            <div>
-              <strong>{coverage.eventsNearby}</strong>
-              <small>周边活动（可归属）</small>
-            </div>
-            <div>
-              <strong>{coverage.eventsAmbiguous}</strong>
-              <small>保留歧义</small>
-            </div>
-            <div>
-              <strong>{coverage.eventsUnmatched}</strong>
-              <small>未匹配</small>
-            </div>
-          </div>
-        )}
-        {coverage?.comparisons?.length ? (
-          <table className="compare-table">
-            <thead>
-              <tr>
-                <th>近邻半径</th>
-                <th>唯一近邻</th>
-                <th>保留歧义</th>
-                <th>未匹配</th>
-              </tr>
-            </thead>
-            <tbody>
-              {coverage.comparisons.map((row) => (
-                <tr key={row.radiusMeters} className={row.radiusMeters === radius ? "active" : ""}>
-                  <td>{row.radiusMeters} 米</td>
-                  <td>{row.uniqueNear}</td>
-                  <td>{row.ambiguous}</td>
-                  <td>{row.unmatched}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : null}
-
-        <p className="muted" style={{ marginTop: 10 }}>
-          分母：去重后共 {coverage?.eventsTotal ?? "—"} 个活动身份，
-          {coverage?.eventsUnmatched ?? "—"} 个因缺少已核验坐标或不在任何商圈半径内而无法归属。
-          切换半径可以看到归属数量的敏感性。
         </p>
+      </div>
+
+      {error && <p className="muted">数据加载失败：{error}</p>}
+
+      {/* ① 总览 */}
+      <section className="insight-grid" aria-label="商圈总览">
+        <div className="panel">
+          <div className="panel-heading">
+            <h3 style={{ margin: 0 }}>活动归属构成</h3>
+            <small className="muted">分母 {coverage?.identitiesTotal ?? "—"} 个去重活动身份</small>
+          </div>
+          <div className="kpi-row">
+            {kpi.map((item) => (
+              <div key={item.label}>
+                <strong>{item.value}</strong>
+                <small>{item.label}</small>
+              </div>
+            ))}
+          </div>
+          <div className="chart-sm">
+            <Chart option={compositionOption} />
+          </div>
+        </div>
+
+        {/* ② 中心点分布 */}
+        <div className="panel">
+          <div className="panel-heading">
+            <h3 style={{ margin: 0 }}>中心点近邻活动 Top 10</h3>
+            <small className="muted">蓝=官方商圈 · 青=候选集聚点 · 点击切换画像</small>
+          </div>
+          <div className="chart-md">
+            <Chart option={rankingOption} onClick={(name: string) => {
+              const target = areas.find(
+                (area) => area.name === name || "·" + area.name === name,
+              );
+              if (target) setSelected(target.id);
+            }} />
+          </div>
+        </div>
       </section>
 
+      {/* ③ 半径敏感性 + ④ 周度预览 */}
+      <section className="insight-grid" aria-label="半径敏感性与周度预览">
+        <div className="panel">
+          <div className="panel-heading">
+            <h3 style={{ margin: 0 }}>半径敏感性</h3>
+            <small className="muted">同一份数据只改半径，看归属如何变化</small>
+          </div>
+          <div className="chart-sm">
+            <Chart option={sensitivityOption} />
+          </div>
+        </div>
+        <div className="panel">
+          <div className="panel-heading">
+            <h3 style={{ margin: 0 }}>选中中心 · 周度活动预览</h3>
+            <Space>
+              <Select
+                size="small"
+                style={{ minWidth: 200 }}
+                value={selected ?? undefined}
+                onChange={setSelected}
+                aria-label="选择商圈"
+                options={areas.map((area) => ({
+                  value: area.id,
+                  label:
+                    (area.status === "candidate" ? "[候选] " : "") +
+                    area.name +
+                    "（" + (area.parentName ?? "父级未知") + "）",
+                }))}
+              />
+              {profile?.area.status === "candidate" && <Tag>候选</Tag>}
+            </Space>
+          </div>
+          <div className="chart-sm">
+            <Chart option={weeklyOption} />
+          </div>
+          <p className="muted">
+            各周为「与该周相交的去重活动数」，跨周可重复，不能相加当作月度总量。
+          </p>
+        </div>
+      </section>
+
+      {/* 单商圈画像 */}
       <section className="panel gap-bottom" aria-label="单商圈画像">
         <div className="panel-heading">
-          <h3 style={{ margin: 0 }}>单商圈画像</h3>
-          <Space>
-            <Select
-              size="small"
-              style={{ minWidth: 190 }}
-              value={selected ?? undefined}
-              onChange={setSelected}
-              aria-label="选择商圈"
-              placeholder="选择商圈"
-              options={areas.map((area) => ({
-                value: area.id,
-                label:
-                  (area.status === "candidate" ? "[候选] " : "") +
-                  area.name +
-                  "（" + (area.parentName ?? "父级未知") + "）",
-              }))}
-            />
-            {profile?.area.status === "candidate" && <Tag>候选商业集聚点</Tag>}
-            {profile && profile.area.quality !== "verified" && (
-              <Tag>中心点 POI：{profile.area.center.matchedName ?? "未知"}</Tag>
-            )}
-          </Space>
+          <h3 style={{ margin: 0 }}>
+            {profile?.area.name ?? "—"}
+            <span className="muted" style={{ fontWeight: 400, marginLeft: 8 }}>
+              {profile?.area.parentName ?? ""} · {profile?.area.center.matchedName ?? ""}（
+              {profile?.area.center.adname ?? ""}）· 半径 {profile?.area.radiusMeters ?? "—"} 米
+            </span>
+          </h3>
         </div>
 
         {!profile ? (
-          <p className="muted">请选择商圈</p>
+          <p className="muted">加载中…</p>
         ) : (
           <>
-            <div className="stat-row">
+            <div className="kpi-row">
               <div>
                 <strong>{profile.coverage.matched}</strong>
-                <small>窗口内周边活动</small>
+                <small>窗口内可归属活动</small>
               </div>
               <div>
                 <strong>{profile.coverage.ambiguous}</strong>
-                <small>窗口内保留歧义</small>
+                <small>保留歧义</small>
               </div>
               <div>
-                <strong>{profile.coverage.matchedAll}</strong>
-                <small>全年可归属</small>
+                <strong>{profile.supplyProfile.coveredDays}</strong>
+                <small>活动覆盖天数</small>
               </div>
               <div>
-                <strong>{profile.coverage.parentDistrictEvents}</strong>
-                <small>父级行政区活动（分母）</small>
+                <strong>{profile.supplyProfile.venues}</strong>
+                <small>关联场馆</small>
               </div>
               <div>
-                <strong>{profile.hotels.length}</strong>
-                <small>半径内酒店</small>
+                <strong>{Math.round(profile.supplyProfile.spatialMatchRate * 100)}%</strong>
+                <small>空间匹配率</small>
+              </div>
+              <div>
+                <strong>{profile.hotelDistribution.count}</strong>
+                <small>半径内已收录酒店</small>
               </div>
             </div>
 
-            <p className="muted">
-              中心点：{profile.area.center.matchedName ?? "—"}（{profile.area.center.adname ?? "—"}）｜坐标系{" "}
-              {profile.area.center.system ?? "—"}｜来源 {profile.area.center.source ?? "—"}｜匹配级别{" "}
-              {profile.area.center.matchLevel ?? "—"}｜半径 {profile.area.radiusMeters} 米
-            </p>
-
-            {profile.supplyProfile && (
-              <>
-                <h4 style={{ marginTop: 4 }}>周边活动供给画像</h4>
-                <div className="stat-row">
-                  <div>
-                    <strong>{profile.supplyProfile.uniqueActivities}</strong>
-                    <small>唯一活动数</small>
-                  </div>
-                  <div>
-                    <strong>{profile.supplyProfile.coveredDays}</strong>
-                    <small>活动覆盖天数</small>
-                  </div>
-                  <div>
-                    <strong>{profile.supplyProfile.venues}</strong>
-                    <small>关联场馆</small>
-                  </div>
-                  <div>
-                    <strong>{Math.round(profile.supplyProfile.sourceCoverageRate * 100)}%</strong>
-                    <small>来源覆盖率</small>
-                  </div>
-                  <div>
-                    <strong>{Math.round(profile.supplyProfile.spatialMatchRate * 100)}%</strong>
-                    <small>空间匹配率</small>
-                  </div>
-                  <div>
-                    <strong>{Math.round(profile.supplyProfile.ambiguityRate * 100)}%</strong>
-                    <small>歧义率</small>
-                  </div>
-                </div>
-                <p className="muted">{profile.supplyProfile.note}</p>
-              </>
-            )}
-
-            <div className="two-column">
+            <div className="insight-grid">
               <div>
-                <h4>品类分布（窗口内）</h4>
-                {profile.categories.length === 0 ? (
-                  <p className="muted">窗口内没有可归属活动</p>
-                ) : (
-                  profile.categories.map(([name, count]) => (
-                    <div className="bar-row" key={name}>
-                      <span>{name}</span>
-                      <div className="bar-track">
-                        <div
-                          className="bar-fill"
-                          style={{
-                            width:
-                              Math.round((count / Math.max(1, profile.categories[0][1])) * 100) + "%",
-                          }}
-                        />
-                      </div>
-                      <strong>{count}</strong>
-                    </div>
-                  ))
-                )}
+                <h4>活动类别构成</h4>
+                <div className="chart-sm">
+                  <Chart option={categoryOption} />
+                </div>
               </div>
               <div>
-                <h4>已收录酒店分布（半径内）</h4>
-                <p className="muted">{profile.hotelDistribution.note}</p>
-                <div className="stat-row">
-                  <div>
-                    <strong>{profile.hotelDistribution.count}</strong>
-                    <small>已收录酒店</small>
-                  </div>
-                  {profile.hotelDistribution.bands.map((band) => (
-                    <div key={band.label}>
-                      <strong>{band.count}</strong>
-                      <small>{band.label}</small>
-                    </div>
-                  ))}
+                <h4>周边酒店距离结构</h4>
+                <div className="chart-sm">
+                  <Chart option={hotelBandOption} />
                 </div>
-                {profile.hotelCalendar.length > 0 && (
-                  <ul className="plain-list">
-                    {profile.hotelCalendar.slice(0, 6).map((hotel) => (
-                      <li key={hotel.name}>
-                        {hotel.name}
-                        <span className="muted">
-                          {" · "}
-                          {hotel.distanceMeters} 米 · 周边活动 {hotel.nearbyActivities} 个 · 覆盖{" "}
-                          {hotel.coveredDays} 天
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
               </div>
             </div>
 
-            <h4 style={{ marginTop: 16 }}>酒店周边活动日历（供给视角，不是酒店需求）</h4>
-            {profile.hotelCalendar.length === 0 ? (
-              <p className="muted">半径内没有已收录且有可信坐标的酒店，无法生成日历</p>
-            ) : (
-              profile.hotelCalendar.slice(0, 3).map((hotel) => (
-                <div key={hotel.name} className="calendar-block">
-                  <div className="muted">
-                    {hotel.name} · {hotel.distanceMeters} 米 · 周边活动 {hotel.nearbyActivities} 个 ·
-                    活动覆盖 {hotel.coveredDays} 天
-                  </div>
-                  {hotel.weeks.length === 0 ? (
-                    <p className="muted">当前窗口内没有活动</p>
-                  ) : (
-                    hotel.weeks.map(([week, count]) => (
-                      <div className="bar-row" key={week}>
-                        <span>{week}</span>
-                        <div className="bar-track">
-                          <div
-                            className="bar-fill"
-                            style={{
-                              width:
-                                Math.round(
-                                  (count / Math.max(1, Math.max(...hotel.weeks.map(([, n]) => n)))) * 100,
-                                ) + "%",
-                            }}
-                          />
-                        </div>
-                        <strong>{count}</strong>
-                      </div>
-                    ))
-                  )}
-                  {hotel.topActivities.length > 0 && (
-                    <p className="muted">
-                      主要活动：{hotel.topActivities.map((item) => item.name + "（" + item.startDate + "）").join("；")}
-                    </p>
-                  )}
-                </div>
-              ))
-            )}
-
-            <h4 style={{ marginTop: 16 }}>集中度提示</h4>
-            <p className="muted">
-              前 1 个商圈占可归属活动的 {Math.round(profile.concentration.top1Share * 100)}%，前 5 个占{" "}
-              {Math.round(profile.concentration.top5Share * 100)}%（分母 {profile.concentration.totalMatched} 个可归属活动）；
-              单一场馆「{profile.concentration.topVenue}」占本商圈可归属活动的{" "}
-              {Math.round(profile.concentration.topVenueShare * 100)}%。
-            </p>
-            <p className="muted">{profile.concentration.note}</p>
-
-            <h4 style={{ marginTop: 16 }}>窗口内可归属活动</h4>
-            <Table
-              size="small"
-              pagination={false}
-              rowKey="identity"
-              dataSource={profile.nearbyEvents}
-              locale={{ emptyText: "该商圈在当前窗口内没有可归属活动" }}
-              columns={[
-                { title: "活动", dataIndex: "name" },
-                { title: "类别", dataIndex: "category", width: 110 },
-                { title: "开始", dataIndex: "startDate", width: 110 },
+            <Collapse
+              ghost
+              items={[
                 {
-                  title: "距离",
-                  dataIndex: "distanceMeters",
-                  width: 90,
-                  render: (value: number) => value + " 米",
+                  key: "activities",
+                  label: "窗口内可归属活动（" + profile.nearbyEvents.length + "）",
+                  children: (
+                    <Table
+                      size="small"
+                      pagination={false}
+                      rowKey="identity"
+                      dataSource={profile.nearbyEvents}
+                      columns={[
+                        { title: "活动", dataIndex: "name" },
+                        { title: "类别", dataIndex: "category", width: 110 },
+                        { title: "开始", dataIndex: "startDate", width: 100 },
+                        {
+                          title: "距离",
+                          dataIndex: "distanceMeters",
+                          width: 90,
+                          render: (value: number) => value + " 米",
+                        },
+                      ]}
+                    />
+                  ),
+                },
+                {
+                  key: "hotels",
+                  label: "周边已收录酒店（" + profile.hotelCalendar.length + "）",
+                  children: (
+                    <Table
+                      size="small"
+                      pagination={false}
+                      rowKey="name"
+                      dataSource={profile.hotelCalendar}
+                      columns={[
+                        { title: "酒店", dataIndex: "name" },
+                        {
+                          title: "距中心",
+                          dataIndex: "distanceMeters",
+                          width: 100,
+                          render: (value: number) => value + " 米",
+                        },
+                        { title: "周边活动", dataIndex: "nearbyActivities", width: 100 },
+                        { title: "覆盖天数", dataIndex: "coveredDays", width: 100 },
+                      ]}
+                    />
+                  ),
+                },
+                {
+                  key: "method",
+                  label: "统计口径与限制",
+                  children: (
+                    <div className="method-text">
+                      <p>{profile.coverage.method}。</p>
+                      <p>{profile.caveat}</p>
+                      <p>
+                        前 1 个中心占可归属活动{" "}
+                        {Math.round(profile.concentration.top1Share * 100)}%，前 5 个占{" "}
+                        {Math.round(profile.concentration.top5Share * 100)}%（分母{" "}
+                        {profile.concentration.totalMatched}）；单一场馆「
+                        {profile.concentration.topVenue}」占本中心{" "}
+                        {Math.round(profile.concentration.topVenueShare * 100)}%。
+                      </p>
+                      <p>{profile.concentration.note}</p>
+                      <p>
+                        共 {coverage?.officialCount ?? "—"} 个官方商圈与{" "}
+                        {coverage?.candidateCount ?? "—"} 个候选集聚点；候选点由 POI 聚类得到，
+                        未经政府或地图方确认为正式商圈。
+                      </p>
+                    </div>
+                  ),
                 },
               ]}
             />
-
-            <p className="muted" style={{ marginTop: 12 }}>
-              {profile.caveat}
-            </p>
           </>
         )}
       </section>
 
-      <section className="panel gap-bottom" aria-label="行政区口径">
-        <div className="panel-heading">
-          <h3 style={{ margin: 0 }}>原始归属：按区县统计（与商圈口径不可相加）</h3>
-        </div>
-        {adminRows.map((row) => (
-          <div className="bar-row" key={row.id}>
-            <span>{row.name}</span>
-            <div className="bar-track">
-              <div
-                className="bar-fill"
-                style={{ width: Math.round((row.count / maxAdmin) * 100) + "%" }}
-              />
-            </div>
-            <strong>{row.count}</strong>
-          </div>
-        ))}
-        <h4 style={{ marginTop: 16 }}>活动类别分布（按区县）</h4>
-        {categoryRows.map((row) => (
-          <div className="bar-row" key={row.category}>
-            <span>{row.category}</span>
-            <div className="bar-track">
-              <div
-                className="bar-fill"
-                style={{ width: Math.round((row.count / maxCategory) * 100) + "%" }}
-              />
-            </div>
-            <strong>{row.count}</strong>
-          </div>
-        ))}
-      </section>
+      <CaliberBar window={caliberWindow} events={adminEvents.distinct} />
 
-      <OpportunityAnalysis events={adminEvents.distinct} />
+      <Collapse
+        ghost
+        items={[
+          {
+            key: "more",
+            label: "更多分析（按区县统计、地区资源比较、经济情景、导出简报）",
+            children: (
+              <>
+                <section className="panel gap-bottom" aria-label="按区县统计">
+                  <div className="panel-heading">
+                    <h3 style={{ margin: 0 }}>原始归属：按区县统计</h3>
+                    <small className="muted">与商圈口径不可相加</small>
+                  </div>
+                  <div className="chart-sm">
+                    <Chart
+                      option={{
+                        grid: { left: 8, right: 24, top: 8, bottom: 8, containLabel: true },
+                        tooltip: { trigger: "axis" },
+                        xAxis: { type: "value", splitLine: { lineStyle: { color: "#F1F5F9" } } },
+                        yAxis: {
+                          type: "category",
+                          data: adminRows.map((row) => row.name).reverse(),
+                          axisLine: { show: false },
+                          axisTick: { show: false },
+                          axisLabel: { fontSize: 11 },
+                        },
+                        series: [
+                          {
+                            type: "bar",
+                            barWidth: 12,
+                            itemStyle: { color: GREY, borderRadius: [0, 3, 3, 0] },
+                            label: { show: true, position: "right", fontSize: 11, color: "#475569" },
+                            data: adminRows.map((row) => row.count).reverse(),
+                          },
+                        ],
+                      } as EChartsOption}
+                    />
+                  </div>
+                </section>
 
-      <ScenarioPanel eventName={profile?.nearbyEvents[0]?.name ?? "（请先选择一条活动）"} />
+                <OpportunityAnalysis events={adminEvents.distinct} />
+                <ScenarioPanel
+                  eventName={profile?.nearbyEvents[0]?.name ?? "（请先选择一条活动）"}
+                />
 
-      <section className="panel gap-top" aria-label="导出城市简报">
-        <div className="panel-heading">
-          <h3 style={{ margin: 0 }}>导出城市简报</h3>
-          <small className="muted">五张工作表：概览 / 活动明细 / 本期变化 / 来源证据 / 待确认事项</small>
-        </div>
-        <Space>
-          <Button
-            type="primary"
-            disabled={!accountState.authenticated}
-            onClick={() => {
-              const query = new URLSearchParams({ start: monthWindow.start, end: monthWindow.end });
-              window.location.assign(
-                "/api/reports/city/" +
-                  encodeURIComponent(filters.district || "suzhou") +
-                  ".xlsx?" +
-                  query.toString(),
-              );
-            }}
-          >
-            导出城市简报（Excel）
-          </Button>
-          {!accountState.authenticated && <span className="muted">登录后可导出</span>}
-        </Space>
-      </section>
+                <section className="panel gap-top" aria-label="导出城市简报">
+                  <div className="panel-heading">
+                    <h3 style={{ margin: 0 }}>导出城市简报</h3>
+                    <small className="muted">
+                      五张工作表：概览 / 活动明细 / 本期变化 / 来源证据 / 待确认事项
+                    </small>
+                  </div>
+                  <Space>
+                    <Button
+                      type="primary"
+                      disabled={!accountState.authenticated}
+                      onClick={() => {
+                        const query = new URLSearchParams({
+                          start: monthWindow.start,
+                          end: monthWindow.end,
+                        });
+                        window.location.assign(
+                          "/api/reports/city/" +
+                            encodeURIComponent(filters.district || "suzhou") +
+                            ".xlsx?" +
+                            query.toString(),
+                        );
+                      }}
+                    >
+                      导出城市简报（Excel）
+                    </Button>
+                    {!accountState.authenticated && <span className="muted">登录后可导出</span>}
+                  </Space>
+                </section>
+              </>
+            ),
+          },
+        ]}
+      />
     </>
   );
 }
