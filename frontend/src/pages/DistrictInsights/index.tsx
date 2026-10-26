@@ -442,14 +442,14 @@ export default function DistrictInsights() {
       {/* ⑤ 酒店摘要 */}
       <section className="insight-card">
         <div className="card-head">
-          <h3>周边已收录酒店</h3>
-          <span className="insight-muted">平台已收录且有可信坐标的酒店，不等于该商圈全部酒店</span>
+          <h3>周边已收录住宿设施</h3>
+          <span className="insight-muted">数据来自平台已收录的住宿 POI（高德），仅反映 800 米近邻范围内的样本分布，不代表全部在营酒店或完整竞争格局</span>
         </div>
         {hotelCount === 0 ? (
           <p className="insight-muted" style={{ padding: "8px 0" }}>暂无已收录酒店</p>
         ) : hotelCount < 3 ? (
           <p className="hotel-summary">
-            周边已收录 {hotelCount} 家酒店
+            周边已收录 {hotelCount} 家住宿设施
             {hotelBands.filter((band) => band.count > 0).map((band) => (
               <span key={band.label}>
                 {" ｜ "}
@@ -494,7 +494,7 @@ export default function DistrictInsights() {
           },
           {
             key: "hotels",
-            label: "周边已收录酒店明细（" + (profile?.hotelCalendar.length ?? 0) + "）",
+            label: "周边已收录住宿设施明细（" + (profile?.hotelCalendar.length ?? 0) + "）",
             children: (
               <Table
                 size="small"
@@ -532,7 +532,7 @@ export default function DistrictInsights() {
                 )}
                 <p className="insight-muted">
                   共 {coverage?.officialCount ?? "—"} 个官方商圈与 {coverage?.candidateCount ?? "—"} 个候选集聚点；
-                  候选点由 POI 聚类得到，未经政府或地图方确认为正式商圈。
+                  候选点由 POI 聚类得到，未经政府或地图方确认为正式商圈。住宿设施坐标来自高德 POI 且通过坐标系检查，但这不等于经人工实地核验其存在、位置与营业状态。
                 </p>
               </div>
             ),

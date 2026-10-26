@@ -197,3 +197,19 @@ def test_coverage_reports_comparisons_and_usable_coords(db):
     assert radii == [800, 1200, 1500]
     for row in coverage["comparisons"]:
         assert set(row) >= {"uniqueNear", "ambiguous", "unmatched"}
+
+def test_hotel_bands_sum_to_count(db):
+    """GPT Round 19 验收②：酒店距离分层之和必须等于酒店总数。"""
+    with connect(db) as con:
+        con.execute("INSERT INTO hotels(id,payload) VALUES(?,?)", ("h1", json.dumps({
+            "id": "h1", "name": "近酒店", "coordinates": {"lng": 120.6202, "lat": 31.3101,
+            "system": "GCJ-02", "status": "Verified"}}, ensure_ascii=False)))
+        con.execute("INSERT INTO hotels(id,payload) VALUES(?,?)", ("h2", json.dumps({
+            "id": "h2", "name": "远酒店", "coordinates": {"lng": 120.6250, "lat": 31.3106,
+            "system": "GCJ-02", "status": "Verified"}}, ensure_ascii=False)))
+        con.execute("INSERT INTO hotels(id,payload) VALUES(?,?)", ("h3", json.dumps({
+            "id": "h3", "name": "无坐标酒店", "coordinates": None}, ensure_ascii=False)))
+    profile = market_area.profile(db, "area-a", 800)
+    bands = profile["hotelDistribution"]["bands"]
+    assert sum(band["count"] for band in bands) == profile["hotelDistribution"]["count"] == 2
+    assert profile["hotelDistribution"]["count"] == len(profile["hotelCalendar"])

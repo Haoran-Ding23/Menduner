@@ -443,7 +443,7 @@ def profile(db_path, area_id: str, radius: int = DEFAULT_RADIUS,
         "hotelDistribution": {
             "count": len(hotels),
             "bands": [{"label": label, "count": count} for label, count in bands.items()],
-            "note": "仅统计平台已收录且有可信坐标的酒店，不等于该商圈全部酒店；也不构成竞争强弱排名。",
+            "note": "仅统计平台已收录的住宿 POI（高德），已通过坐标系检查但未经人工实地核验；不代表全部在营酒店，也不构成竞争强弱排名。",
         },
         "hotelCalendar": calendar,
         "weekly": weekly,
