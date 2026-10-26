@@ -2093,3 +2093,6 @@ main {
 .page-heading h1 { font-size: 26px; margin: 2px 0 0; }
 .page-heading { margin-bottom: 8px; }
 .filterbar { padding: 8px 12px; }
+
+/* F06 默认样例说明：把选择依据写在页面上，便于复核。 */
+.graph-sample-note { color: #475569; font-size: 12.5px; margin: 2px 0 4px; }

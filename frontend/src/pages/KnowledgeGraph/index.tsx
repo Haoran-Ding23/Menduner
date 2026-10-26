@@ -195,10 +195,12 @@ export default function KnowledgeGraph() {
       <div className="page-heading">
         <div className="eyebrow">城市数据关联</div>
         <h1>知识图谱</h1>
-        <p>
-          活动 → 场馆 → 位置语境 → 周边酒店 / 餐饮 / 交通 → 目标客群(按规则自动生成)
+        <p className="graph-sample-note">
+          默认样例：{dataset.events.find((e) => e.id === sample.eventId)?.name ?? "无可用真实活动"}
+          （选择依据：{sample.reasons.join("、")}）
         </p>
-            </div>
+        <p>活动 → 场馆 → 位置语境 → 周边酒店 / 餐饮 / 交通 → 目标客群(按规则自动生成)</p>
+      </div>
 
       <section className="panel gap-bottom" aria-label="图谱业务查询">
         <div className="panel-heading">
