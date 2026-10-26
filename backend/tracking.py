@@ -142,7 +142,7 @@ def snapshot_dates(db_path: Path) -> list[str]:
             "SELECT DISTINCT snapshot_date FROM event_snapshots ORDER BY snapshot_date")]
 
 
-def changes(db_path: Path, since: str | None = None) -> dict:
+def changes(db_path: Path, since: str | None = None, until: str | None = None) -> dict:
     """比较窗口首尾两份快照，给出新增 / 取消 / 改期 / 信息变化。
 
     只有一份快照时无法比较，返回 comparable=False —— 界面必须显示「尚无可比较记录」，
@@ -155,8 +155,13 @@ def changes(db_path: Path, since: str | None = None) -> dict:
         if not dates:
             return {"comparable": False, "reason": "尚无快照记录", "dates": [],
                     "added": [], "cancelled": [], "rescheduled": [], "changed": []}
-        base_date = since if since in dates else dates[0]
-        latest_date = dates[-1]
+        # until 让调用方指定比较终点。历史区间报表必须传它：否则会把「查询截止日之后」才发生的
+        # 变化算进历史差分（例如导出 10-19..10-21，却把 10-24 才出现的取消当成区间内变化）。
+        candidates = [value for value in dates if until is None or value <= until]
+        if not candidates:
+            candidates = dates[:1]
+        base_date = since if since in candidates else candidates[0]
+        latest_date = candidates[-1]
         if base_date == latest_date:
             return {"comparable": False, "reason": "尚无可比较记录（只有一份快照）",
                     "dates": dates, "added": [], "cancelled": [], "rescheduled": [], "changed": []}

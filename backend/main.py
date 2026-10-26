@@ -1,5 +1,6 @@
 import hashlib
 import json
+import urllib.parse
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
@@ -15,6 +16,7 @@ from backend import tenants
 from backend import tracking
 from backend import graph_query
 from backend import geo
+from backend import city_report
 from backend import weekly_report
 from backend.amap import amap_place_url
 from backend import venues as venue_store
@@ -783,6 +785,34 @@ def create_app(db_path: Path | None = None):
         if not removed:
             raise HTTPException(status_code=404, detail='没有这条跟进记录')
         return {'removed': event_key}
+
+    @app.get('/reports/city/{district_id}.xlsx')
+    def city_report_xlsx(district_id: str, request: Request,
+                         start: str | None = None, end: str | None = None):
+        """按城市导出公开活动简报（只读）。
+
+        鉴权：必须已登录（会话 cookie）。不新建公开可下载的旁路 —— 导出接口本身会成为枚举
+        与批量抓取的入口，而且报表含来源证据与待确认事项这类内部口径。
+        """
+        with connect(path) as con:
+            account = accounts.session_account(con, _session_token(request))
+        if not account:
+            raise HTTPException(status_code=401, detail='请先登录后再导出')
+
+        try:
+            report = city_report.collect(path, district_id, start, end)
+            payload = city_report.build_xlsx(report)
+        except city_report.ReportError as error:
+            raise HTTPException(status_code=400, detail=str(error)) from None
+
+        name = report['meta'].get('districtName') or district_id
+        window = report['meta']['window']
+        filename = f"{name}_城市活动简报_{window['start']}_{window['end']}.xlsx"
+        return Response(
+            content=payload,
+            media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            headers={'Content-Disposition': 'attachment; filename*=UTF-8\'\'' + urllib.parse.quote(filename)},
+        )
 
     @app.get('/geo/tree')
     def geo_tree():

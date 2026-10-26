@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Alert, Button, Input, Select, Space, Switch, Table, Tag } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
+import { canReview, useIdentity } from "../../hooks/useIdentity";
 import VenueEvents from "../../components/VenueEvents";
 import TrustCenter from "../../components/TrustCenter";
 import {
@@ -27,6 +28,9 @@ export default function DataQuality() {
   // 证据页必须逐条可见：使用未去重的原始集合，否则「同一活动的另一条来源记录」在合并后
   // 就查不到字段冲突与来源了。
   const platform = usePlatform();
+  // F10：内部字段编号与审核入口只对审核角色可见；公开页只回答数据能不能用。
+  const { identity } = useIdentity();
+  const reviewer = canReview(identity);
   const { repository, selected, update } = platform;
   const dataset = platform.rawDataset ?? platform.dataset;
   const [search, setSearch] = useState("");
@@ -301,13 +305,15 @@ export default function DataQuality() {
                     查看该场馆全部活动
                   </Button>
                 )}
-                <Button
-                  type="primary"
-                  size="small"
-                  onClick={() => update({ event: event.id })}
-                >
-                  去审核台处理
-                </Button>
+                {reviewer && (
+                  <Button
+                    type="primary"
+                    size="small"
+                    onClick={() => update({ event: event.id })}
+                  >
+                    去审核台处理
+                  </Button>
+                )}
               </Space>
             )}
           </div>
@@ -343,7 +349,7 @@ export default function DataQuality() {
                   render: (_, e) => (
                     <>
                       <strong>{e.field}</strong>
-                      <small className="block muted">{e.entityId}</small>
+                      {reviewer && <small className="block muted">{e.entityId}</small>}
                       {entityVenue && e.entityId === entityVenue.id && (
                         <Button
                           type="link"
