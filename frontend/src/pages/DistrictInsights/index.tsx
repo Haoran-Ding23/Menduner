@@ -1,4 +1,5 @@
 import OpportunityAnalysis from "../../components/OpportunityAnalysis";
+import { useAccount } from "../../hooks/useEntitlements";
 import CaliberBar from "../../components/CaliberBar";
 import { distinctByCanonical } from "../../utils/dedupe";
 import type { TimeWindow } from "../../utils/caliber";
@@ -35,6 +36,20 @@ export default function DistrictInsights() {
       overlaps(e, ...monthRange(filters.year, filters.month)) &&
       (!venueId || e.venueId === venueId),
   );
+  const { state: accountState } = useAccount();
+  // 城市活动简报导出（§3）：区间默认取当前筛选的月份，地区取当前筛选；未登录时不显示按钮。
+  const exportWindow = useMemo(() => {
+    const [start, end] = monthRange(filters.year, filters.month);
+    return { start, end };
+  }, [filters.year, filters.month]);
+  const exportDistrict = filters.district || "suzhou";
+  const exportCityReport = () => {
+    const query = new URLSearchParams({ start: exportWindow.start, end: exportWindow.end });
+    window.location.assign(
+      `/api/reports/city/${encodeURIComponent(exportDistrict)}.xlsx?${query.toString()}`,
+    );
+  };
+
   const districtCounts = dataset.districts.map((d) => ({
     name: d.name,
     value: annual.filter((e) => e.districtId === d.id).length,
@@ -105,7 +120,10 @@ export default function DistrictInsights() {
         <div className="eyebrow">商圈活动</div>
         <h1>商圈洞察</h1>
         <p>比较商圈活动与城市资源分布</p>
-      </div>
+      
+        {accountState.authenticated && (
+          <Button onClick={exportCityReport} className="gap-top">导出城市简报（Excel）</Button>
+        )}</div>
       <Filters />
       <CaliberBar window={monthWindow} events={monthEvents} />
       <OpportunityAnalysis
