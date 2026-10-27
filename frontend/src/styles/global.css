@@ -2271,3 +2271,29 @@ main {
 @media (max-width: 900px) {
   .market-area-map { height: 300px !important; }
 }
+
+
+/* 空状态引导：一句人话 + 可点动作 */
+.empty-hint {
+  border: 1px dashed #cbd5e1; border-radius: 10px; padding: 14px 16px;
+  background: #f8fafc; display: flex; flex-direction: column; gap: 6px;
+}
+.empty-hint strong { font-size: 13.5px; color: #0f172a; font-weight: 600; }
+.empty-hint p { margin: 0; font-size: 12.5px; line-height: 18px; }
+
+/* 便民化第 3 轮：商圈页移动端（390）防横向溢出 */
+@media (max-width: 780px) {
+  .insight-page { max-width: 100%; overflow-x: hidden; }
+  .insight-page h1 { font-size: 22px; }
+  .insight-head { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .kpi-strip { flex-wrap: wrap; gap: 14px 20px; }
+  .kpi-strip strong { font-size: 24px; }
+  .insight-card { padding: 14px; }
+  .insight-row { gap: 12px; }
+  .card-head { flex-wrap: wrap; }
+  .selection-bar { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .compare-table { width: 100%; max-width: 100%; }
+  .market-area-legend { gap: 10px; font-size: 11px; }
+  .relation-line { grid-template-columns: 76px 1fr; }
+  .bar-row { grid-template-columns: 74px 1fr 36px; }
+}

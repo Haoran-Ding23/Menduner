@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, Button, Empty, Select, Space, Tag, Tooltip, message } from "antd";
+import EmptyHint from "../../components/EmptyHint";
 import { usePlatform } from "../../hooks/usePlatform";
 import { useAccount } from "../../hooks/useEntitlements";
 import { rankEvents } from "../../services/ranking";
@@ -65,7 +66,7 @@ function fmtDim(value: number | null): string {
 }
 
 export default function Workbench() {
-  const { dataset, filters, update } = usePlatform();
+  const { dataset, filters, update, go } = usePlatform();
   const { state: accountState } = useAccount();
   const [hotelId, setHotelId] = useState<string>(() => {
     try {
@@ -293,6 +294,16 @@ const [followups, setFollowups] = useState<Followup[]>([]);
         </div>
         {worthWatching.length === 0 ? (
           <Empty description="未来七天没有与这家酒店相关的活动" />
+        ) : worthWatching.length === 0 ? (
+          <EmptyHint
+            title="这家酒店未来七天没有匹配到值得关注的活动"
+            reason="可能本周活动较少，或活动场馆还没有可用坐标，距离算不出来。"
+            actions={[
+              { label: "看看本月全部活动", onClick: () => go("/map") },
+              { label: "换一家酒店", onClick: () => go("/find-hotels") },
+              { label: "查看数据质量", onClick: () => go("/evidence") },
+            ]}
+          />
         ) : (
           <div className="workbench-list">
             {worthWatching.map(({ event, reasons, unknown, byDimension }) => (

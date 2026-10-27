@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Button, Collapse, Select, Space, Table, Tag, Tooltip } from "antd";
 import type { EChartsOption } from "echarts";
 import Chart from "../../components/Charts";
+import EmptyHint from "../../components/EmptyHint";
 import MarketAreaMap from "../../components/MarketAreaMap";
 import CaliberBar from "../../components/CaliberBar";
 import OpportunityAnalysis from "../../components/OpportunityAnalysis";
