@@ -70,6 +70,9 @@ export default function DataQuality() {
   const { repository, selected, update, params } = platform;
   // 从图谱/地图跳过来时带 field 参数：定位并高亮对应字段行
   const focusField = params.get("field");
+  const focusPending = focusField
+    ? ["name", "venueId", "venueName", "venue", "sourceUrl"].includes(focusField)
+    : false;
   const dataset = platform.rawDataset ?? platform.dataset;
   // 快速核对：只核对三项（活动名称 / 举办场馆 / 来源链接），其余字段仍在下方明细表里
   const [quickBusy, setQuickBusy] = useState<string | null>(null);
@@ -256,6 +259,7 @@ export default function DataQuality() {
           })}
         </div>
       </div>
+<p className="page-lead">先核对影响活动判断的关键信息，确认后更新关联关系的可信状态。</p>
       <Alert
         className="gap-bottom"
         showIcon
@@ -427,6 +431,16 @@ export default function DataQuality() {
               {simpleOnly && pendingKeyCount === 0 && fields.length > 0 && (
                 <p className="muted" style={{ margin: "0 0 6px" }}>
                   关键三项都已核对完，下面显示其余待处理字段。
+                </p>
+              )}
+              {focusField && !focusPending && (
+                <p className="muted" style={{ margin: "0 0 6px" }}>
+                  目标字段「{FIELD_LABELS[focusField] ?? focusField}」不在待处理列表里（可能已经核对过）。
+                </p>
+              )}
+              {focusField && focusPending && (
+                <p className="muted" style={{ margin: "0 0 6px" }}>
+                  已定位到「{FIELD_LABELS[focusField] ?? focusField}」这一行。
                 </p>
               )}
               <p className="dq-group-title">

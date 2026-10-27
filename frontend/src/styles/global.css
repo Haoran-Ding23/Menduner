@@ -2349,3 +2349,12 @@ main {
 /* 从图谱/地图跳转过来时的字段高亮 */
 .row-focus > td { background: #fffbeb !important; }
 .row-focus > td:first-child { box-shadow: inset 3px 0 0 #f59e0b; }
+
+
+/* 页头业务路径引导 */
+.page-lead {
+  margin: 6px 0 16px;
+  font-size: 13.5px;
+  line-height: 20px;
+  color: #64748b;
+}

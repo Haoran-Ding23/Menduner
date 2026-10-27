@@ -205,6 +205,7 @@ export default function KnowledgeGraph() {
         <p>活动 → 场馆 → 位置语境 → 周边酒店 / 餐饮 / 交通 → 目标客群(按规则自动生成)</p>
       </div>
 
+<p className="page-lead">先看活动在哪里举办、与哪些地区相关；有疑问，再核对关系和来源。</p>
       <GraphRelationSummary
           eventId={id}
           onOpenGraph={() => setShowCanvas(true)}

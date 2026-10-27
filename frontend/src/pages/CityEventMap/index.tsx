@@ -214,7 +214,8 @@ export default function CityEventMap() {
         <h1>{heading}</h1>
         <p>城市活动空间情报 · 连接活动、场馆与周边酒店资源</p>
       </div>
-      <Filters regions={false} />
+            <p className="page-lead">先找到酒店周边值得关注的活动，再查看它与场馆、商圈的关系。</p>
+<Filters regions={false} />
       <RegionNav />
       <CaliberBar window={mapWindow} events={events} />
       {historyCount > 0 && (
