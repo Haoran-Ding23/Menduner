@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Alert, Button, Input, Select, Space, Switch, Table, Tag } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
 import { canReview, useIdentity } from "../../hooks/useIdentity";
@@ -67,6 +67,43 @@ export default function DataQuality() {
   const reviewer = canReview(identity);
   const { repository, selected, update } = platform;
   const dataset = platform.rawDataset ?? platform.dataset;
+  // 快速核对：只核对三项（活动名称 / 举办场馆 / 来源链接），其余字段仍在下方明细表里
+  const [quickBusy, setQuickBusy] = useState<string | null>(null);
+  const [quickMsg, setQuickMsg] = useState<string>("");
+
+  const decideField = useCallback(
+    async (eventId: string, field: string, value: unknown, decision: "Verified" | "Rejected") => {
+      if (!reviewer) return;
+      setQuickBusy(field);
+      setQuickMsg("");
+      try {
+        const response = await fetch("/api/review", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            event_id: eventId,
+            field,
+            decision,
+            value: value ?? null,
+            reviewer: identity.login ?? "reviewer",
+          }),
+        });
+        if (response.status === 409) {
+          setQuickMsg("这条字段在你打开后已变化，请刷新后再核对");
+          return;
+        }
+        if (!response.ok) {
+          setQuickMsg("提交失败（需要审核角色或登录已过期）");
+          return;
+        }
+        setQuickMsg(decision === "Verified" ? "已通过" : "已标记为有问题");
+      } finally {
+        setQuickBusy(null);
+      }
+    },
+    [identity.login, platform, reviewer],
+  );
+
   const VENUE_NAMES = new Map(dataset.venues.map((v) => [v.id, v.name]));
   const DISTRICT_NAMES = new Map(dataset.districts.map((d) => [d.id, d.name]));
   const [search, setSearch] = useState("");
@@ -203,6 +240,58 @@ export default function DataQuality() {
       {/* Per-region quality, so a reviewer can see which part of the city is short of evidence
           before scrolling a global list of 663 events. Selecting a row scopes the index below. */}
       <section className="panel gap-bottom" aria-label="分地区数据质量">
+        <div className="quick-check" aria-label="快速核对">
+          <div className="quick-check-head">
+            <strong>快速核对（3 项）</strong>
+            <span className="muted">
+              {reviewer ? "点 ✓ 通过、点 ✗ 标记有问题；其余字段在下方明细里" : "需要审核角色才能核对"}
+            </span>
+          </div>
+          {[
+            { field: "name", label: "活动名称", value: event?.name },
+            {
+              field: "venueId",
+              label: "举办场馆",
+              value:
+                dataset.venues.find((v) => v.id === event?.venueId)?.name ??
+                (event?.venueId ? "场馆名称待补充" : null),
+            },
+            {
+              field: "sourceUrl",
+              label: "来源链接",
+              value:
+                dataset.evidence.find((item) => item.entityId === event?.id && item.field === "sourceUrl")
+                  ?.value ?? null,
+            },
+          ].map((row) => (
+            <div className="quick-row" key={row.field}>
+              <span className="quick-label">{row.label}</span>
+              <span className="quick-value">{row.value ? String(row.value) : "（缺失）"}</span>
+              <span className="quick-actions">
+                <button
+                  type="button"
+                  className="quick-btn ok"
+                  disabled={!reviewer || quickBusy === row.field || !event}
+                  aria-label={row.label + " 通过"}
+                  onClick={() => void decideField(event!.id, row.field, row.value, "Verified")}
+                >
+                  ✓
+                </button>
+                <button
+                  type="button"
+                  className="quick-btn no"
+                  disabled={!reviewer || quickBusy === row.field || !event}
+                  aria-label={row.label + " 有问题"}
+                  onClick={() => void decideField(event!.id, row.field, row.value, "Rejected")}
+                >
+                  ✗
+                </button>
+              </span>
+            </div>
+          ))}
+          {quickMsg && <p className="muted quick-msg">{quickMsg}</p>}
+        </div>
+
         <div className="panel-heading">
           <h3 style={{ margin: 0 }}>分地区数据质量</h3>
           <small className="muted">

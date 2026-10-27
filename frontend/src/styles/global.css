@@ -2210,3 +2210,26 @@ main {
   font-size: 12.5px; color: #92400e;
 }
 .map-focus-notice a { color: #1d4ed8; text-decoration: underline; }
+
+/* 快速核对（三项一键过审） */
+.quick-check {
+  border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px 14px;
+  margin: 0 0 14px; background: #fff;
+}
+.quick-check-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; }
+.quick-check-head strong { font-size: 13.5px; color: #0f172a; }
+.quick-row {
+  display: grid; grid-template-columns: 88px 1fr 76px; align-items: center; gap: 10px;
+  padding: 7px 0; border-top: 1px solid #f1f5f9; font-size: 13px;
+}
+.quick-label { color: #64748b; }
+.quick-value { color: #0f172a; overflow-wrap: anywhere; }
+.quick-actions { display: flex; gap: 6px; justify-content: flex-end; }
+.quick-btn {
+  width: 30px; height: 28px; border-radius: 6px; cursor: pointer; font-size: 14px;
+  border: 1px solid #e5e7eb; background: #fff; line-height: 1;
+}
+.quick-btn.ok { color: #15803d; border-color: #bbf7d0; background: #f0fdf4; }
+.quick-btn.no { color: #b91c1c; border-color: #fecaca; background: #fef2f2; }
+.quick-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.quick-msg { margin: 6px 0 0; }
