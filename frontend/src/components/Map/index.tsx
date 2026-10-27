@@ -95,6 +95,8 @@ export default function EventMap({
   radiusKm?: number;
 }) {
   const { dataset, repository, selected, openEvent, go } = usePlatform();
+  // 只在聚焦目标变化时居中，避免用户手动拖动后被反复拉回
+  const lastFocusedId = useRef<string | null>(null);
   const container = useRef<HTMLDivElement>(null);
   const map = useRef<SDK>(null);
   const sdk = useRef<SDK>(null);
@@ -308,9 +310,14 @@ export default function EventMap({
     map.current.add(markers);
     if (markers.length)
       map.current.setFitView(markers, false, [70, 70, 70, 70], 14);
-    const event = events.find((e) => e.id === selected);
-    const c = event ? eventCoordinates(event, dataset) : null;
-    if (c) map.current.setZoomAndCenter(14, [c.lng, c.lat]);
+    // 关键：在全量数据集里找，避免该活动被当前筛选条件筛掉后无法定位
+    const focusEvent =
+      dataset.events.find((e) => e.id === selected) ?? events.find((e) => e.id === selected);
+    const focus = focusEvent ? eventCoordinates(focusEvent, dataset) : null;
+    if (focus && lastFocusedId.current !== selected) {
+      lastFocusedId.current = selected;
+      map.current.setZoomAndCenter(15, [focus.lng, focus.lat]);
+    }
   }, [
     ready,
     events,
