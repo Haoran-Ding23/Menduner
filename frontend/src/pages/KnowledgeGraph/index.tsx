@@ -27,6 +27,8 @@ import { valueText } from "../../utils/data";
 import { assessDemand, evidenceSummary } from "../../services/intelligence";
 import { ImpactTag } from "../../components/DemandIntelligence";
 const colors: Record<string, string> = {
+  Shopping: "#0ea5e9",
+  Other: "#64748b",
   Event: "#1677ff",
   Related: "#5b8def",
   Venue: "#13aaba",
@@ -43,31 +45,56 @@ const colors: Record<string, string> = {
  * the next column in their own bands so 5 restaurants, 6 stations and 15 hotels cannot overlap.
  * Audience nodes sit above the event: they are a hypothesis ABOUT the event, not a place around it.
  */
-const LAYER_X: Record<string, number> = {
-  Audience: -330,
-  Event: 0,
-  Venue: 270,
-  District: 540,
-  Hotel: 810,
-  Restaurant: 810,
-  Transport: 810,
+// ---- 太阳发散布局（GPT Round 35 规格：5 扇区 × 3 距离环）----
+// 角度从正上方（12 点方向）顺时针计算，扇区两侧各留 6°。
+const SECTOR_MARGIN = 6;
+// [起始角, 结束角]，单位度
+const SECTORS: Record<string, [number, number]> = {
+  Hotel: [324, 36],
+  Restaurant: [36, 108],
+  Transport: [108, 180],
+  Shopping: [180, 252],
+  Other: [252, 324],
 };
-const BAND_Y: Record<string, number> = {
-  Audience: 60,
-  Event: 180,
-  Venue: 290,
-  District: 290,
-  Hotel: 0,
-  Restaurant: 430,
-  Transport: 760,
-};
-/** Where the related events sit: up to three columns in two rows, left of the chain. */
-const RELATED_PER_ROW = 4;
-function relatedPosition(index: number) {
-  const column = index % RELATED_PER_ROW;
-  const row = Math.floor(index / RELATED_PER_ROW);
-  return { x: -340 + column * 226, y: -430 + row * 118 };
+// 距离环 → 半径区间（px）。画布比 GPT 示例大，等比放大以免标签重叠。
+const RINGS: { max: number; from: number; to: number }[] = [
+  { max: 500, from: 230, to: 330 },
+  { max: 1500, from: 350, to: 480 },
+  { max: 3000, from: 500, to: 640 },
+];
+const MAX_NEARBY_NODES = 30;
+
+/** 类别 → 扇区（未知类别归入「其他」，绝不猜成别的类别）。 */
+function sectorOf(kind: string): [number, number] {
+  return SECTORS[kind] ?? SECTORS.Other;
 }
+
+/** 距离 → 半径：环内线性映射；超过 3000m 不进环（由调用方过滤）。 */
+function radiusForDistance(meters: number | null): number | null {
+  if (meters === null || meters > RINGS[RINGS.length - 1].max) return null;
+  const ring = RINGS.find((item) => meters <= item.max) ?? RINGS[RINGS.length - 1];
+  const lower = ring === RINGS[0] ? 0 : RINGS[RINGS.indexOf(ring) - 1].max;
+  const span = ring.max - lower;
+  const ratio = span <= 0 ? 0 : (meters - lower) / span;
+  return ring.from + (ring.to - ring.from) * Math.min(1, Math.max(0, ratio));
+}
+
+/** 扇区内第 index/n 个节点的角度（GPT 给的公式）。 */
+function angleInSector(kind: string, index: number, total: number): number {
+  const [rawFrom, rawTo] = sectorOf(kind);
+  const from = rawFrom + SECTOR_MARGIN;
+  const to = (rawTo <= rawFrom ? rawTo + 360 : rawTo) - SECTOR_MARGIN;
+  const span = to - from;
+  const theta = total <= 0 ? from + span / 2 : from + ((index + 0.5) / total) * span;
+  return theta % 360;
+}
+
+/** 极坐标 → 画布坐标（θ 从正上方顺时针）。 */
+function polarFromTop(thetaDeg: number, radius: number): { x: number; y: number } {
+  const rad = (thetaDeg * Math.PI) / 180;
+  return { x: Math.sin(rad) * radius, y: -Math.cos(rad) * radius };
+}
+
 export default function KnowledgeGraph() {
   const { repository, dataset, selected, update, openEvent, go, params } =
     usePlatform();
@@ -116,18 +143,51 @@ export default function KnowledgeGraph() {
       (e) => e.venueId === event.venueId && e.id !== event.id,
     ).length;
   }, [repository, dataset.events, id]);
-  const offsets: Record<string, number> = {};
   const relatedOrder = new Map(relatedIds.map((rid, index) => [rid, index]));
-  const nodes: Node[] = graph.nodes
-    .filter((n) => expanded || !["District", "Hotel"].includes(n.kind))
+
+  // 每条 NEARBY 边都带后端算好的距离（标签形如 "NEAR · 358 m" / "1.2 km"）
+  const distanceOf = new Map<string, number>();
+  graph.edges.forEach((edge) => {
+    const label = String(edge.label ?? "");
+    const meters = label.match(/([\d.]+)\s*m\b/);
+    const kilometers = label.match(/([\d.]+)\s*km/);
+    if (meters) distanceOf.set(edge.target, Number(meters[1]));
+    else if (kilometers) distanceOf.set(edge.target, Number(kilometers[1]) * 1000);
+  });
+
+  const NEARBY_KINDS = ["Hotel", "Restaurant", "Transport", "Shopping", "Other"];
+  const visibleNodes = graph.nodes.filter((n) => expanded || !["District", "Hotel"].includes(n.kind));
+
+  // 周边节点：只保留有距离的（无坐标不进环），并按 GPT 规格限制最多 30 个
+  const nearbyNodes = visibleNodes
+    .filter((n) => NEARBY_KINDS.includes(n.kind) && distanceOf.has(n.id))
+    .sort((a, b) => (distanceOf.get(a.id)! - distanceOf.get(b.id)!) || a.id.localeCompare(b.id));
+  const shownNearby = new Set(nearbyNodes.slice(0, MAX_NEARBY_NODES).map((n) => n.id));
+  const hiddenNearbyCount = Math.max(0, nearbyNodes.length - MAX_NEARBY_NODES);
+
+  // 扇区内按「距离升序、稳定 ID 升序」排序，保证刷新后位置一致
+  const ordered = [...visibleNodes].sort((a, b) => {
+    const ak = NEARBY_KINDS.includes(a.kind) ? (distanceOf.get(a.id) ?? Number.MAX_SAFE_INTEGER) : -1;
+    const bk = NEARBY_KINDS.includes(b.kind) ? (distanceOf.get(b.id) ?? Number.MAX_SAFE_INTEGER) : -1;
+    if (a.kind !== b.kind) return a.kind.localeCompare(b.kind);
+    return ak - bk || a.id.localeCompare(b.id);
+  });
+  const sectorCounts = new Map<string, number>();
+  ordered.forEach((n) => {
+    if (NEARBY_KINDS.includes(n.kind)) {
+      if (!shownNearby.has(n.id)) return;
+      sectorCounts.set(n.kind, (sectorCounts.get(n.kind) ?? 0) + 1);
+    } else {
+      sectorCounts.set(n.kind, (sectorCounts.get(n.kind) ?? 0) + 1);
+    }
+  });
+  const sectorSeen = new Map<string, number>();
+
+  const nodes: Node[] = visibleNodes
     .map((n) => {
       const relatedIndex = relatedOrder.get(n.id);
       const isRelated = relatedIndex !== undefined && n.id !== id;
       const kindColor = isRelated ? colors.Related : colors[n.kind];
-      const band = BAND_Y[n.kind] ?? 290;
-      const step = n.kind === "Hotel" ? 58 : 74;
-      const index = offsets[n.kind] ?? 0;
-      offsets[n.kind] = index + 1;
       return {
         id: n.id,
         data: {
@@ -142,12 +202,25 @@ export default function KnowledgeGraph() {
             </div>
           ),
         },
-        position: isRelated
-          ? relatedPosition(relatedIndex)
-          : {
-              x: LAYER_X[n.kind] ?? 0,
-              y: band + (n.kind === "Audience" ? 0 : index * step),
-            },
+        position: (() => {
+          // 中心：当前活动（场馆放在正上方内环）
+          if (n.kind === "Event" && n.id === id) return { x: 0, y: 0 };
+          if (n.kind === "Venue") return polarFromTop(0, 150);
+          if (isRelated) {
+            const total = Math.max(1, relatedIds.length);
+            return polarFromTop(200 + (relatedIndex! / total) * 140, 760);
+          }
+          if (n.kind === "Audience") return polarFromTop(180, 120);
+
+          const group = NEARBY_KINDS.includes(n.kind) ? n.kind : "Other";
+          const total = sectorCounts.get(group) ?? 1;
+          const seen = sectorSeen.get(group) ?? 0;
+          sectorSeen.set(group, seen + 1);
+          const angle = angleInSector(group, seen, total);
+          const meters = distanceOf.get(n.id) ?? null;
+          const radius = radiusForDistance(meters) ?? 260;
+          return polarFromTop(angle, radius);
+        })(),
         style: {
           border: `1px ${n.analytical ? "dashed" : "solid"} ${kindColor}`,
           borderRadius: 12,
@@ -270,6 +343,10 @@ export default function KnowledgeGraph() {
         </Space>
       </div>
       <div className="graph-layout">
+        <p className="muted" style={{ margin: "0 0 8px" }}>
+          按场馆直线距离与设施类别组织的关系示意图，不代表实际地理方位；空间邻近不等于经济贡献。
+          {hiddenNearbyCount > 0 && <span>（另有 {hiddenNearbyCount} 个周边设施未显示，可切换活动或缩小范围查看）</span>}
+        </p>
         <div className="panel graph-canvas">
           {!showCanvas ? (
             <div style={{ padding: 18 }}>
