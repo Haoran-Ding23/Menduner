@@ -44,7 +44,15 @@ export default function MarketAreaMap({
           center: [120.62, 31.31],
           mapStyle: "amap://styles/whitesmoke",
         });
-        map.current.on("complete", () => draw());
+        map.current.on("complete", () => {
+          // 缩放与比例尺：地图能自己操作，不依赖外部按钮
+          const AMapNS = (window as unknown as { AMap?: any }).AMap;
+          if (AMapNS) {
+            if (AMapNS.Scale) map.current.addControl(new AMapNS.Scale());
+            if (AMapNS.ToolBar) map.current.addControl(new AMapNS.ToolBar({ position: "RB" }));
+          }
+          draw();
+        });
       })
       .catch(() => undefined);
     return () => {
@@ -64,10 +72,11 @@ export default function MarketAreaMap({
     overlays.current.forEach((item) => item.setMap && item.setMap(null));
     overlays.current = [];
 
+    const hasSelection = Boolean(selectedId);
     areas.forEach((area) => {
       const active = area.id === selectedId;
       const color = area.status === "official" ? "#2563EB" : "#0F766E";
-      const size = active ? 18 : 12;
+      const size = active ? 20 : hasSelection ? 9 : 12;
       const dot = document.createElement("div");
       dot.className = "market-area-dot";
       dot.style.width = dot.style.height = size + "px";
@@ -76,7 +85,8 @@ export default function MarketAreaMap({
       dot.style.boxSizing = "border-box";
       dot.style.background = area.status === "official" ? color : "#fff";
       dot.style.border = "2px solid " + color;
-      if (active) dot.style.boxShadow = "0 0 0 6px rgba(37,99,235,0.18)";
+      if (active) dot.style.boxShadow = "0 0 0 7px rgba(37,99,235,0.20)";
+      if (!active && hasSelection) dot.style.opacity = "0.45";
       dot.title = area.name + (area.status === "candidate" ? "（参考地点）" : "");
       dot.addEventListener("click", () => onSelect(area.id));
 
@@ -121,5 +131,20 @@ export default function MarketAreaMap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedId, areas]);
 
-  return <div ref={container} className="market-area-map" style={{ height }} role="img" aria-label="商圈中心点地图" />;
+  return (
+    <div className="market-area-wrap">
+      <div ref={container} className="market-area-map" style={{ height }} role="img" aria-label="商圈中心点地图" />
+      <ul className="market-area-legend" aria-label="地图图例">
+        <li>
+          <span className="legend-dot official" /> 官方商圈
+        </li>
+        <li>
+          <span className="legend-dot candidate" /> 参考地点（非官方商圈）
+        </li>
+        <li>
+          <span className="legend-dot selected" /> 选中后显示该地点范围（估算，不是边界）
+        </li>
+      </ul>
+    </div>
+  );
 }
