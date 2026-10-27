@@ -2325,3 +2325,6 @@ main {
 /* AI 建议核对 */
 .batch-select { font-size: 12px; padding: 3px 6px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fff; }
 .cell-ellipsis { display: inline-block; max-width: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
+
+/* 关键三项摘要 */
+.three-summary { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px; }

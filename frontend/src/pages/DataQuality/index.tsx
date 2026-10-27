@@ -76,6 +76,7 @@ export default function DataQuality() {
   const message = appContext?.message ?? staticMessage;
   // 酒店服务员视角：默认只核对"活动名字 / 活动场地 / 来源链接"三项
   const [simpleOnly, setSimpleOnly] = useState(true);
+  const KEY_THREE = [["name"], ["venueName", "venueId", "venue"], ["sourceUrl"]];
   const { reloadData } = platform;
 
   const decideField = useCallback(
@@ -180,6 +181,11 @@ export default function DataQuality() {
   const demoDataset = dataset.events.length > 0 && dataset.events.every((e) => e.demo);
   const pendingFields = fields.filter((f) => effectiveStatus(f) !== "Verified");
   const settledFields = fields.filter((f) => effectiveStatus(f) === "Verified");
+  // 关键三项都已核对完时，默认视图自动展开其余字段，避免出现"有待处理但一行都不显示"
+  const pendingKeyCount = KEY_THREE.filter((names) =>
+    pendingFields.some((item) => names.includes(item.field)),
+  ).length;
+  const effectiveSimple = simpleOnly && pendingKeyCount > 0;
   // 关键字段决定这条活动能不能用；其余（赞助商、规模等）只是信息不全。
   const KEY_FIELD_NAMES = new Set([
     "startDate", "endDate", "name", "venueId", "venueName", "location", "city", "address",
@@ -408,6 +414,34 @@ export default function DataQuality() {
               {/* 一张表 + 「分组」列，而不是拆成两张表：拆分会让同一批字段的渲染逻辑重复两份，
                   而读者真正需要的是「这一行缺失到底要不要紧」。关键字段影响活动能不能用；
                   辅助信息（赞助商、规模）缺失只是信息不全。 */}
+              {simpleOnly && pendingKeyCount === 0 && fields.length > 0 && (
+                <p className="muted" style={{ margin: "0 0 6px" }}>
+                  关键三项都已核对完，下面显示其余待处理字段。
+                </p>
+              )}
+              <p className="dq-group-title">
+                <span className="three-summary">
+                  关键三项：
+                  {[
+                    { names: ["name"], label: "活动名字" },
+                    { names: ["venueName", "venueId", "venue"], label: "活动场地" },
+                    { names: ["sourceUrl"], label: "来源链接" },
+                  ].map((row) => {
+                    const pending = pendingFields.some((item) => row.names.includes(item.field));
+                    const settled = settledFields.some((item) => row.names.includes(item.field));
+                    return (
+                      <Tag
+                        key={row.label}
+                        color={!pending && settled ? "green" : "default"}
+                        style={{ marginLeft: 6 }}
+                      >
+                        {row.label}
+                        {!pending && settled ? " 已核对" : " 待核对"}
+                      </Tag>
+                    );
+                  })}
+                </span>
+              </p>
               <p className="dq-group-title">
                 <Button
                   type="link"
@@ -415,7 +449,7 @@ export default function DataQuality() {
                   style={{ padding: 0, marginRight: 10 }}
                   onClick={() => setSimpleOnly((value) => !value)}
                 >
-                  {simpleOnly ? "显示全部字段（含技术字段）" : "只看三项（推荐）"}
+                  {effectiveSimple ? `查看全部字段（共 ${pendingFields.length} 个待处理）` : "只看三项关键字段"}
                 </Button>
                 关键字段待核对 {keyPending.length} 个（影响活动是否可用） · 辅助信息缺失{" "}
                 {auxPending.length} 个（不影响可用）
@@ -423,7 +457,7 @@ export default function DataQuality() {
               <Table<Evidence>
                 rowKey="id"
                 dataSource={
-                  simpleOnly
+                  effectiveSimple
                     ? pendingFields.filter(
                         (item) =>
                           ["name", "venueId", "venueName", "venue", "sourceUrl"].includes(item.field) ||
