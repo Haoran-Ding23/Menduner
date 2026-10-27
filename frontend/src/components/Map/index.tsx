@@ -88,12 +88,19 @@ export default function EventMap({
   hotel,
   demandLayer = false,
   radiusKm,
+  areasLayer,
+  selectedArea,
+  onAreaSelect,
 }: {
   events: Event[];
   hotel?: Hotel;
   demandLayer?: boolean;
   /** Draw the reviewed demand radius around the selected hotel, in kilometres. */
   radiusKm?: number;
+  /** 商圈图层：只有用户主动打开时才传值（渐进式披露）。 */
+  areasLayer?: { id: string; name: string; status: string; lng: number; lat: number; radiusMeters: number }[];
+  selectedArea?: string | null;
+  onAreaSelect?: (id: string) => void;
 }) {
   const { dataset, repository, selected, openEvent, go } = usePlatform();
   // 只在聚焦目标变化时居中，避免用户手动拖动后被反复拉回
@@ -234,6 +241,45 @@ export default function EventMap({
       });
       markers.push(marker);
     });
+    if (areasLayer && areasLayer.length) {
+      areasLayer.forEach((area) => {
+        const active = area.id === selectedArea;
+        const el = document.createElement("button");
+        el.className = "map-marker area-marker" + (active ? " active" : "");
+        el.setAttribute("aria-label", area.name);
+        el.style.width = active ? "18px" : "12px";
+        el.style.height = active ? "18px" : "12px";
+        el.style.borderRadius = "50%";
+        el.style.boxSizing = "border-box";
+        el.style.cursor = "pointer";
+        el.style.background = area.status === "official" ? "#2563EB" : "#fff";
+        el.style.border = "2px solid " + (area.status === "official" ? "#2563EB" : "#0F766E");
+        if (active) el.style.boxShadow = "0 0 0 6px rgba(37,99,235,0.18)";
+        el.addEventListener("click", () => onAreaSelect?.(area.id));
+        markers.push(
+          new A.Marker({
+            position: [area.lng, area.lat],
+            content: el,
+            anchor: "center",
+            title: area.name + (area.status === "official" ? "" : "（参考地点）"),
+            zIndex: active ? 180 : 90,
+          }),
+        );
+        if (active) {
+          markers.push(
+            new A.Circle({
+              center: [area.lng, area.lat],
+              radius: area.radiusMeters,
+              strokeColor: "#2563EB",
+              strokeOpacity: 0.6,
+              strokeWeight: 1,
+              fillColor: "#2563EB",
+              fillOpacity: 0.08,
+            }),
+          );
+        }
+      });
+    }
     if (demandLayer) {
       const focusEvent = dataset.events.find((e) => e.id === selected);
       // 有选中活动时只显示它附近的酒店（渐进式披露：点了"附近酒店"就该看到"附近"的）。
@@ -361,6 +407,8 @@ export default function EventMap({
     selected,
     openEvent,
     demandLayer,
+    areasLayer,
+    selectedArea,
     go,
     radiusKm,
   ]);

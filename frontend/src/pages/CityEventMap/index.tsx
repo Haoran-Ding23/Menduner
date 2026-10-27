@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Button, Empty, Tag, Alert, Switch, Space, Segmented } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
 import { filterEvents, eventCoordinates, categories, venueHotspots } from "../../utils/data";
+import { loadMarketAreas } from "../../services/api";
 import { assessDemand, businessToday } from "../../services/intelligence";
 import Filters from "../../components/Filters";
 import EventMap from "../../components/Map";
@@ -83,7 +84,20 @@ export default function CityEventMap() {
   // event markers under a cluster of H pins in the same few districts.
   // 渐进式披露：默认不显示酒店图层，用户主动打开才出现（GPT Round 32 第 1 轮）
   const [showHotels, setShowHotels] = useState(false);
+  // 商圈图层：默认关闭，用户主动打开才出现（渐进式披露）
+  const [showAreas, setShowAreas] = useState(false);
+  const [selectedAreaId, setSelectedAreaId] = useState<string | null>(null);
+  const [areaRows, setAreaRows] = useState<
+    { id: string; name: string; status: string; centerLng: number; centerLat: number; radiusMeters: number; nearbyEvents: number }[]
+  >([]);
   const selectedEventId = detail ?? selected ?? null;
+
+  useEffect(() => {
+    if (!showAreas || areaRows.length) return;
+    loadMarketAreas()
+      .then((result) => setAreaRows(result))
+      .catch(() => setAreaRows([]));
+  }, [showAreas, areaRows.length]);
   // 渐进式披露：场馆热点属于“更多查看方式”，默认不展开
   const [showMore, setShowMore] = useState(false);
 
@@ -276,6 +290,15 @@ export default function CityEventMap() {
             <h3>空间分布</h3>
             <Space wrap>
               <Switch
+                aria-label="查看商圈"
+                checked={showAreas}
+                onChange={(value) => {
+                  setShowAreas(value);
+                  if (!value) setSelectedAreaId(null);
+                }}
+              />
+              <span>{showAreas ? "已显示商圈参考点" : "查看商圈"}</span>
+              <Switch
                 aria-label="查看附近酒店"
                 checked={showHotels}
                 onChange={setShowHotels}
@@ -301,7 +324,41 @@ export default function CityEventMap() {
           )}
         </div>
       )}
-      <EventMap events={events} demandLayer={showHotels} />
+      {showAreas && selectedAreaId && (
+        <div className="area-summary">
+          {(() => {
+            const area = areaRows.find((item) => item.id === selectedAreaId);
+            if (!area) return null;
+            return (
+              <>
+                <strong>{area.name}</strong>
+                <span className="muted">
+                  {area.status === "official" ? "官方商圈" : "参考地点（非官方商圈）"} · 半径 {area.radiusMeters} 米 ·
+                  该范围内已收录活动 {area.nearbyEvents} 场 · 圆是估算范围，不是正式边界
+                </span>
+              </>
+            );
+          })()}
+        </div>
+      )}
+      <EventMap
+        events={events}
+        demandLayer={showHotels}
+        areasLayer={
+          showAreas
+            ? areaRows.map((area) => ({
+                id: area.id,
+                name: area.name,
+                status: area.status,
+                lng: area.centerLng,
+                lat: area.centerLat,
+                radiusMeters: area.radiusMeters,
+              }))
+            : undefined
+        }
+        selectedArea={selectedAreaId}
+        onAreaSelect={(id) => setSelectedAreaId((current) => (current === id ? null : id))}
+      />
           <div className="legend">
             {Object.values(categories).map((c) => (
               <span key={c.label}>

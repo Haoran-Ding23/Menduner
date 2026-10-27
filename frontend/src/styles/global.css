@@ -2328,3 +2328,11 @@ main {
 
 /* 关键三项摘要 */
 .three-summary { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+
+/* 商圈图层选中摘要 */
+.area-summary {
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline;
+  padding: 8px 12px; margin: 8px 0;
+  background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px;
+  font-size: 12.5px; color: #1e3a8a;
+}
