@@ -108,6 +108,10 @@ export default function DataQuality() {
             reviewer: identity.login ?? "reviewer",
           }),
         });
+        if (response.status === 404) {
+          message.warning("这个字段没有可核对的记录（缺失字段无法核对，可直接补录或跳过）");
+          return;
+        }
         if (response.status === 409) {
           message.warning("这条字段在你打开后已变化，请刷新后再核对");
           return;
@@ -548,8 +552,17 @@ export default function DataQuality() {
                   title: "处理",
                   width: 96,
                   fixed: "right" as const,
-                  render: (_: unknown, e: Evidence) => (
-                    // 字段处理操作：✓ 通过、✗ 不通过；只做当前这一行字段，不影响整条活动
+                  render: (_: unknown, e: Evidence) => {
+                    // 缺失字段没有可核对记录，点了必然失败：直接说明，不给假按钮
+                    const missing =
+                      e.value === null ||
+                      e.value === undefined ||
+                      e.value === "" ||
+                      effectiveStatus(e) === "Missing";
+                    if (missing) {
+                      return <span className="muted">缺失，无需核对</span>;
+                    }
+                    return (
                     <Space size={4}>
                       <Tooltip title={reviewer ? "通过这个字段" : "需要审核角色"}>
                         <Button
@@ -574,7 +587,8 @@ export default function DataQuality() {
                         </Button>
                       </Tooltip>
                     </Space>
-                  ),
+                    );
+                  },
                 },
                 {
                   title: "核验 / 来源",
