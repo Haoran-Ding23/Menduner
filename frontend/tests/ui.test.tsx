@@ -123,6 +123,8 @@ fireEvent.click(screen.getByRole("switch", { name: "包含演示数据" }));
     const match = /场馆已关联（(.+?)）/.exec(note.textContent ?? "");
     expect(match).not.toBeNull();
     const venueName = match![1];
+    // 12 轮第 2 轮起：关系画布默认收起（渐进式披露），先展开再点节点。
+    fireEvent.click(await screen.findByRole("button", { name: "展开关系图" }));
     fireEvent.click(screen.getAllByText(venueName)[0]);
     expect(await screen.findByText(/节点详情/)).toBeInTheDocument();
   });

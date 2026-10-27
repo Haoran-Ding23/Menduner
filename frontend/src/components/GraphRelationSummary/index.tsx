@@ -78,10 +78,17 @@ function statusTag(value: string) {
   return <Tag color={value === "Verified" ? "green" : value === "Needs Review" ? "gold" : "default"}>{label}</Tag>;
 }
 
-export default function GraphRelationSummary({ eventId }: { eventId: string }) {
+export default function GraphRelationSummary({
+  eventId,
+  onOpenGraph,
+}: {
+  eventId: string;
+  onOpenGraph?: () => void;
+}) {
   const [chain, setChain] = useState<Chain | null>(null);
   const [error, setError] = useState<string>("");
-  const [showGraph, setShowGraph] = useState(false);
+  // 周边设施默认收起：摘要先回答“在哪办、靠不靠谱”，要看细节再点开
+  const [showNearby, setShowNearby] = useState(false);
 
   useEffect(() => {
     if (!eventId) return undefined;
@@ -155,71 +162,81 @@ export default function GraphRelationSummary({ eventId }: { eventId: string }) {
         </span>
       </div>
 
-      {/* ② 离我的酒店多远 */}
-      <h4 className="relation-title">附近有什么</h4>
-      {chain.nearbyHotels.length === 0 ? (
-        <p className="muted">该场馆周边 800 米内没有已收录的住宿设施（不代表附近没有酒店）</p>
+      {/* ② 周边设施：默认收起，用户主动打开才出现 */}
+      {showNearby ? (
+        <>
+        {/* ② 离我的酒店多远 */}
+        <h4 className="relation-title">附近有什么</h4>
+        {chain.nearbyHotels.length === 0 ? (
+          <p className="muted">该场馆周边 800 米内没有已收录的住宿设施（不代表附近没有酒店）</p>
+        ) : (
+          <ul className="relation-list">
+            {chain.nearbyHotels.slice(0, 6).map((hotel) => (
+              <li key={hotel.id}>
+                {hotel.name}
+                <span className="muted"> · 距活动场馆约 {hotel.distanceMeters} 米 · 直线距离</span>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {dining.length > 0 && (
+          <>
+            <h4 className="relation-title">附近餐饮（按名称判断）</h4>
+            <ul className="relation-list">
+              {dining.slice(0, 4).map((place) => (
+                <li key={place.id}>
+                  {place.name}
+                  <span className="muted"> · 约 {place.distanceMeters} 米</span>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        {transport.length > 0 && (
+          <>
+            <h4 className="relation-title">附近交通（按名称判断）</h4>
+            <ul className="relation-list">
+              {transport.slice(0, 4).map((place) => (
+                <li key={place.id}>
+                  {place.name}
+                  <span className="muted"> · 约 {place.distanceMeters} 米</span>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        {others.length > 0 && (
+          <>
+            <h4 className="relation-title">附近其他设施</h4>
+            <ul className="relation-list">
+              {others.slice(0, 4).map((place) => (
+                <li key={place.id}>
+                  {place.name}
+                  <span className="muted"> · 约 {place.distanceMeters} 米</span>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        {chain.nearbyAreaCenter && (
+          <div className="relation-line">
+            <span className="relation-key">中心点周边</span>
+            <span className="relation-value">
+              最近参考点「{chain.nearbyAreaCenter.name}」约 {chain.nearbyAreaCenter.distanceMeters} 米
+              {chain.nearbyAreaCenter.insideRadius ? "（在半径内）" : "（超出半径，不计入归属）"}
+            </span>
+          </div>
+        )}
+
+        </>
       ) : (
-        <ul className="relation-list">
-          {chain.nearbyHotels.slice(0, 6).map((hotel) => (
-            <li key={hotel.id}>
-              {hotel.name}
-              <span className="muted"> · 距活动场馆约 {hotel.distanceMeters} 米 · 直线距离</span>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {dining.length > 0 && (
-        <>
-          <h4 className="relation-title">附近餐饮（按名称判断）</h4>
-          <ul className="relation-list">
-            {dining.slice(0, 4).map((place) => (
-              <li key={place.id}>
-                {place.name}
-                <span className="muted"> · 约 {place.distanceMeters} 米</span>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-
-      {transport.length > 0 && (
-        <>
-          <h4 className="relation-title">附近交通（按名称判断）</h4>
-          <ul className="relation-list">
-            {transport.slice(0, 4).map((place) => (
-              <li key={place.id}>
-                {place.name}
-                <span className="muted"> · 约 {place.distanceMeters} 米</span>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-
-      {others.length > 0 && (
-        <>
-          <h4 className="relation-title">附近其他设施</h4>
-          <ul className="relation-list">
-            {others.slice(0, 4).map((place) => (
-              <li key={place.id}>
-                {place.name}
-                <span className="muted"> · 约 {place.distanceMeters} 米</span>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-
-      {chain.nearbyAreaCenter && (
-        <div className="relation-line">
-          <span className="relation-key">中心点周边</span>
-          <span className="relation-value">
-            最近参考点「{chain.nearbyAreaCenter.name}」约 {chain.nearbyAreaCenter.distanceMeters} 米
-            {chain.nearbyAreaCenter.insideRadius ? "（在半径内）" : "（超出半径，不计入归属）"}
-          </span>
-        </div>
+        <Button size="small" onClick={() => setShowNearby(true)}>
+          查看周边设施（酒店 {chain.nearbyHotels.length} · 餐饮/交通/其他 {chain.nearbyPlaces.length}）
+        </Button>
       )}
 
       <p className="relation-caveat">
@@ -228,8 +245,8 @@ export default function GraphRelationSummary({ eventId }: { eventId: string }) {
 
       {/* ③ 靠不靠谱 */}
       <Space wrap>
-        <Button size="small" onClick={() => setShowGraph((value) => !value)}>
-          {showGraph ? "收起关系图" : "查看关系图"}
+        <Button size="small" onClick={() => onOpenGraph?.()}>
+          查看关系图
         </Button>
         <Button size="small" href={`/map?event=${encodeURIComponent(chain.eventId)}`}>
           在地图上看

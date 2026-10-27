@@ -90,6 +90,8 @@ export default function KnowledgeGraph() {
   const setShowPlaces = (next: boolean) => update({ places: next ? null : "0" });
   const setShowAudience = (next: boolean) =>
     update({ audience: next ? null : "0" });
+  // 渐进式披露：默认不渲染关系画布（初始 DOM 里没有 ReactFlow）
+  const [showCanvas, setShowCanvas] = useState(false);
   const [nodeId, setNodeId] = useState<string | null>(null),
     [edgeId, setEdgeId] = useState<string | null>(null);
   const graph = useMemo(
@@ -203,7 +205,7 @@ export default function KnowledgeGraph() {
         <p>活动 → 场馆 → 位置语境 → 周边酒店 / 餐饮 / 交通 → 目标客群(按规则自动生成)</p>
       </div>
 
-      <GraphRelationSummary eventId={id} />
+      <GraphRelationSummary eventId={id} onOpenGraph={() => setShowCanvas(true)} />
 
       <section className="panel gap-bottom" aria-label="图谱业务查询">
         <div className="panel-heading">
@@ -264,7 +266,15 @@ export default function KnowledgeGraph() {
       </div>
       <div className="graph-layout">
         <div className="panel graph-canvas">
-          {nodes.length ? (
+          {!showCanvas ? (
+            <div style={{ padding: 18 }}>
+              <p className="muted" style={{ margin: "0 0 10px" }}>
+                关系图默认收起。上面已经用一句句话说明了这场活动在哪办、离哪些住宿多近、信息靠不靠谱；
+                需要看节点与连线时再展开。
+              </p>
+              <Button onClick={() => setShowCanvas(true)}>展开关系图</Button>
+            </div>
+          ) : nodes.length ? (
             <ReactFlow
               // The key must change whenever the node set changes shape. React Flow only
               // runs fitView on mount, so toggling the related layer without remounting left
