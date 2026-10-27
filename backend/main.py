@@ -16,6 +16,7 @@ from backend import tenants
 from backend import tracking
 from backend import graph_query
 from backend import ai_analysis
+from backend import manual_fill
 from backend import ai_review
 from backend import graph_chain
 from backend import market_area
@@ -26,6 +27,16 @@ from backend.amap import amap_place_url
 from backend import venues as venue_store
 from backend.database import connect, database_path, initialize, snapshot, snapshot_bytes
 from crawler import crawl_log, review
+
+
+class FillRequest(BaseModel):
+    """人工补录一个缺失字段。"""
+    event_id: str = Field(min_length=1)
+    field: str = Field(min_length=1)
+    value: str = Field(min_length=1, max_length=500)
+    source_url: str = Field(min_length=4, max_length=500)
+    reviewer: str = Field(min_length=1, max_length=80)
+    note: str | None = Field(default=None, max_length=300)
 
 
 class AiReviewLabel(BaseModel):
@@ -1082,6 +1093,24 @@ def create_app(db_path: Path | None = None):
         result['venue_reference_status'] = row['status'] if row else None
         result['authenticated_as'] = principal
         return result
+
+    @app.post('/review/fill')
+    def review_fill(body: FillRequest, principal: str = Depends(auth.require_role(auth.ROLE_REVIEWER))):
+        """人工补录缺失字段：必须带来源链接，留痕补录人，方法标记为 manual_entry。"""
+        try:
+            return manual_fill.fill(
+                path,
+                event_id=body.event_id,
+                field=body.field,
+                value=body.value,
+                source_url=body.source_url,
+                reviewer=body.reviewer,
+                note=body.note,
+            )
+        except KeyError:
+            raise HTTPException(status_code=404, detail='活动不存在') from None
+        except manual_fill.FillError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from None
 
     @app.get('/review/{event_id}')
     def event_review(event_id: str,

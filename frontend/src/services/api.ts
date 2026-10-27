@@ -655,3 +655,31 @@ export async function labelAiReview(id: string, verdict: "agree" | "disagree", n
   if (!response.ok) throw new Error("标注失败（需要审核角色）");
   return response.json();
 }
+
+// ---- 人工补录缺失字段（必须带来源；留痕补录人）----
+export async function fillEvidence(input: {
+  eventId: string;
+  field: string;
+  value: string;
+  sourceUrl: string;
+  reviewer: string;
+  note?: string;
+}): Promise<{ ok: boolean; action: string; fieldLabel: string }> {
+  const response = await fetch("/api/review/fill", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      event_id: input.eventId,
+      field: input.field,
+      value: input.value,
+      source_url: input.sourceUrl,
+      reviewer: input.reviewer,
+      note: input.note ?? null,
+    }),
+  });
+  if (!response.ok) {
+    const detail = await response.json().catch(() => ({ detail: "" }));
+    throw new Error(detail.detail || "补录失败（需要审核角色）");
+  }
+  return response.json();
+}

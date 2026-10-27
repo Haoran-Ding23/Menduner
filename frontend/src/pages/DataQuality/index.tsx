@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Alert, App, Button, Input, Select, Space, Switch, Table, Tag, Tooltip, message as staticMessage } from "antd";
+import { Alert, App, Button, Input, Modal, Select, Space, Switch, Table, Tag, Tooltip, message as staticMessage } from "antd";
+import { fillEvidence } from "../../services/api";
 import { usePlatform } from "../../hooks/usePlatform";
 import { canReview, useIdentity } from "../../hooks/useIdentity";
 import VenueEvents from "../../components/VenueEvents";
@@ -89,6 +90,12 @@ export default function DataQuality() {
   }, [focusField]);
   // 酒店服务员视角：默认只核对"活动名字 / 活动场地 / 来源链接"三项
   const [simpleOnly, setSimpleOnly] = useState(true);
+  // 人工补录：缺失字段没有可核对记录，只能补录（必须带来源）
+  const [fillTarget, setFillTarget] = useState<Evidence | null>(null);
+  const [fillValue, setFillValue] = useState("");
+  const [fillSource, setFillSource] = useState("");
+  const [fillNote, setFillNote] = useState("");
+  const [fillBusy, setFillBusy] = useState(false);
   const KEY_THREE = [["name"], ["venueName", "venueId", "venue"], ["sourceUrl"]];
   const { reloadData } = platform;
 
@@ -178,7 +185,15 @@ export default function DataQuality() {
       (showVerified || eventStatus(repository.getEvidence(e.id)) !== "Verified") &&
       (!status || eventStatus(repository.getEvidence(e.id)) === status),
   );
-  const event = repository.getEventById(selected ?? records[0]?.id ?? "");
+  // ?event= 传进来时，优先按 id 在全量数据里找（repository 只索引当前筛选范围，
+  // 活动若被年份/地区筛掉就找不到，页面会错误显示“未选择活动”）
+  // 平台状态偶尔还没同步，直接读 URL 参数更可靠（深链 ?event=）
+  const wantedId =
+    selected ?? new URLSearchParams(window.location.search).get("event") ?? "";
+  const event =
+    (wantedId ? repository.getEventById(wantedId) : undefined) ??
+    (wantedId ? dataset.events.find((item) => item.id === wantedId) : undefined) ??
+    repository.getEventById(records[0]?.id ?? "");
   const venue = dataset.venues.find((v) => v.id === event?.venueId);
   const fields = useMemo(() => {
     if (!event) return [] as Evidence[];
@@ -203,6 +218,10 @@ export default function DataQuality() {
     pendingFields.some((item) => names.includes(item.field)),
   ).length;
   const effectiveSimple = simpleOnly && pendingKeyCount > 0;
+  // 缺失字段（没有可核对记录）单独列出：它们多为辅助字段，默认三项视图会把它们过滤掉
+  const isMissingField = (item: Evidence) =>
+    item.value === null || item.value === undefined || item.value === "" || effectiveStatus(item) === "Missing";
+  const missingFields = pendingFields.filter(isMissingField);
   // 关键字段决定这条活动能不能用；其余（赞助商、规模等）只是信息不全。
   const KEY_FIELD_NAMES = new Set([
     "startDate", "endDate", "name", "venueId", "venueName", "location", "city", "address",
@@ -447,6 +466,32 @@ export default function DataQuality() {
                   已定位到「{FIELD_LABELS[focusField] ?? focusField}」这一行。
                 </p>
               )}
+              {missingFields.length > 0 && (
+                <div className="missing-block">
+                  <strong>缺失字段（{missingFields.length} 个，可补录）</strong>
+                  <div className="missing-items">
+                    {missingFields.map((item) => (
+                      <span key={item.id} className="missing-item">
+                        {FIELD_LABELS[item.field] ?? item.field}
+                        <Button
+                          size="small"
+                          type="link"
+                          style={{ padding: "0 4px" }}
+                          disabled={!reviewer}
+                          onClick={() => {
+                            setFillTarget(item);
+                            setFillValue("");
+                            setFillSource(item.sourceUrl ?? "");
+                            setFillNote("");
+                          }}
+                        >
+                          补录
+                        </Button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
               <p className="dq-group-title">
                 <span className="three-summary">
                   关键三项：
@@ -560,7 +605,20 @@ export default function DataQuality() {
                       e.value === "" ||
                       effectiveStatus(e) === "Missing";
                     if (missing) {
-                      return <span className="muted">缺失，无需核对</span>;
+                      return (
+                        <Button
+                          size="small"
+                          disabled={!reviewer}
+                          onClick={() => {
+                            setFillTarget(e);
+                            setFillValue("");
+                            setFillSource(e.sourceUrl ?? "");
+                            setFillNote("");
+                          }}
+                        >
+                          补录
+                        </Button>
+                      );
                     }
                     return (
                     <Space size={4}>
@@ -677,6 +735,74 @@ export default function DataQuality() {
           <VenueEvents venueId={openVenueId} onClose={() => setOpenVenueId(null)} />
         </section>
       )}
+
+      <Modal
+        title="补录这个字段"
+        open={Boolean(fillTarget)}
+        onCancel={() => setFillTarget(null)}
+        okText="保存补录"
+        confirmLoading={fillBusy}
+        onOk={async () => {
+          if (!fillTarget) return;
+          if (!fillSource.trim()) {
+            message.warning("必须填写来源链接：没有来源的信息不写入");
+            return;
+          }
+          setFillBusy(true);
+          try {
+            const result = await fillEvidence({
+              eventId: fillTarget.entityId,
+              field: fillTarget.field,
+              value: fillValue,
+              sourceUrl: fillSource,
+              reviewer: String(identity.login ?? "reviewer"),
+              note: fillNote || undefined,
+            });
+            message.success("已补录：" + (result.fieldLabel ?? fillTarget.field));
+            setFillTarget(null);
+            await reloadData();
+          } catch (error) {
+            message.error((error as Error).message);
+          } finally {
+            setFillBusy(false);
+          }
+        }}
+      >
+        <p className="muted" style={{ marginTop: 0 }}>
+          补录会写成一条「人工补录」证据（状态已核验），并记录补录人与时间；必须填来源链接。
+        </p>
+        <p>
+          <strong>字段：</strong>
+          {FIELD_LABELS[fillTarget?.field ?? ""] ?? fillTarget?.field}
+        </p>
+        <p style={{ marginBottom: 6 }}>
+          <strong>值</strong>
+        </p>
+        <Input
+          aria-label="补录值"
+          placeholder="例如：苏州文化艺术中心大剧院"
+          value={fillValue}
+          onChange={(event) => setFillValue(event.target.value)}
+        />
+        <p style={{ margin: "12px 0 6px" }}>
+          <strong>来源链接</strong>（必填）
+        </p>
+        <Input
+          aria-label="补录来源链接"
+          placeholder="https://..."
+          value={fillSource}
+          onChange={(event) => setFillSource(event.target.value)}
+        />
+        <p style={{ margin: "12px 0 6px" }}>
+          <strong>备注</strong>（可选）
+        </p>
+        <Input
+          aria-label="补录备注"
+          placeholder="例如：来自官方公告第二段"
+          value={fillNote}
+          onChange={(event) => setFillNote(event.target.value)}
+        />
+      </Modal>
     </>
   );
 }

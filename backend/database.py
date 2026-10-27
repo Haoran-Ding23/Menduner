@@ -99,7 +99,7 @@ def snapshot(path):
         counts = {status: sum(e['verification_status'] == status for e in events)
                   for status in ('Verified', 'Unverified', 'Missing', 'Conflicting', 'Needs Review')}
         status = {'sourceCount': len(sources), 'mockSourceCount': sum(s['mock'] for s in sources),
-                  'eventCount': len(events), 'demoEventCount': sum(e['demo'] for e in events),
+                  'eventCount': len(events), 'demoEventCount': sum(bool(e.get('demo')) for e in events),
                   'verificationCounts': counts, 'lastUpdated': last['updated_at'] if last else None,
                   'revision': last['id'] if last else 0, 'sources': sources,
                   'caliberVersion': CALIBER_VERSION}
