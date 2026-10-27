@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { Alert, Button, Input, Select, Space, Switch, Table, Tag, Tooltip } from "antd";
+import { Alert, App, Button, Input, Select, Space, Switch, Table, Tag, Tooltip } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
 import { canReview, useIdentity } from "../../hooks/useIdentity";
 import VenueEvents from "../../components/VenueEvents";
@@ -71,18 +71,15 @@ export default function DataQuality() {
   const dataset = platform.rawDataset ?? platform.dataset;
   // 快速核对：只核对三项（活动名称 / 举办场馆 / 来源链接），其余字段仍在下方明细表里
   const [quickBusy, setQuickBusy] = useState<string | null>(null);
+  const { message } = App.useApp();
   // 酒店服务员视角：默认只核对"活动名字 / 活动场地 / 来源链接"三项
   const [simpleOnly, setSimpleOnly] = useState(true);
   const { reloadData } = platform;
-  const [quickMsg, setQuickMsg] = useState<string>("");
-  // 本次会话内的核对痕迹：字段 -> { 操作人, 时间 }
-  const [reviewTrail, setReviewTrail] = useState<Record<string, { who: string; at: string }>>({});
 
   const decideField = useCallback(
     async (eventId: string, field: string, value: unknown, decision: "Verified" | "Rejected") => {
       if (!reviewer) return;
       setQuickBusy(field);
-      setQuickMsg("");
       try {
         const response = await fetch("/api/review", {
           method: "POST",
@@ -96,25 +93,25 @@ export default function DataQuality() {
           }),
         });
         if (response.status === 409) {
-          setQuickMsg("这条字段在你打开后已变化，请刷新后再核对");
+          message.warning("这条字段在你打开后已变化，请刷新后再核对");
           return;
         }
         if (!response.ok) {
-          setQuickMsg("提交失败（需要审核角色或登录已过期）");
+          message.error("提交失败：需要审核角色，或登录已过期");
           return;
         }
-        setQuickMsg(decision === "Verified" ? "已人工核对，状态已更新" : "已标记为有问题");
-        setReviewTrail((current) => ({
-          ...current,
-          [field]: { who: identity.login ?? "reviewer", at: new Date().toLocaleString("zh-CN") },
-        }));
+        message.success(
+          decision === "Verified"
+            ? "已人工核对：" + (FIELD_LABELS[String(field)] ?? String(field))
+            : "已标记有问题：" + (FIELD_LABELS[String(field)] ?? String(field)),
+        );
         // 关键：重新拉取数据，否则页面仍显示"待复核"（用户看到的"闪一下就恢复"就是这个）
         await reloadData();
       } finally {
         setQuickBusy(null);
       }
     },
-    [identity.login, platform, reloadData, reviewer],
+    [identity.login, message, platform, reloadData, reviewer],
   );
 
   const VENUE_NAMES = new Map(dataset.venues.map((v) => [v.id, v.name]));
@@ -253,103 +250,6 @@ export default function DataQuality() {
       {/* Per-region quality, so a reviewer can see which part of the city is short of evidence
           before scrolling a global list of 663 events. Selecting a row scopes the index below. */}
       <section className="panel gap-bottom" aria-label="分地区数据质量">
-        <div className="quick-check" aria-label="快速核对">
-          <div className="quick-check-head">
-            <strong>快速核对（3 项）</strong>
-            <span className="muted" style={{ marginLeft: 8 }}>
-              已核对{" "}
-              {
-                [
-                  ["name"],
-                  ["venueName", "venueId", "venue"],
-                  ["sourceUrl"],
-                ].filter((names) => !pendingFields.some((item) => names.includes(item.field))).length
-              }
-              /3 项
-            </span>
-            <span className="muted">
-              {reviewer ? "点 ✓ 通过、点 ✗ 标记有问题；其余字段在下方明细里" : "需要审核角色才能核对"}
-            </span>
-          </div>
-          {[
-            { field: "name", label: "活动名称", value: event?.name },
-            {
-              field: "venueName|venueId|venue",
-              label: "举办场馆",
-              value:
-                dataset.venues.find((v) => v.id === event?.venueId)?.name ??
-                (event?.venueId ? "场馆名称待补充" : null),
-            },
-            {
-              field: "sourceUrl",
-              label: "来源链接",
-              value:
-                dataset.evidence.find((item) => item.entityId === event?.id && item.field === "sourceUrl")
-                  ?.value ?? null,
-            },
-          ].map((row) => (
-            <div className="quick-row" key={row.field}>
-              <span className="quick-label">{row.label}</span>
-              <span className="quick-value">{row.value ? String(row.value) : "（缺失）"}</span>
-              <span className="quick-status">
-                {(() => {
-                  // 与审核台同一口径：待处理=可点；已核验=已通过；都没有=无记录
-                  const names = String(row.field).split("|");
-                  const pending = pendingFields.some((item) => names.includes(item.field));
-                  if (pending) return <Tag>待核对</Tag>;
-                  const settled = settledFields.some((item) => names.includes(item.field));
-                  if (settled) return <Tag color="green">已人工核对</Tag>;
-                  return <Tag>无记录</Tag>;
-                })()}
-              </span>
-              <span className="quick-trail">
-                {Object.entries(reviewTrail)
-                  .filter(([key]) => String(row.field).split("|").includes(key))
-                  .map(([key, trace]) => (
-                    <small key={key} className="muted">
-                      {trace.who} · {trace.at}
-                    </small>
-                  ))}
-              </span>
-              <span className="quick-actions">
-                <button
-                  type="button"
-                  className="quick-btn ok"
-                  disabled={
-                    !reviewer ||
-                    quickBusy === row.field ||
-                    !event ||
-                    !pendingFields.some((item) => row.field.split("|").includes(item.field))
-                  }
-                  aria-label={row.label + " 通过"}
-                  onClick={() => void decideField(event!.id, row.field, row.value, "Verified")}
-                >
-                  ✓
-                </button>
-                <button
-                  type="button"
-                  className="quick-btn no"
-                  disabled={
-                    !reviewer ||
-                    quickBusy === row.field ||
-                    !event ||
-                    (() => {
-                      const record = dataset.evidence.find(
-                        (item) => item.entityId === event?.id && item.field === row.field,
-                      );
-                      return record ? effectiveStatus(record) === "Verified" : false;
-                    })()
-                  }
-                  aria-label={row.label + " 有问题"}
-                  onClick={() => void decideField(event!.id, row.field, row.value, "Rejected")}
-                >
-                  ✗
-                </button>
-              </span>
-            </div>
-          ))}
-          {quickMsg && <p className="muted quick-msg">{quickMsg}</p>}
-        </div>
 
         <div className="panel-heading">
           <h3 style={{ margin: 0 }}>分地区数据质量</h3>
