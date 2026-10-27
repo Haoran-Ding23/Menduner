@@ -309,12 +309,38 @@ const [followups, setFollowups] = useState<Followup[]>([]);
                   </small>
                   {/* 推荐理由与维度分数分开显示：距离近不等于值得投入，用户要能看到两件事。 */}
                   <small className="rank-reasons">{reasons.join(" · ")}</small>
-                  <small className="rank-dims">
-                    相关性 {fmtDim(byDimension.relevance)} · 距离 {fmtDim(byDimension.distance)} ·
-                    可信度 {fmtDim(byDimension.credibility)} · 紧迫度 {fmtDim(byDimension.timing)}
-                  </small>
+                  {(() => {
+                    // 主界面只说人话；分档规则与原始分数放 tooltip，避免变成黑箱打分
+                    const level = (value: number | null, high: number, mid: number) =>
+                      value === null ? "不足" : value >= high ? "高" : value >= mid ? "中" : "低";
+                    const worth = level(
+                      byDimension.relevance === null || byDimension.timing === null
+                        ? null
+                        : (byDimension.relevance + byDimension.timing) / 2,
+                      0.75,
+                      0.5,
+                    );
+                    const reliable = level(byDimension.credibility, 0.75, 0.4);
+                    return (
+                      <small className="rank-plain">
+                        值得关注：<strong>{worth}</strong> · 信息可靠：<strong>{reliable}</strong>
+                        <Tooltip
+                          title={
+                            "值得关注 = 业务相关性与紧迫度的平均（≥0.75 高，≥0.5 中，其余低）；" +
+                            "信息可靠 = 关键字段的证据覆盖率（≥0.75 高，≥0.4 中，其余低）。原始分数：" +
+                            "相关性 " + fmtDim(byDimension.relevance) +
+                            " · 距离 " + fmtDim(byDimension.distance) +
+                            " · 可信度 " + fmtDim(byDimension.credibility) +
+                            " · 紧迫度 " + fmtDim(byDimension.timing)
+                          }
+                        >
+                          <span className="rank-help">怎么判断的</span>
+                        </Tooltip>
+                      </small>
+                    );
+                  })()}
                   {unknown.length > 0 && (
-                    <small className="rank-unknown">未知：{unknown.join("；")}</small>
+                    <small className="rank-unknown">还没确认：{unknown.join("；")}</small>
                   )}
                 </div>
                 <Space size={4} wrap>
