@@ -1,0 +1,35 @@
+[
+  {
+    "page": "/review",
+    "name": "审核台",
+    "controls": 3,
+    "tested": 3,
+    "noop": 0,
+    "rows": [
+      {
+        "index": 0,
+        "tag": "button",
+        "label": "刷新 API 数据",
+        "verdict": "effect",
+        "mutations": 12,
+        "fetches": 1
+      },
+      {
+        "index": 1,
+        "tag": "button",
+        "label": "重新检查身份",
+        "verdict": "effect",
+        "mutations": 16,
+        "fetches": 2
+      },
+      {
+        "index": 2,
+        "tag": "button",
+        "label": "返回数据质量页",
+        "verdict": "missing",
+        "mutations": 16,
+        "fetches": 2
+      }
+    ]
+  }
+]

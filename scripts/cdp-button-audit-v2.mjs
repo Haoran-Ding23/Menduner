@@ -20,6 +20,9 @@ const BASE = argv[0] && !argv[0].startsWith("--") ? argv[0] : "https://entgroup1
 const JSON_OUT = getArg("--json", "deliverables/button-audit.json");
 const CAP = Number(getArg("--cap", "18"));
 const ONLY = getArg("--pages", "");
+const AUTH = argv.includes("--auth");
+const AUTH_LOGIN = getArg("--login", "manager01");
+const AUTH_PASSWORD = getArg("--password", "Menduner#2026");
 // 审计只验证"有没有反应"，绝不允许写入真实数据：
 // 生成/保存/审核/删除/导入这类动作在审计中一律跳过，改为在专门的测试里验证。
 const DESTRUCTIVE = /(生成|保存|提交|确认|审核|核查完毕|删除|导入|撤回|补录|对$|错$|通过|驳回|清空|重置数据)/;
@@ -67,7 +70,9 @@ const COLLECT = `(function(){
       if (el.closest('aside, nav, .sidebar, [class*="sider"], [class*="layout-menu"]')) return;
       const label = (el.getAttribute('aria-label') || el.textContent || '').trim().replace(/\\s+/g, ' ').slice(0, 26);
       // 破坏性操作一律跳过（正则必须写字面量：这段代码在浏览器里执行）
-      if (/生成|保存|提交|确认|审核|核查完毕|删除|导入|撤回|补录|^对$|^错$|通过|驳回|清空|重置数据/.test(label)) return;
+      // 先把空白去掉再判断：按钮文案是「通 过 / 驳 回 / 修 正」，直接匹配「通过」会漏
+      const compact = label.replace(/\s+/g, "");
+      if (/生成|保存|提交|确认|审核|核查完毕|删除|导入|撤回|补录|^对$|^错$|通过|驳回|修正|清空|重置数据/.test(compact)) return;
       const key = el.tagName + '|' + label + '|' + Math.round(r.x) + ',' + Math.round(r.y);
       if (seen.has(key)) return;
       seen.add(key);
@@ -116,6 +121,14 @@ async function main() {
   for (const [path, name] of PAGES) {
     await send("Page.navigate", { url: BASE + path });
     await sleep(13000);
+    if (AUTH) {
+      // 先登录（会话 Cookie），再重载页面，才能看到审核身份下才渲染的控件
+      await evaluate(`fetch('/api/account/login',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:${JSON.stringify(
+        JSON.stringify({ login: AUTH_LOGIN, password: AUTH_PASSWORD }).replace(/"/g, '"'),
+      )}}).then(r=>r.status).catch(()=>0)`);
+      await send("Page.navigate", { url: BASE + path });
+      await sleep(15000);
+    }
     await evaluate(INSTRUMENT);
     const controls = (await evaluate(COLLECT)) || [];
     const rows = [];
