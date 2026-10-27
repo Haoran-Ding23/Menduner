@@ -83,6 +83,7 @@ export default function CityEventMap() {
   // event markers under a cluster of H pins in the same few districts.
   // 渐进式披露：默认不显示酒店图层，用户主动打开才出现（GPT Round 32 第 1 轮）
   const [showHotels, setShowHotels] = useState(false);
+  const selectedEventId = detail ?? selected ?? null;
   // 渐进式披露：场馆热点属于“更多查看方式”，默认不展开
   const [showMore, setShowMore] = useState(false);
 
@@ -279,7 +280,15 @@ export default function CityEventMap() {
                 checked={showHotels}
                 onChange={setShowHotels}
               />
-              <span>{showHotels ? `已显示酒店（${hotelCount} 家）` : `查看附近酒店（${hotelCount} 家）`}</span>
+              <span>
+                {showHotels
+                  ? selectedEventId
+                    ? "已显示这条活动附近的酒店"
+                    : `已显示酒店（${hotelCount} 家）`
+                  : selectedEventId
+                    ? "查看附近酒店"
+                    : `查看附近酒店（${hotelCount} 家）`}
+              </span>
             </Space>
           </div>
           {focusNotice && (

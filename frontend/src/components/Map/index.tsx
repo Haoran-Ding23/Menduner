@@ -235,13 +235,37 @@ export default function EventMap({
       markers.push(marker);
     });
     if (demandLayer) {
-      const relevant = new Set(
-        events.flatMap((event) =>
-          assessDemand(event, dataset).nearbyHotels.map(
-            (item) => item.hotel.id,
-          ),
-        ),
-      );
+      const focusEvent = dataset.events.find((e) => e.id === selected);
+      // 有选中活动时只显示它附近的酒店（渐进式披露：点了"附近酒店"就该看到"附近"的）。
+      // 用场馆坐标直接算 3 公里内，不依赖"活动↔场馆关联是否已核验"，
+      // 否则未核验的活动会一家都显示不出来（页面文案已注明这是参考位置）。
+      const focusLocated = focusEvent ? eventLocation(focusEvent, dataset) : null;
+      const NEAR_HOTEL_METERS = 3000;
+      const relevant = focusLocated?.coords
+        ? new Set(
+            dataset.hotels
+              .filter((h) => {
+                const c = h.coordinates;
+                if (!c || c.lng == null || c.lat == null) return false;
+                const toRad = (value: number) => (value * Math.PI) / 180;
+                const dLat = toRad(c.lat - focusLocated.coords!.lat);
+                const dLng = toRad(c.lng - focusLocated.coords!.lng);
+                const a =
+                  Math.sin(dLat / 2) ** 2 +
+                  Math.cos(toRad(focusLocated.coords!.lat)) *
+                    Math.cos(toRad(c.lat)) *
+                    Math.sin(dLng / 2) ** 2;
+                return 2 * 6371000 * Math.asin(Math.sqrt(a)) <= NEAR_HOTEL_METERS;
+              })
+              .map((h) => h.id),
+          )
+        : new Set(
+            events.flatMap((event) =>
+              assessDemand(event, dataset).nearbyHotels.map(
+                (item) => item.hotel.id,
+              ),
+            ),
+          );
       dataset.hotels
         .filter((h) => relevant.has(h.id) && h.id !== hotel?.id)
         .forEach((h) => {
