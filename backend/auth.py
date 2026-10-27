@@ -92,6 +92,20 @@ def principal(request: Request) -> str:
     login = (request.headers.get(LOGIN_HEADER) or "").strip()
     if login:
         return login
+    # 会话 Cookie 兜底：客户账号登录后，只要登录名在 roles.json 里有角色，就能执行写操作。
+    # 角色仍来自服务端配置，前端无法伪造。
+    try:
+        from backend import accounts as _accounts
+        from backend.database import connect as _connect, database_path as _database_path
+
+        token = request.cookies.get(_accounts.SESSION_COOKIE)
+        if token:
+            with _connect(_database_path()) as con:
+                account = _accounts.session_account(con, token)
+            if account and account.get("login"):
+                return str(account["login"])
+    except Exception:
+        pass
     configured = (os.environ.get(TOKEN_ENV) or "").strip()
     authorization = request.headers.get("Authorization") or ""
     if configured and authorization.lower().startswith("bearer "):
