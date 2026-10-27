@@ -71,7 +71,7 @@ const COLLECT = `(function(){
       const label = (el.getAttribute('aria-label') || el.textContent || '').trim().replace(/\\s+/g, ' ').slice(0, 26);
       // 破坏性操作一律跳过（正则必须写字面量：这段代码在浏览器里执行）
       // 先把空白去掉再判断：按钮文案是「通 过 / 驳 回 / 修 正」，直接匹配「通过」会漏
-      const compact = label.replace(/\s+/g, "");
+      const compact = label.replace(/\\s+/g, "");
       if (/生成|保存|提交|确认|审核|核查完毕|删除|导入|撤回|补录|^对$|^错$|通过|驳回|修正|清空|重置数据/.test(compact)) return;
       const key = el.tagName + '|' + label + '|' + Math.round(r.x) + ',' + Math.round(r.y);
       if (seen.has(key)) return;
