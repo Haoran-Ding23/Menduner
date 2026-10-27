@@ -22,7 +22,19 @@ export default function CityEventMap() {
     const params = new URLSearchParams(window.location.search);
     const eventId = params.get("event");
     if (!eventId) return;
-    update({ event: eventId, detail: eventId });
+    const target = dataset.events.find((item) => item.id === eventId);
+    if (target) {
+      // 地区与月份必须跟着活动走，否则标题会写成一个不相干的地区
+      update({
+        event: eventId,
+        detail: eventId,
+        district: target.districtId ?? null,
+        year: Number((target.startDate ?? "").slice(0, 4)) || filters.year,
+        month: Number((target.startDate ?? "").slice(5, 7)) || filters.month,
+      });
+    } else {
+      update({ event: eventId, detail: eventId });
+    }
     params.delete("event");
     const next = params.toString();
     window.history.replaceState(null, "", window.location.pathname + (next ? "?" + next : ""));
