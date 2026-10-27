@@ -73,11 +73,24 @@ export default function AiReviewTrials({ canReview }: { canReview: boolean }) {
   };
 
   const label = async (trial: AiReviewTrial, verdict: "agree" | "disagree") => {
+    // 乐观更新：先把这条标记成已判定，界面立刻有结果；失败再回滚。
+    // 用户反馈过"点完没反应"，等待整表刷新会让操作看起来无效。
+    const previous = trials;
+    setTrials((current) =>
+      current.map((item) =>
+        item.id === trial.id ? { ...item, verdict, labeled_at: new Date().toISOString() } : item,
+      ),
+    );
+    setStats((current) =>
+      current ? { ...current, labeled: current.labeled + 1 } : current,
+    );
     try {
       await labelAiReview(trial.id, verdict);
       message.success(verdict === "agree" ? "已记为：AI 建议正确" : "已记为：AI 建议有误");
-      await refresh();
+      void refresh().catch(() => undefined);
     } catch (error) {
+      setTrials(previous); // 回滚
+      void refresh().catch(() => undefined);
       message.error((error as Error).message);
     }
   };

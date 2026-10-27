@@ -159,8 +159,9 @@ export default function ReviewConsole() {
     setBusy(`${eventId}:__all__`);
     try {
       const result = await checkWholeEvent({ eventId, reviewer: effectiveReviewer });
-      await reloadData();
-      await loadQueue();
+      // 先给结果，再在后台刷新数据；不让用户盯着"没反应"等 7MB 重载
+      void reloadData().catch(() => undefined);
+      void loadQueue().catch(() => undefined);
       const parts = [
         `已核验 ${result.settled} 个字段`,
         result.confirmed_absent.length
@@ -350,7 +351,7 @@ export default function ReviewConsole() {
         </section>
       )}
       {/* AI 建议核对（试验）：只有审核角色可见 */}
-      {allowed && <AiReviewTrials canReview={Boolean(reviewer)} />}
+      {allowed && <AiReviewTrials canReview={Boolean(effectiveReviewer)} />}
 
       <div className="evidence-layout">
         <section className="panel">
