@@ -73,6 +73,7 @@ export default function DataQuality() {
   const [quickBusy, setQuickBusy] = useState<string | null>(null);
   // 酒店服务员视角：默认只核对"活动名字 / 活动场地 / 来源链接"三项
   const [simpleOnly, setSimpleOnly] = useState(true);
+  const { reloadData } = platform;
   const [quickMsg, setQuickMsg] = useState<string>("");
 
   const decideField = useCallback(
@@ -100,12 +101,14 @@ export default function DataQuality() {
           setQuickMsg("提交失败（需要审核角色或登录已过期）");
           return;
         }
-        setQuickMsg(decision === "Verified" ? "已通过" : "已标记为有问题");
+        setQuickMsg(decision === "Verified" ? "已通过，状态已更新" : "已标记为有问题");
+        // 关键：重新拉取数据，否则页面仍显示"待复核"（用户看到的"闪一下就恢复"就是这个）
+        await reloadData();
       } finally {
         setQuickBusy(null);
       }
     },
-    [identity.login, platform, reviewer],
+    [identity.login, platform, reloadData, reviewer],
   );
 
   const VENUE_NAMES = new Map(dataset.venues.map((v) => [v.id, v.name]));
@@ -254,7 +257,7 @@ export default function DataQuality() {
           {[
             { field: "name", label: "活动名称", value: event?.name },
             {
-              field: "venueId",
+              field: "venueName|venueId|venue",
               label: "举办场馆",
               value:
                 dataset.venues.find((v) => v.id === event?.venueId)?.name ??
@@ -271,11 +274,27 @@ export default function DataQuality() {
             <div className="quick-row" key={row.field}>
               <span className="quick-label">{row.label}</span>
               <span className="quick-value">{row.value ? String(row.value) : "（缺失）"}</span>
+              <span className="quick-status">
+                {(() => {
+                  // 与审核台同一口径：待处理=可点；已核验=已通过；都没有=无记录
+                  const names = String(row.field).split("|");
+                  const pending = pendingFields.some((item) => names.includes(item.field));
+                  if (pending) return <Tag>待核对</Tag>;
+                  const settled = settledFields.some((item) => names.includes(item.field));
+                  if (settled) return <Tag color="green">已通过</Tag>;
+                  return <Tag>无记录</Tag>;
+                })()}
+              </span>
               <span className="quick-actions">
                 <button
                   type="button"
                   className="quick-btn ok"
-                  disabled={!reviewer || quickBusy === row.field || !event}
+                  disabled={
+                    !reviewer ||
+                    quickBusy === row.field ||
+                    !event ||
+                    !pendingFields.some((item) => row.field.split("|").includes(item.field))
+                  }
                   aria-label={row.label + " 通过"}
                   onClick={() => void decideField(event!.id, row.field, row.value, "Verified")}
                 >
@@ -284,7 +303,17 @@ export default function DataQuality() {
                 <button
                   type="button"
                   className="quick-btn no"
-                  disabled={!reviewer || quickBusy === row.field || !event}
+                  disabled={
+                    !reviewer ||
+                    quickBusy === row.field ||
+                    !event ||
+                    (() => {
+                      const record = dataset.evidence.find(
+                        (item) => item.entityId === event?.id && item.field === row.field,
+                      );
+                      return record ? effectiveStatus(record) === "Verified" : false;
+                    })()
+                  }
                   aria-label={row.label + " 有问题"}
                   onClick={() => void decideField(event!.id, row.field, row.value, "Rejected")}
                 >
