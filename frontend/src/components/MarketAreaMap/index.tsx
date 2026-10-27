@@ -146,6 +146,16 @@ export default function MarketAreaMap({
 
   return (
     <div className="market-area-wrap">
+      {(() => {
+        const active = areas.find((item) => item.id === selectedId);
+        if (!active) return null;
+        return (
+          <div className="market-area-selected">
+            当前选中：<strong>{active.name}</strong>
+            <span>{active.status === "official" ? "官方商圈" : "参考地点（非官方商圈）"} · 半径 {active.radiusMeters} 米</span>
+          </div>
+        );
+      })()}
       <div ref={container} className="market-area-map" style={{ height }} role="img" aria-label="商圈中心点地图" />
       <ul className="market-area-legend" aria-label="地图图例">
         <li>

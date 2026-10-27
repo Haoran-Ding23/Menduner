@@ -107,6 +107,8 @@ export default function EventMap({
   const lastFocusedId = useRef<string | null>(null);
   // 是否已经做过一次自适应缩放（之后不再自动改变视野）
   const didFitOnce = useRef(false);
+  // 箭头单独保存：它不属于活动点集合，不能参与 fitView，也不应影响标记计数
+  const arrowRef = useRef<unknown>(null);
   const container = useRef<HTMLDivElement>(null);
   const map = useRef<SDK>(null);
   const sdk = useRef<SDK>(null);
@@ -423,6 +425,9 @@ export default function EventMap({
       const arrow = document.createElement("div");
       arrow.className = "map-arrow";
       arrow.innerHTML = '<span class="map-arrow-pin">📍</span><span class="map-arrow-tip">活动在这里</span>';
+      if (arrowRef.current) {
+        (arrowRef.current as { setMap: (v: null) => void }).setMap(null);
+      }
       const arrowMarker = new A.Marker({
         position: [located.coords.lng, located.coords.lat],
         content: arrow,
@@ -430,7 +435,7 @@ export default function EventMap({
         zIndex: 300,
       });
       arrowMarker.setMap(map.current);
-      markers.push(arrowMarker);
+      arrowRef.current = arrowMarker;
       // 便于自动化核验：记录本次定位目标（只读，不改地图行为）
       (window as unknown as Record<string, unknown>).__mapFocus = {
         eventId: selected,

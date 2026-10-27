@@ -63,8 +63,10 @@ describe("Real map integration boundary with mocked SDK", () => {
         </PlatformProvider>
       </MemoryRouter>,
     );
-    await waitFor(() => expect(state.markers).toHaveLength(3));
-    expect(state.markers.map((m) => m.title)).toEqual([
+    // 新增了「活动在这里」的箭头标记（无标题、不参与分组），
+    // 这里只断言有标题的实际点位标记。
+    await waitFor(() => expect(state.markers.filter((m) => m.title)).toHaveLength(3));
+    expect(state.markers.filter((m) => m.title).map((m) => m.title)).toEqual([
       "苏州国际博览中心",
       "独墅湖影剧院",
       "苏州洲际酒店",

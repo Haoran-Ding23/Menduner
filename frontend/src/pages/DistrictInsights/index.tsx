@@ -301,12 +301,17 @@ export default function DistrictInsights() {
     };
   }, [coverage]);
 
-  const kpi = [
-    { label: "分析地点", value: coverage?.areaCount ?? "—" },
-    { label: "只靠近一处", value: coverage?.eventsNearby ?? "—" },
-    { label: "靠近多处", value: coverage?.eventsAmbiguous ?? "—" },
-    { label: "暂未匹配", value: coverage?.eventsUnmatched ?? "—" },
-  ];
+  // 一句话摘要取代四个裸数字：让人知道这些数字在说什么、分母是多少
+  const coverageSentence = coverage
+    ? {
+        places: coverage.areaCount,
+        matched: coverage.eventsNearby,
+        ambiguous: coverage.eventsAmbiguous,
+        unmatched: coverage.eventsUnmatched,
+        total:
+          (coverage.eventsNearby ?? 0) + (coverage.eventsAmbiguous ?? 0) + (coverage.eventsUnmatched ?? 0),
+      }
+    : null;
 
   return (
     <div className="insight-page">
@@ -336,14 +341,15 @@ export default function DistrictInsights() {
             />
           </p>
         </div>
-        <div className="kpi-strip">
-          {kpi.map((item) => (
-            <div key={item.label}>
-              <strong>{item.value}</strong>
-              <small>{item.label}</small>
-            </div>
-          ))}
-        </div>
+        {coverageSentence && (
+          <p className="coverage-sentence">
+            已收录 <strong>{coverageSentence.total}</strong> 个有坐标的活动：
+            <strong>{coverageSentence.matched}</strong> 个能对上 {coverageSentence.places} 个地点，
+            <strong>{coverageSentence.ambiguous}</strong> 个同时靠近多处（暂不归属），
+            <strong>{coverageSentence.unmatched}</strong> 个暂未落在任何地点范围内
+            <span className="insight-muted">（暂未匹配不代表当地没有活动）</span>
+          </p>
+        )}
       </header>
 
       {error && <p className="insight-muted">数据加载失败：{error}</p>}

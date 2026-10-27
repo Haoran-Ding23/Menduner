@@ -1,5 +1,6 @@
 import { DemandExplanation } from "../DemandIntelligence";
 import EvidenceSummary from "../EvidenceSummary";
+import { useEffect } from "react";
 import { Drawer, Descriptions, Space, Button, Tag, Alert } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
 import {
@@ -22,6 +23,16 @@ function dateRangeText(start: string | null, end: string | null): string {
 export default function EventDetail() {
   const { detail, repository, closeEvent, go } = usePlatform();
   const event = detail ? repository.getEventById(detail) : undefined;
+
+  // 只有链接里明确要求（detail=）才允许常驻打开；
+  // 否则切换页面后抽屉应当自动收起 —— 用户反馈"点城市活动地图右边还是冒出详情"。
+  useEffect(() => {
+    if (!detail) return;
+    const params = new URLSearchParams(window.location.search);
+    if (!params.get("detail")) closeEvent();
+    // 只在路径变化时判断一次
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [window.location.pathname]);
   const venue = repository.getVenues().find((v) => v.id === event?.venueId);
   const district = repository
     .getDistricts()
