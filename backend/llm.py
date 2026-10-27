@@ -17,6 +17,11 @@ class LLMError(RuntimeError):
     """调用失败；调用方必须把它展示为"暂不可用"，不能编内容。"""
 
 
+def client_model() -> str:
+    """当前使用的模型名（用于把建议绑定到具体模型版本，便于回溯）。"""
+    return os.environ.get("LLM_MODEL", "deepseek-chat")
+
+
 def configured() -> bool:
     return bool(os.environ.get("LLM_API_KEY"))
 

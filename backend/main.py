@@ -16,6 +16,7 @@ from backend import tenants
 from backend import tracking
 from backend import graph_query
 from backend import ai_analysis
+from backend import ai_review
 from backend import graph_chain
 from backend import market_area
 from backend import geo
@@ -25,6 +26,11 @@ from backend.amap import amap_place_url
 from backend import venues as venue_store
 from backend.database import connect, database_path, initialize, snapshot, snapshot_bytes
 from crawler import crawl_log, review
+
+
+class AiReviewLabel(BaseModel):
+    verdict: str = Field(pattern="^(agree|disagree)$")
+    note: str | None = Field(default=None, max_length=300)
 
 
 class ReviewRequest(BaseModel):
@@ -823,6 +829,30 @@ def create_app(db_path: Path | None = None):
             media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             headers={'Content-Disposition': 'attachment; filename*=UTF-8\'\'' + urllib.parse.quote(filename)},
         )
+
+    @app.post('/ai/review/generate')
+    def ai_review_generate(limit: int = 25, principal: str = Depends(auth.require_role(auth.ROLE_REVIEWER))):
+        """生成 AI 审核建议（只写建议表，不改任何核验状态）。"""
+        return ai_review.generate(path, max(1, min(limit, 60)))
+
+    @app.get('/ai/review/trials')
+    def ai_review_trials(batch: str | None = None, limit: int = 200):
+        return ai_review.list_trials(path, batch, max(1, min(limit, 500)))
+
+    @app.get('/ai/review/stats')
+    def ai_review_stats():
+        return ai_review.stats(path)
+
+    @app.post('/ai/review/trials/{trial_id}/label')
+    def ai_review_label(trial_id: str, body: AiReviewLabel,
+                        principal: str = Depends(auth.require_role(auth.ROLE_REVIEWER))):
+        """人工判定 AI 建议对/错并留痕（判定人 + 时间 + 备注）。"""
+        try:
+            return ai_review.label_trial(path, trial_id, body.verdict, principal, body.note)
+        except KeyError:
+            raise HTTPException(status_code=404, detail='建议不存在') from None
+        except ValueError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from None
 
     @app.get('/ai/market-analysis/{area_id}')
     def ai_market_analysis(area_id: str, radius: int | None = None,

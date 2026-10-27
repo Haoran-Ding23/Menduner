@@ -25,6 +25,7 @@ import {
   type ReviewDecision,
 } from "../../services/api";
 import VenueMaintenance from "../../components/VenueMaintenance";
+import AiReviewTrials from "../../components/AiReviewTrials";
 import ClientErrors from "../../components/ClientErrors";
 import CrawlHealth from "../../components/CrawlHealth";
 import VenueEvents from "../../components/VenueEvents";
@@ -344,6 +345,9 @@ export default function ReviewConsole() {
           <ClientErrors />
         </section>
       )}
+      {/* AI 建议核对（试验）：只有审核角色可见 */}
+      {allowed && <AiReviewTrials canReview={Boolean(reviewer)} />}
+
       <div className="evidence-layout">
         <section className="panel">
           <div className="panel-heading">

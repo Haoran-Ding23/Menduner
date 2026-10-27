@@ -141,7 +141,9 @@ describe("review console gate", () => {
     expect(await screen.findByLabelText("审核人")).toBeInTheDocument();
     // The decision log and the internal lists are fetched once the role allows it.
     await waitFor(() =>
-      expect(screen.getAllByRole("button", { name: /通\s*过/ }).length).toBeGreaterThan(0),
+      // 改动：旧的「通过/驳回」整体审批按钮与「快速核对」面板均已删除（用户要求），
+      // 审核动作改为字段表行内 ✓/✗。这里断言审核工作区确实渲染（不依赖具体某条样例数据有没有待处理字段）。
+      expect(screen.getByLabelText("当前身份与审核人")).toBeInTheDocument(),
     );
     expect(document.body.textContent).toContain("已记录审核");
   });

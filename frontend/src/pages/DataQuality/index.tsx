@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { Alert, App, Button, Input, Select, Space, Switch, Table, Tag, Tooltip } from "antd";
+import { Alert, App, Button, Input, Select, Space, Switch, Table, Tag, Tooltip, message as staticMessage } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
 import { canReview, useIdentity } from "../../hooks/useIdentity";
 import VenueEvents from "../../components/VenueEvents";
@@ -71,7 +71,9 @@ export default function DataQuality() {
   const dataset = platform.rawDataset ?? platform.dataset;
   // 快速核对：只核对三项（活动名称 / 举办场馆 / 来源链接），其余字段仍在下方明细表里
   const [quickBusy, setQuickBusy] = useState<string | null>(null);
-  const { message } = App.useApp();
+  // 测试环境或未包裹 <App> 时 useApp 返回空，回退到静态 message，避免弹提示时抛错
+  const appContext = App.useApp();
+  const message = appContext?.message ?? staticMessage;
   // 酒店服务员视角：默认只核对"活动名字 / 活动场地 / 来源链接"三项
   const [simpleOnly, setSimpleOnly] = useState(true);
   const { reloadData } = platform;

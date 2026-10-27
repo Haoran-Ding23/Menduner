@@ -2321,3 +2321,7 @@ main {
 
 /* 更多查看方式 */
 .more-views { margin-top: 8px; }
+
+/* AI 建议核对 */
+.batch-select { font-size: 12px; padding: 3px 6px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fff; }
+.cell-ellipsis { display: inline-block; max-width: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
