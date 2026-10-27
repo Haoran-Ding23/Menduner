@@ -33,7 +33,7 @@ function readableValue(
   districtNames: Map<string, string>,
 ): unknown {
   if (typeof value !== "string") return value;
-  if (field === "venueId") {
+  if (field === "venueId" || field === "venueName" || field === "venue") {
     return venueNames.get(value) ?? "场馆名称待补充";
   }
   if (field === "districtId") {
@@ -43,10 +43,12 @@ function readableValue(
 }
 
 const FIELD_LABELS: Record<string, string> = {
-  name: "活动名称",
+  name: "活动名字",
   startDate: "开始日期",
   endDate: "结束日期",
-  venueId: "举办场馆",
+  venueId: "活动场地",
+  venueName: "活动场地",
+  venue: "活动场地",
   districtId: "所属地区",
   category: "活动类别",
   organizer: "主办方",
@@ -69,6 +71,8 @@ export default function DataQuality() {
   const dataset = platform.rawDataset ?? platform.dataset;
   // 快速核对：只核对三项（活动名称 / 举办场馆 / 来源链接），其余字段仍在下方明细表里
   const [quickBusy, setQuickBusy] = useState<string | null>(null);
+  // 酒店服务员视角：默认只核对"活动名字 / 活动场地 / 来源链接"三项
+  const [simpleOnly, setSimpleOnly] = useState(true);
   const [quickMsg, setQuickMsg] = useState<string>("");
 
   const decideField = useCallback(
@@ -448,12 +452,26 @@ export default function DataQuality() {
                   而读者真正需要的是「这一行缺失到底要不要紧」。关键字段影响活动能不能用；
                   辅助信息（赞助商、规模）缺失只是信息不全。 */}
               <p className="dq-group-title">
+                <Button
+                  type="link"
+                  size="small"
+                  style={{ padding: 0, marginRight: 10 }}
+                  onClick={() => setSimpleOnly((value) => !value)}
+                >
+                  {simpleOnly ? "显示全部字段（含技术字段）" : "只看三项（推荐）"}
+                </Button>
                 关键字段待核对 {keyPending.length} 个（影响活动是否可用） · 辅助信息缺失{" "}
                 {auxPending.length} 个（不影响可用）
               </p>
               <Table<Evidence>
                 rowKey="id"
-                dataSource={pendingFields}
+                dataSource={
+                  simpleOnly
+                    ? pendingFields.filter((item) =>
+                        ["name", "venueId", "venueName", "venue", "sourceUrl"].includes(item.field),
+                      )
+                    : pendingFields
+                }
                 pagination={false}
                 scroll={{ x: 620 }}
                 locale={{ emptyText: "没有待处理字段，这一条已处理完" }}
@@ -496,11 +514,13 @@ export default function DataQuality() {
                     effectiveStatus(e) === "Conflicting" ? (
                       e.value.map((value, i) => (
                         <div key={i}>
-                          候选 {i + 1}：{valueText(value)}
+                          候选 {i + 1}：{valueText(readableValue(e.field, value, VENUE_NAMES, DISTRICT_NAMES))}
                         </div>
                       ))
                     ) : (
-                      <span className="value-wrap">{valueText(e.value)}</span>
+                      <span className="value-wrap">
+                        {valueText(readableValue(e.field, e.value, VENUE_NAMES, DISTRICT_NAMES))}
+                      </span>
                     ),
                 },
                 {
