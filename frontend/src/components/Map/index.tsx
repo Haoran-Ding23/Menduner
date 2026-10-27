@@ -252,6 +252,12 @@ export default function EventMap({
         el.style.borderRadius = "50%";
         el.style.boxSizing = "border-box";
         el.style.cursor = "pointer";
+        // 三层同开时商圈点降权（缩小 + 半透明），避免和酒店标记糊在一起
+        if (demandLayer && !active) {
+          el.style.width = "9px";
+          el.style.height = "9px";
+          el.style.opacity = "0.7";
+        }
         el.style.background = area.status === "official" ? "#2563EB" : "#fff";
         el.style.border = "2px solid " + (area.status === "official" ? "#2563EB" : "#0F766E");
         if (active) el.style.boxShadow = "0 0 0 6px rgba(37,99,235,0.18)";
@@ -409,6 +415,7 @@ export default function EventMap({
     demandLayer,
     areasLayer,
     selectedArea,
+    demandLayer,
     go,
     radiusKm,
   ]);

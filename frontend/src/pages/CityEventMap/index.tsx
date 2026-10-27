@@ -87,6 +87,7 @@ export default function CityEventMap() {
   // 商圈图层：默认关闭，用户主动打开才出现（渐进式披露）
   const [showAreas, setShowAreas] = useState(false);
   const [selectedAreaId, setSelectedAreaId] = useState<string | null>(null);
+  const [areaLoadState, setAreaLoadState] = useState<"idle" | "loading" | "error">("idle");
   const [areaRows, setAreaRows] = useState<
     { id: string; name: string; status: string; centerLng: number; centerLat: number; radiusMeters: number; nearbyEvents: number }[]
   >([]);
@@ -94,9 +95,13 @@ export default function CityEventMap() {
 
   useEffect(() => {
     if (!showAreas || areaRows.length) return;
+    setAreaLoadState("loading");
     loadMarketAreas()
-      .then((result) => setAreaRows(result))
-      .catch(() => setAreaRows([]));
+      .then((result) => {
+        setAreaRows(result);
+        setAreaLoadState("idle");
+      })
+      .catch(() => setAreaLoadState("error"));
   }, [showAreas, areaRows.length]);
   // 渐进式披露：场馆热点属于“更多查看方式”，默认不展开
   const [showMore, setShowMore] = useState(false);
@@ -324,6 +329,19 @@ export default function CityEventMap() {
           )}
         </div>
       )}
+      {showAreas && areaLoadState === "loading" && (
+        <div className="area-summary">
+          <span className="muted">正在加载商圈参考点…</span>
+        </div>
+      )}
+      {showAreas && areaLoadState === "error" && (
+        <div className="area-summary">
+          <span className="muted">商圈参考点加载失败（不影响活动与酒店）</span>
+          <Button size="small" onClick={() => setAreaLoadState("idle")}>
+            重试
+          </Button>
+        </div>
+      )}
       {showAreas && selectedAreaId && (
         <div className="area-summary">
           {(() => {
@@ -360,12 +378,31 @@ export default function CityEventMap() {
         onAreaSelect={(id) => setSelectedAreaId((current) => (current === id ? null : id))}
       />
           <div className="legend">
-            {Object.values(categories).map((c) => (
-              <span key={c.label}>
-                <i style={{ background: c.color }} />
-                {c.label}
+            <span className="legend-item">
+              <i style={{ background: "#dc2626" }} />
+              活动点（按类别着色）
+            </span>
+            {showHotels && (
+              <span className="legend-item">
+                <i className="legend-hotel" />H 酒店
               </span>
-            ))}
+            )}
+            {showAreas && (
+              <span className="legend-item">
+                <i className="legend-area-official" />官方商圈
+              </span>
+            )}
+            {showAreas && (
+              <span className="legend-item">
+                <i className="legend-area-candidate" />参考地点（非官方商圈）
+              </span>
+            )}
+            {showAreas && selectedAreaId && (
+              <span className="legend-item">
+                <i className="legend-ring" />
+                选中范围（估算，不是边界）
+              </span>
+            )}
           </div>
         </section>
         <section className="panel event-list">
