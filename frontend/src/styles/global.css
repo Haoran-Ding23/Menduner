@@ -2313,3 +2313,8 @@ main {
 /* 快速核对：状态徽标 */
 .quick-status { display: flex; justify-content: flex-end; }
 .quick-row { grid-template-columns: 88px 1fr 64px 76px; }
+
+/* 核对痕迹 */
+.quick-trail { display: flex; justify-content: flex-end; }
+.quick-trail small { font-size: 11px; }
+.quick-row { grid-template-columns: 88px 1fr 62px 108px 76px; }

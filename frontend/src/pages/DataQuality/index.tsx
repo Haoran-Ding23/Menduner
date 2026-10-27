@@ -75,6 +75,8 @@ export default function DataQuality() {
   const [simpleOnly, setSimpleOnly] = useState(true);
   const { reloadData } = platform;
   const [quickMsg, setQuickMsg] = useState<string>("");
+  // 本次会话内的核对痕迹：字段 -> { 操作人, 时间 }
+  const [reviewTrail, setReviewTrail] = useState<Record<string, { who: string; at: string }>>({});
 
   const decideField = useCallback(
     async (eventId: string, field: string, value: unknown, decision: "Verified" | "Rejected") => {
@@ -101,7 +103,11 @@ export default function DataQuality() {
           setQuickMsg("提交失败（需要审核角色或登录已过期）");
           return;
         }
-        setQuickMsg(decision === "Verified" ? "已通过，状态已更新" : "已标记为有问题");
+        setQuickMsg(decision === "Verified" ? "已人工核对，状态已更新" : "已标记为有问题");
+        setReviewTrail((current) => ({
+          ...current,
+          [field]: { who: identity.login ?? "reviewer", at: new Date().toLocaleString("zh-CN") },
+        }));
         // 关键：重新拉取数据，否则页面仍显示"待复核"（用户看到的"闪一下就恢复"就是这个）
         await reloadData();
       } finally {
@@ -250,6 +256,17 @@ export default function DataQuality() {
         <div className="quick-check" aria-label="快速核对">
           <div className="quick-check-head">
             <strong>快速核对（3 项）</strong>
+            <span className="muted" style={{ marginLeft: 8 }}>
+              已核对{" "}
+              {
+                [
+                  ["name"],
+                  ["venueName", "venueId", "venue"],
+                  ["sourceUrl"],
+                ].filter((names) => !pendingFields.some((item) => names.includes(item.field))).length
+              }
+              /3 项
+            </span>
             <span className="muted">
               {reviewer ? "点 ✓ 通过、点 ✗ 标记有问题；其余字段在下方明细里" : "需要审核角色才能核对"}
             </span>
@@ -281,9 +298,18 @@ export default function DataQuality() {
                   const pending = pendingFields.some((item) => names.includes(item.field));
                   if (pending) return <Tag>待核对</Tag>;
                   const settled = settledFields.some((item) => names.includes(item.field));
-                  if (settled) return <Tag color="green">已通过</Tag>;
+                  if (settled) return <Tag color="green">已人工核对</Tag>;
                   return <Tag>无记录</Tag>;
                 })()}
+              </span>
+              <span className="quick-trail">
+                {Object.entries(reviewTrail)
+                  .filter(([key]) => String(row.field).split("|").includes(key))
+                  .map(([key, trace]) => (
+                    <small key={key} className="muted">
+                      {trace.who} · {trace.at}
+                    </small>
+                  ))}
               </span>
               <span className="quick-actions">
                 <button
