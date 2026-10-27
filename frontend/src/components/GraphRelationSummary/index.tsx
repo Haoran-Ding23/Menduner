@@ -91,6 +91,8 @@ export default function GraphRelationSummary({
   const [showNearby, setShowNearby] = useState(false);
 
   useEffect(() => {
+    // 换一条活动就收起周边：避免上一条的展开状态让人误以为数据没变
+    setShowNearby(false);
     if (!eventId) return undefined;
     let alive = true;
     setChain(null);
@@ -237,6 +239,14 @@ export default function GraphRelationSummary({
         <Button size="small" onClick={() => setShowNearby(true)}>
           查看周边设施（酒店 {chain.nearbyHotels.length} · 餐饮/交通/其他 {chain.nearbyPlaces.length}）
         </Button>
+      )}
+
+      {showNearby && (
+        <div style={{ marginTop: 8 }}>
+          <Button size="small" onClick={() => setShowNearby(false)}>
+            收起周边
+          </Button>
+        </div>
       )}
 
       <p className="relation-caveat">
