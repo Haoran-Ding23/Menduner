@@ -515,6 +515,7 @@ export default function DistrictInsights() {
       <Collapse
         ghost
         className="insight-collapse"
+        defaultActiveKey={["activities"]}
         items={[
           {
             key: "activities",

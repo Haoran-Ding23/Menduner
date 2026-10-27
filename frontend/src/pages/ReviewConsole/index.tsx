@@ -95,7 +95,11 @@ export default function ReviewConsole() {
     }
   });
   const [busy, setBusy] = useState("");
-  const canSubmit = reviewer.trim().length > 0;
+  // 会话登录的身份就是审核人；手填姓名的老流程保留但不再强制，
+  // 否则「全部核查完毕」按钮会一直禁用、点了没反应（用户反馈过）。
+  const typedReviewer = reviewer.trim();
+  const effectiveReviewer = typedReviewer || (identity.login ?? "");
+  const canSubmit = effectiveReviewer.length > 0;
 
   // The authenticated account already carries a display name; prefill it so the reviewer does
   // not sign decisions with an empty field (which used to disable every button silently).
@@ -137,7 +141,7 @@ export default function ReviewConsole() {
     }
     setBusy(`${eventId}:${field}`);
     try {
-      await submitReview({ eventId, field, decision, reviewer: reviewer.trim(), ...detail });
+      await submitReview({ eventId, field, decision, reviewer: effectiveReviewer, ...detail });
       await reloadData();
       await loadQueue();
       message.success(`已记录：${field} → ${decision}`);
@@ -154,7 +158,7 @@ export default function ReviewConsole() {
     }
     setBusy(`${eventId}:__all__`);
     try {
-      const result = await checkWholeEvent({ eventId, reviewer: reviewer.trim() });
+      const result = await checkWholeEvent({ eventId, reviewer: effectiveReviewer });
       await reloadData();
       await loadQueue();
       const parts = [

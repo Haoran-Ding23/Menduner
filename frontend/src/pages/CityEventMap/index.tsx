@@ -54,6 +54,11 @@ export default function CityEventMap() {
   // 而不是只按月份/地区筛一遍让人自己找（用户已指出这是断链）。
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    // 只有在链接里明确写了 detail 时才自动打开详情抽屉；
+    // 从导航进地图不应该被上一次的详情状态弹窗打断（用户反馈过）
+    if (!params.get("detail")) {
+      update({ detail: null });
+    }
     const eventId = params.get("event");
     if (!eventId) return;
     const target = dataset.events.find((item) => item.id === eventId);

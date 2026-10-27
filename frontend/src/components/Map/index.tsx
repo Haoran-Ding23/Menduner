@@ -394,7 +394,20 @@ export default function EventMap({
     const located = focusEvent ? eventLocation(focusEvent, dataset) : null;
     if (located?.coords && lastFocusedId.current !== selected) {
       lastFocusedId.current = selected;
-      map.current.setZoomAndCenter(15, [located.coords.lng, located.coords.lat]);
+      // 适当放大到能看清周边，但不是最大级别（用户要求"适当放大"）
+      map.current.setZoomAndCenter(13, [located.coords.lng, located.coords.lat]);
+      // Q 版箭头：直接指出"这条活动在这里"，比只有一个圆点更好认
+      const arrow = document.createElement("div");
+      arrow.className = "map-arrow";
+      arrow.innerHTML = '<span class="map-arrow-pin">📍</span><span class="map-arrow-tip">活动在这里</span>';
+      const arrowMarker = new A.Marker({
+        position: [located.coords.lng, located.coords.lat],
+        content: arrow,
+        anchor: "bottom-center",
+        zIndex: 300,
+      });
+      arrowMarker.setMap(map.current);
+      markers.push(arrowMarker);
       // 便于自动化核验：记录本次定位目标（只读，不改地图行为）
       (window as unknown as Record<string, unknown>).__mapFocus = {
         eventId: selected,

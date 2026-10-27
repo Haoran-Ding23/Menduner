@@ -114,7 +114,7 @@ export default function MarketAreaMap({
       });
       circle.setMap(map.current);
       overlays.current.push(circle);
-      map.current.setZoomAndCenter(13, [active.lng, active.lat]);
+      // 不改变用户当前的缩放与中心：只画范围圆，避免"点一下就变大变位"（用户反馈过）
     } else if (areas.length) {
       const bounds = new AMap.Bounds();
       areas.forEach((area) => bounds.extend([area.lng, area.lat]));

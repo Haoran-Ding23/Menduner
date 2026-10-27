@@ -2366,3 +2366,16 @@ main {
 }
 .missing-items { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 6px; }
 .missing-item { display: inline-flex; align-items: center; gap: 2px; }
+
+/* Q 版箭头：指出活动在地图上的位置 */
+.map-arrow { display: flex; flex-direction: column; align-items: center; }
+.map-arrow-pin { font-size: 26px; line-height: 1; animation: mapArrowBounce 1.4s ease-in-out infinite; }
+.map-arrow-tip {
+  margin-top: 2px; padding: 2px 6px; border-radius: 10px;
+  background: #dc2626; color: #fff; font-size: 11px; white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+}
+@keyframes mapArrowBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
