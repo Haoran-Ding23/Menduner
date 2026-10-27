@@ -15,6 +15,7 @@ from backend import dedupe
 from backend import tenants
 from backend import tracking
 from backend import graph_query
+from backend import graph_chain
 from backend import market_area
 from backend import geo
 from backend import city_report
@@ -821,6 +822,18 @@ def create_app(db_path: Path | None = None):
             media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             headers={'Content-Disposition': 'attachment; filename*=UTF-8\'\'' + urllib.parse.quote(filename)},
         )
+
+    @app.get('/graph/query/event/{event_id}')
+    def graph_event_chain(event_id: str, radius: int | None = None):
+        """活动 → 场馆 → 周边酒店/餐饮/交通 的可解释链路。
+
+        每条边都带 kind(recorded/computed)、verificationStatus 与证据或计算参数；
+        超出半径的中心点不建关系，只作为信息返回。
+        """
+        try:
+            return graph_chain.event_chain(path, event_id, _radius(radius))
+        except KeyError:
+            raise HTTPException(status_code=404, detail='活动不存在') from None
 
     @app.get('/market/coverage')
     def market_coverage(radius: int | None = None):
