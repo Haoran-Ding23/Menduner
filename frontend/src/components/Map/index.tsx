@@ -9,6 +9,7 @@ import {
   verifiedCoords,
   categories,
   eventCoordinates,
+  eventLocation,
   HOTSPOT_MIN,
 } from "../../utils/data";
 // SDK has no bundled TypeScript declarations; keep dynamic types at this boundary only.
@@ -310,13 +311,22 @@ export default function EventMap({
     map.current.add(markers);
     if (markers.length)
       map.current.setFitView(markers, false, [70, 70, 70, 70], 14);
-    // 关键：在全量数据集里找，避免该活动被当前筛选条件筛掉后无法定位
+    // 关键：在全量数据集里找，避免该活动被当前筛选条件筛掉后无法定位；
+    // 用 eventLocation 区分「坐标不可用」与「场馆关联未核验（给参考位置）」。
     const focusEvent =
       dataset.events.find((e) => e.id === selected) ?? events.find((e) => e.id === selected);
-    const focus = focusEvent ? eventCoordinates(focusEvent, dataset) : null;
-    if (focus && lastFocusedId.current !== selected) {
+    const located = focusEvent ? eventLocation(focusEvent, dataset) : null;
+    if (located?.coords && lastFocusedId.current !== selected) {
       lastFocusedId.current = selected;
-      map.current.setZoomAndCenter(15, [focus.lng, focus.lat]);
+      map.current.setZoomAndCenter(15, [located.coords.lng, located.coords.lat]);
+      // 便于自动化核验：记录本次定位目标（只读，不改地图行为）
+      (window as unknown as Record<string, unknown>).__mapFocus = {
+        eventId: selected,
+        lng: located.coords.lng,
+        lat: located.coords.lat,
+        verifiedLink: located.verifiedLink,
+        focusedAt: Date.now(),
+      };
     }
   }, [
     ready,

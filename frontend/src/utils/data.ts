@@ -201,6 +201,38 @@ export function valueText(x: unknown): string {
       : String(x);
 }
 // A verified venue position alone does not verify that a real event takes place there.
+/**
+ * 地图定位用的坐标判定：区分「坐标不可用」与「场馆关联未核验」。
+ *
+ * eventCoordinates() 会在「活动↔场馆」关联未核验时返回 null（严格语义，其它页面仍在用）。
+ * 但定位功能需要更细的区分：坐标本身可用、只是关联待核验时，应给出**参考位置**并标注，
+ * 否则 0 条已核验活动会导致地图对任何活动都不定位。
+ */
+export function eventLocation(
+  event: Event,
+  data: import("../types").Dataset,
+): { coords: Coordinates | null; verifiedLink: boolean; caveat: string | null } {
+  const venue = data.venues.find((v) => v.id === event.venueId);
+  if (!venue) return { coords: null, verifiedLink: false, caveat: "该活动没有关联场馆" };
+  if (!verifiedCoords(venue.coordinates)) {
+    return { coords: null, verifiedLink: false, caveat: "该活动场馆坐标缺失或未核验，无法定位" };
+  }
+  const linkVerified =
+    !event.demo &&
+    data.evidence.some(
+      (item) =>
+        item.entityId === event.id &&
+        item.field === "venueId" &&
+        item.value === event.venueId &&
+        effectiveStatus(item) === "Verified",
+    );
+  return {
+    coords: venue.coordinates,
+    verifiedLink: linkVerified,
+    caveat: linkVerified ? null : "场馆关联尚未核验，地图位置仅供参考",
+  };
+}
+
 export function eventCoordinates(
   event: Event,
   data: import("../types").Dataset,

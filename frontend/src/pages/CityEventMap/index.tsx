@@ -6,6 +6,7 @@ import { assessDemand, businessToday } from "../../services/intelligence";
 import Filters from "../../components/Filters";
 import EventMap from "../../components/Map";
 import EventCard from "../../components/EventCard";
+import { eventLocation } from "../../utils/data";
 import VenueHotspots from "../../components/VenueHotspots";
 import RegionNav, { DEFAULT_REGION } from "../../components/RegionNav";
 import CaliberBar from "../../components/CaliberBar";
@@ -22,12 +23,13 @@ export default function CityEventMap() {
     if (!id) return null;
     const target = dataset.events.find((item) => item.id === id);
     if (!target) return null;
-    if (eventCoordinates(target, dataset)) return null;
+    const located = eventLocation(target, dataset);
+    if (located.coords && !located.caveat) return null;
     const venue = dataset.venues.find((item) => item.id === target.venueId);
     const raw = venue?.coordinates;
     if (raw && raw.lng != null) {
       return {
-        text: "该活动的场馆关联或坐标尚未核验，暂不在地图上定位（不用行政区中心代替场馆位置）",
+        text: located.caveat ? located.caveat : "暂不在地图上定位",
         coords: `${raw.lng}, ${raw.lat}`,
         link: `https://uri.amap.com/marker?position=${raw.lng},${raw.lat}`,
       };
@@ -51,7 +53,10 @@ export default function CityEventMap() {
       update({
         event: eventId,
         detail: eventId,
-        district: target.districtId ?? null,
+        district:
+          target.districtId ??
+          dataset.venues.find((v) => v.id === target.venueId)?.districtId ??
+          null,
         year: Number((target.startDate ?? "").slice(0, 4)) || filters.year,
         month: Number((target.startDate ?? "").slice(5, 7)) || filters.month,
       });
