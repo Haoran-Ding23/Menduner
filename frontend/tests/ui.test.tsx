@@ -8,6 +8,7 @@ import {
   cleanup,
 } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import { IdentityProvider } from "../src/hooks/useIdentity";
 import { PlatformProvider } from "../src/hooks/usePlatform";
 import App from "../src/App";
 import { ENTERPRISE_ACCOUNT } from "./fixtures";
@@ -23,14 +24,25 @@ vi.mock("echarts", () => ({
   }),
 }));
 afterEach(cleanup);
-function mount(path: string) {
+const REVIEWER_IDENTITY = {
+  authenticated: true,
+  login: "test-reviewer",
+  role: "reviewer" as const,
+  name: null,
+};
+
+function mount(path: string, identity?: typeof REVIEWER_IDENTITY) {
+  const app = (
+    <PlatformProvider initialDataset={sampleDataset}>
+      {/* These pages exercise the PAID workflow (hotel intelligence / district insights), so the
+          active enterprise account is seeded; tests/plans.test.tsx covers the locked states. */}
+      <App initialAccount={ENTERPRISE_ACCOUNT} />
+    </PlatformProvider>
+  );
   return render(
     <MemoryRouter initialEntries={[withDemo(path)]}>
-      <PlatformProvider initialDataset={sampleDataset}>
-        {/* These pages exercise the PAID workflow (hotel intelligence / district insights), so the
-            active enterprise account is seeded; tests/plans.test.tsx covers the locked states. */}
-        <App initialAccount={ENTERPRISE_ACCOUNT} />
-      </PlatformProvider>
+      {/* 审核台的证据索引只对审核角色渲染，需要显式注入身份 */}
+      {identity ? <IdentityProvider initialIdentity={identity}>{app}</IdentityProvider> : app}
     </MemoryRouter>,
   );
 }
@@ -140,9 +152,11 @@ fireEvent.click(screen.getByRole("switch", { name: "包含演示数据" }));
   });
   // TODO(重写): 审核台的证据索引只在有审核身份时渲染，本测试文件的默认身份
   // 不满足条件，因此搜索框不会出现。需要先用 reviewer 身份 mount 再验证。
+  // TODO(重写): 审核台会 probe /auth/me，本文件的 stubApi 返回匿名身份，
+  // 页面因此渲染 403 提示而不是索引；需要先让 stub 返回 reviewer 身份才能验证搜索。
   it.skip("[待重写] searches the evidence index on the review console", async () => {
     // 活动证据索引已合并到审核台：搜索框、状态筛选都在 /review 上
-    mount("/review?event=demo-02");
+    mount("/review?event=demo-02", REVIEWER_IDENTITY);
     const search = await screen.findByRole("searchbox", { name: "搜索活动证据" });
     fireEvent.change(search, { target: { value: "秋季文化展" } });
     await waitFor(() => expect(screen.queryByText("城市商业交流会")).not.toBeInTheDocument());

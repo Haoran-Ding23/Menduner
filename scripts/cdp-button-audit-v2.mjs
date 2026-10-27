@@ -66,8 +66,8 @@ const COLLECT = `(function(){
       // 侧边导航单独看（它们都是跳转，不是页面功能），避免把审计时间耗在导航上
       if (el.closest('aside, nav, .sidebar, [class*="sider"], [class*="layout-menu"]')) return;
       const label = (el.getAttribute('aria-label') || el.textContent || '').trim().replace(/\\s+/g, ' ').slice(0, 26);
-      // 破坏性操作一律跳过：审计只验证有没有反应，绝不能改生产数据
-      if (DESTRUCTIVE.test(label)) return;
+      // 破坏性操作一律跳过（正则必须写字面量：这段代码在浏览器里执行）
+      if (/生成|保存|提交|确认|审核|核查完毕|删除|导入|撤回|补录|^对$|^错$|通过|驳回|清空|重置数据/.test(label)) return;
       const key = el.tagName + '|' + label + '|' + Math.round(r.x) + ',' + Math.round(r.y);
       if (seen.has(key)) return;
       seen.add(key);

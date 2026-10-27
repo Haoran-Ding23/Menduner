@@ -2,6 +2,7 @@ import { sampleDataset } from "../src/services/repository";
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import { IdentityProvider } from "../src/hooks/useIdentity";
 import { PlatformProvider } from "../src/hooks/usePlatform";
 import App from "../src/App";
 import { ENTERPRISE_ACCOUNT } from "./fixtures";
