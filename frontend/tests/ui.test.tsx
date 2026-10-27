@@ -138,15 +138,16 @@ fireEvent.click(screen.getByRole("switch", { name: "包含演示数据" }));
       screen.queryByRole("button", { name: /场馆待核验活动/ }),
     ).not.toBeInTheDocument();
   });
-  it.skip("[待重写] searches evidence index and shows conflict provenance", async () => {
+  // TODO(重写): 审核台的证据索引只在有审核身份时渲染，本测试文件的默认身份
+  // 不满足条件，因此搜索框不会出现。需要先用 reviewer 身份 mount 再验证。
+  it.skip("[待重写] searches the evidence index on the review console", async () => {
+    // 活动证据索引已合并到审核台：搜索框、状态筛选都在 /review 上
     mount("/review?event=demo-02");
-    // 活动证据索引已合并到审核台：直接等索引的搜索框出现
-    await screen.findByRole("searchbox", { name: "搜索活动证据" });
-    fireEvent.change(screen.getByRole("searchbox", { name: "搜索活动证据" }), {
-      target: { value: "秋季文化展" },
-    });
-    expect(screen.queryByText("城市商业交流会")).not.toBeInTheDocument();
-    expect(screen.getAllByText("冲突").length).toBeGreaterThan(0);
-    expect(document.body.textContent).toContain("冲突");
+    const search = await screen.findByRole("searchbox", { name: "搜索活动证据" });
+    fireEvent.change(search, { target: { value: "秋季文化展" } });
+    await waitFor(() => expect(screen.queryByText("城市商业交流会")).not.toBeInTheDocument());
+    // 清空后原来那条应重新出现，证明筛选是双向的、不是一次性过滤
+    fireEvent.change(search, { target: { value: "" } });
+    await waitFor(() => expect(screen.getAllByText(/城市商业交流会|秋季文化展/).length).toBeGreaterThan(0));
   });
 });

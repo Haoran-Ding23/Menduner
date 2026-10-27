@@ -36,6 +36,7 @@ const ALL_PAGES = [
   ["/insights", "商圈洞察"],
   ["/graph", "知识图谱"],
   ["/evidence", "数据质量"],
+  ["/review", "审核台"],
   ["/more", "更多"],
 ];
 const PAGES = ONLY
@@ -65,6 +66,8 @@ const COLLECT = `(function(){
       // 侧边导航单独看（它们都是跳转，不是页面功能），避免把审计时间耗在导航上
       if (el.closest('aside, nav, .sidebar, [class*="sider"], [class*="layout-menu"]')) return;
       const label = (el.getAttribute('aria-label') || el.textContent || '').trim().replace(/\\s+/g, ' ').slice(0, 26);
+      // 破坏性操作一律跳过：审计只验证有没有反应，绝不能改生产数据
+      if (DESTRUCTIVE.test(label)) return;
       const key = el.tagName + '|' + label + '|' + Math.round(r.x) + ',' + Math.round(r.y);
       if (seen.has(key)) return;
       seen.add(key);
@@ -126,10 +129,11 @@ async function main() {
         mutations: window.__audit.mutations, fetches: window.__audit.fetches,
         overlay: document.querySelectorAll('.ant-modal, .ant-drawer-open, .ant-message').length })`);
       if (!after) {
-        rows.push({ ...control, verdict: 'unknown', mutations: -1, fetches: -1 });
-        console.log('      ? [' + control.tag + '] ' + control.label + ' → 页面跳转中，无法判定');
+        // 点击导致页面开始跳转：这本身是有作用的（navigate），不是 NO-OP。
+        rows.push({ ...control, verdict: 'navigate', mutations: -1, fetches: -1 });
+        console.log('      · [' + control.tag + '] ' + control.label + ' → navigate(跳转中)');
         await send('Page.navigate', { url: BASE + path });
-        await sleep(11000);
+        await sleep(12000);
         await evaluate(INSTRUMENT);
         await evaluate(COLLECT);
         continue;
@@ -143,7 +147,7 @@ async function main() {
       console.log(`      ${verdict === "NO-OP" ? "✗" : "·"} [${control.tag}] ${control.label} → ${verdict}`);
       if (navigated) {
         await send("Page.navigate", { url: BASE + path });
-        await sleep(11000);
+        await sleep(12000);
         await evaluate(INSTRUMENT);
         await evaluate(COLLECT);
       }

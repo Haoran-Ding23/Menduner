@@ -1,0 +1,491 @@
+[
+  {
+    "page": "/review",
+    "name": "审核台",
+    "controls": 93,
+    "tested": 60,
+    "noop": 0,
+    "rows": [
+      {
+        "index": 0,
+        "tag": "button",
+        "label": "刷新 API 数据",
+        "verdict": "effect",
+        "mutations": 126,
+        "fetches": 1
+      },
+      {
+        "index": 1,
+        "tag": "button",
+        "label": "设置与数据导入",
+        "verdict": "effect",
+        "mutations": 140,
+        "fetches": 1
+      },
+      {
+        "index": 2,
+        "tag": "button",
+        "label": "录入一条",
+        "verdict": "effect",
+        "mutations": 155,
+        "fetches": 1
+      },
+      {
+        "index": 3,
+        "tag": "button",
+        "label": "显示全部 17 个来源",
+        "verdict": "effect",
+        "mutations": 160,
+        "fetches": 1
+      },
+      {
+        "index": 4,
+        "tag": "button",
+        "label": "(无文字)",
+        "verdict": "effect",
+        "mutations": 182,
+        "fetches": 1
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "label": "刷 新",
+        "verdict": "effect",
+        "mutations": 182,
+        "fetches": 1
+      },
+      {
+        "index": 6,
+        "tag": "button",
+        "label": "生成 25 条建议",
+        "verdict": "effect",
+        "mutations": 198,
+        "fetches": 2
+      },
+      {
+        "index": 7,
+        "tag": "a",
+        "label": "查看来源",
+        "verdict": "effect",
+        "mutations": 198,
+        "fetches": 2
+      },
+      {
+        "index": 8,
+        "tag": "a",
+        "label": "查看来源",
+        "verdict": "effect",
+        "mutations": 198,
+        "fetches": 2
+      },
+      {
+        "index": 9,
+        "tag": "button",
+        "label": "对",
+        "verdict": "effect",
+        "mutations": 201,
+        "fetches": 3
+      },
+      {
+        "index": 10,
+        "tag": "button",
+        "label": "错",
+        "verdict": "missing",
+        "mutations": 201,
+        "fetches": 3
+      },
+      {
+        "index": 11,
+        "tag": "a",
+        "label": "查看来源",
+        "verdict": "effect",
+        "mutations": 201,
+        "fetches": 3
+      },
+      {
+        "index": 12,
+        "tag": "button",
+        "label": "对",
+        "verdict": "effect",
+        "mutations": 204,
+        "fetches": 4
+      },
+      {
+        "index": 13,
+        "tag": "button",
+        "label": "错",
+        "verdict": "missing",
+        "mutations": 204,
+        "fetches": 4
+      },
+      {
+        "index": 14,
+        "tag": "a",
+        "label": "查看来源",
+        "verdict": "effect",
+        "mutations": 204,
+        "fetches": 4
+      },
+      {
+        "index": 15,
+        "tag": "button",
+        "label": "对",
+        "verdict": "effect",
+        "mutations": 207,
+        "fetches": 5
+      },
+      {
+        "index": 16,
+        "tag": "button",
+        "label": "错",
+        "verdict": "missing",
+        "mutations": 207,
+        "fetches": 5
+      },
+      {
+        "index": 17,
+        "tag": "a",
+        "label": "查看来源",
+        "verdict": "effect",
+        "mutations": 217,
+        "fetches": 7
+      },
+      {
+        "index": 18,
+        "tag": "button",
+        "label": "对",
+        "verdict": "effect",
+        "mutations": 224,
+        "fetches": 8
+      },
+      {
+        "index": 19,
+        "tag": "button",
+        "label": "错",
+        "verdict": "missing",
+        "mutations": 224,
+        "fetches": 8
+      },
+      {
+        "index": 20,
+        "tag": "a",
+        "label": "查看来源",
+        "verdict": "effect",
+        "mutations": 237,
+        "fetches": 10
+      },
+      {
+        "index": 21,
+        "tag": "button",
+        "label": "对",
+        "verdict": "effect",
+        "mutations": 240,
+        "fetches": 11
+      },
+      {
+        "index": 22,
+        "tag": "button",
+        "label": "错",
+        "verdict": "missing",
+        "mutations": 245,
+        "fetches": 11
+      },
+      {
+        "index": 23,
+        "tag": "a",
+        "label": "查看来源",
+        "verdict": "effect",
+        "mutations": 261,
+        "fetches": 13
+      },
+      {
+        "index": 24,
+        "tag": "button",
+        "label": "对",
+        "verdict": "effect",
+        "mutations": 264,
+        "fetches": 14
+      },
+      {
+        "index": 25,
+        "tag": "button",
+        "label": "错",
+        "verdict": "missing",
+        "mutations": 269,
+        "fetches": 14
+      },
+      {
+        "index": 26,
+        "tag": "a",
+        "label": "查看来源",
+        "verdict": "effect",
+        "mutations": 277,
+        "fetches": 16
+      },
+      {
+        "index": 27,
+        "tag": "button",
+        "label": "对",
+        "verdict": "effect",
+        "mutations": 280,
+        "fetches": 17
+      },
+      {
+        "index": 28,
+        "tag": "button",
+        "label": "错",
+        "verdict": "missing",
+        "mutations": 285,
+        "fetches": 17
+      },
+      {
+        "index": 29,
+        "tag": "a",
+        "label": "查看来源",
+        "verdict": "effect",
+        "mutations": 293,
+        "fetches": 19
+      },
+      {
+        "index": 30,
+        "tag": "button",
+        "label": "对",
+        "verdict": "effect",
+        "mutations": 296,
+        "fetches": 20
+      },
+      {
+        "index": 31,
+        "tag": "button",
+        "label": "错",
+        "verdict": "missing",
+        "mutations": 301,
+        "fetches": 20
+      },
+      {
+        "index": 32,
+        "tag": "a",
+        "label": "查看来源",
+        "verdict": "effect",
+        "mutations": 308,
+        "fetches": 22
+      },
+      {
+        "index": 33,
+        "tag": "button",
+        "label": "对",
+        "verdict": "effect",
+        "mutations": 314,
+        "fetches": 23
+      },
+      {
+        "index": 34,
+        "tag": "button",
+        "label": "错",
+        "verdict": "missing",
+        "mutations": 319,
+        "fetches": 23
+      },
+      {
+        "index": 35,
+        "tag": "button",
+        "label": "(无文字)",
+        "verdict": "effect",
+        "mutations": 350,
+        "fetches": 25
+      },
+      {
+        "index": 36,
+        "tag": "button",
+        "label": "(无文字)",
+        "verdict": "effect",
+        "mutations": 363,
+        "fetches": 31
+      },
+      {
+        "index": 37,
+        "tag": "button",
+        "label": "(无文字)",
+        "verdict": "effect",
+        "mutations": 432,
+        "fetches": 31
+      },
+      {
+        "index": 38,
+        "tag": "button",
+        "label": "全部核查完毕",
+        "verdict": "effect",
+        "mutations": 489,
+        "fetches": 31
+      },
+      {
+        "index": 39,
+        "tag": "button",
+        "label": "活动详情",
+        "verdict": "navigate",
+        "mutations": 550,
+        "fetches": 31
+      },
+      {
+        "index": 40,
+        "tag": "a",
+        "label": "原始来源 ↗",
+        "verdict": "effect",
+        "mutations": 93,
+        "fetches": 0
+      },
+      {
+        "index": 41,
+        "tag": "button",
+        "label": "通 过",
+        "verdict": "effect",
+        "mutations": 151,
+        "fetches": 1
+      },
+      {
+        "index": 42,
+        "tag": "button",
+        "label": "驳 回",
+        "verdict": "effect",
+        "mutations": 170,
+        "fetches": 2
+      },
+      {
+        "index": 43,
+        "tag": "button",
+        "label": "修 正",
+        "verdict": "effect",
+        "mutations": 170,
+        "fetches": 2
+      },
+      {
+        "index": 44,
+        "tag": "a",
+        "label": "原始来源 ↗",
+        "verdict": "effect",
+        "mutations": 170,
+        "fetches": 2
+      },
+      {
+        "index": 45,
+        "tag": "button",
+        "label": "通 过",
+        "verdict": "effect",
+        "mutations": 261,
+        "fetches": 3
+      },
+      {
+        "index": 46,
+        "tag": "button",
+        "label": "驳 回",
+        "verdict": "effect",
+        "mutations": 261,
+        "fetches": 3
+      },
+      {
+        "index": 47,
+        "tag": "button",
+        "label": "修 正",
+        "verdict": "effect",
+        "mutations": 261,
+        "fetches": 3
+      },
+      {
+        "index": 48,
+        "tag": "button",
+        "label": "撤回",
+        "verdict": "effect",
+        "mutations": 313,
+        "fetches": 3
+      },
+      {
+        "index": 49,
+        "tag": "a",
+        "label": "原始来源 ↗",
+        "verdict": "effect",
+        "mutations": 313,
+        "fetches": 3
+      },
+      {
+        "index": 50,
+        "tag": "button",
+        "label": "通 过",
+        "verdict": "effect",
+        "mutations": 404,
+        "fetches": 4
+      },
+      {
+        "index": 51,
+        "tag": "button",
+        "label": "驳 回",
+        "verdict": "effect",
+        "mutations": 404,
+        "fetches": 4
+      },
+      {
+        "index": 52,
+        "tag": "button",
+        "label": "修 正",
+        "verdict": "effect",
+        "mutations": 404,
+        "fetches": 4
+      },
+      {
+        "index": 53,
+        "tag": "button",
+        "label": "撤回",
+        "verdict": "effect",
+        "mutations": 456,
+        "fetches": 4
+      },
+      {
+        "index": 54,
+        "tag": "a",
+        "label": "原始来源 ↗",
+        "verdict": "effect",
+        "mutations": 456,
+        "fetches": 4
+      },
+      {
+        "index": 55,
+        "tag": "button",
+        "label": "通 过",
+        "verdict": "effect",
+        "mutations": 547,
+        "fetches": 5
+      },
+      {
+        "index": 56,
+        "tag": "button",
+        "label": "驳 回",
+        "verdict": "effect",
+        "mutations": 547,
+        "fetches": 5
+      },
+      {
+        "index": 57,
+        "tag": "button",
+        "label": "修 正",
+        "verdict": "effect",
+        "mutations": 547,
+        "fetches": 5
+      },
+      {
+        "index": 58,
+        "tag": "button",
+        "label": "撤回",
+        "verdict": "effect",
+        "mutations": 599,
+        "fetches": 5
+      },
+      {
+        "index": 59,
+        "tag": "a",
+        "label": "原始来源 ↗",
+        "verdict": "effect",
+        "mutations": 599,
+        "fetches": 5
+      }
+    ]
+  }
+]
