@@ -81,9 +81,12 @@ function statusTag(value: string) {
 export default function GraphRelationSummary({
   eventId,
   onOpenGraph,
+  onVerify,
 }: {
   eventId: string;
   onOpenGraph?: () => void;
+  /** 跳到审核台核对某个字段（venueName / sourceUrl） */
+  onVerify?: (field: string) => void;
 }) {
   const [chain, setChain] = useState<Chain | null>(null);
   const [error, setError] = useState<string>("");
@@ -149,6 +152,11 @@ export default function GraphRelationSummary({
               {eventNode.attributes.endDate ? " 至 " + String(eventNode.attributes.endDate) : ""}
             </span>
           ) : null}
+          {onVerify && (
+            <Button size="small" type="link" style={{ padding: "0 6px" }} onClick={() => onVerify("venueName")}>
+              核对场地
+            </Button>
+          )}
         </span>
       </div>
       <div className="relation-line">
@@ -160,6 +168,11 @@ export default function GraphRelationSummary({
               {" "}
               查看原始记录
             </a>
+          )}
+          {onVerify && (
+            <Button size="small" type="link" style={{ padding: "0 6px" }} onClick={() => onVerify("sourceUrl")}>
+              核对来源
+            </Button>
           )}
         </span>
       </div>

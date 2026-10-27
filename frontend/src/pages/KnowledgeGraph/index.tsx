@@ -205,7 +205,11 @@ export default function KnowledgeGraph() {
         <p>活动 → 场馆 → 位置语境 → 周边酒店 / 餐饮 / 交通 → 目标客群(按规则自动生成)</p>
       </div>
 
-      <GraphRelationSummary eventId={id} onOpenGraph={() => setShowCanvas(true)} />
+      <GraphRelationSummary
+          eventId={id}
+          onOpenGraph={() => setShowCanvas(true)}
+          onVerify={(field) => go("/evidence", id, { field })}
+        />
 
       <section className="panel gap-bottom" aria-label="图谱业务查询">
         <div className="panel-heading">

@@ -2345,3 +2345,7 @@ main {
 .legend-area-official { background: #2563EB; }
 .legend-area-candidate { background: #fff; border: 2px solid #0F766E; }
 .legend-ring { background: #fff; border: 2px solid #2563EB; box-shadow: 0 0 0 3px rgba(37,99,235,0.18); }
+
+/* 从图谱/地图跳转过来时的字段高亮 */
+.row-focus > td { background: #fffbeb !important; }
+.row-focus > td:first-child { box-shadow: inset 3px 0 0 #f59e0b; }
