@@ -4,6 +4,7 @@ import {
   PHASE_LABELS,
   caliberCounts,
   phaseOf,
+  phaseToday,
   type EventPhase,
   type TimeWindow,
 } from "../../utils/caliber";
@@ -30,9 +31,13 @@ export default function CaliberBar({
   // 后端去重结果偏高，前后端对不上。
   const identities = distinctByCanonical(events);
   const counts = caliberCounts(window, identities, (event) => !!eventCoordinates(event, dataset));
-  // 只列与窗口有交集的活动状态。「已结束」不在其中：窗口本身已把它们排除，历史活动由
-  // 「显示已结束」开关控制，放在这里会恒为 0，反而误导。
-  const phaseOrder: EventPhase[] = ["upcoming", "ongoing"];
+  // 三类都列，且按「今天」判断：酒店客户要的是"这场活动现在还在不在办"。
+  // 用窗口起点判断会把 10 月 2 日就结束的活动算成"进行中"。
+  const phaseOrder: EventPhase[] = ["upcoming", "ongoing", "ended"];
+  const todayCounts: Record<EventPhase, number> = { upcoming: 0, ongoing: 0, ended: 0 };
+  identities.forEach((event) => {
+    todayCounts[phaseToday(event)] += 1;
+  });
 
   return (
     <div className="caliber-bar">
@@ -73,7 +78,7 @@ export default function CaliberBar({
         </Tooltip>
         {phaseOrder.map((phase) => (
           <span key={phase} className="caliber-phase">
-            {PHASE_LABELS[phase]} {events.filter((event) => phaseOf(event, window) === phase).length}
+            {PHASE_LABELS[phase]} {todayCounts[phase]}
           </span>
         ))}
         {counts.withoutCoordinates > 0 && (

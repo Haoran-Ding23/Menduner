@@ -100,6 +100,22 @@ export function phaseOf(event: Event, window: TimeWindow): EventPhase {
   return "upcoming";
 }
 
+/**
+ * 相对「今天」的活动状态：这是酒店客户真正关心的口径（这场活动现在还在不在办）。
+ *
+ * 与 phaseOf(event, window) 的区别：后者是相对统计窗口起点判断，
+ * 用在一整个月的报表里；但页头/地图上的"进行中"若用它，
+ * 10 月 2 日就结束的活动会被算成"进行中"，与实际不符。
+ */
+export function phaseToday(event: Event, today: string = new Date().toISOString().slice(0, 10)): EventPhase {
+  const range = dates(event);
+  if (!range) return "ended";
+  const [start, end] = range;
+  if (end < today) return "ended";
+  if (start > today) return "upcoming";
+  return "ongoing";
+}
+
 export const PHASE_LABELS: Record<EventPhase, string> = {
   upcoming: "即将开始",
   ongoing: "进行中",

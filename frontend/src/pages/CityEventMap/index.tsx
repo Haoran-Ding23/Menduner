@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button, Empty, Tag, Alert, Switch, Space, Segmented } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
 import { filterEvents, eventCoordinates, categories, venueHotspots } from "../../utils/data";
@@ -98,6 +98,18 @@ export default function CityEventMap() {
   >([]);
   const selectedEventId = detail ?? selected ?? null;
 
+  const regionSignature = `${filters.district}|${filters.year}|${filters.month}`;
+  const lastRegion = useRef(regionSignature);
+  useEffect(() => {
+    if (lastRegion.current === regionSignature) return;
+    lastRegion.current = regionSignature;
+    // 清掉上一个区域的残留：选中活动、商圈选中都会跨区挂着
+    setSelectedAreaId(null);
+    update({ event: null, detail: null });
+    setRefitKey((value) => value + 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [regionSignature]);
+
   useEffect(() => {
     if (!showAreas || areaRows.length) return;
     setAreaLoadState("loading");
@@ -156,6 +168,8 @@ export default function CityEventMap() {
   // 页面叫「城市活动地图」，默认就应该看到地图；列表是辅助视图。
   // （此前默认 false 导致打开页面只有一长串列表，地图根本没渲染 —— 断言发现的）
   const [showMap, setShowMap] = useState(true);
+  // 切区/切月时需要：清掉跨区的选中活动与商圈残留，并让地图按新区域的活动点重新适配
+  const [refitKey, setRefitKey] = useState(0);
 
   const mapWindow: TimeWindow = useMemo(() => {
     const [start, end] = monthRange(filters.year, filters.month);
@@ -327,9 +341,7 @@ export default function CityEventMap() {
               />
               <span>
                 {showHotels
-                  ? selectedEventId
-                    ? "已显示这条活动附近的酒店"
-                    : `已显示酒店（${hotelCount} 家）`
+                  ? `已显示酒店（${hotelCount} 家）`
                   : selectedEventId
                     ? "查看附近酒店"
                     : `查看附近酒店（${hotelCount} 家）`}
@@ -379,6 +391,7 @@ export default function CityEventMap() {
       <EventMap
         events={events}
         demandLayer={showHotels}
+        refitKey={refitKey}
         areasLayer={
           showAreas
             ? areaRows.map((area) => ({

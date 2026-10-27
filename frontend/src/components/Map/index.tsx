@@ -91,6 +91,7 @@ export default function EventMap({
   areasLayer,
   selectedArea,
   onAreaSelect,
+  refitKey,
 }: {
   events: Event[];
   hotel?: Hotel;
@@ -101,12 +102,15 @@ export default function EventMap({
   areasLayer?: { id: string; name: string; status: string; lng: number; lat: number; radiusMeters: number }[];
   selectedArea?: string | null;
   onAreaSelect?: (id: string) => void;
+  /** 变化时按当前活动点重新适配视野（切区/切月用） */
+  refitKey?: number;
 }) {
   const { dataset, repository, selected, openEvent, go } = usePlatform();
   // 只在聚焦目标变化时居中，避免用户手动拖动后被反复拉回
   const lastFocusedId = useRef<string | null>(null);
   // 是否已经做过一次自适应缩放（之后不再自动改变视野）
   const didFitOnce = useRef(false);
+  const lastRefitKey = useRef<number | undefined>(refitKey);
   // 箭头单独保存：它不属于活动点集合，不能参与 fitView，也不应影响标记计数
   const arrowRef = useRef<unknown>(null);
   const container = useRef<HTMLDivElement>(null);
@@ -404,6 +408,12 @@ export default function EventMap({
           }),
         );
       }
+    }
+    // 切区/切月：允许重新适配一次视野，并清掉上一次的聚焦记录
+    if (refitKey !== undefined && refitKey !== lastRefitKey.current) {
+      lastRefitKey.current = refitKey;
+      didFitOnce.current = false;
+      lastFocusedId.current = null;
     }
     map.current.add(markers);
     // 只在首次渲染时自适应范围；之后重绘（开关图层、切换筛选）一律保持用户当前视野。
