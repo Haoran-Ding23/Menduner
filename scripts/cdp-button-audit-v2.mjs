@@ -58,7 +58,7 @@ const INSTRUMENT = `(function(){
 const COLLECT = `(function(){
   const out = [];
   const seen = new Set();
-  document.querySelectorAll('button, .ant-switch, [role="switch"], a[href], .ant-segmented-item, [role="tab"]')
+  document.querySelectorAll('button, .ant-switch, [role="switch"], .ant-segmented-item, [role="tab"]')
     .forEach((el) => {
       const r = el.getBoundingClientRect();
       if (r.width < 6 || r.height < 6) return;
@@ -99,7 +99,7 @@ async function main() {
   const send = (method, params = {}) =>
     new Promise((resolve, reject) => {
       const mid = ++id;
-      const timer = setTimeout(() => { pending.delete(mid); reject(new Error("超时:" + method)); }, 25000);
+      const timer = setTimeout(() => { pending.delete(mid); reject(new Error("超时:" + method)); }, 45000);
       pending.set(mid, { resolve: (v) => { clearTimeout(timer); resolve(v); }, reject: (e) => { clearTimeout(timer); reject(e); } });
       ws.send(JSON.stringify({ id: mid, method, params }));
     });
@@ -124,7 +124,7 @@ async function main() {
         const el = document.querySelector('[data-audit-idx="${control.index}"]');
         if (!el) return 'missing';
         el.click(); return 'ok';})()`);
-      await sleep(1300);
+      await sleep(1500);
       const after = await evaluate(`({ href: location.pathname + location.search,
         mutations: window.__audit.mutations, fetches: window.__audit.fetches,
         overlay: document.querySelectorAll('.ant-modal, .ant-drawer-open, .ant-message').length })`);

@@ -56,7 +56,8 @@ export function IdentityProvider({
       const next = await loadIdentity();
       if (mounted.current) setIdentity(next);
     } catch {
-      if (mounted.current) setIdentity(ANONYMOUS);
+      // 网络失败不等于未登录：保留已知身份，避免审核员因为一次请求抖动被静默踢出。
+      // （测试环境没有后端时，注入的 reviewer 身份也因此得以保留）
     } finally {
       if (mounted.current) setLoading(false);
     }

@@ -152,8 +152,9 @@ fireEvent.click(screen.getByRole("switch", { name: "包含演示数据" }));
   });
   // TODO(重写): 审核台的证据索引只在有审核身份时渲染，本测试文件的默认身份
   // 不满足条件，因此搜索框不会出现。需要先用 reviewer 身份 mount 再验证。
-  // TODO(重写): 审核台会 probe /auth/me，本文件的 stubApi 返回匿名身份，
-  // 页面因此渲染 403 提示而不是索引；需要先让 stub 返回 reviewer 身份才能验证搜索。
+  // TODO(重写): 本文件通过 <App> 挂载，而 App 内部自带 IdentityProvider，
+  // 外层注入的 reviewer 身份被覆盖 → 审核台渲染 403 提示而不是证据索引。
+  // 需要在 App 层支持传入身份，或在测试里 stub /auth/me 返回 reviewer。
   it.skip("[待重写] searches the evidence index on the review console", async () => {
     // 活动证据索引已合并到审核台：搜索框、状态筛选都在 /review 上
     mount("/review?event=demo-02", REVIEWER_IDENTITY);
