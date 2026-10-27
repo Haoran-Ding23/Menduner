@@ -73,7 +73,10 @@ export default function CityEventMap() {
   // Hotels are drawn on request rather than always. The map is about where the demand is;
   // the hotel layer answers the follow-up question, and leaving it on by default buries the
   // event markers under a cluster of H pins in the same few districts.
-  const [showHotels, setShowHotels] = useState(true);
+  // 渐进式披露：默认不显示酒店图层，用户主动打开才出现（GPT Round 32 第 1 轮）
+  const [showHotels, setShowHotels] = useState(false);
+  // 渐进式披露：场馆热点属于“更多查看方式”，默认不展开
+  const [showMore, setShowMore] = useState(false);
 
   // The map opens on 太仓: a hotel plans its own county first and the whole city second. An
   // absent ?district= therefore means 太仓 rather than "everything", and 全市 is an explicit
@@ -264,11 +267,11 @@ export default function CityEventMap() {
             <h3>空间分布</h3>
             <Space wrap>
               <Switch
-                aria-label="显示酒店"
+                aria-label="查看附近酒店"
                 checked={showHotels}
                 onChange={setShowHotels}
               />
-              <span>显示酒店（{hotelCount} 家）</span>
+              <span>{showHotels ? `已显示酒店（${hotelCount} 家）` : `查看附近酒店（${hotelCount} 家）`}</span>
             </Space>
           </div>
           {focusNotice && (
@@ -305,7 +308,12 @@ export default function CityEventMap() {
           </div>
         </section>
       </div>
-      <VenueHotspots />
+      <div className="more-views">
+        <Button type="link" size="small" onClick={() => setShowMore((value) => !value)}>
+          {showMore ? "收起更多查看方式" : "更多查看方式（场馆热点）"}
+        </Button>
+        {showMore && <VenueHotspots />}
+      </div>
     </>
   );
 }

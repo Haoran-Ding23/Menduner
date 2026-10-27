@@ -2318,3 +2318,6 @@ main {
 .quick-trail { display: flex; justify-content: flex-end; }
 .quick-trail small { font-size: 11px; }
 .quick-row { grid-template-columns: 88px 1fr 62px 108px 76px; }
+
+/* 更多查看方式 */
+.more-views { margin-top: 8px; }
