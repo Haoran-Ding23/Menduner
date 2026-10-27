@@ -22,7 +22,15 @@ export default function CityEventMap() {
     const id = detail ?? selected;
     if (!id) return null;
     const target = dataset.events.find((item) => item.id === id);
-    if (!target) return null;
+    if (!target) {
+      // 链接里带了活动但数据集里没有（可能不在当前年份或已被合并/替换）：
+      // 必须说清楚，不能让用户点了像"没反应"。
+      return {
+        text: "当前数据里找不到这条活动（可能不在所选年份，或已合并到另一条记录），请从左侧列表重新选择",
+        coords: null,
+        link: null,
+      };
+    }
     const located = eventLocation(target, dataset);
     if (located.coords && !located.caveat) return null;
     const venue = dataset.venues.find((item) => item.id === target.venueId);
