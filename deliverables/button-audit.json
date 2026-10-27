@@ -1,0 +1,963 @@
+[
+  {
+    "page": "/workbench",
+    "name": "工作台",
+    "controls": 48,
+    "tested": 14,
+    "noop": 0,
+    "rows": [
+      {
+        "index": 0,
+        "tag": "button",
+        "label": "刷新 API 数据",
+        "verdict": "effect",
+        "mutations": 63,
+        "fetches": 1
+      },
+      {
+        "index": 1,
+        "tag": "button",
+        "label": "设置与数据导入",
+        "verdict": "effect",
+        "mutations": 77,
+        "fetches": 1
+      },
+      {
+        "index": 2,
+        "tag": "button",
+        "label": "换一家酒店",
+        "verdict": "unknown",
+        "mutations": -1,
+        "fetches": -1
+      },
+      {
+        "index": 3,
+        "tag": "button",
+        "label": "在地图上看",
+        "verdict": "unknown",
+        "mutations": -1,
+        "fetches": -1
+      },
+      {
+        "index": 4,
+        "tag": "a",
+        "label": "周报 Excel",
+        "verdict": "effect",
+        "mutations": 48,
+        "fetches": 0
+      },
+      {
+        "index": 5,
+        "tag": "a",
+        "label": "周报 PDF",
+        "verdict": "effect",
+        "mutations": 48,
+        "fetches": 0
+      },
+      {
+        "index": 6,
+        "tag": "button",
+        "label": "显示演示数据",
+        "verdict": "navigate",
+        "mutations": 56,
+        "fetches": 0
+      },
+      {
+        "index": 7,
+        "tag": "button",
+        "label": "重置筛选",
+        "verdict": "effect",
+        "mutations": 52,
+        "fetches": 0
+      },
+      {
+        "index": 8,
+        "tag": "button",
+        "label": "太仓市博物馆:铁军东进——新四军在常武大地展",
+        "verdict": "unknown",
+        "mutations": -1,
+        "fetches": -1
+      },
+      {
+        "index": 9,
+        "tag": "button",
+        "label": "关 注",
+        "verdict": "effect",
+        "mutations": 80,
+        "fetches": 1
+      },
+      {
+        "index": 10,
+        "tag": "button",
+        "label": "待跟进",
+        "verdict": "effect",
+        "mutations": 112,
+        "fetches": 2
+      },
+      {
+        "index": 11,
+        "tag": "button",
+        "label": "已跟进",
+        "verdict": "effect",
+        "mutations": 144,
+        "fetches": 3
+      },
+      {
+        "index": 12,
+        "tag": "button",
+        "label": "忽 略",
+        "verdict": "effect",
+        "mutations": 176,
+        "fetches": 4
+      },
+      {
+        "index": 13,
+        "tag": "button",
+        "label": "太仓市图书馆:四时与小物——赵夏橦个人项目",
+        "verdict": "unknown",
+        "mutations": -1,
+        "fetches": -1
+      }
+    ]
+  },
+  {
+    "page": "/map",
+    "name": "地图",
+    "controls": 30,
+    "tested": 14,
+    "noop": 0,
+    "rows": [
+      {
+        "index": 0,
+        "tag": "button",
+        "label": "刷新 API 数据",
+        "verdict": "effect",
+        "mutations": 159,
+        "fetches": 1
+      },
+      {
+        "index": 1,
+        "tag": "button",
+        "label": "设置与数据导入",
+        "verdict": "effect",
+        "mutations": 173,
+        "fetches": 1
+      },
+      {
+        "index": 2,
+        "tag": "button",
+        "label": "更多筛选",
+        "verdict": "effect",
+        "mutations": 181,
+        "fetches": 1
+      },
+      {
+        "index": 3,
+        "tag": "button",
+        "label": "月份：10 月",
+        "verdict": "effect",
+        "mutations": 189,
+        "fetches": 1
+      },
+      {
+        "index": 4,
+        "tag": "button",
+        "label": "太仓市16",
+        "verdict": "navigate",
+        "mutations": 253,
+        "fetches": 1
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "label": "常熟市6",
+        "verdict": "navigate",
+        "mutations": 435,
+        "fetches": 12
+      },
+      {
+        "index": 6,
+        "tag": "button",
+        "label": "昆山市9",
+        "verdict": "navigate",
+        "mutations": 442,
+        "fetches": 10
+      },
+      {
+        "index": 7,
+        "tag": "button",
+        "label": "张家港市1",
+        "verdict": "navigate",
+        "mutations": 71,
+        "fetches": 0
+      },
+      {
+        "index": 8,
+        "tag": "button",
+        "label": "姑苏区46",
+        "verdict": "navigate",
+        "mutations": 591,
+        "fetches": 18
+      },
+      {
+        "index": 9,
+        "tag": "button",
+        "label": "虎丘区7",
+        "verdict": "navigate",
+        "mutations": 73,
+        "fetches": 0
+      },
+      {
+        "index": 10,
+        "tag": "button",
+        "label": "吴中区152",
+        "verdict": "navigate",
+        "mutations": 752,
+        "fetches": 18
+      },
+      {
+        "index": 11,
+        "tag": "button",
+        "label": "相城区4",
+        "verdict": "navigate",
+        "mutations": 437,
+        "fetches": 8
+      },
+      {
+        "index": 12,
+        "tag": "button",
+        "label": "吴江区5",
+        "verdict": "navigate",
+        "mutations": 78,
+        "fetches": 0
+      },
+      {
+        "index": 13,
+        "tag": "button",
+        "label": "苏州全市",
+        "verdict": "navigate",
+        "mutations": 3017,
+        "fetches": 20
+      }
+    ]
+  },
+  {
+    "page": "/agenda",
+    "name": "活动清单",
+    "controls": 135,
+    "tested": 14,
+    "noop": 0,
+    "rows": [
+      {
+        "index": 0,
+        "tag": "button",
+        "label": "刷新 API 数据",
+        "verdict": "effect",
+        "mutations": 180,
+        "fetches": 1
+      },
+      {
+        "index": 1,
+        "tag": "button",
+        "label": "设置与数据导入",
+        "verdict": "effect",
+        "mutations": 194,
+        "fetches": 1
+      },
+      {
+        "index": 2,
+        "tag": "button",
+        "label": "更多筛选",
+        "verdict": "effect",
+        "mutations": 205,
+        "fetches": 1
+      },
+      {
+        "index": 3,
+        "tag": "button",
+        "label": "月份：10 月",
+        "verdict": "effect",
+        "mutations": 216,
+        "fetches": 1
+      },
+      {
+        "index": 4,
+        "tag": "button",
+        "label": "显示演示数据",
+        "verdict": "navigate",
+        "mutations": 244,
+        "fetches": 1
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "label": "重置筛选",
+        "verdict": "effect",
+        "mutations": 154,
+        "fetches": 0
+      },
+      {
+        "index": 6,
+        "tag": "label",
+        "label": "本日",
+        "verdict": "effect",
+        "mutations": 348,
+        "fetches": 0
+      },
+      {
+        "index": 7,
+        "tag": "label",
+        "label": "本周",
+        "verdict": "effect",
+        "mutations": 525,
+        "fetches": 0
+      },
+      {
+        "index": 8,
+        "tag": "label",
+        "label": "本月",
+        "verdict": "effect",
+        "mutations": 825,
+        "fetches": 0
+      },
+      {
+        "index": 9,
+        "tag": "button",
+        "label": "在地图上查看 2026中国(长三角)苏州表面处理产业",
+        "verdict": "missing",
+        "mutations": 825,
+        "fetches": 0
+      },
+      {
+        "index": 10,
+        "tag": "button",
+        "label": "在地图上查看 纪录片《她在四月跳舞》放映+导演见面交",
+        "verdict": "missing",
+        "mutations": 825,
+        "fetches": 0
+      },
+      {
+        "index": 11,
+        "tag": "button",
+        "label": "在地图上查看 [9.9元起]不同喜剧-盲盒开放麦 新",
+        "verdict": "navigate",
+        "mutations": 1352,
+        "fetches": 5
+      },
+      {
+        "index": 12,
+        "tag": "button",
+        "label": "在地图上查看 第三十三届中国汽车工程学会年会暨展览会",
+        "verdict": "navigate",
+        "mutations": 489,
+        "fetches": 5
+      },
+      {
+        "index": 13,
+        "tag": "button",
+        "label": "在地图上查看 第三十三届中国汽车工程学会年会暨展览会",
+        "verdict": "navigate",
+        "mutations": 489,
+        "fetches": 5
+      }
+    ]
+  },
+  {
+    "page": "/hotels",
+    "name": "找酒店",
+    "controls": 25,
+    "tested": 14,
+    "noop": 0,
+    "rows": [
+      {
+        "index": 0,
+        "tag": "button",
+        "label": "刷新 API 数据",
+        "verdict": "effect",
+        "mutations": 262,
+        "fetches": 1
+      },
+      {
+        "index": 1,
+        "tag": "button",
+        "label": "设置与数据导入",
+        "verdict": "effect",
+        "mutations": 276,
+        "fetches": 1
+      },
+      {
+        "index": 2,
+        "tag": "button",
+        "label": "显示演示数据",
+        "verdict": "navigate",
+        "mutations": 398,
+        "fetches": 1
+      },
+      {
+        "index": 3,
+        "tag": "button",
+        "label": "重置筛选",
+        "verdict": "effect",
+        "mutations": 140,
+        "fetches": 0
+      },
+      {
+        "index": 4,
+        "tag": "button",
+        "label": "全选 488 家",
+        "verdict": "effect",
+        "mutations": 255,
+        "fetches": 0
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "label": "清 空",
+        "verdict": "effect",
+        "mutations": 337,
+        "fetches": 0
+      },
+      {
+        "index": 6,
+        "tag": "button",
+        "label": "只选高端（8）",
+        "verdict": "effect",
+        "mutations": 1805,
+        "fetches": 18
+      },
+      {
+        "index": 7,
+        "tag": "button",
+        "label": "只选中端（6）",
+        "verdict": "effect",
+        "mutations": 2637,
+        "fetches": 28
+      },
+      {
+        "index": 8,
+        "tag": "button",
+        "label": "只选舒适（5）",
+        "verdict": "effect",
+        "mutations": 2760,
+        "fetches": 28
+      },
+      {
+        "index": 9,
+        "tag": "a",
+        "label": "高德地点来源 ↗",
+        "verdict": "missing",
+        "mutations": 2760,
+        "fetches": 28
+      },
+      {
+        "index": 10,
+        "tag": "button",
+        "label": "太仓市博物馆，6 个活动，热点场馆",
+        "verdict": "missing",
+        "mutations": 2760,
+        "fetches": 28
+      },
+      {
+        "index": 11,
+        "tag": "button",
+        "label": "太仓美术馆，5 个活动，热点场馆",
+        "verdict": "missing",
+        "mutations": 2760,
+        "fetches": 28
+      },
+      {
+        "index": 12,
+        "tag": "button",
+        "label": "太仓名人馆，1 个活动",
+        "verdict": "missing",
+        "mutations": 2760,
+        "fetches": 28
+      },
+      {
+        "index": 13,
+        "tag": "button",
+        "label": "大观长江——大江东流与江南繁华(太仓站·融江汇海展风",
+        "verdict": "missing",
+        "mutations": 2760,
+        "fetches": 28
+      }
+    ]
+  },
+  {
+    "page": "/hotel-activity",
+    "name": "酒店活动情报",
+    "controls": 30,
+    "tested": 14,
+    "noop": 0,
+    "rows": [
+      {
+        "index": 0,
+        "tag": "button",
+        "label": "刷新 API 数据",
+        "verdict": "navigate",
+        "mutations": 159,
+        "fetches": 1
+      },
+      {
+        "index": 1,
+        "tag": "button",
+        "label": "设置与数据导入",
+        "verdict": "navigate",
+        "mutations": 44,
+        "fetches": 0
+      },
+      {
+        "index": 2,
+        "tag": "button",
+        "label": "更多筛选",
+        "verdict": "navigate",
+        "mutations": 38,
+        "fetches": 0
+      },
+      {
+        "index": 3,
+        "tag": "button",
+        "label": "月份：10 月",
+        "verdict": "navigate",
+        "mutations": 38,
+        "fetches": 0
+      },
+      {
+        "index": 4,
+        "tag": "button",
+        "label": "太仓市16",
+        "verdict": "navigate",
+        "mutations": 91,
+        "fetches": 0
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "label": "常熟市6",
+        "verdict": "navigate",
+        "mutations": 435,
+        "fetches": 12
+      },
+      {
+        "index": 6,
+        "tag": "button",
+        "label": "昆山市9",
+        "verdict": "navigate",
+        "mutations": 442,
+        "fetches": 10
+      },
+      {
+        "index": 7,
+        "tag": "button",
+        "label": "张家港市1",
+        "verdict": "navigate",
+        "mutations": 71,
+        "fetches": 0
+      },
+      {
+        "index": 8,
+        "tag": "button",
+        "label": "姑苏区46",
+        "verdict": "navigate",
+        "mutations": 591,
+        "fetches": 18
+      },
+      {
+        "index": 9,
+        "tag": "button",
+        "label": "虎丘区7",
+        "verdict": "navigate",
+        "mutations": 73,
+        "fetches": 0
+      },
+      {
+        "index": 10,
+        "tag": "button",
+        "label": "吴中区152",
+        "verdict": "navigate",
+        "mutations": 752,
+        "fetches": 18
+      },
+      {
+        "index": 11,
+        "tag": "button",
+        "label": "相城区4",
+        "verdict": "navigate",
+        "mutations": 437,
+        "fetches": 8
+      },
+      {
+        "index": 12,
+        "tag": "button",
+        "label": "吴江区5",
+        "verdict": "navigate",
+        "mutations": 78,
+        "fetches": 0
+      },
+      {
+        "index": 13,
+        "tag": "button",
+        "label": "苏州全市",
+        "verdict": "navigate",
+        "mutations": 3109,
+        "fetches": 20
+      }
+    ]
+  },
+  {
+    "page": "/insights",
+    "name": "商圈洞察",
+    "controls": 4,
+    "tested": 4,
+    "noop": 0,
+    "rows": [
+      {
+        "index": 0,
+        "tag": "button",
+        "label": "刷新 API 数据",
+        "verdict": "effect",
+        "mutations": 47,
+        "fetches": 1
+      },
+      {
+        "index": 1,
+        "tag": "button",
+        "label": "设置与数据导入",
+        "verdict": "effect",
+        "mutations": 61,
+        "fetches": 1
+      },
+      {
+        "index": 2,
+        "tag": "button",
+        "label": "显示演示数据",
+        "verdict": "navigate",
+        "mutations": 86,
+        "fetches": 1
+      },
+      {
+        "index": 3,
+        "tag": "button",
+        "label": "重置筛选",
+        "verdict": "effect",
+        "mutations": 22,
+        "fetches": 0
+      }
+    ]
+  },
+  {
+    "page": "/graph",
+    "name": "知识图谱",
+    "controls": 17,
+    "tested": 14,
+    "noop": 0,
+    "rows": [
+      {
+        "index": 0,
+        "tag": "button",
+        "label": "刷新 API 数据",
+        "verdict": "effect",
+        "mutations": 56,
+        "fetches": 1
+      },
+      {
+        "index": 1,
+        "tag": "button",
+        "label": "设置与数据导入",
+        "verdict": "effect",
+        "mutations": 70,
+        "fetches": 1
+      },
+      {
+        "index": 2,
+        "tag": "button",
+        "label": "核对场地",
+        "verdict": "navigate",
+        "mutations": 113,
+        "fetches": 1
+      },
+      {
+        "index": 3,
+        "tag": "a",
+        "label": "查看原始记录",
+        "verdict": "effect",
+        "mutations": 17,
+        "fetches": 0
+      },
+      {
+        "index": 4,
+        "tag": "button",
+        "label": "核对来源",
+        "verdict": "navigate",
+        "mutations": 57,
+        "fetches": 0
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "label": "查看周边设施（酒店 6 · 餐饮/交通/其他 24）",
+        "verdict": "effect",
+        "mutations": 28,
+        "fetches": 0
+      },
+      {
+        "index": 6,
+        "tag": "button",
+        "label": "查看关系图",
+        "verdict": "effect",
+        "mutations": 76,
+        "fetches": 0
+      },
+      {
+        "index": 7,
+        "tag": "a",
+        "label": "在地图上看",
+        "verdict": "unknown",
+        "mutations": -1,
+        "fetches": -1
+      },
+      {
+        "index": 8,
+        "tag": "label",
+        "label": "场馆",
+        "verdict": "effect",
+        "mutations": 78,
+        "fetches": 0
+      },
+      {
+        "index": 9,
+        "tag": "label",
+        "label": "酒店",
+        "verdict": "effect",
+        "mutations": 139,
+        "fetches": 0
+      },
+      {
+        "index": 10,
+        "tag": "label",
+        "label": "商圈",
+        "verdict": "effect",
+        "mutations": 200,
+        "fetches": 0
+      },
+      {
+        "index": 11,
+        "tag": "button",
+        "label": "查 询",
+        "verdict": "effect",
+        "mutations": 214,
+        "fetches": 0
+      },
+      {
+        "index": 12,
+        "tag": "button",
+        "label": "展开商圈酒店",
+        "verdict": "navigate",
+        "mutations": 232,
+        "fetches": 0
+      },
+      {
+        "index": 13,
+        "tag": "button",
+        "label": "显示周边餐饮交通",
+        "verdict": "navigate",
+        "mutations": 35,
+        "fetches": 0
+      }
+    ]
+  },
+  {
+    "page": "/evidence",
+    "name": "数据质量",
+    "controls": 8,
+    "tested": 8,
+    "noop": 0,
+    "rows": [
+      {
+        "index": 0,
+        "tag": "button",
+        "label": "刷新 API 数据",
+        "verdict": "effect",
+        "mutations": 41,
+        "fetches": 1
+      },
+      {
+        "index": 1,
+        "tag": "button",
+        "label": "设置与数据导入",
+        "verdict": "effect",
+        "mutations": 55,
+        "fetches": 1
+      },
+      {
+        "index": 2,
+        "tag": "button",
+        "label": "(无文字)",
+        "verdict": "effect",
+        "mutations": 56,
+        "fetches": 1
+      },
+      {
+        "index": 3,
+        "tag": "button",
+        "label": "显示已核验活动",
+        "verdict": "effect",
+        "mutations": 71,
+        "fetches": 1
+      },
+      {
+        "index": 4,
+        "tag": "button",
+        "label": "(无文字)",
+        "verdict": "effect",
+        "mutations": 94,
+        "fetches": 1
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "label": "只看三项关键字段",
+        "verdict": "effect",
+        "mutations": 107,
+        "fetches": 1
+      },
+      {
+        "index": 6,
+        "tag": "a",
+        "label": "上海乐历（苏州公开演出页面） ↗",
+        "verdict": "effect",
+        "mutations": 107,
+        "fetches": 1
+      },
+      {
+        "index": 7,
+        "tag": "button",
+        "label": "展开已核验的 8 个字段",
+        "verdict": "effect",
+        "mutations": 123,
+        "fetches": 1
+      }
+    ]
+  },
+  {
+    "page": "/more",
+    "name": "更多",
+    "controls": 30,
+    "tested": 14,
+    "noop": 0,
+    "rows": [
+      {
+        "index": 0,
+        "tag": "button",
+        "label": "刷新 API 数据",
+        "verdict": "navigate",
+        "mutations": 159,
+        "fetches": 1
+      },
+      {
+        "index": 1,
+        "tag": "button",
+        "label": "设置与数据导入",
+        "verdict": "navigate",
+        "mutations": 44,
+        "fetches": 0
+      },
+      {
+        "index": 2,
+        "tag": "button",
+        "label": "更多筛选",
+        "verdict": "navigate",
+        "mutations": 38,
+        "fetches": 0
+      },
+      {
+        "index": 3,
+        "tag": "button",
+        "label": "月份：10 月",
+        "verdict": "navigate",
+        "mutations": 38,
+        "fetches": 0
+      },
+      {
+        "index": 4,
+        "tag": "button",
+        "label": "太仓市16",
+        "verdict": "navigate",
+        "mutations": 91,
+        "fetches": 0
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "label": "常熟市6",
+        "verdict": "navigate",
+        "mutations": 435,
+        "fetches": 12
+      },
+      {
+        "index": 6,
+        "tag": "button",
+        "label": "昆山市9",
+        "verdict": "navigate",
+        "mutations": 442,
+        "fetches": 10
+      },
+      {
+        "index": 7,
+        "tag": "button",
+        "label": "张家港市1",
+        "verdict": "navigate",
+        "mutations": 71,
+        "fetches": 0
+      },
+      {
+        "index": 8,
+        "tag": "button",
+        "label": "姑苏区46",
+        "verdict": "navigate",
+        "mutations": 591,
+        "fetches": 18
+      },
+      {
+        "index": 9,
+        "tag": "button",
+        "label": "虎丘区7",
+        "verdict": "navigate",
+        "mutations": 73,
+        "fetches": 0
+      },
+      {
+        "index": 10,
+        "tag": "button",
+        "label": "吴中区152",
+        "verdict": "navigate",
+        "mutations": 752,
+        "fetches": 18
+      },
+      {
+        "index": 11,
+        "tag": "button",
+        "label": "相城区4",
+        "verdict": "navigate",
+        "mutations": 437,
+        "fetches": 8
+      },
+      {
+        "index": 12,
+        "tag": "button",
+        "label": "吴江区5",
+        "verdict": "navigate",
+        "mutations": 78,
+        "fetches": 0
+      },
+      {
+        "index": 13,
+        "tag": "button",
+        "label": "苏州全市",
+        "verdict": "navigate",
+        "mutations": 3063,
+        "fetches": 20
+      }
+    ]
+  }
+]

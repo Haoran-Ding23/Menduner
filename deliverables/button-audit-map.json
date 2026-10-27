@@ -1,0 +1,107 @@
+[
+  {
+    "page": "/map",
+    "name": "地图",
+    "controls": 41,
+    "tested": 12,
+    "noop": 0,
+    "rows": [
+      {
+        "index": 0,
+        "tag": "button",
+        "label": "本店工作台",
+        "verdict": "navigate",
+        "mutations": 89,
+        "fetches": 1
+      },
+      {
+        "index": 1,
+        "tag": "button",
+        "label": "城市活动地图",
+        "verdict": "effect",
+        "mutations": 101,
+        "fetches": 0
+      },
+      {
+        "index": 2,
+        "tag": "button",
+        "label": "活动清单",
+        "verdict": "navigate",
+        "mutations": 153,
+        "fetches": 0
+      },
+      {
+        "index": 3,
+        "tag": "button",
+        "label": "知识图谱",
+        "verdict": "navigate",
+        "mutations": 89,
+        "fetches": 1
+      },
+      {
+        "index": 4,
+        "tag": "button",
+        "label": "找酒店",
+        "verdict": "navigate",
+        "mutations": 92,
+        "fetches": 0
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "label": "酒店活动情报",
+        "verdict": "navigate",
+        "mutations": 938,
+        "fetches": 9
+      },
+      {
+        "index": 6,
+        "tag": "button",
+        "label": "商圈洞察",
+        "verdict": "navigate",
+        "mutations": 257,
+        "fetches": 6
+      },
+      {
+        "index": 7,
+        "tag": "button",
+        "label": "本店经营数据",
+        "verdict": "navigate",
+        "mutations": 94,
+        "fetches": 2
+      },
+      {
+        "index": 8,
+        "tag": "button",
+        "label": "数据质量与来源",
+        "verdict": "navigate",
+        "mutations": 100,
+        "fetches": 0
+      },
+      {
+        "index": 9,
+        "tag": "button",
+        "label": "更多",
+        "verdict": "effect",
+        "mutations": 53,
+        "fetches": 0
+      },
+      {
+        "index": 10,
+        "tag": "button",
+        "label": "登录 / 注册",
+        "verdict": "navigate",
+        "mutations": 84,
+        "fetches": 0
+      },
+      {
+        "index": 11,
+        "tag": "button",
+        "label": "刷新 API 数据",
+        "verdict": "effect",
+        "mutations": 170,
+        "fetches": 1
+      }
+    ]
+  }
+]

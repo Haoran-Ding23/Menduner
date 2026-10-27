@@ -1,0 +1,252 @@
+[
+  {
+    "page": "/evidence",
+    "name": "数据质量与来源（登录）",
+    "controls": 17,
+    "noop": 0,
+    "rows": [
+      {
+        "index": 0,
+        "tag": "button",
+        "label": "刷新 API 数据",
+        "verdict": "effect"
+      },
+      {
+        "index": 1,
+        "tag": "button",
+        "label": "设置与数据导入",
+        "verdict": "effect"
+      },
+      {
+        "index": 2,
+        "tag": "button",
+        "label": "(无文字)",
+        "verdict": "effect"
+      },
+      {
+        "index": 3,
+        "tag": "button",
+        "label": "显示已核验活动",
+        "verdict": "effect"
+      },
+      {
+        "index": 4,
+        "tag": "button",
+        "label": "(无文字)",
+        "verdict": "effect"
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "label": "去审核台处理",
+        "verdict": "navigate"
+      },
+      {
+        "index": 6,
+        "tag": "button",
+        "label": "补录",
+        "verdict": "effect"
+      },
+      {
+        "index": 7,
+        "tag": "button",
+        "label": "补录",
+        "verdict": "effect"
+      },
+      {
+        "index": 8,
+        "tag": "button",
+        "label": "补录",
+        "verdict": "effect"
+      },
+      {
+        "index": 9,
+        "tag": "button",
+        "label": "补录",
+        "verdict": "effect"
+      },
+      {
+        "index": 10,
+        "tag": "button",
+        "label": "只看三项关键字段",
+        "verdict": "effect"
+      },
+      {
+        "index": 11,
+        "tag": "button",
+        "label": "补 录",
+        "verdict": "effect"
+      },
+      {
+        "index": 12,
+        "tag": "a",
+        "label": "上海乐历（苏州公开演出页面） ↗",
+        "verdict": "effect"
+      },
+      {
+        "index": 13,
+        "tag": "button",
+        "label": "补 录",
+        "verdict": "effect"
+      },
+      {
+        "index": 14,
+        "tag": "button",
+        "label": "补 录",
+        "verdict": "effect"
+      },
+      {
+        "index": 15,
+        "tag": "button",
+        "label": "补 录",
+        "verdict": "effect"
+      },
+      {
+        "index": 16,
+        "tag": "button",
+        "label": "展开已核验的 8 个字段",
+        "verdict": "effect"
+      }
+    ]
+  },
+  {
+    "page": "/review",
+    "name": "审核台（登录）",
+    "controls": 95,
+    "noop": 0,
+    "rows": [
+      {
+        "index": 0,
+        "tag": "button",
+        "label": "刷新 API 数据",
+        "verdict": "effect"
+      },
+      {
+        "index": 1,
+        "tag": "button",
+        "label": "设置与数据导入",
+        "verdict": "effect"
+      },
+      {
+        "index": 2,
+        "tag": "button",
+        "label": "录入一条",
+        "verdict": "effect"
+      },
+      {
+        "index": 3,
+        "tag": "button",
+        "label": "显示全部 17 个来源",
+        "verdict": "effect"
+      },
+      {
+        "index": 4,
+        "tag": "button",
+        "label": "(无文字)",
+        "verdict": "effect"
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "label": "刷 新",
+        "verdict": "effect"
+      },
+      {
+        "index": 6,
+        "tag": "button",
+        "label": "生成 25 条建议",
+        "verdict": "effect"
+      },
+      {
+        "index": 7,
+        "tag": "a",
+        "label": "查看来源",
+        "verdict": "effect"
+      },
+      {
+        "index": 8,
+        "tag": "button",
+        "label": "对",
+        "verdict": "effect"
+      },
+      {
+        "index": 9,
+        "tag": "button",
+        "label": "错",
+        "verdict": "effect"
+      },
+      {
+        "index": 10,
+        "tag": "a",
+        "label": "查看来源",
+        "verdict": "effect"
+      },
+      {
+        "index": 11,
+        "tag": "button",
+        "label": "对",
+        "verdict": "effect"
+      },
+      {
+        "index": 12,
+        "tag": "button",
+        "label": "错",
+        "verdict": "effect"
+      },
+      {
+        "index": 13,
+        "tag": "a",
+        "label": "查看来源",
+        "verdict": "effect"
+      },
+      {
+        "index": 14,
+        "tag": "button",
+        "label": "对",
+        "verdict": "effect"
+      },
+      {
+        "index": 15,
+        "tag": "button",
+        "label": "错",
+        "verdict": "effect"
+      },
+      {
+        "index": 16,
+        "tag": "a",
+        "label": "查看来源",
+        "verdict": "effect"
+      },
+      {
+        "index": 17,
+        "tag": "button",
+        "label": "对",
+        "verdict": "effect"
+      },
+      {
+        "index": 18,
+        "tag": "button",
+        "label": "错",
+        "verdict": "effect"
+      },
+      {
+        "index": 19,
+        "tag": "a",
+        "label": "查看来源",
+        "verdict": "effect"
+      },
+      {
+        "index": 20,
+        "tag": "button",
+        "label": "对",
+        "verdict": "effect"
+      },
+      {
+        "index": 21,
+        "tag": "button",
+        "label": "错",
+        "verdict": "effect"
+      }
+    ]
+  }
+]
