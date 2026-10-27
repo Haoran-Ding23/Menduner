@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Button, Collapse, Select, Space, Table, Tag, Tooltip } from "antd";
 import type { EChartsOption } from "echarts";
 import Chart from "../../components/Charts";
+import MarketAreaMap from "../../components/MarketAreaMap";
 import CaliberBar from "../../components/CaliberBar";
 import OpportunityAnalysis from "../../components/OpportunityAnalysis";
 import ScenarioPanel from "../../components/ScenarioPanel";
@@ -344,6 +345,31 @@ export default function DistrictInsights() {
       </header>
 
       {error && <p className="insight-muted">数据加载失败：{error}</p>}
+
+      {/* 商圈地图：选中中心画 800 米范围圆，其余只画点（不画假边界） */}
+      {areas.length > 0 && (
+        <section className="insight-card" aria-label="商圈地图">
+          <div className="card-head">
+            <h3>商圈地图</h3>
+            <span className="insight-muted">
+              蓝＝官方商圈 · 青＝参考地点 · 选中后显示该地点 {radius} 米范围（不是正式边界）
+            </span>
+          </div>
+          <MarketAreaMap
+            height={420}
+            selectedId={selected}
+            onSelect={setSelected}
+            areas={areas.map((area) => ({
+              id: area.id,
+              name: area.name,
+              status: area.status,
+              lng: area.centerLng,
+              lat: area.centerLat,
+              radiusMeters: area.radiusMeters,
+            }))}
+          />
+        </section>
+      )}
 
       {/* ② 主图 + 辅助图 */}
       <section className="insight-row" style={{ gridTemplateColumns: "minmax(0, 1.5fr) minmax(0, 1fr)" }}>

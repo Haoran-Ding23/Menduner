@@ -452,6 +452,8 @@ export interface MarketAreaRow {
   status: "official" | "candidate";
   parentName: string | null;
   quality: string;
+  centerLng: number;
+  centerLat: number;
   centerSource: string | null;
   radiusMeters: number;
   nearbyEvents: number;

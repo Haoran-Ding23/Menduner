@@ -2250,3 +2250,7 @@ main {
 
 /* 便民化：帮助入口 */
 .insight-help { color: #1d4ed8; cursor: help; border-bottom: 1px dashed #93c5fd; margin-left: 6px; }
+
+/* 商圈地图 */
+.market-area-map { width: 100%; border-radius: 10px; overflow: hidden; border: 1px solid #eef2f7; }
+.market-area-dot { transition: box-shadow 150ms; }

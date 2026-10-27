@@ -440,3 +440,6 @@ export default function EventMap({
     </div>
   );
 }
+
+/** 供其它地图组件复用的加载器（同一 key 会被 AMapLoader 内部缓存）。 */
+export const loadAMapSDK = loadSDK;
