@@ -16,7 +16,7 @@ import { monthRange } from "../../utils/data";
 import type { TimeWindow } from "../../utils/caliber";
 import { SITE_SHORT } from "../../config";
 export default function CityEventMap() {
-  const { dataset, allEvents, filters, update, selected, detail } = usePlatform();
+  const { dataset, allEvents, filters, update, selected, detail, go } = usePlatform();
 
   // 定位提示：活动无法在地图上定位时，说清原因，不假装它在那儿
   const focusNotice = useMemo(() => {
@@ -303,6 +303,15 @@ export default function CityEventMap() {
                 }}
               />
               <span>{showAreas ? "已显示商圈参考点" : "查看商圈"}</span>
+              {selectedEventId && (
+                <Button
+                  size="small"
+                  onClick={() => go("/graph", selectedEventId)}
+                  aria-label="查看关系摘要"
+                >
+                  查看关系摘要
+                </Button>
+              )}
               <Switch
                 aria-label="查看附近酒店"
                 checked={showHotels}
