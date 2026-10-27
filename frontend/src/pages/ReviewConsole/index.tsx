@@ -335,9 +335,15 @@ export default function ReviewConsole() {
           <VenueEvents venueId={openVenueId} onClose={() => setOpenVenueId(null)} />
         </section>
       )}
-      <section className="panel gap-bottom" aria-label="前端错误">
-        <ClientErrors />
-      </section>
+      {/*
+        前端错误日志是给技术人员排障用的，顾客不需要看到，也不该被它吓到。
+        只有审核/管理角色（已登录的运营人员）才渲染这一块；普通访客完全看不到。
+      */}
+      {allowed && (
+        <section className="panel gap-bottom" aria-label="前端错误">
+          <ClientErrors />
+        </section>
+      )}
       <div className="evidence-layout">
         <section className="panel">
           <div className="panel-heading">

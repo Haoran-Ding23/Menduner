@@ -54,7 +54,7 @@ export default class ErrorBoundary extends Component<
                 {error.message || String(error)}
               </Typography.Text>
               <Typography.Text type="secondary">
-                这个错误已经记录到服务器，可以在「证据与数据质量」页面的「前端错误」里查看。
+                这个错误已经记录到服务器，我们会跟进处理。你可以先刷新页面重试。
               </Typography.Text>
               <Collapse
                 size="small"
