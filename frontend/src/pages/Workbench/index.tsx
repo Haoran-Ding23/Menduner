@@ -207,6 +207,8 @@ const [followups, setFollowups] = useState<Followup[]>([]);
   const openOnMap = (event: Event) => {
     const params = new URLSearchParams();
     if (event.districtId) params.set("district", event.districtId);
+    // 关键：必须带上活动 id，否则地图无法定位这条活动（用户已指出这个断链）
+    params.set("event", event.id);
     if (event.startDate) {
       params.set("year", event.startDate.slice(0, 4));
       params.set("month", String(Number(event.startDate.slice(5, 7))));

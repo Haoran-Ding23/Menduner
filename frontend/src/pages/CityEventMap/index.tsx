@@ -15,6 +15,21 @@ import type { TimeWindow } from "../../utils/caliber";
 import { SITE_SHORT } from "../../config";
 export default function CityEventMap() {
   const { dataset, allEvents, filters, update } = usePlatform();
+
+  // 从工作台等页面跳进来时带 ?event=<id>，直接打开该活动详情并定位，
+  // 而不是只按月份/地区筛一遍让人自己找（用户已指出这是断链）。
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const eventId = params.get("event");
+    if (!eventId) return;
+    update({ event: eventId, detail: eventId });
+    params.delete("event");
+    const next = params.toString();
+    window.history.replaceState(null, "", window.location.pathname + (next ? "?" + next : ""));
+    // 只在挂载时执行一次：后续改筛选不重复触发
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Hotels are drawn on request rather than always. The map is about where the demand is;
   // the hotel layer answers the follow-up question, and leaving it on by default buries the
   // event markers under a cluster of H pins in the same few districts.
