@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { multiDayCaveat, selectGraphSample } from "../../utils/graphSample";
 import GraphQueries from "../../components/GraphQueries";
+import GraphRelationSummary from "../../components/GraphRelationSummary";
 import {
   ReactFlow,
   Background,
@@ -201,6 +202,8 @@ export default function KnowledgeGraph() {
         </p>
         <p>活动 → 场馆 → 位置语境 → 周边酒店 / 餐饮 / 交通 → 目标客群(按规则自动生成)</p>
       </div>
+
+      <GraphRelationSummary eventId={id} />
 
       <section className="panel gap-bottom" aria-label="图谱业务查询">
         <div className="panel-heading">
