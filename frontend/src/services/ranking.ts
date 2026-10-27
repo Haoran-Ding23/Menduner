@@ -70,7 +70,7 @@ const CATEGORY_TEXT: Record<string, string> = {
 function relevanceScore(event: Event, hotel: Hotel): { score: number | null; reason?: string; unknown?: string } {
   const weight = categoryWeights[event.category];
   if (weight === undefined) {
-    return { score: null, unknown: "活动类别未知，无法判断客群相关性" };
+    return { score: null, unknown: "还不知道活动类别，暂时判断不了客群" };
   }
   const base = Math.min(1, weight / 2);
   const sameDistrict = !!event.districtId && event.districtId === hotel.districtId;
@@ -87,7 +87,7 @@ function relevanceScore(event: Event, hotel: Hotel): { score: number | null; rea
 function distanceScore(event: Event, context: RankContext): { score: number | null; reason?: string; unknown?: string; km?: number } {
   const point = eventCoordinates(event, context.dataset);
   if (!point || !verifiedCoords(context.hotel.coordinates)) {
-    return { score: null, unknown: "缺少已核验坐标，无法计算距离" };
+    return { score: null, unknown: "场馆位置还没确认，暂时算不了距离" };
   }
   const km = distanceKm(context.hotel.coordinates, point);
   if (km === null) return { score: null, unknown: "距离计算失败" };
@@ -110,8 +110,8 @@ function credibilityScore(event: Event, dataset: Dataset): { score: number; reas
   const missing = checks.filter((check) => !check.ok).map((check) => check.label);
   return {
     score: ok / checks.length,
-    reason: `${ok}/${checks.length} 个关键字段有来源（${checks.filter((c) => c.ok).map((c) => c.label).join("、")}）`,
-    unknown: missing.length ? `缺少：${missing.join("、")}` : undefined,
+    reason: `关键信息有 ${ok} 项可查证（${checks.filter((c) => c.ok).map((c) => c.label).join("、")}）`,
+    unknown: missing.length ? `还没确认：${missing.join("、")}` : undefined,
   };
 }
 

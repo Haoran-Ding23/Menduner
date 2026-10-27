@@ -467,8 +467,11 @@ export default function DataQuality() {
                 rowKey="id"
                 dataSource={
                   simpleOnly
-                    ? pendingFields.filter((item) =>
-                        ["name", "venueId", "venueName", "venue", "sourceUrl"].includes(item.field),
+                    ? pendingFields.filter(
+                        (item) =>
+                          ["name", "venueId", "venueName", "venue", "sourceUrl"].includes(item.field) ||
+                          // 来源冲突必须始终显示：它影响这条活动能不能用，不能被只看三项藏起来
+                          effectiveStatus(item) === "Conflicting",
                       )
                     : pendingFields
                 }
@@ -514,7 +517,7 @@ export default function DataQuality() {
                     effectiveStatus(e) === "Conflicting" ? (
                       e.value.map((value, i) => (
                         <div key={i}>
-                          候选 {i + 1}：{valueText(readableValue(e.field, value, VENUE_NAMES, DISTRICT_NAMES))}
+                          候选 {i + 1}：{valueText(value)}
                         </div>
                       ))
                     ) : (

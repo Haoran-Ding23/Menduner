@@ -79,7 +79,7 @@ describe("rankEvent", () => {
     const noVenue = baseEvent({ venueId: null });
     const ranked = rankEvent(noVenue, context);
     expect(ranked.byDimension.distance).toBeNull();
-    expect(ranked.unknown.join()).toContain("坐标");
+    expect(ranked.unknown.join()).toContain("位置");
   });
 
   it("缺坐标的活动不会因为距离得 0 而被误判为很远", () => {
@@ -93,7 +93,7 @@ describe("rankEvent", () => {
   it("类别未知时相关性为未知，不按泛客群给满分", () => {
     const ranked = rankEvent(baseEvent({ category: "unknown-category" as Event["category"] }), context);
     expect(ranked.byDimension.relevance).toBeNull();
-    expect(ranked.unknown.join()).toContain("类别未知");
+    expect(ranked.unknown.join()).toContain("类别");
   });
 
   it("理由最多三条且按权重顺序给出", () => {

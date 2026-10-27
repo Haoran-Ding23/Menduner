@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Button, Collapse, Select, Space, Table, Tag } from "antd";
+import { Button, Collapse, Select, Space, Table, Tag, Tooltip } from "antd";
 import type { EChartsOption } from "echarts";
 import Chart from "../../components/Charts";
 import CaliberBar from "../../components/CaliberBar";
@@ -299,10 +299,10 @@ export default function DistrictInsights() {
   }, [coverage]);
 
   const kpi = [
-    { label: "分析中心", value: coverage?.areaCount ?? "—" },
-    { label: "唯一近邻", value: coverage?.eventsNearby ?? "—" },
-    { label: "保留歧义", value: coverage?.eventsAmbiguous ?? "—" },
-    { label: "未匹配", value: coverage?.eventsUnmatched ?? "—" },
+    { label: "分析地点", value: coverage?.areaCount ?? "—" },
+    { label: "只靠近一处", value: coverage?.eventsNearby ?? "—" },
+    { label: "靠近多处", value: coverage?.eventsAmbiguous ?? "—" },
+    { label: "暂未匹配", value: coverage?.eventsUnmatched ?? "—" },
   ];
 
   return (
@@ -311,6 +311,17 @@ export default function DistrictInsights() {
         <div>
           <h1>商圈洞察</h1>
           <p className="insight-sub">
+          <Tooltip
+            title={
+              "只靠近一处＝活动只进入一个地点的范围；靠近多处＝同时进入多个地点范围，未强行分配；" +
+              "暂未匹配＝不在任何地点范围内，不代表当地没有活动；" +
+              "已匹配比例＝能对上地点的活动数 ÷ 有坐标的活动数。" +
+              "所有距离都是场馆坐标到地点中心点的直线距离。"
+            }
+          >
+            <span className="insight-help">怎么算的</span>
+          </Tooltip>
+
             {radius}m 中心点近邻 · 非正式商圈边界
             <Select
               size="small"
@@ -338,8 +349,8 @@ export default function DistrictInsights() {
       <section className="insight-row" style={{ gridTemplateColumns: "minmax(0, 1.5fr) minmax(0, 1fr)" }}>
         <div className="insight-card">
           <div className="card-head">
-            <h3>中心点近邻活动 Top 10</h3>
-            <span className="insight-muted">蓝=官方商圈 · 青=候选集聚点 · 点击切换画像</span>
+            <h3>活动最多的十个地点</h3>
+            <span className="insight-muted">蓝=官方商圈 · 青=参考地点 · 点击切换</span>
           </div>
           <div className="chart-md">
             <Chart
@@ -353,7 +364,7 @@ export default function DistrictInsights() {
         </div>
         <div className="insight-card">
           <div className="card-head">
-            <h3>活动归属构成</h3>
+            <h3>活动能不能对上地点</h3>
             <span className="insight-muted">分母 {coverage?.identitiesTotal ?? "—"} 个活动身份</span>
           </div>
           <div className="chart-md">
@@ -395,11 +406,11 @@ export default function DistrictInsights() {
           <div className="kpi-strip">
             <div>
               <strong>{profile.coverage.matched}</strong>
-              <small>窗口内可归属活动</small>
+              <small>本月能对上的活动</small>
             </div>
             <div>
               <strong>{profile.coverage.ambiguous}</strong>
-              <small>保留歧义</small>
+              <small>靠近多处</small>
             </div>
             <div>
               <strong>{profile.supplyProfile.coveredDays}</strong>
@@ -411,7 +422,7 @@ export default function DistrictInsights() {
             </div>
             <div>
               <strong>{Math.round(profile.supplyProfile.spatialMatchRate * 100)}%</strong>
-              <small>空间匹配率</small>
+              <small>已匹配比例</small>
             </div>
           </div>
         )}
@@ -421,7 +432,7 @@ export default function DistrictInsights() {
       <section className="insight-row" style={{ gridTemplateColumns: "minmax(0, 1.5fr) minmax(0, 1fr)" }}>
         <div className="insight-card">
           <div className="card-head">
-            <h3>周度活动趋势</h3>
+            <h3>每周有多少活动</h3>
             <span className="insight-muted">周起始日 · 跨周可重复，不能相加当月度总量</span>
           </div>
           <div className="chart-md chart-tall">
@@ -430,7 +441,7 @@ export default function DistrictInsights() {
         </div>
         <div className="insight-card">
           <div className="card-head">
-            <h3>活动类别构成</h3>
+            <h3>活动都有哪些类型</h3>
             <span className="insight-muted">窗口内可归属活动</span>
           </div>
           <div className="chart-md chart-tall">
@@ -442,7 +453,7 @@ export default function DistrictInsights() {
       {/* ⑤ 酒店摘要 */}
       <section className="insight-card">
         <div className="card-head">
-          <h3>周边已收录住宿设施</h3>
+          <h3>周边收录的住宿</h3>
           <span className="insight-muted">数据来自平台已收录的住宿 POI（高德），仅反映 800 米近邻范围内的样本分布，不代表全部在营酒店或完整竞争格局</span>
         </div>
         {hotelCount === 0 ? (

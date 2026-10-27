@@ -2242,3 +2242,11 @@ main {
 .relation-list { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.9; color: #0f172a; }
 .relation-caveat { margin: 12px 0 10px; font-size: 12px; line-height: 18px; color: #94a3b8; }
 .relation-warnings { margin: 10px 0 0; padding-left: 18px; font-size: 12px; color: #92400e; }
+
+/* 便民化：人话分档与帮助入口 */
+.rank-plain { display: inline-flex; align-items: center; gap: 6px; color: #334155; }
+.rank-plain strong { color: #0f172a; }
+.rank-help { color: #1d4ed8; cursor: help; border-bottom: 1px dashed #93c5fd; }
+
+/* 便民化：帮助入口 */
+.insight-help { color: #1d4ed8; cursor: help; border-bottom: 1px dashed #93c5fd; margin-left: 6px; }
