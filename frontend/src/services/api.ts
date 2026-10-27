@@ -569,3 +569,31 @@ export async function loadMarketAreaProfile(
   if (!response.ok) throw new Error("商圈画像加载失败");
   return response.json();
 }
+
+// ---- AI 商圈解读（证据约束型）：前端只渲染，不重算 ----
+export interface AiMarketAnalysis {
+  available: boolean;
+  reason: string | null;
+  areaId: string;
+  areaName: string;
+  radiusMeters: number;
+  verificationStatus: "ai_analysis_unverified";
+  metrics: Record<string, number | null>;
+  summary: string;
+  findings: { claim: string; metricKeys: string[] }[];
+  unknowns: string[];
+  limitations: string[];
+  businessQuestions: string[];
+  rejected: { claim: string; reason: string }[];
+}
+
+export async function loadAiMarketAnalysis(
+  areaId: string,
+  params: { radius?: number; start?: string; end?: string } = {},
+): Promise<AiMarketAnalysis> {
+  const response = await fetch(
+    "/api/ai/market-analysis/" + encodeURIComponent(areaId) + marketQuery(params),
+  );
+  if (!response.ok) throw new Error("AI 解读加载失败");
+  return response.json();
+}

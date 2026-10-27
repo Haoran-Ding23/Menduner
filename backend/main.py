@@ -15,6 +15,7 @@ from backend import dedupe
 from backend import tenants
 from backend import tracking
 from backend import graph_query
+from backend import ai_analysis
 from backend import graph_chain
 from backend import market_area
 from backend import geo
@@ -822,6 +823,19 @@ def create_app(db_path: Path | None = None):
             media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             headers={'Content-Disposition': 'attachment; filename*=UTF-8\'\'' + urllib.parse.quote(filename)},
         )
+
+    @app.get('/ai/market-analysis/{area_id}')
+    def ai_market_analysis(area_id: str, radius: int | None = None,
+                           start: str | None = None, end: str | None = None):
+        """证据约束型 AI 商圈解读。
+
+        只解释输入里已有的指标；模型编造的数字、白名单外的指标、经营预测措辞都会被丢弃。
+        模型不可用时返回 available=false，绝不生成替代内容。
+        """
+        try:
+            return ai_analysis.analyze_area(path, area_id, _radius(radius), start, end)
+        except KeyError:
+            raise HTTPException(status_code=404, detail='商圈不存在') from None
 
     @app.get('/graph/query/event/{event_id}')
     def graph_event_chain(event_id: str, radius: int | None = None):

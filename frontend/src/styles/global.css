@@ -2297,3 +2297,15 @@ main {
   .relation-line { grid-template-columns: 76px 1fr; }
   .bar-row { grid-template-columns: 74px 1fr 36px; }
 }
+
+
+/* AI 商圈解读卡片 */
+.ai-card { margin-bottom: 16px; }
+.ai-summary { font-size: 14px; line-height: 22px; color: #0f172a; margin: 4px 0 8px; }
+.ai-findings { margin: 0 0 8px; padding-left: 18px; font-size: 13px; line-height: 1.9; color: #0f172a; }
+.ai-metric-keys { margin-left: 6px; display: inline-flex; gap: 4px; flex-wrap: wrap; }
+.ai-metric-keys code {
+  font-size: 11px; color: #475569; background: #f1f5f9;
+  border-radius: 4px; padding: 1px 5px;
+}
+.ai-rejected { margin: 0 0 8px; padding-left: 18px; font-size: 12px; color: #92400e; line-height: 1.8; }

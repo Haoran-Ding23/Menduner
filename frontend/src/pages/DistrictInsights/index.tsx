@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Button, Collapse, Select, Space, Table, Tag, Tooltip } from "antd";
 import type { EChartsOption } from "echarts";
 import Chart from "../../components/Charts";
+import AiMarketCard from "../../components/AiMarketCard";
 import EmptyHint from "../../components/EmptyHint";
 import MarketAreaMap from "../../components/MarketAreaMap";
 import CaliberBar from "../../components/CaliberBar";
@@ -501,6 +502,14 @@ export default function DistrictInsights() {
           </div>
         )}
       </section>
+
+      {/* AI 解读：证据约束型，明确标注未经核实 */}
+      <AiMarketCard
+        areaId={selected}
+        radius={radius}
+        start={monthWindow.start}
+        end={monthWindow.end}
+      />
 
       {/* 明细与口径 */}
       <Collapse
