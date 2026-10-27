@@ -291,6 +291,13 @@ const pageTitle = page?.title ?? AUTH_PAGE_TITLES[location.pathname] ?? "";
         <main>
           {children}
           <DataProvenance />
+          {/* 工信部要求：网站底部公示备案号并链接到备案系统 */}
+          <footer className="site-footer">
+            <span>© {new Date().getFullYear()} Menduner · 城市活动情报</span>
+            <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer">
+              皖ICP备2026037432号
+            </a>
+          </footer>
         </main>
       </div>
       <Modal
