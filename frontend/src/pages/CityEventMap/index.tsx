@@ -14,7 +14,30 @@ import { monthRange } from "../../utils/data";
 import type { TimeWindow } from "../../utils/caliber";
 import { SITE_SHORT } from "../../config";
 export default function CityEventMap() {
-  const { dataset, allEvents, filters, update } = usePlatform();
+  const { dataset, allEvents, filters, update, selected, detail } = usePlatform();
+
+  // 定位提示：活动无法在地图上定位时，说清原因，不假装它在那儿
+  const focusNotice = useMemo(() => {
+    const id = detail ?? selected;
+    if (!id) return null;
+    const target = dataset.events.find((item) => item.id === id);
+    if (!target) return null;
+    if (eventCoordinates(target, dataset)) return null;
+    const venue = dataset.venues.find((item) => item.id === target.venueId);
+    const raw = venue?.coordinates;
+    if (raw && raw.lng != null) {
+      return {
+        text: "该活动的场馆关联或坐标尚未核验，暂不在地图上定位（不用行政区中心代替场馆位置）",
+        coords: `${raw.lng}, ${raw.lat}`,
+        link: `https://uri.amap.com/marker?position=${raw.lng},${raw.lat}`,
+      };
+    }
+    return {
+      text: "该活动没有可用的场馆坐标，暂不在地图上定位",
+      coords: null,
+      link: null,
+    };
+  }, [dataset, detail, selected]);
 
   // 从工作台等页面跳进来时带 ?event=<id>，直接打开该活动详情并定位，
   // 而不是只按月份/地区筛一遍让人自己找（用户已指出这是断链）。
@@ -243,7 +266,17 @@ export default function CityEventMap() {
               <span>显示酒店（{hotelCount} 家）</span>
             </Space>
           </div>
-          <EventMap events={events} demandLayer={showHotels} />
+          {focusNotice && (
+        <div className="map-focus-notice">
+          <span>{focusNotice.text}</span>
+          {focusNotice.coords && (
+            <a href={focusNotice.link ?? "#"} target="_blank" rel="noreferrer">
+              原始坐标 {focusNotice.coords}（在高德查看）
+            </a>
+          )}
+        </div>
+      )}
+      <EventMap events={events} demandLayer={showHotels} />
           <div className="legend">
             {Object.values(categories).map((c) => (
               <span key={c.label}>
