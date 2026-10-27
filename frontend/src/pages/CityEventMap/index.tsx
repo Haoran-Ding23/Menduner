@@ -153,7 +153,9 @@ export default function CityEventMap() {
   );
   // 地图按月浏览，所以把当月表达成一个统一的时间窗口，交给同一套口径计算。
   // 移动端默认先看列表：小屏幕上地图只有 320px 高，先看列表更快找到活动。
-  const [showMap, setShowMap] = useState(false);
+  // 页面叫「城市活动地图」，默认就应该看到地图；列表是辅助视图。
+  // （此前默认 false 导致打开页面只有一长串列表，地图根本没渲染 —— 断言发现的）
+  const [showMap, setShowMap] = useState(true);
 
   const mapWindow: TimeWindow = useMemo(() => {
     const [start, end] = monthRange(filters.year, filters.month);

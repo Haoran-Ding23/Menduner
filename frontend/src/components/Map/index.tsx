@@ -105,6 +105,8 @@ export default function EventMap({
   const { dataset, repository, selected, openEvent, go } = usePlatform();
   // 只在聚焦目标变化时居中，避免用户手动拖动后被反复拉回
   const lastFocusedId = useRef<string | null>(null);
+  // 是否已经做过一次自适应缩放（之后不再自动改变视野）
+  const didFitOnce = useRef(false);
   const container = useRef<HTMLDivElement>(null);
   const map = useRef<SDK>(null);
   const sdk = useRef<SDK>(null);
@@ -150,6 +152,23 @@ export default function EventMap({
           });
           observer.observe(container.current);
         }
+        // 暴露当前视野（只读），供自动化断言"某按钮不许改变视野"
+        const exposeView = () => {
+          try {
+            const zoom = map.current.getZoom();
+            const center = map.current.getCenter();
+            (window as unknown as Record<string, unknown>).__mapView = {
+              zoom,
+              lng: center.lng,
+              lat: center.lat,
+              at: Date.now(),
+            };
+          } catch {
+            /* 地图未就绪时忽略 */
+          }
+        };
+        map.current.on("zoomend", exposeView);
+        map.current.on("moveend", exposeView);
         map.current.on("complete", () => {
           if (!cancelled) {
             clearTimeout(timeout);
@@ -385,8 +404,12 @@ export default function EventMap({
       }
     }
     map.current.add(markers);
-    if (markers.length)
+    // 只在首次渲染时自适应范围；之后重绘（开关图层、切换筛选）一律保持用户当前视野。
+    // 之前每次重绘都 fitView，打开"附近酒店"会把 zoom 从 14 拉到 9，用户会以为位置丢了。
+    if (markers.length && !didFitOnce.current) {
       map.current.setFitView(markers, false, [70, 70, 70, 70], 14);
+      didFitOnce.current = true;
+    }
     // 关键：在全量数据集里找，避免该活动被当前筛选条件筛掉后无法定位；
     // 用 eventLocation 区分「坐标不可用」与「场馆关联未核验（给参考位置）」。
     const focusEvent =

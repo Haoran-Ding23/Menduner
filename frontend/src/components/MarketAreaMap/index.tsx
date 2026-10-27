@@ -44,6 +44,19 @@ export default function MarketAreaMap({
           center: [120.62, 31.31],
           mapStyle: "amap://styles/whitesmoke",
         });
+        const exposeView = () => {
+          try {
+            const zoom = map.current.getZoom();
+            const center = map.current.getCenter();
+            (window as unknown as Record<string, unknown>).__mapView = {
+              zoom, lng: center.lng, lat: center.lat, at: Date.now(),
+            };
+          } catch {
+            /* 未就绪 */
+          }
+        };
+        map.current.on("zoomend", exposeView);
+        map.current.on("moveend", exposeView);
         map.current.on("complete", () => {
           // 缩放与比例尺：地图能自己操作，不依赖外部按钮
           const AMapNS = (window as unknown as { AMap?: any }).AMap;
