@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { Alert, Button, Input, Select, Space, Switch, Table, Tag } from "antd";
+import { Alert, Button, Input, Select, Space, Switch, Table, Tag, Tooltip } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
 import { canReview, useIdentity } from "../../hooks/useIdentity";
 import VenueEvents from "../../components/VenueEvents";
@@ -46,7 +46,7 @@ const FIELD_LABELS: Record<string, string> = {
   name: "活动名字",
   startDate: "开始日期",
   endDate: "结束日期",
-  venueId: "活动场地",
+  venueId: "活动场地编号",
   venueName: "活动场地",
   venue: "活动场地",
   districtId: "所属地区",
@@ -525,6 +525,38 @@ export default function DataQuality() {
                         {valueText(readableValue(e.field, e.value, VENUE_NAMES, DISTRICT_NAMES))}
                       </span>
                     ),
+                },
+                {
+                  title: "处理",
+                  width: 96,
+                  fixed: "right" as const,
+                  render: (_: unknown, e: Evidence) => (
+                    // 字段处理操作：✓ 通过、✗ 不通过；只做当前这一行字段，不影响整条活动
+                    <Space size={4}>
+                      <Tooltip title={reviewer ? "通过这个字段" : "需要审核角色"}>
+                        <Button
+                          size="small"
+                          aria-label="通过该字段"
+                          disabled={!reviewer || quickBusy === e.field}
+                          onClick={() => void decideField(e.entityId, e.field, e.value, "Verified")}
+                          style={{ color: "#15803d", borderColor: "#bbf7d0", background: "#f0fdf4" }}
+                        >
+                          ✓
+                        </Button>
+                      </Tooltip>
+                      <Tooltip title={reviewer ? "标记这个字段有问题" : "需要审核角色"}>
+                        <Button
+                          size="small"
+                          aria-label="该字段有问题"
+                          disabled={!reviewer || quickBusy === e.field}
+                          onClick={() => void decideField(e.entityId, e.field, e.value, "Rejected")}
+                          style={{ color: "#b91c1c", borderColor: "#fecaca", background: "#fef2f2" }}
+                        >
+                          ✗
+                        </Button>
+                      </Tooltip>
+                    </Space>
+                  ),
                 },
                 {
                   title: "核验 / 来源",
