@@ -288,7 +288,7 @@ export default function KnowledgeGraph() {
       <GraphRelationSummary
           eventId={id}
           onOpenGraph={() => setShowCanvas(true)}
-          onVerify={(field) => go("/evidence", id, { field })}
+          onVerify={(field) => go("/review", id, { field })}
         />
 
       <section className="panel gap-bottom" aria-label="图谱业务查询">
@@ -368,6 +368,22 @@ export default function KnowledgeGraph() {
         按场馆直线距离与设施类别组织的关系示意图，不代表实际地理方位；空间邻近不等于经济贡献。
         {hiddenNearbyCount > 0 && <span>（另有 {hiddenNearbyCount} 个周边设施未显示，可切换活动或缩小范围查看）</span>}
       </p>
+      {/* 图谱稀疏时说明原因：不是画布坏了，而是场地关系还没核验 */}
+      {event && !graph.nodes.some((n) => n.kind === "Venue") && (
+        <Alert
+          className="graph-sparse-hint"
+          type="info"
+          showIcon
+          style={{marginBottom: 12 }}
+          message="这条活动的场地关系还没核验，所以关系图里只有活动本身"
+          description="核验「在哪举办」之后，场馆、周边酒店与商圈才会出现在图上。距离都是场馆到对应地点的直线距离。"
+          action={
+            <Button size="small" type="primary" onClick={() => go("/review", id, { field: "venueName" })}>
+              去核验场地
+            </Button>
+          }
+        />
+      )}
       <div className="graph-layout">
         <div className={"panel graph-canvas" + (graphFullscreen ? " graph-canvas-full" : "")}>
           {!showCanvas ? (
