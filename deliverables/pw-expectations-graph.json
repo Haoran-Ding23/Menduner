@@ -1,5 +1,29 @@
 [
   {
+    "label": "展开商圈酒店",
+    "kind": "switch",
+    "ok": true,
+    "detail": "aria-checked true → false，标记 0"
+  },
+  {
+    "label": "显示周边餐饮交通",
+    "kind": "switch",
+    "ok": true,
+    "detail": "aria-checked true → false，标记 0"
+  },
+  {
+    "label": "显示目标客群",
+    "kind": "switch",
+    "ok": true,
+    "detail": "aria-checked true → false，标记 0"
+  },
+  {
+    "label": "显示关联活动",
+    "kind": "switch",
+    "ok": true,
+    "detail": "aria-checked false → true，标记 0"
+  },
+  {
     "label": "刷新 API 数据",
     "kind": "action",
     "ok": true,
@@ -20,20 +44,20 @@
   {
     "label": "核对来源",
     "kind": "filter",
-    "ok": false,
-    "detail": "元素已不在 DOM（页面重渲染）"
+    "ok": true,
+    "detail": "行数 0 → 9，下拉 0 → 0，标记 0 → 0"
   },
   {
     "label": "查看周边设施（酒店 6 · 餐饮/交通/其他 2",
     "kind": "toggle",
     "ok": false,
-    "detail": "元素已不在 DOM（页面重渲染）"
+    "detail": "行数 0 → 0，弹窗 0 → 0"
   },
   {
     "label": "查看关系图",
     "kind": "toggle",
     "ok": false,
-    "detail": "元素已不在 DOM（页面重渲染）"
+    "detail": "行数 0 → 0，弹窗 0 → 0"
   },
   {
     "label": "场馆",
@@ -44,49 +68,25 @@
   {
     "label": "酒店",
     "kind": "dialog",
-    "ok": false,
-    "detail": "元素已不在 DOM（页面重渲染）"
+    "ok": true,
+    "detail": "行数 0 → 12，弹窗 0 → 0"
   },
   {
     "label": "商圈",
     "kind": "dialog",
-    "ok": false,
-    "detail": "元素已不在 DOM（页面重渲染）"
+    "ok": true,
+    "detail": "行数 0 → 0，弹窗 0 → 0"
   },
   {
     "label": "查 询",
     "kind": "dialog",
     "ok": false,
-    "detail": "元素已不在 DOM（页面重渲染）"
-  },
-  {
-    "label": "展开商圈酒店",
-    "kind": "expand",
-    "ok": false,
-    "detail": "元素已不在 DOM（页面重渲染）"
-  },
-  {
-    "label": "显示周边餐饮交通",
-    "kind": "toggle",
-    "ok": false,
-    "detail": "元素已不在 DOM（页面重渲染）"
-  },
-  {
-    "label": "显示目标客群",
-    "kind": "toggle",
-    "ok": false,
-    "detail": "元素已不在 DOM（页面重渲染）"
-  },
-  {
-    "label": "显示关联活动",
-    "kind": "toggle",
-    "ok": false,
-    "detail": "元素已不在 DOM（页面重渲染）"
+    "detail": "行数 0 → 0，弹窗 0 → 0"
   },
   {
     "label": "展开关系图",
     "kind": "expand",
-    "ok": false,
-    "detail": "元素已不在 DOM（页面重渲染）"
+    "ok": true,
+    "detail": "表单字段 0 → 0，文字 947 → 1003"
   }
 ]

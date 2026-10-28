@@ -15,12 +15,12 @@
     "label": "显示演示数据",
     "kind": "filter",
     "ok": true,
-    "detail": "行数 66 → 66"
+    "detail": "行数 66 → 66，下拉 0 → 0，标记 53 → 53"
   },
   {
     "label": "重置筛选",
     "kind": "filter",
     "ok": false,
-    "detail": "元素已不在 DOM（页面重渲染）"
+    "detail": "行数 66 → 66，下拉 0 → 0，标记 53 → 53"
   }
 ]

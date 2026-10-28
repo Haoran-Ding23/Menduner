@@ -75,6 +75,12 @@ export default function ClientErrors() {
         <Space wrap>
           <strong>前端错误</strong>
           <Tag color={rows.length ? "red" : "green"}>{rows.length} 条</Tag>
+          {(() => {
+            // 本地开发（127.0.0.1 / localhost）与线上的报错要分开看，避免把噪音当线上故障
+            const local = rows.filter((r) => /127\.0\.0\.1|localhost/.test(r.source ?? "")).length;
+            if (!local) return null;
+            return <Tag>{`其中本地开发 ${local} 条`}</Tag>;
+          })()}
           <small className="muted">
             手机或电脑上打开页面出错时会自动记录，含错误信息、堆栈和屏幕尺寸。
           </small>

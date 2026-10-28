@@ -225,7 +225,8 @@ export async function reportClientError(
   await fetch("/api/client-error", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(report),
+    // 带上来源域名：本地开发（127.0.0.1:vite）产生的报错不应该和线上混在一起看
+    body: JSON.stringify({ ...report, source: report.source ?? `${location.host}${location.pathname}` }),
     // Survives the page being navigated away from or reloaded mid-report.
     keepalive: true,
   });

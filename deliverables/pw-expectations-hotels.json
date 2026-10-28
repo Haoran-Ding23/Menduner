@@ -15,19 +15,19 @@
     "label": "显示演示数据",
     "kind": "filter",
     "ok": true,
-    "detail": "行数 0 → 0"
+    "detail": "行数 0 → 0，下拉 0 → 0，标记 4 → 4"
   },
   {
     "label": "重置筛选",
     "kind": "filter",
     "ok": false,
-    "detail": "元素已不在 DOM（页面重渲染）"
+    "detail": "行数 0 → 0，下拉 0 → 0，标记 4 → 4"
   },
   {
     "label": "全选 488 家",
     "kind": "dialog",
     "ok": false,
-    "detail": "元素已不在 DOM（页面重渲染）"
+    "detail": "行数 0 → 0，弹窗 0 → 0"
   },
   {
     "label": "清 空",
@@ -39,19 +39,19 @@
     "label": "只选高端（8）",
     "kind": "dialog",
     "ok": false,
-    "detail": "元素已不在 DOM（页面重渲染）"
+    "detail": "行数 0 → 0，弹窗 0 → 0"
   },
   {
     "label": "只选中端（6）",
     "kind": "dialog",
-    "ok": false,
-    "detail": "元素已不在 DOM（页面重渲染）"
+    "ok": true,
+    "detail": "行数 0 → 0，弹窗 0 → 0"
   },
   {
     "label": "只选舒适（5）",
     "kind": "dialog",
-    "ok": false,
-    "detail": "元素已不在 DOM（页面重渲染）"
+    "ok": true,
+    "detail": "行数 0 → 0，弹窗 0 → 0"
   },
   {
     "label": "太仓市博物馆，6 个活动，热点场馆",

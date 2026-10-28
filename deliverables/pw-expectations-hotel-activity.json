@@ -1,5 +1,17 @@
 [
   {
+    "label": "查看商圈",
+    "kind": "switch",
+    "ok": true,
+    "detail": "aria-checked false → true，标记 56"
+  },
+  {
+    "label": "查看附近酒店",
+    "kind": "switch",
+    "ok": true,
+    "detail": "aria-checked false → true，标记 66"
+  },
+  {
     "label": "刷新 API 数据",
     "kind": "action",
     "ok": true,
@@ -15,13 +27,13 @@
     "label": "更多筛选",
     "kind": "filter",
     "ok": false,
-    "detail": "行数 0 → 0"
+    "detail": "行数 0 → 0，下拉 0 → 0，标记 3 → 3"
   },
   {
     "label": "月份：10 月",
     "kind": "filter",
     "ok": false,
-    "detail": "行数 0 → 0"
+    "detail": "行数 0 → 0，下拉 0 → 0，标记 3 → 3"
   },
   {
     "label": "太仓市15",
@@ -87,25 +99,13 @@
     "label": "显示演示数据",
     "kind": "filter",
     "ok": true,
-    "detail": "行数 0 → 0"
+    "detail": "行数 0 → 0，下拉 0 → 0，标记 3 → 3"
   },
   {
     "label": "重置筛选",
     "kind": "filter",
     "ok": false,
-    "detail": "行数 0 → 0"
-  },
-  {
-    "label": "查看商圈",
-    "kind": "toggle",
-    "ok": false,
-    "detail": "元素已不在 DOM（页面重渲染）"
-  },
-  {
-    "label": "查看附近酒店",
-    "kind": "toggle",
-    "ok": false,
-    "detail": "元素已不在 DOM（页面重渲染）"
+    "detail": "行数 0 → 0，下拉 0 → 0，标记 3 → 3"
   },
   {
     "label": "太仓美术馆，2 个活动",

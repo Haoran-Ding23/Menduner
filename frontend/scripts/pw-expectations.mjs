@@ -46,6 +46,8 @@ async function main() {
     toast: (document.querySelector('.ant-message')?.innerText || '').length,
     popovers: document.querySelectorAll('.ant-popover').length,
     mapView: window.__mapView ? `${window.__mapView.zoom}/${window.__mapView.lng}` : null,
+    dropdowns: document.querySelectorAll('.ant-dropdown:not(.ant-dropdown-hidden), .ant-select-dropdown:not(.ant-select-dropdown-hidden), .ant-popover:not(.ant-popover-hidden)').length,
+    markers: document.querySelectorAll('.amap-marker, .amap-marker-label').length,
   }));
 
   // networkidle 在该应用上永不触发（有长连接/轮询）：改为等表格出现 + 固定等待
@@ -79,7 +81,58 @@ async function main() {
     return out;
   });
 
+
+  // ---- 开关类控件：按 aria-checked 是否翻转判定（这是它们唯一的"预期行为"）----
+  const switches = await page.evaluate(() =>
+    [...document.querySelectorAll(".ant-switch, [role='switch']")]
+      .filter((el) => !el.closest("aside, nav, .sidebar"))
+      .map((el) => ({
+        label: (el.getAttribute("aria-label") || el.textContent || "").trim().slice(0, 24) || "(开关)",
+        checked: String(el.getAttribute("aria-checked")),
+      }))
+      .filter((item) => item.label),
+  );
+  for (const item of switches) {
+    const before = await page.evaluate((label) => {
+      const el = [...document.querySelectorAll(".ant-switch, [role='switch']")].find(
+        (c) => ((c.getAttribute("aria-label") || c.textContent || "").trim().slice(0, 24) === label),
+      );
+      return el ? String(el.getAttribute("aria-checked")) : null;
+    }, item.label);
+    const clicked = await page.evaluate((label) => {
+      const el = [...document.querySelectorAll(".ant-switch, [role='switch']")].find(
+        (c) => ((c.getAttribute("aria-label") || c.textContent || "").trim().slice(0, 24) === label),
+      );
+      if (!el) return false;
+      el.scrollIntoView({ block: "center" });
+      el.click();
+      return true;
+    }, item.label);
+    await page.waitForTimeout(1500);
+    const after = await page.evaluate((label) => {
+      const el = [...document.querySelectorAll(".ant-switch, [role='switch']")].find(
+        (c) => ((c.getAttribute("aria-label") || c.textContent || "").trim().slice(0, 24) === label),
+      );
+      const markers = document.querySelectorAll(".amap-marker, .amap-marker-label").length;
+      return { checked: el ? String(el.getAttribute("aria-checked")) : null, markers, view: window.__mapView ? window.__mapView.zoom : null };
+    }, item.label);
+    const ok = clicked && before !== null && after.checked !== null && before !== after.checked;
+    record(item.label, "switch", ok, `aria-checked ${before} → ${after.checked}，标记 ${after.markers}`);
+    if (ok) {
+      // 关回去，避免影响后续控件判定
+      await page.evaluate((label) => {
+        const el = [...document.querySelectorAll(".ant-switch, [role='switch']")].find(
+          (c) => ((c.getAttribute("aria-label") || c.textContent || "").trim().slice(0, 24) === label),
+        );
+        el?.click();
+      }, item.label);
+      await page.waitForTimeout(900);
+    }
+  }
+
+  const verifiedSwitches = new Set(results.filter((r) => r.kind === "switch").map((r) => r.label));
   for (const label of controls) {
+    if (verifiedSwitches.has(label)) continue;
     const compact = label.replace(/\s+/g, "");
     if (WRITE_LIKE.test(compact)) {
       results.push({ label, kind: "write", ok: true, detail: "写入类：由隔离环境脚本验证" });
@@ -131,11 +184,14 @@ async function main() {
       ok = after.url !== before.url || after.modals > before.modals;
       detail = `URL ${before.url} → ${after.url}，抽屉 ${before.modals} → ${after.modals}`;
     } else if (kind === "filter") {
-      ok = after.rows !== before.rows || after.url !== before.url;
-      detail = `行数 ${before.rows} → ${after.rows}`;
+      ok = after.rows !== before.rows || after.url !== before.url
+        || after.dropdowns > before.dropdowns || after.mapView !== before.mapView
+        || after.markers !== before.markers;
+      detail = `行数 ${before.rows} → ${after.rows}，下拉 ${before.dropdowns} → ${after.dropdowns}，标记 ${before.markers} → ${after.markers}`;
     } else {
       ok = after.rows !== before.rows || after.modals !== before.modals || after.popovers !== before.popovers
-        || after.url !== before.url || after.mapView !== before.mapView || toastAppeared;
+        || after.url !== before.url || after.mapView !== before.mapView || toastAppeared
+        || after.dropdowns !== before.dropdowns || after.markers !== before.markers;
       detail = `行数 ${before.rows} → ${after.rows}，弹窗 ${before.modals} → ${after.modals}`;
     }
     record(label, kind, ok, detail);
