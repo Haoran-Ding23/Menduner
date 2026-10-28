@@ -549,6 +549,15 @@ export default function KnowledgeGraph() {
           }
         />
       )}
+
+      {graphFullscreen && (
+        <div className="graph-fullscreen-bar" role="dialog" aria-label="全屏查看关系图">
+          <span>全屏查看中 · 按 Esc 或点右侧按钮退出</span>
+          <Button type="primary" onClick={() => setGraphFullscreen(false)}>
+            退出全屏
+          </Button>
+        </div>
+      )}
     </>
   );
 }

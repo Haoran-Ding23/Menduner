@@ -2459,3 +2459,25 @@ main {
   z-index: 1305;
   box-shadow: 0 2px 10px rgba(15, 23, 42, 0.18);
 }
+
+
+/* 全屏查看时的退出条：渲染在画布之外、固定在最上层，
+   避免被顶部导航等元素遮挡导致「退不出去」 */
+.graph-fullscreen-bar {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.92);
+  color: #fff;
+  font-size: 13px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.35);
+}
+.graph-fullscreen-bar .ant-btn { border: none; }
+.graph-canvas-full .graph-fullscreen-toggle { display: none; }
