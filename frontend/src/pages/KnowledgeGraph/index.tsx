@@ -62,6 +62,8 @@ const RINGS: { max: number; from: number; to: number }[] = [
   { max: 3000, from: 500, to: 640 },
 ];
 const MAX_NEARBY_NODES = 30;
+/** 距离未写明时使用的半径：比最外环再远一档，避免与真实距离环混淆 */
+const UNKNOWN_DISTANCE_RADIUS = 760;
 
 /** 类别 → 扇区（未知类别归入「其他」，绝不猜成别的类别）。 */
 function sectorOf(kind: string): [number, number] {
@@ -160,8 +162,10 @@ export default function KnowledgeGraph() {
   const visibleNodes = graph.nodes.filter((n) => expanded || !["District", "Hotel"].includes(n.kind));
 
   // 周边节点：只保留有距离的（无坐标不进环），并按 GPT 规格限制最多 30 个
+  // 注意：不能要求"必须解析出距离"才显示——解析失败会让整类节点消失，
+  // 用户看到的是"开关没用"。距离未知的节点放到最外环并标注。
   const nearbyNodes = visibleNodes
-    .filter((n) => NEARBY_KINDS.includes(n.kind) && distanceOf.has(n.id))
+    .filter((n) => NEARBY_KINDS.includes(n.kind))
     .sort((a, b) => (distanceOf.get(a.id)! - distanceOf.get(b.id)!) || a.id.localeCompare(b.id));
   const shownNearby = new Set(nearbyNodes.slice(0, MAX_NEARBY_NODES).map((n) => n.id));
   const hiddenNearbyCount = Math.max(0, nearbyNodes.length - MAX_NEARBY_NODES);
@@ -219,7 +223,8 @@ export default function KnowledgeGraph() {
           sectorSeen.set(group, seen + 1);
           const angle = angleInSector(group, seen, total);
           const meters = distanceOf.get(n.id) ?? null;
-          const radius = radiusForDistance(meters) ?? 260;
+          // 距离未知时放到最外环（比 3km 环更外），并在节点标签上说明
+          const radius = radiusForDistance(meters) ?? UNKNOWN_DISTANCE_RADIUS;
           return polarFromTop(angle, radius);
         })(),
         style: {
