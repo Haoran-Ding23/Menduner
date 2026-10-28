@@ -253,8 +253,11 @@ export function buildKnowledgeGraph(
   });
 
   const venue = dataset.venues.find((v) => v.id === event.venueId);
-  const venueInGraph =
+  const venueVerified =
     venue && (event.demo || supported(event.id, "venueId", event.venueId));
+  // 未核验也把场馆画出来，但明确标成"候选"：图不能因为核验率低就空着，
+  // 更不能把未核验说成已核验。
+  const venueInGraph = Boolean(venue);
   if (venue && venueInGraph) {
     add({
       id: venue.id,
@@ -264,16 +267,18 @@ export function buildKnowledgeGraph(
       entityId: venue.id,
       sourceUrl: venue.coordinates?.sourceUrl ?? null,
       rule: "held_at",
-      reason: "活动引用该场馆,且该引用已核验",
+      reason: venueVerified ? "活动引用该场馆,且该引用已核验" : "活动引用该场馆，但该引用尚未人工核验",
+      analytical: !venueVerified,
     });
     edges.push({
       id: "held-" + event.id,
       source: event.id,
       target: venue.id,
-      label: "HELD_AT",
+      label: venueVerified ? "HELD_AT" : "HELD_AT · 待核验",
       demo: event.demo,
       rule: "held_at",
-      reason: "来源给出的场馆引用",
+      reason: venueVerified ? "来源给出的场馆引用" : "来源给出的场馆引用（未人工核验）",
+      analytical: !venueVerified,
     });
 
     const district = dataset.districts.find((d) => d.id === venue.districtId);

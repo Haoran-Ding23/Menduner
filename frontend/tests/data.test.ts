@@ -170,11 +170,19 @@ describe("Proximity and graph", () => {
     ] as typeof data.evidence;
     expect(eventCoordinates(data.events[0], data)?.lng).toBe(120.707374);
   });
-  it("omits unsupported non-demo held-at relationship", () => {
+  it("marks an unverified held-at relationship as a candidate instead of hiding it", () => {
+    // 规则变化（第 28 轮）：未核验的场馆不再整条隐藏——图谱会因为核验率低而空成两三个点，
+    // 用户会以为图坏了。现在画出来但**明确标成候选**（analytical + 标签带「待核验」），
+    // 绝不把未核验说成已核验。
     const d = normalizeDataset({
       events: [{ id: "e", name: "A", venueId: "v" }],
       venues: [{ id: "v", name: "V" }],
     });
-    expect(createRepository(d).getGraphData("e").nodes).toHaveLength(1);
+    const graph = createRepository(d).getGraphData("e");
+    expect(graph.nodes).toHaveLength(2);
+    const venue = graph.nodes.find((node) => node.id === "v");
+    expect(venue?.analytical).toBe(true);
+    const edge = graph.edges.find((item) => item.target === "v");
+    expect(edge?.label).toContain("待核验");
   });
 });
