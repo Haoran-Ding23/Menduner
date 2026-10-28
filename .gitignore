@@ -83,3 +83,6 @@ deliverables/pdf-*/
 deliverables/*.pdf
 deliverables/.check-*.json
 deliverables/.final-*.json
+
+# 本地验证环境（数据库与临时产物）
+.local/
