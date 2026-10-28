@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Alert, Button, Collapse, Space, Table, Tag, Typography } from "antd";
+import { Alert, Button, Collapse, Space, Table, Tag, Typography, message } from "antd";
 import { loadClientErrors, type StoredClientError } from "../../services/api";
 
 /**
@@ -31,14 +31,40 @@ export default function ClientErrors() {
     void load();
   }, [load]);
 
-  if (error) return <Alert type="warning" showIcon message={error} />;
+  /** 手动刷新：必须给一句反馈，否则空列表下点击看起来毫无反应。 */
+  const reload = useCallback(async () => {
+    await load();
+    message.success("已重新检查前端错误上报");
+  }, [load]);
+
+  if (error) {
+    return (
+      <Alert
+        type="warning"
+        showIcon
+        message={error}
+        action={
+          <Button size="small" loading={loading} onClick={() => void reload()}>
+            重试
+          </Button>
+        }
+      />
+    );
+  }
   if (!loading && !rows.length) {
+    // 空状态下也要保留刷新入口：否则"刷新"按钮会整块消失，
+    // 用户既看不到按钮，也无法主动再检查一次。
     return (
       <Alert
         type="success"
         showIcon
         message="没有记录到前端错误"
         description="页面崩溃时会自动上报到这里，包括手机上的错误。"
+        action={
+          <Button size="small" loading={loading} onClick={() => void reload()}>
+            重新检查
+          </Button>
+        }
       />
     );
   }
@@ -53,7 +79,7 @@ export default function ClientErrors() {
             手机或电脑上打开页面出错时会自动记录，含错误信息、堆栈和屏幕尺寸。
           </small>
         </Space>
-        <Button size="small" loading={loading} onClick={() => void load()}>
+        <Button size="small" loading={loading} onClick={() => void reload()}>
           刷新
         </Button>
       </div>

@@ -1,0 +1,98 @@
+[
+  {
+    "label": "刷新 API 数据",
+    "kind": "action",
+    "ok": true,
+    "detail": "请求 1 个，行数 37 → 37"
+  },
+  {
+    "label": "设置与数据导入",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "录入一条",
+    "kind": "expand",
+    "ok": true,
+    "detail": "表单字段 1 → 3，文字 6535 → 6555"
+  },
+  {
+    "label": "显示全部 17 个来源",
+    "kind": "expand",
+    "ok": true,
+    "detail": "表单字段 1 → 1，文字 6535 → 6455"
+  },
+  {
+    "label": "生成邀请码",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "刷 新",
+    "kind": "action",
+    "ok": false,
+    "detail": "请求 0 个，行数 37 → 37"
+  },
+  {
+    "label": "生成 25 条建议",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "对",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "错",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "全部核查完毕",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "活动详情",
+    "kind": "drawer",
+    "ok": true,
+    "detail": "URL /review → /review?event=evt-033324f0d292defe01cb2c4c&detail=evt-033324f0d292defe01cb2c4c，抽屉 0 → 1"
+  },
+  {
+    "label": "补录",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "通 过",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "驳 回",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "修 正",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "撤回",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  }
+]
