@@ -19,8 +19,7 @@ import {
   Empty,
   Alert,
   Descriptions,
-  Space,
-} from "antd";
+  Space, Collapse } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
 import useIsSmallScreen from "../../hooks/useIsSmallScreen";
 import { valueText } from "../../utils/data";
@@ -119,6 +118,8 @@ export default function KnowledgeGraph() {
     update({ audience: next ? null : "0" });
   // 渐进式披露：默认不渲染关系画布（初始 DOM 里没有 ReactFlow）
   const [showCanvas, setShowCanvas] = useState(false);
+  // 关系图全屏：节点多的时候小画布看不清，给一个不离开页面的放大方式
+  const [graphFullscreen, setGraphFullscreen] = useState(false);
   const [nodeId, setNodeId] = useState<string | null>(null),
     [edgeId, setEdgeId] = useState<string | null>(null);
   const graph = useMemo(
@@ -286,11 +287,25 @@ export default function KnowledgeGraph() {
         />
 
       <section className="panel gap-bottom" aria-label="图谱业务查询">
-        <div className="panel-heading">
-          <h3 style={{ margin: 0 }}>用问题查图谱</h3>
-          <small className="muted">结果显示来源、生成方式、假设与待补充关系</small>
-        </div>
-        <GraphQueries />
+        <Collapse
+          ghost
+          size="small"
+          items={[
+            {
+              key: "queries",
+              // 默认收起：关系图是这一页的主角，查询面板不该把画布挤到屏幕外
+              label: (
+                <span>
+                  用问题查图谱
+                  <small className="muted" style={{ marginLeft: 8 }}>
+                    同一商圈关联哪些活动和酒店；结果显示来源、生成方式与假设
+                  </small>
+                </span>
+              ),
+              children: <GraphQueries />,
+            },
+          ]}
+        />
       </section>
       <div className="panel graph-toolbar">
         <Space wrap>
@@ -342,12 +357,14 @@ export default function KnowledgeGraph() {
           ))}
         </Space>
       </div>
+      {/* 免责说明必须放在两列网格之外：放进 .graph-layout 会占掉画布那一格，
+          把关系图挤成右下一小块（真实踩过的坑）。 */}
+      <p className="muted graph-note">
+        按场馆直线距离与设施类别组织的关系示意图，不代表实际地理方位；空间邻近不等于经济贡献。
+        {hiddenNearbyCount > 0 && <span>（另有 {hiddenNearbyCount} 个周边设施未显示，可切换活动或缩小范围查看）</span>}
+      </p>
       <div className="graph-layout">
-        <p className="muted" style={{ margin: "0 0 8px" }}>
-          按场馆直线距离与设施类别组织的关系示意图，不代表实际地理方位；空间邻近不等于经济贡献。
-          {hiddenNearbyCount > 0 && <span>（另有 {hiddenNearbyCount} 个周边设施未显示，可切换活动或缩小范围查看）</span>}
-        </p>
-        <div className="panel graph-canvas">
+        <div className={"panel graph-canvas" + (graphFullscreen ? " graph-canvas-full" : "")}>
           {!showCanvas ? (
             <div style={{ padding: 18 }}>
               <p className="muted" style={{ margin: "0 0 10px" }}>
@@ -357,6 +374,14 @@ export default function KnowledgeGraph() {
               <Button onClick={() => setShowCanvas(true)}>展开关系图</Button>
             </div>
           ) : nodes.length ? (
+            <>
+            <Button
+              size="small"
+              className="graph-fullscreen-toggle"
+              onClick={() => setGraphFullscreen((v) => !v)}
+            >
+              {graphFullscreen ? "退出全屏" : "全屏查看"}
+            </Button>
             <ReactFlow
               // The key must change whenever the node set changes shape. React Flow only
               // runs fitView on mount, so toggling the related layer without remounting left
@@ -387,6 +412,7 @@ export default function KnowledgeGraph() {
                 />
               )}
             </ReactFlow>
+            </>
           ) : (
             <Empty description="没有可展示的图谱数据" />
           )}

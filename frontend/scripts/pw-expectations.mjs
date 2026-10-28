@@ -15,7 +15,7 @@ const LOGIN = getArg("--login", "menduner");
 const PASSWORD = getArg("--password", "123456");
 const OUT = getArg("--json", "../deliverables/pw-expectations.json");
 
-const WRITE_LIKE = /生成|保存|提交|确认|审核|核查完毕|删除|导入|撤回|补录|^对$|^错$|通过|驳回|修正|清空|重置数据|合并|反向合并|开通|取消|录入并/;
+const WRITE_LIKE = /生成|保存|提交|确认|审核|核查完毕|删除|导入|撤回|补录|^对$|^错$|通过|驳回|修正|清空|重置数据|合并|反向合并|开通|取消|录入并|关注|待跟进|已跟进|忽略|标记/;
 const ACTION_LIKE = /^刷\s*新|刷新 API 数据/;
 const DRAWER_LIKE = /活动详情|查看来源|原始来源/;
 const EXPAND_LIKE = /录入一条|显示全部|展开|收起/;

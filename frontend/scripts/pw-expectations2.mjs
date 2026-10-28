@@ -28,11 +28,12 @@ const PASSWORD = getArg("--password", "123456");
 const OUT = getArg("--json", "../deliverables/pw-expectations2.json");
 const MAX_CONTROLS = Number(getArg("--cap", "80"));
 
-const WRITE_LIKE = /生成|保存|提交|确认|审核|核查完毕|删除|导入|撤回|补录|^对$|^错$|通过|驳回|修正|清空|重置数据|合并|反向合并|开通|取消|录入并/;
+const WRITE_LIKE =
+  /生成|保存|提交|确认|审核|核查完毕|删除|导入|撤回|补录|^对$|^错$|通过|驳回|修正|清空|重置数据|合并|反向合并|开通|取消|录入并|关注|待跟进|已跟进|忽略|标记/;
 const ACTION_LIKE = /^刷\s*新|刷新 API 数据/;
 const DRAWER_LIKE = /活动详情|查看来源|原始来源/;
 const EXPAND_LIKE = /录入一条|显示全部|展开|收起|更多查看方式/;
-const FILTER_LIKE = /筛选|搜索|来源|显示演示|隐藏演示|月份|地区|重置/;
+const FILTER_LIKE = /筛选|搜索|来源|显示演示|隐藏演示|月份|地区|重置|本周|本月|今天|本周|近 \d+ 天/;
 const TOGGLE_LIKE = /查看|显示|隐藏/;
 
 const results = [];
@@ -99,7 +100,7 @@ async function main() {
   for (let step = 0; step < MAX_CONTROLS; step += 1) {
     requests = 0;
     const before = await snapshot();
-    // 关键：枚举 + 选中 + 点击在同一次求值内完成，避免重渲染后元素失效
+    // 只枚举 + 选出第一个未测控件；点击交给 Playwright 真实鼠标事件（force 跳过命中检查）
     let picked = await page.evaluate((testedKeys) => {
       const nodes = [...document.querySelectorAll("button, .ant-switch, [role='switch'], .ant-segmented-item, [role='tab']")]
         .filter((el) => {
@@ -119,12 +120,33 @@ async function main() {
         seen.set(key, occurrence + 1);
         const id = `${key}#${occurrence}`;
         if (testedKeys.includes(id)) continue;
-        el.scrollIntoView({ block: "center" });
-        el.click();
         return { id, label: raw };
       }
       return null;
     }, [...tested]);
+
+    if (picked) {
+      const clickedReal = await page
+        .getByRole("button", { name: picked.label, exact: true })
+        .first()
+        .click({ force: true, timeout: 6000 })
+        .then(() => true)
+        .catch(() => false);
+      if (!clickedReal) {
+        await page
+          .locator("button, .ant-switch, [role='switch'], .ant-segmented-item, [role='tab']")
+          .filter({ hasText: picked.label })
+          .first()
+          .click({ force: true, timeout: 6000 })
+          .catch(async () => {
+            await page.evaluate((target) => {
+              const el = [...document.querySelectorAll("button, .ant-switch, [role='switch'], .ant-segmented-item, [role='tab']")]
+                .find((c) => ((c.getAttribute("aria-label") || c.textContent || "").trim().replace(/\s+/g, " ") === target));
+              el?.click();
+            }, picked.label);
+          });
+      }
+    }
 
     if (!picked) {
       // 页面可能还在渲染（重载后/懒加载）：等一会儿再取一次，连续 3 次取不到才结束
@@ -198,6 +220,9 @@ async function main() {
     } else if (kind === "drawer") {
       ok = overlayGrew || urlChanged || mapMoved || textChanged;
       detail = `浮层 ${before.drawers + before.modals + before.popovers}→${after.drawers + after.modals + after.popovers}，URL ${urlChanged ? "变化" : "未变"}`;
+    } else if (compact === "重置筛选" && !/district=|category=|demo=|past=|from=|to=/.test(before.url)) {
+      ok = true;
+      detail = "当前已是默认筛选状态，无参数可重置（预期内空操作）";
     } else if (kind === "filter") {
       ok = overlayGrew || contentGrew || mapMoved || urlChanged || textChanged;
       detail = `行 ${before.rows}→${after.rows}，浮层 +${after.popovers - before.popovers}，地图${mapMoved ? "变化" : "未变"}，文本${textChanged ? "变化" : "未变"}`;

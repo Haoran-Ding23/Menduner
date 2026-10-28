@@ -2410,3 +2410,42 @@ main {
 }
 .site-footer a { color: #64748b; text-decoration: none; }
 .site-footer a:hover { color: #2563eb; text-decoration: underline; }
+
+
+/* 图谱：免责说明独立一行，画布占满可用宽度 */
+.graph-note {
+  margin: 0 0 10px;
+  font-size: 12.5px;
+  color: #94a3b8;
+}
+/* 画布加高，避免关系图被压扁看不清 */
+.graph-canvas {
+  height: 580px;
+}
+@media (max-width: 900px) {
+  .graph-canvas { height: 420px; }
+  .graph-layout { grid-template-columns: minmax(0, 1fr); }
+}
+
+
+/* 关系图全屏：节点多时放大查看，不离开当前页面 */
+.graph-canvas-full {
+  position: fixed;
+  inset: 12px;
+  z-index: 1200;
+  /* 必须给明确高度：height:auto 时内部画布只剩内容高度，撑不满屏幕 */
+  height: calc(100vh - 24px) !important;
+  width: calc(100vw - 24px);
+  background: #fff;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.25);
+}
+.graph-fullscreen-toggle {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  z-index: 5;
+  background: #fff;
+}
+.graph-canvas { position: relative; }
+.graph-canvas-full .react-flow,
+.graph-canvas-full .react-flow__renderer { height: 100% !important; }
