@@ -1,0 +1,20 @@
+[
+  {
+    "label": "刷新 API 数据",
+    "kind": "action",
+    "ok": true,
+    "detail": "请求 1 个，行数 9 → 9"
+  },
+  {
+    "label": "设置与数据导入",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "去审核台处理",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  }
+]

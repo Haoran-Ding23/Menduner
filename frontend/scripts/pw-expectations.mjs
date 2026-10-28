@@ -44,6 +44,8 @@ async function main() {
     text: document.body.innerText.length,
     fields: document.querySelectorAll('input[placeholder*="活动名称"], section textarea').length,
     toast: (document.querySelector('.ant-message')?.innerText || '').length,
+    popovers: document.querySelectorAll('.ant-popover').length,
+    mapView: window.__mapView ? `${window.__mapView.zoom}/${window.__mapView.lng}` : null,
   }));
 
   // networkidle 在该应用上永不触发（有长连接/轮询）：改为等表格出现 + 固定等待
@@ -91,13 +93,26 @@ async function main() {
 
     const before = await snapshot();
     requests = 0;
-    const clicked = await page.evaluate((target) => {
-      const el = document.querySelector("[data-expect-label='" + target.replace(/'/g, "\\'") + "']");
-      if (!el) return false;
-      el.scrollIntoView({ block: "center" });
-      el.click();
-      return true;
-    }, label);
+    const clicked = await page
+      .getByRole("button", { name: label, exact: true })
+      .first()
+      .evaluate((el) => {
+        el.scrollIntoView({ block: "center" });
+        el.click();
+        return true;
+      })
+      .catch(async () => {
+        // 开关/分段控件不是 button 角色：退化到文本定位
+        return page
+          .locator(`button:has-text("${label}"), .ant-switch, [role="switch"], [role="tab"]`)
+          .filter({ hasText: label })
+          .first()
+          .evaluate((el) => {
+            el.click();
+            return true;
+          })
+          .catch(() => false);
+      });
     await page.waitForTimeout(1800);
     const after = await snapshot();
 
@@ -119,7 +134,8 @@ async function main() {
       ok = after.rows !== before.rows || after.url !== before.url;
       detail = `行数 ${before.rows} → ${after.rows}`;
     } else {
-      ok = after.rows !== before.rows || after.modals !== before.modals || after.url !== before.url || toastAppeared;
+      ok = after.rows !== before.rows || after.modals !== before.modals || after.popovers !== before.popovers
+        || after.url !== before.url || after.mapView !== before.mapView || toastAppeared;
       detail = `行数 ${before.rows} → ${after.rows}，弹窗 ${before.modals} → ${after.modals}`;
     }
     record(label, kind, ok, detail);
@@ -128,10 +144,11 @@ async function main() {
       await page.goto(BASE + PAGE, { waitUntil: "domcontentloaded" });
       await page.waitForTimeout(9000);
     } else if (after.fields > before.fields) {
-      await page.evaluate((target) => {
-        const el = document.querySelector("[data-expect-label='" + target.replace(/'/g, "\\'") + "']");
-        el?.click();
-      }, label);
+      await page
+        .getByRole("button", { name: label, exact: true })
+        .first()
+        .evaluate((el) => el.click())
+        .catch(() => undefined);
       await page.waitForTimeout(800);
     }
   }

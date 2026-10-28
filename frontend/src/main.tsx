@@ -46,6 +46,28 @@ function report(reason: unknown, source: string, extra?: Record<string, unknown>
   });
 }
 
+// 部署后旧页面会去拉已经不存在的 chunk：浏览器拿到 SPA 回退的 index.html，
+// 于是报 Unexpected token '<' 或 Failed to fetch dynamically imported module，页面卡死。
+// 这里自动刷新一次（同一个标签页只尝试一次，避免死循环）。
+const CHUNK_ERROR = /Failed to fetch dynamically imported module|Loading chunk|Unexpected token '<'|ChunkLoadError/i;
+const RELOAD_FLAG = 'menduner.chunk-reload';
+
+function recoverFromStaleChunk(message: string) {
+  if (!CHUNK_ERROR.test(message)) return;
+  try {
+    if (sessionStorage.getItem(RELOAD_FLAG) === '1') return;
+    sessionStorage.setItem(RELOAD_FLAG, '1');
+  } catch {
+    return; // 隐私模式下 sessionStorage 不可用：宁可不刷新，也不要死循环
+  }
+  window.location.reload();
+}
+
+window.addEventListener('error', (event) => {
+  recoverFromStaleChunk(String(event.message ?? ''));
+  if (event.error instanceof Error) recoverFromStaleChunk(event.error.message);
+});
+
 window.addEventListener('error', (event) => {
   // Resource load failures (a script or image that 404s) also fire here and carry no error
   // object; they are reported with the tag name so they are distinguishable in the log.

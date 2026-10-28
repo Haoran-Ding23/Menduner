@@ -3,7 +3,7 @@
     "label": "刷新 API 数据",
     "kind": "action",
     "ok": true,
-    "detail": "请求 1 个，行数 37 → 37"
+    "detail": "请求 1 个，行数 45 → 45"
   },
   {
     "label": "设置与数据导入",
@@ -15,13 +15,13 @@
     "label": "录入一条",
     "kind": "expand",
     "ok": true,
-    "detail": "表单字段 1 → 3，文字 6535 → 6555"
+    "detail": "表单字段 1 → 3，文字 7174 → 7194"
   },
   {
     "label": "显示全部 17 个来源",
     "kind": "expand",
     "ok": true,
-    "detail": "表单字段 1 → 1，文字 6535 → 6455"
+    "detail": "表单字段 1 → 1，文字 7174 → 7094"
   },
   {
     "label": "生成邀请码",
@@ -32,8 +32,14 @@
   {
     "label": "刷 新",
     "kind": "action",
-    "ok": false,
-    "detail": "请求 0 个，行数 37 → 37"
+    "ok": true,
+    "detail": "请求 1 个，行数 45 → 45"
+  },
+  {
+    "label": "展开行",
+    "kind": "expand",
+    "ok": true,
+    "detail": "表单字段 1 → 1，文字 7094 → 8581"
   },
   {
     "label": "生成 25 条建议",
