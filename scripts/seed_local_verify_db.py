@@ -37,6 +37,13 @@ con.execute(
     "INSERT INTO sources(id,name,kind,mock,source_url,updated_at) VALUES(?,?,?,?,?,datetime('now'))",
     ("verify-source", "本地验证来源", "venue", 0, "https://example.com/verify"),
 )
+# events.district 有外键指向 districts：本地库必须先把用到的地区建出来
+for district_id, district_name in (("taicang", "太仓市"), ("gusu", "姑苏区")):
+    con.execute(
+        "INSERT INTO districts(id,payload) VALUES(?,?)",
+        (district_id, json.dumps({"id": district_id, "name": district_name, "official": True}, ensure_ascii=False)),
+    )
+
 VENUE = {
     "id": "venue-verify", "name": "验证用场馆", "address": "苏州市姑苏区验证路 1 号",
     "district": "姑苏区", "longitude": 120.62, "latitude": 31.30,
@@ -67,7 +74,7 @@ for event_id, name, drop_fields in VARIANTS:
         "venueId": "venue-verify",
         "venueName": "验证用场馆",
         "organizer": "验证主办方",
-        "districtId": "姑苏区",
+        "districtId": "taicang",
         "category": "culture",
     })
     if drop_fields:
@@ -80,7 +87,7 @@ for event_id, name, drop_fields in VARIANTS:
         "INSERT INTO events(id,name,category,startDate,endDate,venue,district,source,"
         "verification_status,payload) VALUES(?,?,?,?,?,?,?,?,?,?)",
         (event_id, name, "culture", payload["startDate"], payload.get("endDate"),
-         None, "姑苏区", "verify-source", "Needs Review",
+         None, "taicang", "verify-source", "Needs Review",
          json.dumps(payload, ensure_ascii=False)),
     )
     for field in ("name", "startDate", "endDate", "sourceUrl", "venueName", "organizer"):

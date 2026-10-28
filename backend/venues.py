@@ -96,9 +96,10 @@ def coordinate_targets(db_path: Path) -> list[dict]:
         if not usage.get(venue["id"]):
             continue
         coordinates = venue.get("coordinates")
-        usable = bool(coordinates) and bool(coordinates.get("sourceUrl")) and bool(
-            coordinates.get("system")
-        )
+        # coordinates 有两种写法：结构化 dict（带 sourceUrl/system），或 [lng, lat] 数组。
+        # 数组形式下没有来源信息，不能算「可用坐标」，但也不能因此抛异常把整页弄挂。
+        coordinates_meta = coordinates if isinstance(coordinates, dict) else {}
+        usable = bool(coordinates_meta.get("sourceUrl")) and bool(coordinates_meta.get("system"))
         rows.append(
             {
                 "id": venue["id"],

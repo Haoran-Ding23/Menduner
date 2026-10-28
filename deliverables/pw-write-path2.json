@@ -2,17 +2,17 @@
   {
     "name": "打开审核台能取到审核记录",
     "ok": true,
-    "detail": "HTTP 200，记录 5 条"
+    "detail": "HTTP 200，记录 0 条"
   },
   {
     "name": "点「驳回」写入审核记录",
-    "ok": true,
-    "detail": "5 条 → 5 条（签名已变）"
+    "ok": false,
+    "detail": "0 条 → 0 条（签名未变）"
   },
   {
     "name": "点「修正」写入修正值",
-    "ok": true,
-    "detail": "5 条 → 5 条（签名已变）"
+    "ok": false,
+    "detail": "0 条 → 0 条（签名未变）"
   },
   {
     "name": "点「撤回」撤销上一条审核",

@@ -1056,8 +1056,18 @@ def create_app(db_path: Path | None = None):
             "note": body.note,
         }
         with connect(path) as con:
+            # events.source 有外键约束：人工录入用的是一个虚拟来源 id，
+            # 必须先把它登记进 sources，否则 INSERT 会因外键失败返回 500。
             con.execute(
-                "INSERT INTO events VALUES(?,?,?,?,?,?,?,?,?,?)",
+                "INSERT INTO sources(id, name, kind, mock, source_url, updated_at) "
+                "VALUES(?,?,?,?,?,datetime('now')) ON CONFLICT(id) DO NOTHING",
+                (f"manual-{principal}", "人工录入（无公开来源）", "manual", 0, None),
+            )
+            # 显式列名：生产库比本地多一列（canonical_id）时，位置式 VALUES 会直接报错。
+            con.execute(
+                "INSERT INTO events(id, name, category, startDate, endDate, venue, district, "
+                "source, verification_status, payload, canonical_id) "
+                "VALUES(?,?,?,?,?,?,?,?,?,?,?)",
                 (
                     event_id,
                     body.name,
@@ -1069,6 +1079,7 @@ def create_app(db_path: Path | None = None):
                     f"manual-{principal}",
                     "Needs Review",
                     json.dumps(payload, ensure_ascii=False),
+                    f"canonical-{event_id}",
                 ),
             )
         return {"id": event_id, "status": "Needs Review"}
