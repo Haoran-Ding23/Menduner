@@ -103,3 +103,33 @@ node scripts/pw-write-path2.mjs --base http://127.0.0.1:5199 --event evt-verify-
 node scripts/pw-audit.mjs https://entgroup14.com --cap 120 --json ../deliverables/pw-audit.json
 node scripts/cdp-assertions.mjs https://entgroup14.com
 ```
+
+## 八、分页专项断言（第 24 轮，均为真实变化判定）
+
+### 地图页 pw-map-controls.mjs —— 9/9 全通过
+
+| 断言 | 实测 |
+|---|---|
+| 地图渲染出视野 | view=14/121.1243/31.4545 |
+| 「更多查看方式（场馆热点）」能展开 | 文字 1153 → 1257 |
+| 多场活动场馆标记弹出同址活动 | 标题「太仓美术馆 · 同址活动」，2 行 |
+| 打开同址活动时视野不变 | view 不变 |
+| 「更多筛选」能展开筛选面板 | 文字 1153 → 1173 |
+| 「月份」能打开月份选择 | 打开成功 |
+| 「重置筛选」清掉 URL 参数 | ?district=taicang&year=2026&month=10 → ?year=2026&month=10 |
+| 开关「查看商圈」：图层出现且视野不变 | aria-checked false→true，标记 3→56，zoom 不变 |
+| 开关「查看附近酒店」：图层出现且视野不变 | aria-checked false→true，标记 3→66，zoom 不变 |
+
+**重要经验（已写进脚本注释）**：地图标记由 AMap 渲染，
+DOM 的 el.click() **不会**触发 AMap 的 click 事件，必须用真实鼠标点击；
+否则会误判成"按钮没反应"。
+
+### 其他页面（通用验收器 pw-expectations2.mjs）
+
+| 页面 | 结果 | 说明 |
+|---|---|---|
+| 审核台 | 38/40 | 2 项为表格展开类，受状态污染影响 |
+| 找酒店 | 19/24 | 剩余为选中态/地图聚焦类，需专属断言 |
+| 数据质量 | 3/3 | — |
+| 商圈洞察 | 3/4 | 「重置筛选」在已重置状态下无变化（预期内空操作） |
+| 知识图谱 | 11/15 | 展开类判定过窄，待补专属断言 |

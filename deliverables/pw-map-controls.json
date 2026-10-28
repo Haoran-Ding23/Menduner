@@ -1,0 +1,47 @@
+[
+  {
+    "name": "地图页已渲染出地图视野",
+    "ok": true,
+    "detail": "view=14|121.1243|31.4545"
+  },
+  {
+    "name": "「更多查看方式（场馆热点）」能展开出内容",
+    "ok": true,
+    "detail": "文字 1153 → 1257，气泡 0"
+  },
+  {
+    "name": "多场活动的场馆标记点开后列出同址活动",
+    "ok": true,
+    "detail": "窗口标题「太仓美术馆 · 同址活动」，行数 2"
+  },
+  {
+    "name": "打开同址活动窗口时地图视野不变",
+    "ok": true,
+    "detail": "view 14|121.1243|31.4545 → 14|121.1243|31.4545"
+  },
+  {
+    "name": "「更多筛选」能展开筛选面板",
+    "ok": true,
+    "detail": "气泡 0 → 0，文字 1153 → 1173"
+  },
+  {
+    "name": "「月份」能打开月份选择",
+    "ok": true,
+    "detail": "气泡 0 → 0"
+  },
+  {
+    "name": "「重置筛选」清掉 URL 上的筛选参数",
+    "ok": true,
+    "detail": "URL ?district=taicang&year=2026&month=10 → ?year=2026&month=10"
+  },
+  {
+    "name": "开关「查看商圈」切换后图层出现且视野不变",
+    "ok": true,
+    "detail": "aria-checked false → true，标记 3 → 56，zoom 14 → 14"
+  },
+  {
+    "name": "开关「查看附近酒店」切换后图层出现且视野不变",
+    "ok": true,
+    "detail": "aria-checked false → true，标记 3 → 66，zoom 14 → 14"
+  }
+]
