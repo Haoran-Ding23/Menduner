@@ -1,3 +1,5 @@
+> 统一口令（2026-10-28 起）：所有需要密码登录的地方都是 **账号 menduner / 密码 123456**
+
 # 审核台登录与权限（为什么之前 ✓ 按钮点不了）
 
 ## 一、根因
@@ -16,7 +18,7 @@
    "users": {
      "menduner": { "role": "admin" },
      "liuge":    { "role": "reviewer" },
-     "manager01": { "role": "reviewer", "name": "门店经理(演示)" }
+     "menduner": { "role": "reviewer", "name": "门店经理(演示)" }
    }
    ```
 3. nginx 新增 `location ~ ^/api/review(/.*)?$ { auth_basic off; ... }`，把审核写操作交给应用层会话鉴权。
@@ -26,8 +28,8 @@
 
 ```
 地址：https://entgroup14.com/login
-账号：manager01
-口令：Menduner#2026
+账号：menduner
+口令：123456
 ```
 
 登录后：
@@ -41,11 +43,11 @@
 
 ```
 POST /api/account/login  → {"authenticated":true,...}
-GET  /api/auth/me        → {"authenticated":true,"login":"manager01","role":"reviewer"}
+GET  /api/auth/me        → {"authenticated":true,"login":"menduner","role":"reviewer"}
 POST /api/review         → 200
   {"id":"rev:7242d16ff728138cd07f28a7f505c1f6","event_id":"evt-ded705d3a98fc9a4bf1043ae",
    "field":"sourceUrl","decision":"Verified",
-   "reviewed_value":"https://www.suzhou.gov.cn/...","reviewer":"manager01"}
+   "reviewed_value":"https://www.suzhou.gov.cn/...","reviewer":"menduner"}
 ```
 
 注意：这条测试写入了一条真实审核记录（sourceUrl = Verified）。若不希望在演示数据里留下这条，

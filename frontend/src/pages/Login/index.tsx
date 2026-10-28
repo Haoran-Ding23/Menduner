@@ -99,7 +99,7 @@ export default function LoginPage() {
                 size="large"
                 autoComplete="username"
                 prefix={<UserOutlined className="signin-field-icon" />}
-                placeholder="例如：manager01"
+                placeholder="例如：menduner"
               />
             </Form.Item>
             <Form.Item
@@ -111,7 +111,7 @@ export default function LoginPage() {
                 size="large"
                 autoComplete="current-password"
                 prefix={<LockOutlined className="signin-field-icon" />}
-                placeholder="至少 8 位"
+                placeholder="请输入密码"
               />
             </Form.Item>
             <Button
@@ -131,7 +131,7 @@ export default function LoginPage() {
               hotel's ledger. */}
           <div className="signin-hint">
             <strong>演示账号</strong>
-            <code>登录名 manager01　密码 hotel2026</code>
+            <code>登录名 menduner　密码 123456</code>
             <small>可直接登录。里面是示例数据，不含任何真实酒店信息。</small>
           </div>
 

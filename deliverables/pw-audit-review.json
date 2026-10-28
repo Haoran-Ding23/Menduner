@@ -1,0 +1,485 @@
+[
+  {
+    "page": "/review",
+    "name": "审核台",
+    "controls": 76,
+    "tested": 76,
+    "noop": 0,
+    "rows": [
+      {
+        "index": 0,
+        "tag": "button",
+        "label": "刷新 API 数据",
+        "verdict": "effect",
+        "mutations": 76,
+        "fetches": 0
+      },
+      {
+        "index": 1,
+        "tag": "button",
+        "label": "设置与数据导入",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 2,
+        "tag": "button",
+        "label": "录入一条",
+        "verdict": "effect",
+        "mutations": 76,
+        "fetches": 0
+      },
+      {
+        "index": 3,
+        "tag": "button",
+        "label": "显示全部 17 个来源",
+        "verdict": "effect",
+        "mutations": 76,
+        "fetches": 0
+      },
+      {
+        "index": 4,
+        "tag": "button",
+        "label": "(无文字)",
+        "verdict": "effect",
+        "mutations": 76,
+        "fetches": 0
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "label": "刷 新",
+        "verdict": "effect",
+        "mutations": 76,
+        "fetches": 0
+      },
+      {
+        "index": 6,
+        "tag": "button",
+        "label": "生成 25 条建议",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 7,
+        "tag": "button",
+        "label": "对",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 8,
+        "tag": "button",
+        "label": "错",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 9,
+        "tag": "button",
+        "label": "对",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 10,
+        "tag": "button",
+        "label": "错",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 11,
+        "tag": "button",
+        "label": "对",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 12,
+        "tag": "button",
+        "label": "错",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 13,
+        "tag": "button",
+        "label": "对",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 14,
+        "tag": "button",
+        "label": "错",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 15,
+        "tag": "button",
+        "label": "对",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 16,
+        "tag": "button",
+        "label": "错",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 17,
+        "tag": "button",
+        "label": "对",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 18,
+        "tag": "button",
+        "label": "错",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 19,
+        "tag": "button",
+        "label": "对",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 20,
+        "tag": "button",
+        "label": "错",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 21,
+        "tag": "button",
+        "label": "对",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 22,
+        "tag": "button",
+        "label": "错",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 23,
+        "tag": "button",
+        "label": "对",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 24,
+        "tag": "button",
+        "label": "错",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 25,
+        "tag": "button",
+        "label": "(无文字)",
+        "verdict": "effect",
+        "mutations": 76,
+        "fetches": 0
+      },
+      {
+        "index": 26,
+        "tag": "button",
+        "label": "(无文字)",
+        "verdict": "effect",
+        "mutations": 76,
+        "fetches": 0
+      },
+      {
+        "index": 27,
+        "tag": "button",
+        "label": "(无文字)",
+        "verdict": "effect",
+        "mutations": 76,
+        "fetches": 0
+      },
+      {
+        "index": 28,
+        "tag": "button",
+        "label": "全部核查完毕",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 29,
+        "tag": "button",
+        "label": "活动详情",
+        "verdict": "effect",
+        "mutations": 76,
+        "fetches": 0
+      },
+      {
+        "index": 30,
+        "tag": "button",
+        "label": "通 过",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 31,
+        "tag": "button",
+        "label": "驳 回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 32,
+        "tag": "button",
+        "label": "修 正",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 33,
+        "tag": "button",
+        "label": "撤回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 34,
+        "tag": "button",
+        "label": "通 过",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 35,
+        "tag": "button",
+        "label": "驳 回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 36,
+        "tag": "button",
+        "label": "修 正",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 37,
+        "tag": "button",
+        "label": "撤回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 38,
+        "tag": "button",
+        "label": "通 过",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 39,
+        "tag": "button",
+        "label": "驳 回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 40,
+        "tag": "button",
+        "label": "修 正",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 41,
+        "tag": "button",
+        "label": "撤回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 42,
+        "tag": "button",
+        "label": "通 过",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 43,
+        "tag": "button",
+        "label": "驳 回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 44,
+        "tag": "button",
+        "label": "修 正",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 45,
+        "tag": "button",
+        "label": "撤回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 46,
+        "tag": "button",
+        "label": "通 过",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 47,
+        "tag": "button",
+        "label": "驳 回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 48,
+        "tag": "button",
+        "label": "修 正",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 49,
+        "tag": "button",
+        "label": "撤回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 50,
+        "tag": "button",
+        "label": "通 过",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 51,
+        "tag": "button",
+        "label": "驳 回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 52,
+        "tag": "button",
+        "label": "修 正",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 53,
+        "tag": "button",
+        "label": "撤回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 54,
+        "tag": "button",
+        "label": "通 过",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 55,
+        "tag": "button",
+        "label": "驳 回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 56,
+        "tag": "button",
+        "label": "修 正",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 57,
+        "tag": "button",
+        "label": "撤回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 58,
+        "tag": "button",
+        "label": "通 过",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 59,
+        "tag": "button",
+        "label": "驳 回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 60,
+        "tag": "button",
+        "label": "修 正",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 61,
+        "tag": "button",
+        "label": "撤回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 62,
+        "tag": "button",
+        "label": "通 过",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 63,
+        "tag": "button",
+        "label": "驳 回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 64,
+        "tag": "button",
+        "label": "修 正",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 65,
+        "tag": "button",
+        "label": "撤回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 66,
+        "tag": "button",
+        "label": "通 过",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 67,
+        "tag": "button",
+        "label": "驳 回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 68,
+        "tag": "button",
+        "label": "修 正",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 69,
+        "tag": "button",
+        "label": "撤回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 70,
+        "tag": "button",
+        "label": "通 过",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 71,
+        "tag": "button",
+        "label": "驳 回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 72,
+        "tag": "button",
+        "label": "修 正",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 73,
+        "tag": "button",
+        "label": "通 过",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 74,
+        "tag": "button",
+        "label": "驳 回",
+        "verdict": "skipped-destructive"
+      },
+      {
+        "index": 75,
+        "tag": "button",
+        "label": "修 正",
+        "verdict": "skipped-destructive"
+      }
+    ]
+  }
+]
