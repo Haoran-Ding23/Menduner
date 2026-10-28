@@ -1,0 +1,272 @@
+[
+  {
+    "label": "刷新 API 数据",
+    "kind": "action",
+    "ok": true,
+    "detail": "请求 1，提示 无"
+  },
+  {
+    "label": "设置与数据导入",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "换一家酒店",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 1→1，地图未变"
+  },
+  {
+    "label": "在地图上看",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→2，地图变化"
+  },
+  {
+    "label": "显示演示数据",
+    "kind": "filter",
+    "ok": true,
+    "detail": "行 0→0，浮层 +0，地图未变，文本变化"
+  },
+  {
+    "label": "重置筛选",
+    "kind": "filter",
+    "ok": true,
+    "detail": "当前已是默认筛选状态，无参数可重置（预期内空操作）"
+  },
+  {
+    "label": "太仓市博物馆:铁军东进——新四军在常武大地展",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→2，地图变化"
+  },
+  {
+    "label": "关 注",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "待跟进",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "已跟进",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "忽 略",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "太仓市图书馆:四时与小物——赵夏橦个人项目",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→2，地图变化"
+  },
+  {
+    "label": "关 注",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "待跟进",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "已跟进",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "忽 略",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "太仓美术馆:书写时代——纪念红军长征胜利90周年江苏省文旅系统书法作品展",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→2，地图变化"
+  },
+  {
+    "label": "关 注",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "待跟进",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "已跟进",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "忽 略",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "太仓名人馆:“健雄星辉:科创之光的家国诗篇”设计展",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→2，地图变化"
+  },
+  {
+    "label": "关 注",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "待跟进",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "已跟进",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "忽 略",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "大观长江——大江东流与江南繁华(太仓站·融江汇海展风华)",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→2，地图变化"
+  },
+  {
+    "label": "关 注",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "待跟进",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "已跟进",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "忽 略",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "书海观澜,文津拾贝——第二十一届文津图书展",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→2，地图变化"
+  },
+  {
+    "label": "关 注",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "待跟进",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "已跟进",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "忽 略",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "太仓市博物馆:经纶映辉——苏州丝绸文化技艺展",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→2，地图变化"
+  },
+  {
+    "label": "关 注",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "待跟进",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "已跟进",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "忽 略",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "铁军东进——新四军在常武大地",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→2，地图变化"
+  },
+  {
+    "label": "关 注",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "待跟进",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "已跟进",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  }
+]

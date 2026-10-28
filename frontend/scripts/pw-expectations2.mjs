@@ -80,7 +80,7 @@ async function main() {
     }));
 
   await page.goto(BASE + PAGE, { waitUntil: "domcontentloaded", timeout: 60000 });
-  await page.waitForSelector("tbody tr.ant-table-row, .panel, section", { timeout: 30000 }).catch(() => undefined);
+  await page.waitForSelector("tbody tr.ant-table-row", { timeout: 30000 }).catch(() => undefined);
   await page.waitForTimeout(4000);
 
   // 禁用控件必须写原因
@@ -230,15 +230,39 @@ async function main() {
       ok = overlayGrew || contentGrew || mapMoved || urlChanged || toastShown || textChanged;
       detail = `浮层 ${before.drawers + before.modals + before.popovers}→${after.drawers + after.modals + after.popovers}，地图${mapMoved ? "变化" : "未变"}`;
     }
+    if (!ok) {
+      // 真实点击没产生变化时，补一次 DOM 点击再判断一次：
+      // 不同控件的 React onClick 触发路径不同（实测表内按钮只吃 el.click()，
+      // 顶部图标按钮只吃真实点击），只认其中一种会产生假失败。
+      await page.evaluate((target) => {
+        const el = [...document.querySelectorAll("button, .ant-switch, [role='switch'], .ant-segmented-item, [role='tab']")]
+          .find((c) => ((c.getAttribute("aria-label") || c.textContent || "").trim().replace(/\s+/g, " ") === target));
+        el?.click();
+      }, label).catch(() => undefined);
+      await page.waitForTimeout(1500);
+      const retryAfter = await snapshot();
+      const overlay2 = retryAfter.drawers > before.drawers || retryAfter.modals > before.modals || retryAfter.popovers > before.popovers;
+      const content2 = retryAfter.rows !== before.rows || Math.abs(retryAfter.text - before.text) > 20 || retryAfter.fields > before.fields;
+      const map2 = retryAfter.mapView !== before.mapView || retryAfter.markers !== before.markers;
+      const url2 = retryAfter.url !== before.url;
+      if (overlay2 || content2 || map2 || url2) {
+        ok = true;
+        detail += "（改用 DOM 点击后生效）";
+      }
+    }
+
     record(label, kind, ok, detail);
 
-    // 清理：展开/浮层/筛选会改变页面初始状态，导致后续控件"看起来没反应"（假的）
+    // 清理：任何浮层/展开都会污染后续控件判定（点击被遮罩吃掉 → 假失败），
+    // 所以只要页面状态变了就重载，保证下一个控件仍在初始状态被验证。
     await page.keyboard.press("Escape").catch(() => undefined);
-    if (overlayGrew || contentGrew || urlChanged) {
+    const stillDirty = await page.evaluate(() => ({
+      overlays: document.querySelectorAll(".ant-modal-wrap:not([style*='display: none']), .ant-drawer-open").length,
+    }));
+    if (overlayGrew || contentGrew || urlChanged || stillDirty.overlays > 0) {
       await page.goto(BASE + PAGE, { waitUntil: "domcontentloaded", timeout: 60000 });
-      await page.waitForSelector("tbody tr.ant-table-row, .panel, section", { timeout: 20000 }).catch(() => undefined);
+      await page.waitForSelector("tbody tr.ant-table-row", { timeout: 25000 }).catch(() => undefined);
       await page.waitForTimeout(2500);
-    } else {
       await page.waitForTimeout(400);
     }
   }

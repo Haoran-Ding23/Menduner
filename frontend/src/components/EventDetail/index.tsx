@@ -1,6 +1,6 @@
 import { DemandExplanation } from "../DemandIntelligence";
 import EvidenceSummary from "../EvidenceSummary";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Drawer, Descriptions, Space, Button, Tag, Alert } from "antd";
 import { usePlatform } from "../../hooks/usePlatform";
 import {
@@ -24,15 +24,20 @@ export default function EventDetail() {
   const { detail, repository, closeEvent, go } = usePlatform();
   const event = detail ? repository.getEventById(detail) : undefined;
 
-  // 只有链接里明确要求（detail=）才允许常驻打开；
-  // 否则切换页面后抽屉应当自动收起 —— 用户反馈"点城市活动地图右边还是冒出详情"。
+  // 只有链接里明确要求（detail=）才允许常驻打开；切换页面后抽屉应自动收起。
+  // 注意：这里必须比较"上一次的路径"，不能只看当前 URL——
+  // 抽屉是条件渲染的，detail 被设置时组件才挂载，
+  // 此时 URL 可能还没写入 detail，直接判断会把刚打开的抽屉立刻关掉
+  //（真实 bug：审核台/地图的「活动详情」按钮点了没反应）。
+  const lastPath = useRef<string | null>(null);
   useEffect(() => {
+    const current = window.location.pathname;
+    const previous = lastPath.current;
+    lastPath.current = current;
+    if (previous === null || previous === current) return;
     if (!detail) return;
-    const params = new URLSearchParams(window.location.search);
-    if (!params.get("detail")) closeEvent();
-    // 只在路径变化时判断一次
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [window.location.pathname]);
+    if (!new URLSearchParams(window.location.search).get("detail")) closeEvent();
+  }, [detail, closeEvent]);
   const venue = repository.getVenues().find((v) => v.id === event?.venueId);
   const district = repository
     .getDistricts()

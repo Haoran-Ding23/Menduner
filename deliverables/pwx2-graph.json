@@ -1,0 +1,68 @@
+[
+  {
+    "label": "刷新 API 数据",
+    "kind": "action",
+    "ok": true,
+    "detail": "请求 1，提示 无"
+  },
+  {
+    "label": "设置与数据导入",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "核对场地",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 1→1，地图未变"
+  },
+  {
+    "label": "核对来源",
+    "kind": "filter",
+    "ok": true,
+    "detail": "行 0→45，浮层 +0，地图未变，文本变化"
+  },
+  {
+    "label": "查看周边设施（酒店 6 · 餐饮/交通/其他 24）",
+    "kind": "toggle",
+    "ok": true,
+    "detail": "浮层 0→0，地图未变"
+  },
+  {
+    "label": "查看关系图",
+    "kind": "toggle",
+    "ok": true,
+    "detail": "浮层 0→0，地图未变"
+  },
+  {
+    "label": "展开商圈酒店",
+    "kind": "expand",
+    "ok": false,
+    "detail": "文字 905→905，字段 0→0，浮层 +0"
+  },
+  {
+    "label": "显示周边餐饮交通",
+    "kind": "toggle",
+    "ok": true,
+    "detail": "浮层 0→0，地图未变"
+  },
+  {
+    "label": "显示目标客群",
+    "kind": "toggle",
+    "ok": true,
+    "detail": "浮层 0→0，地图未变"
+  },
+  {
+    "label": "显示关联活动",
+    "kind": "toggle",
+    "ok": true,
+    "detail": "浮层 0→0，地图未变"
+  },
+  {
+    "label": "展开关系图",
+    "kind": "expand",
+    "ok": true,
+    "detail": "文字 905→1531，字段 0→0，浮层 +0"
+  }
+]

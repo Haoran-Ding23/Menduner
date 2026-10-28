@@ -1,0 +1,26 @@
+[
+  {
+    "label": "刷新 API 数据",
+    "kind": "action",
+    "ok": true,
+    "detail": "请求 1，提示 无"
+  },
+  {
+    "label": "设置与数据导入",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "显示演示数据",
+    "kind": "filter",
+    "ok": true,
+    "detail": "行 66→66，浮层 +0，地图未变，文本变化"
+  },
+  {
+    "label": "重置筛选",
+    "kind": "filter",
+    "ok": true,
+    "detail": "当前已是默认筛选状态，无参数可重置（预期内空操作）"
+  }
+]

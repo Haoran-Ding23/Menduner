@@ -1,0 +1,182 @@
+[
+  {
+    "label": "刷新 API 数据",
+    "kind": "action",
+    "ok": true,
+    "detail": "请求 1，提示 无"
+  },
+  {
+    "label": "设置与数据导入",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "更多筛选",
+    "kind": "filter",
+    "ok": true,
+    "detail": "行 0→0，浮层 +0，地图未变，文本变化"
+  },
+  {
+    "label": "月份：10 月",
+    "kind": "filter",
+    "ok": true,
+    "detail": "行 0→0，浮层 +0，地图未变，文本变化"
+  },
+  {
+    "label": "太仓市15",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→0，地图未变"
+  },
+  {
+    "label": "常熟市6",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→0，地图变化"
+  },
+  {
+    "label": "昆山市9",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→0，地图变化"
+  },
+  {
+    "label": "张家港市1",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→0，地图变化"
+  },
+  {
+    "label": "姑苏区46",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→0，地图变化"
+  },
+  {
+    "label": "虎丘区7",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→0，地图变化"
+  },
+  {
+    "label": "吴中区141",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→0，地图变化"
+  },
+  {
+    "label": "相城区4",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→0，地图变化"
+  },
+  {
+    "label": "吴江区5",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→0，地图变化"
+  },
+  {
+    "label": "苏州全市",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→0，地图变化"
+  },
+  {
+    "label": "显示演示数据",
+    "kind": "filter",
+    "ok": true,
+    "detail": "行 0→0，浮层 +0，地图未变，文本变化"
+  },
+  {
+    "label": "重置筛选",
+    "kind": "filter",
+    "ok": true,
+    "detail": "当前已是默认筛选状态，无参数可重置（预期内空操作）"
+  },
+  {
+    "label": "查看商圈",
+    "kind": "toggle",
+    "ok": true,
+    "detail": "浮层 0→0，地图变化"
+  },
+  {
+    "label": "查看附近酒店",
+    "kind": "toggle",
+    "ok": true,
+    "detail": "浮层 0→0，地图变化"
+  },
+  {
+    "label": "太仓美术馆，2 个活动",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→1，地图未变"
+  },
+  {
+    "label": "太仓名人馆，1 个活动",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→2，地图变化"
+  },
+  {
+    "label": "太仓市博物馆，2 个活动",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→1，地图未变"
+  },
+  {
+    "label": "太仓美术馆:书写时代——纪念红军长征胜利90周年江苏省文旅系统书法作品展 2026-09-30 → 2026-11-22太仓美术馆文化 / 娱乐待复核",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→2，地图变化"
+  },
+  {
+    "label": "太仓市:捡个秋天·太仓漫游季 2026-09-09 → 2026-11-15场馆待核验其他缺失",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→2，地图未变"
+  },
+  {
+    "label": "太仓名人馆:“健雄星辉:科创之光的家国诗篇”设计展 2026-09-24 → 2026-11-09太仓名人馆其他待复核",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→2，地图变化"
+  },
+  {
+    "label": "太仓市图书馆:四时与小物——赵夏橦个人项目 2026-10-17 → 2026-11-29太仓市博物馆其他待复核",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→2，地图变化"
+  },
+  {
+    "label": "太仓美术馆:“翰墨润初心 光影鉴变迁”纪念太仓政协成立70周年书画摄影作品展 2026-09-14 → 2026-10-15太仓美术馆文化 / 娱乐待复核",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→2，地图变化"
+  },
+  {
+    "label": "《毛茸茸的我·萌宠治愈系艺术展》太仓站 2026-08-01 → 2026-10-31太仓后浪艺术中心其他冲突",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→2，地图未变"
+  },
+  {
+    "label": "太仓市博物馆:铁军东进——新四军在常武大地展 2026-09-25 → 2026-12-13太仓市博物馆文化 / 娱乐待复核",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→2，地图变化"
+  },
+  {
+    "label": "猫咪艺术展 2026-08-01 → 2026-10-31太仓后浪艺术中心其他待复核",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→2，地图未变"
+  },
+  {
+    "label": "更多查看方式（场馆热点）",
+    "kind": "expand",
+    "ok": true,
+    "detail": "文字 1153→1257，字段 0→0，浮层 +0"
+  }
+]

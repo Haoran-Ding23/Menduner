@@ -1,0 +1,272 @@
+[
+  {
+    "label": "刷新 API 数据",
+    "kind": "action",
+    "ok": false,
+    "detail": "请求 0，提示 无"
+  },
+  {
+    "label": "设置与数据导入",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "录入一条",
+    "kind": "expand",
+    "ok": true,
+    "detail": "文字 7151→7151，字段 1→1，浮层 +0（改用 DOM 点击后生效）"
+  },
+  {
+    "label": "收 起",
+    "kind": "dialog",
+    "ok": false,
+    "detail": "浮层 0→0，地图未变"
+  },
+  {
+    "label": "显示全部 17 个来源",
+    "kind": "expand",
+    "ok": true,
+    "detail": "文字 7151→7151，字段 1→1，浮层 +0（改用 DOM 点击后生效）"
+  },
+  {
+    "label": "只看异常来源",
+    "kind": "filter",
+    "ok": true,
+    "detail": "行 45→45，浮层 +0，地图未变，文本未变（改用 DOM 点击后生效）"
+  },
+  {
+    "label": "生成邀请码",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "刷 新",
+    "kind": "action",
+    "ok": false,
+    "detail": "请求 0，提示 无"
+  },
+  {
+    "label": "展开行",
+    "kind": "expand",
+    "ok": true,
+    "detail": "文字 7151→7151，字段 1→1，浮层 +0（改用 DOM 点击后生效）"
+  },
+  {
+    "label": "关闭行",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→0，地图未变（改用 DOM 点击后生效）"
+  },
+  {
+    "label": "展开行",
+    "kind": "expand",
+    "ok": true,
+    "detail": "文字 7151→7151，字段 1→1，浮层 +0（改用 DOM 点击后生效）"
+  },
+  {
+    "label": "复制",
+    "kind": "dialog",
+    "ok": false,
+    "detail": "浮层 0→0，地图未变"
+  },
+  {
+    "label": "复制成功",
+    "kind": "dialog",
+    "ok": false,
+    "detail": "浮层 0→0，地图未变"
+  },
+  {
+    "label": "展开行",
+    "kind": "expand",
+    "ok": true,
+    "detail": "文字 8638→8638，字段 1→1，浮层 +0（改用 DOM 点击后生效）"
+  },
+  {
+    "label": "关闭行",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→0，地图未变（改用 DOM 点击后生效）"
+  },
+  {
+    "label": "展开行",
+    "kind": "expand",
+    "ok": true,
+    "detail": "文字 8638→8638，字段 1→1，浮层 +0（改用 DOM 点击后生效）"
+  },
+  {
+    "label": "复制",
+    "kind": "dialog",
+    "ok": false,
+    "detail": "浮层 0→0，地图未变"
+  },
+  {
+    "label": "展开行",
+    "kind": "expand",
+    "ok": true,
+    "detail": "文字 10125→10125，字段 1→1，浮层 +0（改用 DOM 点击后生效）"
+  },
+  {
+    "label": "关闭行",
+    "kind": "dialog",
+    "ok": true,
+    "detail": "浮层 0→0，地图未变（改用 DOM 点击后生效）"
+  },
+  {
+    "label": "展开行",
+    "kind": "expand",
+    "ok": true,
+    "detail": "文字 10125→10125，字段 1→1，浮层 +0（改用 DOM 点击后生效）"
+  },
+  {
+    "label": "复制",
+    "kind": "dialog",
+    "ok": false,
+    "detail": "浮层 0→0，地图未变"
+  },
+  {
+    "label": "生成 25 条建议",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "对",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "错",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "对",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "错",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "对",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "错",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "全部核查完毕",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "活动详情",
+    "kind": "drawer",
+    "ok": true,
+    "detail": "浮层 0→0，URL 未变（改用 DOM 点击后生效）"
+  },
+  {
+    "label": "展开行",
+    "kind": "expand",
+    "ok": true,
+    "detail": "文字 7151→7151，字段 1→1，浮层 +0（改用 DOM 点击后生效）"
+  },
+  {
+    "label": "补录",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "补录",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "补录",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "补录",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "补录",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "通 过",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "驳 回",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "修 正",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "撤回",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "通 过",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "驳 回",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "修 正",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "撤回",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  },
+  {
+    "label": "通 过",
+    "kind": "write",
+    "ok": true,
+    "detail": "写入类：由隔离环境脚本验证"
+  }
+]
