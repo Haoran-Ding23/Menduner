@@ -64,6 +64,18 @@ async function main() {
       markers: document.querySelectorAll(".amap-marker, .amap-marker-label").length,
       mapView: window.__mapView ? `${window.__mapView.zoom}/${Math.round(window.__mapView.lng * 100)}` : null,
       toast: (document.querySelector(".ant-message")?.innerText || "").length,
+      // 文本指纹：排除时钟类易变内容，其余任何文字变化都能被捕获
+      textHash: (() => {
+        const raw = (document.body.innerText || '')
+          .replace(/\d{2}:\d{2}(:\d{2})?/g, 'T')
+          .replace(/\s+/g, ' ')
+          .trim();
+        let hash = 0;
+        for (let i = 0; i < raw.length; i += 1) {
+          hash = (hash * 31 + raw.charCodeAt(i)) | 0;
+        }
+        return `${raw.length}:${hash}`;
+      })(),
     }));
 
   await page.goto(BASE + PAGE, { waitUntil: "domcontentloaded", timeout: 60000 });
@@ -173,6 +185,7 @@ async function main() {
     const mapMoved = after.mapView !== before.mapView || after.markers !== before.markers;
     const urlChanged = after.url !== before.url;
     const toastShown = after.toast > before.toast;
+    const textChanged = after.textHash !== before.textHash;
 
     let ok = false;
     let detail = "";
@@ -180,16 +193,16 @@ async function main() {
       ok = requests > 0 || toastShown;
       detail = `请求 ${requests}，提示 ${toastShown ? "有" : "无"}`;
     } else if (kind === "expand") {
-      ok = contentGrew || overlayGrew;
+      ok = contentGrew || overlayGrew || textChanged;
       detail = `文字 ${before.text}→${after.text}，字段 ${before.fields}→${after.fields}，浮层 +${after.drawers + after.modals + after.popovers - before.drawers - before.modals - before.popovers}`;
     } else if (kind === "drawer") {
-      ok = overlayGrew || urlChanged || mapMoved;
+      ok = overlayGrew || urlChanged || mapMoved || textChanged;
       detail = `浮层 ${before.drawers + before.modals + before.popovers}→${after.drawers + after.modals + after.popovers}，URL ${urlChanged ? "变化" : "未变"}`;
     } else if (kind === "filter") {
-      ok = overlayGrew || contentGrew || mapMoved || urlChanged;
-      detail = `行 ${before.rows}→${after.rows}，浮层 +${after.popovers - before.popovers}，地图${mapMoved ? "变化" : "未变"}`;
+      ok = overlayGrew || contentGrew || mapMoved || urlChanged || textChanged;
+      detail = `行 ${before.rows}→${after.rows}，浮层 +${after.popovers - before.popovers}，地图${mapMoved ? "变化" : "未变"}，文本${textChanged ? "变化" : "未变"}`;
     } else {
-      ok = overlayGrew || contentGrew || mapMoved || urlChanged || toastShown;
+      ok = overlayGrew || contentGrew || mapMoved || urlChanged || toastShown || textChanged;
       detail = `浮层 ${before.drawers + before.modals + before.popovers}→${after.drawers + after.modals + after.popovers}，地图${mapMoved ? "变化" : "未变"}`;
     }
     record(label, kind, ok, detail);

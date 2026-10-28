@@ -10,8 +10,7 @@ import {
   Tag,
   Empty,
   Alert,
-  Space,
-} from "antd";
+  Space, App } from "antd";
 import dayjs from "dayjs";
 import { usePlatform } from "../../hooks/usePlatform";
 import { distinctByCanonical } from "../../utils/dedupe";
@@ -62,6 +61,8 @@ function tierOptions(
 }
 
 export default function HotelIntelligence() {
+  // antd v5 里静态 message 不会渲染（不消费 App 上下文）；统一用上下文实例
+  const { message } = App.useApp();
   const { dataset, filters, params, update } = usePlatform();
   // 专业版盯一家酒店,企业版管理多家:套餐决定这里能选几家(演示版套餐在本机切换)。
   const { plan } = useEntitlements();
@@ -195,7 +196,15 @@ export default function HotelIntelligence() {
             <>
               <Button
                 size="small"
-                onClick={() => setPortfolio(dataset.hotels.map((h) => h.id))}
+                onClick={() => {
+                  if (portfolio === null) {
+                    // 默认状态本身就是"包含全部"，此时再点全选不会有任何变化，
+                    // 必须明确告诉用户，而不是让它看起来像坏按钮。
+                    message.info(`当前已包含全部 ${dataset.hotels.length} 家酒店`);
+                    return;
+                  }
+                  setPortfolio(dataset.hotels.map((h) => h.id));
+                }}
               >
                 全选 {dataset.hotels.length} 家
               </Button>
@@ -225,10 +234,12 @@ export default function HotelIntelligence() {
               })}
             </>
           )}
-          <small className="muted">
+          <small className="muted" aria-label="已选酒店数">
             {singleHotel
               ? `专业版 · 当前 1 家酒店 · 共 ${dataset.hotels.length} 家可选`
-              : `已选 ${hotel ? owned.length : 0} 家 · 共 ${dataset.hotels.length} 家`}
+              : `已选 ${owned.length} 家 · 共 ${dataset.hotels.length} 家${
+                  portfolio === null ? "（默认全部）" : ""
+                }`}
           </small>
         </Space>
       </section>
