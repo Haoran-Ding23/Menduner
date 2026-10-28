@@ -89,9 +89,26 @@ def snapshot(path):
             )
             for row in con.execute('SELECT * FROM events ORDER BY id')
         ]
-        evidence = [dict(json.loads(row['payload']), event_id=row['event_id'],
-                         source_url=row['source_url'], verification_status=row['verification_status'])
-                    for row in con.execute('SELECT * FROM evidence ORDER BY id')]
+        # 谁做过决定必须带给前端：没有 decidedBy，审核台的「撤回」按钮永远不会出现。
+        # review_decisions 里同一字段可能有多条，取最近一次。
+        decided = {}
+        try:
+            for row in con.execute(
+                'SELECT event_id, field, reviewer, decided_at FROM review_decisions ORDER BY id'
+            ):
+                decided[(row['event_id'], row['field'])] = (row['reviewer'], row['decided_at'])
+        except sqlite3.OperationalError:
+            decided = {}
+        evidence = []
+        for row in con.execute('SELECT * FROM evidence ORDER BY id'):
+            item = dict(json.loads(row['payload']), event_id=row['event_id'],
+                        source_url=row['source_url'],
+                        verification_status=row['verification_status'])
+            who = decided.get((row['event_id'], item.get('field')))
+            if who:
+                item['decidedBy'] = who[0]
+                item['decidedAt'] = who[1]
+            evidence.append(item)
         resources = {name: [json.loads(row['payload']) for row in con.execute(f'SELECT payload FROM {name} ORDER BY id')]
                      for name in ('venues', 'hotels', 'districts', 'places')}
         sources = [dict(row) for row in con.execute('SELECT * FROM sources ORDER BY id')]

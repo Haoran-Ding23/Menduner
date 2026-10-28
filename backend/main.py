@@ -1044,6 +1044,8 @@ def create_app(db_path: Path | None = None):
 
         event_id = uuid.uuid4().hex
         payload = {
+            "id": event_id,          # snapshot() 用 payload 还原事件，缺 id 会让整个数据集接口 500
+            "canonicalId": f"canonical-{event_id}",
             "name": body.name,
             "category": body.category,
             "startDate": body.startDate,
@@ -1063,24 +1065,27 @@ def create_app(db_path: Path | None = None):
                 "VALUES(?,?,?,?,?,datetime('now')) ON CONFLICT(id) DO NOTHING",
                 (f"manual-{principal}", "人工录入（无公开来源）", "manual", 0, None),
             )
-            # 显式列名：生产库比本地多一列（canonical_id）时，位置式 VALUES 会直接报错。
+            # 列名自适应：不同库版本的 events 列不完全一致（生产多一列 canonical_id），
+            # 写死列名或位置式 VALUES 都会在某一侧崩掉。
+            columns = {row[1] for row in con.execute("PRAGMA table_info(events)")}
+            values = {
+                "id": event_id,
+                "name": body.name,
+                "category": body.category,
+                "startDate": body.startDate,
+                "endDate": body.endDate,
+                "venue": None,      # venue id: resolved separately, not guessed here
+                "district": body.district,
+                "source": f"manual-{principal}",
+                "verification_status": "Needs Review",
+                "payload": json.dumps(payload, ensure_ascii=False),
+                "canonical_id": f"canonical-{event_id}",
+            }
+            usable = [name for name in values if name in columns]
             con.execute(
-                "INSERT INTO events(id, name, category, startDate, endDate, venue, district, "
-                "source, verification_status, payload, canonical_id) "
-                "VALUES(?,?,?,?,?,?,?,?,?,?,?)",
-                (
-                    event_id,
-                    body.name,
-                    body.category,
-                    body.startDate,
-                    body.endDate,
-                    None,          # venue id: resolved separately, not guessed here
-                    body.district,
-                    f"manual-{principal}",
-                    "Needs Review",
-                    json.dumps(payload, ensure_ascii=False),
-                    f"canonical-{event_id}",
-                ),
+                f"INSERT INTO events({', '.join(usable)}) "
+                f"VALUES({', '.join('?' for _ in usable)})",
+                tuple(values[name] for name in usable),
             )
         return {"id": event_id, "status": "Needs Review"}
 
@@ -1150,7 +1155,7 @@ def create_app(db_path: Path | None = None):
             raise HTTPException(
                 status_code=400, detail="A correction must carry a replacement value"
             )
-        if body.event_id not in {e['id'] for e in snapshot(path)['events']}:
+        if body.event_id not in {e.get('id') for e in snapshot(path)['events']}:
             raise HTTPException(status_code=404, detail='Event not found')
         exists, current = stored_claim(path, body.event_id, body.field)
         if not exists:
