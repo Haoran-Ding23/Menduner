@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { multiDayCaveat, selectGraphSample } from "../../utils/graphSample";
 import GraphQueries from "../../components/GraphQueries";
 import GraphRelationSummary from "../../components/GraphRelationSummary";
@@ -122,6 +122,15 @@ export default function KnowledgeGraph() {
   const [showCanvas, setShowCanvas] = useState(false);
   // 关系图全屏：节点多的时候小画布看不清，给一个不离开页面的放大方式
   const [graphFullscreen, setGraphFullscreen] = useState(false);
+  // 全屏后必须能退出：Esc 直接关（用户反馈"点开收不回去"）
+  useEffect(() => {
+    if (!graphFullscreen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setGraphFullscreen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [graphFullscreen]);
   const [nodeId, setNodeId] = useState<string | null>(null),
     [edgeId, setEdgeId] = useState<string | null>(null);
   const graph = useMemo(
@@ -401,7 +410,7 @@ export default function KnowledgeGraph() {
               className="graph-fullscreen-toggle"
               onClick={() => setGraphFullscreen((v) => !v)}
             >
-              {graphFullscreen ? "退出全屏" : "全屏查看"}
+              {graphFullscreen ? "退出全屏（Esc）" : "全屏查看"}
             </Button>
             <ReactFlow
               // The key must change whenever the node set changes shape. React Flow only
