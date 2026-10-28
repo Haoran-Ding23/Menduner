@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Modal,
   Alert,
   Button,
   Empty,
@@ -25,6 +26,7 @@ import {
   type ReviewDecision,
 } from "../../services/api";
 import VenueMaintenance from "../../components/VenueMaintenance";
+import { fillEvidence } from "../../services/api";
 import AiReviewTrials from "../../components/AiReviewTrials";
 import ClientErrors from "../../components/ClientErrors";
 import CrawlHealth from "../../components/CrawlHealth";
@@ -82,6 +84,12 @@ export default function ReviewConsole() {
   }, [identityLoading, allowed, identity.authenticated, probe]);
 
   const [search, setSearch] = useState("");
+  // 人工补录：缺失字段没有可核对记录，只能补录（必须带来源链接）
+  const [fillTarget, setFillTarget] = useState<Evidence | null>(null);
+  const [fillValue, setFillValue] = useState("");
+  const [fillSource, setFillSource] = useState("");
+  const [fillNote, setFillNote] = useState("");
+  const [fillBusy, setFillBusy] = useState(false);
   const [status, setStatus] = useState("");
   const [openVenueId, setOpenVenueId] = useState<string | null>(null);
   const [queueError, setQueueError] = useState("");
@@ -240,6 +248,11 @@ export default function ReviewConsole() {
   const fields = event
     ? [...repository.getEvidence(event.id), ...(venue ? repository.getEvidence(venue.id) : [])]
     : [];
+
+  // 缺失字段（没有可核对记录）单独列出：字段表里它们无法点 ✓/✗，只能补录
+  const isMissingField = (item: Evidence) =>
+    item.value === null || item.value === undefined || item.value === "" || item.status === "Missing";
+  const missingFields = fields.filter(isMissingField);
   const entityVenue =
     venue && fields.some((f) => f.entityId === venue.id) ? venue : null;
   const count = (s: Status) =>
@@ -437,6 +450,32 @@ export default function ReviewConsole() {
               </Space>
             )}
           </div>
+          {missingFields.length > 0 && (
+            <div className="missing-block">
+              <strong>缺失字段（{missingFields.length} 个，可补录）</strong>
+              <div className="missing-items">
+                {missingFields.map((item) => (
+                  <span key={item.id} className="missing-item">
+                    {item.field}
+                    <Button
+                      size="small"
+                      type="link"
+                      style={{ padding: "0 4px" }}
+                      disabled={!effectiveReviewer}
+                      onClick={() => {
+                        setFillTarget(item);
+                        setFillValue("");
+                        setFillSource(item.sourceUrl ?? "");
+                        setFillNote("");
+                      }}
+                    >
+                      补录
+                    </Button>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
           {fields.length ? (
             <Table<Evidence>
               rowKey="id"
@@ -605,6 +644,62 @@ export default function ReviewConsole() {
           )}
         </section>
       </div>
+      <Modal
+        title="补录这个字段"
+        open={Boolean(fillTarget)}
+        onCancel={() => setFillTarget(null)}
+        okText="保存补录"
+        confirmLoading={fillBusy}
+        onOk={async () => {
+          if (!fillTarget) return;
+          if (!fillSource.trim()) {
+            message.warning("必须填写来源链接：没有来源的信息不写入");
+            return;
+          }
+          setFillBusy(true);
+          try {
+            const result = await fillEvidence({
+              eventId: fillTarget.entityId,
+              field: fillTarget.field,
+              value: fillValue,
+              sourceUrl: fillSource,
+              reviewer: String(effectiveReviewer),
+              note: fillNote || undefined,
+            });
+            message.success("已补录：" + (result.fieldLabel ?? fillTarget.field));
+            setFillTarget(null);
+            void reloadData().catch(() => undefined);
+          } catch (error) {
+            message.error((error as Error).message);
+          } finally {
+            setFillBusy(false);
+          }
+        }}
+      >
+        <p className="muted" style={{ marginTop: 0 }}>
+          补录会写成一条「人工补录」证据（状态已核验），并记录补录人与时间；必须填来源链接。
+        </p>
+        <Space direction="vertical" style={{ width: "100%" }}>
+          <Input
+            aria-label="补录值"
+            placeholder="这个字段的正确值"
+            value={fillValue}
+            onChange={(event) => setFillValue(event.target.value)}
+          />
+          <Input
+            aria-label="补录来源链接"
+            placeholder="https://…（必填，可追溯）"
+            value={fillSource}
+            onChange={(event) => setFillSource(event.target.value)}
+          />
+          <Input
+            aria-label="补录备注"
+            placeholder="备注（可选）"
+            value={fillNote}
+            onChange={(event) => setFillNote(event.target.value)}
+          />
+        </Space>
+      </Modal>
     </>
   );
 }
@@ -735,4 +830,3 @@ function ManualEntry({ onDone }: { onDone: () => Promise<void> | void }) {
     </section>
   );
 }
-

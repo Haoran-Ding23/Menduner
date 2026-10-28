@@ -1,0 +1,32 @@
+[
+  {
+    "name": "登录审核账号",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "点「补录」弹出弹窗",
+    "ok": false,
+    "detail": "页面上没有可补录字段（测试活动创建失败？）"
+  },
+  {
+    "name": "点「通过」后审核记录发生变化",
+    "ok": true,
+    "detail": "2 → 246"
+  },
+  {
+    "name": "「全部核查完毕」按钮可点",
+    "ok": true,
+    "detail": "enabled"
+  },
+  {
+    "name": "全部核查后接口返回 200",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "点 AI 建议「对」后已标注数增加",
+    "ok": false,
+    "detail": "页面上没有可判定的 AI 建议"
+  }
+]
