@@ -19,8 +19,8 @@ const getArg = (name, fallback) => {
 };
 const BASE = getArg("--base", "https://entgroup14.com");
 const EVENT = getArg("--event", "");
-const LOGIN = getArg("--login", "manager01");
-const PASSWORD = getArg("--password", "Menduner#2026");
+const LOGIN = getArg("--login", "menduner");
+const PASSWORD = getArg("--password", "123456");
 const OUT = getArg("--json", "../deliverables/pw-write-path.json");
 
 if (!EVENT) {
@@ -60,7 +60,8 @@ async function main() {
   record("登录审核账号", login.status() === 200, `HTTP ${login.status()}`);
 
   // ---------- 1) 补录（写入路径：POST /review/fill） ----------
-  await page.goto(`${BASE}/evidence?event=${EVENT}`, { waitUntil: "domcontentloaded" });
+  // 活动证据索引已合并到审核台：补录、字段核对、全部核查都在 /review 上
+  await page.goto(`${BASE}/review?event=${EVENT}`, { waitUntil: "domcontentloaded" });
   await page.waitForTimeout(9000);
   const fillButton = page.getByRole("button", { name: "补录" }).first();
   if (await fillButton.count()) {

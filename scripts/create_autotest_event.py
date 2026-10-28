@@ -22,7 +22,7 @@ with connect(DB) as con:
         "INSERT INTO events(id,name,category,startDate,endDate,venue,district,source,"
         "verification_status,payload) VALUES(?,?,?,?,?,?,?,?,?,?)",
         (EVENT_ID, "【自动化验收】按钮测试活动", "culture", "2026-11-01", None, None, None, source_id,
-         "Needs Review", json.dumps({"demo": True, "autoTest": True}, ensure_ascii=False)),
+         "Needs Review", json.dumps({"demo": False, "autoTest": True}, ensure_ascii=False)),
     )
     rows = [
         ("name", "【自动化验收】按钮测试活动", "Needs Review"),
@@ -31,7 +31,7 @@ with connect(DB) as con:
         ("organizer", None, "Missing"),
     ]
     for field, value, status in rows:
-        evidence_id = "ev-autotest-" + field
+        evidence_id = "ev-" + EVENT_ID + "-" + field
         payload = {"id": evidence_id, "entityId": EVENT_ID, "field": field, "value": value,
                    "status": status, "sourceUrl": "https://example.com/autotest"}
         con.execute(

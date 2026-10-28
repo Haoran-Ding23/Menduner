@@ -33,8 +33,8 @@ const CAP = Number(getArg("--cap", "150"));
 const JSON_OUT = getArg("--json", "../deliverables/pw-audit.json");
 const ONLY = getArg("--pages", "");
 const AUTH = !argv.includes("--no-auth");
-const LOGIN = getArg("--login", "manager01");
-const PASSWORD = getArg("--password", "Menduner#2026");
+const LOGIN = getArg("--login", "menduner");
+const PASSWORD = getArg("--password", "123456");
 
 const PAGES = [
   ["/workbench", "本店工作台"],
