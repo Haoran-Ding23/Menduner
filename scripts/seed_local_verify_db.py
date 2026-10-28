@@ -54,6 +54,12 @@ HOTEL = {
     "longitude": 120.621, "latitude": 31.301, "coordinates": [120.621, 31.301], "demo": False,
 }
 con.execute("INSERT INTO venues(id,payload) VALUES(?,?)", ("venue-verify", json.dumps(VENUE, ensure_ascii=False)))
+
+# 重复场馆候选：名称包含 + 坐标极近，用于验证「合并场馆」按钮
+DUP = {"id": "venue-verify-dup", "name": "验证用场馆剧场", "address": "苏州市姑苏区验证路 1 号 2 号门",
+       "district": "姑苏区", "longitude": 120.6201, "latitude": 31.3001,
+       "coordinates": [120.6201, 31.3001], "demo": False}
+con.execute("INSERT INTO venues(id,payload) VALUES(?,?)", ("venue-verify-dup", json.dumps(DUP, ensure_ascii=False)))
 con.execute("INSERT INTO hotels(id,payload) VALUES(?,?)", ("hotel-verify", json.dumps(HOTEL, ensure_ascii=False)))
 
 # 两个活动：一个字段齐全，一个故意把 organizer / venueName / endDate 抹掉
@@ -71,7 +77,7 @@ for event_id, name, drop_fields in VARIANTS:
         "sourceUrl": "https://example.com/verify",
         "startDate": "2026-11-05",
         "endDate": "2026-11-06",
-        "venueId": "venue-verify",
+        "venueId": ("venue-verify-dup" if drop_fields else "venue-verify"),
         "venueName": "验证用场馆",
         "organizer": "验证主办方",
         "districtId": "taicang",

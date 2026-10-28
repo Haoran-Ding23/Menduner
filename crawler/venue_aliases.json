@@ -56,6 +56,25 @@
         "districtDemo": false,
         "coordinates": null
       }
+    },
+    {
+      "alias_id": "venue-verify-dup",
+      "canonical_id": "venue-verify",
+      "name": "验证用场馆",
+      "reason": "自动化验证：同址同场馆",
+      "canonical_row": {
+        "id": "venue-verify",
+        "name": "验证用场馆",
+        "address": "苏州市姑苏区验证路 1 号",
+        "district": "姑苏区",
+        "longitude": 120.62,
+        "latitude": 31.3,
+        "coordinates": [
+          120.62,
+          31.3
+        ],
+        "demo": false
+      }
     }
   ]
 }

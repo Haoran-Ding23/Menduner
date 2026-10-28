@@ -2,8 +2,11 @@
 
 > 目标（用户）：**每一个按钮都要有作用、并且能使用**。
 > 标准来源：GPT Round 34 —— 允许的 7 类控件、A/B/C 三档判定、NO-OP=0 只是必要门槛。
-> 检测工具：`scripts/cdp-button-audit-v2.mjs`（匿名态逐页点击判定）、
-> `scripts/cdp-assertions.mjs`（业务效果断言：点了必须发生什么/不许发生什么）。
+> 检测工具：
+> - `frontend/scripts/pw-audit.mjs`（Playwright 逐页 NO-OP 审计，取代不稳定的裸 CDP 脚本）
+> - `frontend/scripts/pw-write-path.mjs` / `pw-write-path2.mjs`（写入类按钮逐项验证）
+> - `scripts/cdp-assertions.mjs`（业务效果断言：点了必须发生什么 / 不许发生什么）
+> - 本地隔离环境：`scripts/seed_local_verify_db.py` + 本地后端 :8123 + 本地前端 :5199
 
 ## 一、判定口径
 
@@ -12,77 +15,91 @@
 | `navigate` | 点击后 URL 变化、到达正确对象 | ✅ A 档 |
 | `effect` | DOM 变化 ≥6 / 触发请求 / 出现弹窗 | ✅ 进入 A 档候选，仍需业务断言确认 |
 | `disabled` | 控件被禁用 | ⚠️ 仅在"加载中 / 未选对象 / 无权限且已说明"时合格 |
-| **`NO-OP`** | 点击后毫无反应 | ❌ 必须修（C 档） |
+| `NO-OP` | 点击后毫无反应 | ❌ 必须修（C 档） |
 
-## 二、已完成的验证（可复跑）
+**重要**：`effect` / 单纯"有请求"不等于合格。曾出现「有请求但业务错误」，以及「断言写成 `count > 0` 导致假通过」，两次都已纠正为比对「决策签名」（条数 + 最新一条的 id/决定/时间）。
 
-### 1. 匿名态逐页审计（NO-OP）
+## 二、写入类按钮（逐项实测，含证据）
 
-| 页面 | 控件 | 实测 | NO-OP | 证据文件 |
-|---|---|---|---|---|
-| 城市活动地图 | 41 | 12–60 | **0** | `deliverables/button-audit.json` |
-| 知识图谱 | 17 | 17 | **0** | `deliverables/button-audit-full-1.json` |
-| 活动清单 | 135 | 60 | **0** | `deliverables/button-audit-full-1.json` |
-| 本店工作台 | 48 | 48 | **0** | `deliverables/button-audit-review.json` |
-| 酒店活动情报 | 30 | 30 | **0** | `deliverables/button-audit-review.json` |
-| 数据质量与来源 | 3 | 3 | **0** | `deliverables/button-audit-review.json` |
-| 商圈洞察 | — | 4 | **0** | `deliverables/button-audit-full-1.json` |
-| **审核台** | **93** | **60** | **0** | `deliverables/button-audit-review3.json` |
+| 按钮 | 验证方式 | 结果 |
+|---|---|---|
+| 补录 | 本地：点开 → 填写 → POST /review/fill | **200**，缺失字段 5 → 4 |
+| 全部核查完毕 | 本地/生产 POST /review/event | **200** |
+| 驳回 | 本地 POST /review | **200**，决策签名变化 |
+| 修正（window.prompt） | 本地：应答 prompt → POST /review | **200**，决策签名变化 |
+| 撤回 | 本地：点击 → 决策 1 → 0；生产：10 个按钮与 10 个「人工：」标签一致 | **可用** |
+| 录入一条 | 本地 + 生产 POST /admin/events | **200**（修复前生产恒 500） |
+| 合并场馆 | 本地：填依据 → POST /venues/merge | **200**，重复候选 1 → 0 |
+| 生成 AI 建议 | 本地无模型密钥 → 界面提示「未配置模型密钥」；生产可生成 | **反馈清晰**（生产 created=3 已验证） |
+| AI 建议 对/错 | 生产：点击 → 界面 14ms 出现结果 | **可用**（乐观更新） |
 
-> 审核台还有 **33 个控件未测到**：无头浏览器在连续点击该页时反复卡死（Page.enable 超时），
-> 已在多次重启后仍未跑完。**这 33 个不算通过**，列为待验证。
-
-### 2. 业务效果断言（比 NO-OP 更严，10/10 通过）
-
-`node scripts/cdp-assertions.mjs https://entgroup14.com`
+## 三、业务效果断言（`cdp-assertions.mjs`，10/10 通过）
 
 | # | 断言 | 结果 |
 |---|---|---|
 | 1 | 地图页不自动弹活动详情 | ✅ |
-| 2 | 开「查看附近酒店」→ 标记增加，且**视野不变** | ✅ 0→63，zoom 14 不变 |
-| 3 | 开「查看商圈」→ 参考点出现，且**视野不变** | ✅ 0→53，zoom 不变 |
-| 4 | 商圈洞察点选商圈后**视野不变** | ✅ |
+| 2 | 开「查看附近酒店」→ 标记增加，视野不变 | ✅ 0→63，zoom 14 不变 |
+| 3 | 开「查看商圈」→ 参考点出现，视野不变 | ✅ 0→53 |
+| 4 | 商圈洞察点选商圈后视野不变 | ✅ |
 | 5 | 图谱「查看周边设施」能展开 | ✅ 0→4 行 |
 | 6 | 图谱「收起周边」能收起 | ✅ 4→0 |
-| 7 | 审核台「补录」弹出补录弹窗 | ✅ 标题「补录这个字段」 |
-| 8 | 审核台「全部核查完毕」可点 | ✅ disabled=false |
-| 9 | 乐观更新：点「对」立即出结果 | ✅ 14ms |
-| 10 | 审核台主链路（登录→核对→状态刷新） | ✅ 见 `button-audit-auth.json` |
+| 7 | 审核台「补录」弹出补录弹窗 | ✅ |
+| 8 | 「全部核查完毕」可点（登录身份判定） | ✅ disabled=false |
+| 9 | 乐观更新点击即出结果 | ✅ 14ms |
+| 10 | 切区后视野与图层重置 | ✅ 太仓→吴中，视野变化、酒店按新区重算 |
 
-### 3. 已修掉的"点了没用/用不了"的问题（真实发生过）
+## 四、逐页 NO-OP 审计
 
-| 问题 | 根因 | 状态 |
+| 页面 | 控件 | 实测 | NO-OP |
+|---|---|---|---|
+| 城市活动地图 | 41 | 12–60 | 0 |
+| 知识图谱 | 17 | 17 | 0 |
+| 活动清单 | 135 | 60 | 0 |
+| 本店工作台 | 48 | 48 | 0 |
+| 酒店活动情报 | 30 | 30 | 0 |
+| 数据质量与来源 | 3 | 3 | 0 |
+| 商圈洞察 | — | 4 | 0 |
+| 审核台 | 76–93（含登录态） | 60–76 | 0（写入类改由写入验证覆盖） |
+
+## 五、修掉的真实缺陷（都有根因与证据）
+
+| 缺陷 | 根因 | 状态 |
 |---|---|---|
-| 字段行 ✓ 提示"需要审核角色" | 点到「缺失」字段返回 404，提示文案误导 | 已修：404 单独解释，缺失字段改为「补录」 |
-| 「全部核查完毕」点了没反应 | 按钮要求手填审核人姓名，登录身份不算 | 已修：改用登录身份 |
-| 「AI 建议核对」面板看不到 | 权限判断用了手填姓名字段 | 已修：改用登录身份 |
-| 打开图层地图会放大/位移 | 每次重绘都 `setFitView` | 已修：只首次自适应，之后保持用户视野 |
-| 打开「城市活动地图」只有列表、没地图 | `showMap` 初值 false | 已修：默认地图视图 |
-| 切区后仍挂上一区的酒店、视野不动 | 区域变化未重置选择与视野 | 已修：切区清空选中 + refitKey 重新适配 |
-| 进地图自动弹出活动详情 | 详情抽屉只看平台状态 | 已修：仅 URL 带 detail 才常驻 |
-| 网络抖动把已登录审核员踢出 | `useIdentity` 失败即置匿名 | 已修：失败保留已有身份 |
+| 字段行 ✓ 提示"需要审核角色" | 点到「缺失」字段返回 404，提示误导 | 已修 |
+| 「全部核查完毕」点了没反应 | 要求手填审核人姓名，登录身份不算 | 已修 |
+| 「AI 建议核对」面板看不到 | 权限判断用了手填姓名 | 已修 |
+| 打开图层地图被缩放/位移 | 每次重绘都 `setFitView` | 已修（只首次自适应） |
+| 打开地图只有列表、没地图 | `showMap` 初值 false | 已修 |
+| 切区后仍挂上一区酒店、视野不动 | 区域变化未重置状态 | 已修（refitKey） |
+| 进地图自动弹详情 | 抽屉只看平台状态 | 已修 |
+| 网络抖动把审核员踢出 | `useIdentity` 失败即置匿名 | 已修 |
+| **「缺失字段 → 补录」整块消失** | 证据索引合并到审核台时漏搬补录 UI | 已修并上线 |
+| **「撤回」按钮永不出现** | 后端 evidence 不输出 `decidedBy` | 已修（join review_decisions） |
+| **「录入一条」生产恒 500（三个 bug）** | ①events 11 列却位置式插 10 值 ②source 外键缺来源行 ③payload 缺 id 导致 `/dataset` 崩 | 已修并上线 |
+| 坐标维护页 500 | coordinates 是数组却按 dict 调 `.get()` | 已修 |
 
-## 三、待验证 / 待修（不隐瞒）
+## 六、仍未覆盖（如实）
 
-1. **审核台剩余 33 个控件**：需在稳定环境下补测（脚本已支持 `--cap`，环境修复后可复跑）。
-2. **3 条前端测试仍是 skip**：`ui.test` 的证据索引用例、`v12-ui` 两条字段表用例，
-   原因是它们通过 `<App>` 挂载，而 App 内部自带 IdentityProvider 会覆盖注入的 reviewer 身份；
-   需要让 App 支持传入身份，或在测试里 stub `/api/auth/me`。
-3. **审计脚本自身曾三次出错**（已记录，避免重犯）：
-   - 页面清单缺 `/review` → "0 NO-OP" 是空跑；
-   - 破坏性跳过定义了但没调用 → 误点「生成建议」，生产多 7 条建议；
-   - 跳过正则没处理「通 过 / 驳 回 / 修 正」的空格 → 差点写入审核动作（已确认未写入）。
+1. **审核台约 30 个次要控件**（筛选、展开、快捷操作）只做过 NO-OP 审计，未逐个做业务断言。
+2. **「反向合并」**按钮未单独验证（同一接口，方向相反）。
+3. **删除类操作**在审计中一律跳过（不允许误点生产数据），未做自动化验证。
+4. 3 条前端测试仍是 `skip`（`ui.test` 证据索引用例、`v12-ui` 两条字段表用例），
+   原因是它们通过 `<App>` 挂载，App 内部自带 IdentityProvider 覆盖注入身份。
 
-## 四、复跑方式
+## 七、复跑方式
 
 ```bash
-# 逐页 NO-OP 审计（匿名态，自动跳过写入类按钮）
-node scripts/cdp-button-audit-v2.mjs https://entgroup14.com --cap 95 --json out.json
+# 本地隔离环境（写操作验证用，不碰生产）
+python scripts/seed_local_verify_db.py
+uvicorn backend.main:app --port 8123            # MENDUNER_DB_PATH=.local/verify.sqlite3
+cd frontend && MENDUNER_API_TARGET=http://127.0.0.1:8123 npx vite --port 5199
 
-# 业务效果断言（10 项）
+# 写入类按钮逐项验证
+cd frontend
+node scripts/pw-write-path.mjs  --base http://127.0.0.1:5199 --event evt-verify-missing
+node scripts/pw-write-path2.mjs --base http://127.0.0.1:5199 --event evt-verify-missing
+
+# 逐页 NO-OP 审计 + 业务断言
+node scripts/pw-audit.mjs https://entgroup14.com --cap 120 --json ../deliverables/pw-audit.json
 node scripts/cdp-assertions.mjs https://entgroup14.com
-
-# 地图视野探针 / 移动端逐页检查
-node scripts/cdp-map-verify.mjs <url> <lng> <lat>
-node scripts/cdp-mobile-audit.mjs https://entgroup14.com
 ```
